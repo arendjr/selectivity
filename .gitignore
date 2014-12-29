@@ -1,0 +1,10 @@
+node_modules
+
+# OS X mess
+.DS_Store
+
+# Qt Creator IDE files
+select3*.config
+select3*.creator*
+select3*.files
+select3*.includes

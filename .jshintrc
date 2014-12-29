@@ -1,0 +1,32 @@
+{
+    "asi":           false,
+    "browser":       true,
+    "camelcase":     true,
+    "curly":         true,
+    "debug":         true,
+    "devel":         true,
+    "eqeqeq":        true,
+    "evil":          true,
+    "indent":        4,
+    "noarg":         true,
+    "node":          true,
+    "nonew":         true,
+    "maxparams":     100,
+    "proto":         true,
+    "regexdash":     true,
+    "strict":        true,
+    "sub":           true,
+    "trailing":      true,
+    "undef":         true,
+    "unused":        true,
+    "predef"     : [
+        "exports",
+        "phantom",
+        "casper",
+        "window",
+        "require",
+        "define",
+        "module",
+        "-event"
+    ]
+}
