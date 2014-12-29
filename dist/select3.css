@@ -1,0 +1,83 @@
+/**
+ * All CSS that comes with Select3 can be used as is, or tweaked to your heart's content :)
+ *
+ * Please realize though there is no "API contract" regarding styling of CSS classes, meaning that
+ * any customized CSS made may need to be updated without warning if you want to upgrade the Select3
+ * version you use. You can mitigate this problem by using your own templates instead of those
+ * defined in select3-templates.js, since templates will at the very least continue working across
+ * patch versions and any changes necessary to templates will be documented in the changelog.
+ */
+
+/**
+ * Multi-selection input.
+ */
+
+.select3-multiple-input-container {
+    background: #eee;
+    border-radius: 2px;
+    min-height: 28px;
+    padding: 5px;
+}
+
+.select3-multiple-select-input,
+input[type="text"].select3-multiple-select-input {
+    background-color: transparent;
+    border: none;
+    float: left;
+    height: 28px;
+    line-height: 28px;
+    max-width: calc(100% - 10px);
+    outline: 0;
+    padding: 0;
+}
+
+.select3-multiple-select-input:focus,
+input[type="text"].select3-multiple-select-input:focus {
+    background-color: transparent;
+    box-shadow: none;
+    outline: none;
+}
+
+.select3-multiple-select-input.select3-width-detector {
+    left: 0;
+    position: absolute;
+    top: -10000px;
+}
+
+.select3-selected-item {
+    border-radius: 3px;
+    cursor: default;
+    float: left;
+    font-size: 12px;
+    line-height: 24px;
+    margin: 2px;
+    padding: 0 5px 0 8px;
+    position: relative;
+    white-space: nowrap;
+}
+
+.select3-selected-item.selected {
+    background-color: #e6e6e6;
+}
+
+.select3-selected-item-remove {
+    padding: 6px 0;
+}
+
+
+.selector-placeholder, input[type="text"].multi-select-input.selector-placeholder {
+    padding: 0px 6px;
+}
+
+.selected-members {
+    background: #fff;
+    border-bottom: 1px solid #dadada;
+    position: relative;
+    z-index: 2;
+
+    .multi-select-input-container {
+        height: 50px;
+        min-height: 30px;
+        overflow-y: scroll;
+    }
+}

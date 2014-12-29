@@ -26,5 +26,8 @@
     "vinyl-buffer": "^1.0.0",
     "vinyl-source-stream": "^1.0.0",
     "yargs": "^1.3.3"
+  },
+  "dependencies": {
+    "lodash.escape": "^2.4.1"
   }
 }
