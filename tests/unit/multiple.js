@@ -76,12 +76,43 @@ exports.testSetValue = DomUtil.createDomTest(
 
         $input.select3('value', ['Antwerp', 'Athens']);
 
-        test.deepEqual($input.select3('value'), ['Antwerp', 'Athens']);
-
         test.deepEqual($input.select3('data'), [
             { id: 'Antwerp', text: 'Antwerp' },
             { id: 'Athens', text: 'Athens' }
         ]);
+
+        test.deepEqual($input.select3('value'), ['Antwerp', 'Athens']);
+    }
+);
+
+exports.testSetValueWithInitSelection = DomUtil.createDomTest(
+    ['base', 'single', 'templates'],
+    function(test, $input) {
+        $input.select3({
+            initSelection: function(value, callback) {
+                var cities = {
+                    1: 'Amsterdam',
+                    2: 'Antwerp',
+                    3: 'Athens'
+                };
+                callback(value.map(function(id) { return { id: id, text: cities[id] }; }));
+            },
+            multiple: true,
+            value: [1]
+        });
+
+        test.deepEqual($input.select3('data'), [{ id: 1, text: 'Amsterdam' }]);
+
+        test.deepEqual($input.select3('value'), [1]);
+
+        $input.select3('value', [2, 3]);
+
+        test.deepEqual($input.select3('data'), [
+            { id: 2, text: 'Antwerp' },
+            { id: 3, text: 'Athens' }
+        ]);
+
+        test.deepEqual($input.select3('value'), [2, 3]);
     }
 );
 
@@ -97,11 +128,11 @@ exports.testSetValueWithoutItems = DomUtil.createDomTest(
 
         $input.select3('value', ['Antwerp', 'Athens']);
 
-        test.deepEqual($input.select3('value'), ['Antwerp', 'Athens']);
-
         test.deepEqual($input.select3('data'), [
             { id: 'Antwerp', text: 'Antwerp' },
             { id: 'Athens', text: 'Athens' }
         ]);
+
+        test.deepEqual($input.select3('value'), ['Antwerp', 'Athens']);
     }
 );
