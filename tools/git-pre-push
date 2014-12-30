@@ -1,4 +1,4 @@
 #!/bin/sh
 
 # Run gulp to check the build is not broken
-gulp jshint
+gulp jshint unit-tests
