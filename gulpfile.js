@@ -5,6 +5,7 @@ var gulp = require('./gulp')([
     'browser-sync',
     'jshint',
     'qt-creator',
+    'unit-tests',
     'watch'
 ]);
 

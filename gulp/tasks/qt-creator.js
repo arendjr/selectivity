@@ -6,7 +6,7 @@ var gutil = require('gulp-util');
 var _ = require('lodash');
 
 var PROJECT_NAME = 'select3';
-var EXCLUDE_DIRS = ['.git/', 'dist/', 'node_modules/', PROJECT_NAME];
+var EXCLUDE_DIRS = ['.git/', 'node_modules/', PROJECT_NAME];
 var FILENAME = PROJECT_NAME + '.files';
 
 module.exports = function() {

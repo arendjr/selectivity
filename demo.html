@@ -3,6 +3,13 @@
     <head>
         <title>Select3 Demo Use Cases</title>
         <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
+        <link href="dist/select3.css" rel="stylesheet">
+        <style>
+            .select3-input {
+                display: inline-block;
+                width: 200px;
+            }
+        </style>
         <script src="vendor/jquery.js"></script>
         <script src="dist/select3-full.js"></script>
         <script>
@@ -105,9 +112,9 @@
     </head>
     <body>
         <h1>Select a single city</h1>
-        <p><div id="single-input"></div></p>
+        <p><span id="single-input" class="select3-input"></span></p>
         <h1>Select multiple cities</h1>
-        <p><div id="multiple-input"></div></p>
+        <p><span id="multiple-input" class="select3-input"></span></p>
     </body>
 </html>
 

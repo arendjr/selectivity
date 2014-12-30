@@ -22,8 +22,8 @@ specifically, I wanted to make the following changes:
 - Make Select2 work with jQuery builds without Sizzle for better performance. Patches for this have
   been accepted in Select2, but unfortunately it's a moving target causing repeated breakage.
 - Personally, I preferred a more modern codebase to work with, rather than the huge monolithic
-  library that is Select2. At this point also support for any IE version older than 10 can be
-  dropped.
+  library that is Select2. This also includes proper documentation of the code as well as good test
+  coverage. At this point also support for any IE version older than 10 can be dropped.
 
 Having said that, if you're a user of Select2 and don't recognize yourself in any of these issues,
 I advise you to keep using Select2. It's feature-rich and actively supported, so don't fix what
@@ -48,12 +48,21 @@ a new build, or revert the changes in the dist/ directory before committing):
 
     $ gulp dev
 
+Unit Tests
+----------
+
+Unit tests are available and can be ran using the following command:
+
+    $ gulp unit-tests
+
 Contributing
 ------------
 
-Patches for bugs are always welcome. If you want to implement a new feature, I advise to open an
-issue first in the [GitHub issue tracker](https://github.com/arendjr/select3/issues) so we can
-discuss its merits.
+Patches for bugfixes are always welcome. Please accompany pull requests for bugfixes with a test
+case that is fixed by the PR.
+
+If you want to implement a new feature, I advise to open an issue first in the
+[GitHub issue tracker](https://github.com/arendjr/select3/issues) so we can discuss its merits.
 
 In the absence of a formal style guide, please take the following into consideration:
 
@@ -61,7 +70,10 @@ In the absence of a formal style guide, please take the following into considera
 - Prefer single quotes.
 - No lines longer than 100 characters.
 
-Also make sure you don't check-in any JSHint violations. In order to validate your code before
-pushing, please run the following script:
+Also make sure you don't check-in any JSHint violations.
+
+In order to validate your code before pushing, please run the following script:
 
     $ tools/install-git-hooks.sh
+
+This will install a Git pre-push hook that will run JSHint and all unit tests before pushing.

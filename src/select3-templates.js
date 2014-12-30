@@ -55,8 +55,8 @@ Select3.Templates = {
      *
      * @param options Options object containing the following properties:
      *                id - Identifier for the item.
-     *                label - Text label which the user sees.
      *                selected - Boolean whether this item is currently selected.
+     *                text - Text label which the user sees.
      */
     multiSelectItem: function(options) {
         return (

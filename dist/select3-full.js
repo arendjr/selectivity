@@ -61,7 +61,7 @@ module.exports = escape;
 },{}],3:[function(_dereq_,module,exports){
 'use strict';
 
-var $ = window.$;
+var $ = window.jQuery;
 
 /**
  * Select3 Base Constructor.
@@ -71,13 +71,45 @@ var $ = window.$;
  * functionality that is common between both.
  *
  * @param options Options object. Accepts the same options as the setOptions method(), in addition
- *                to the following:
- *                multiple - Boolean determining whether multiple items may be selected
- *                           (default: false).
+ *                to the following ones:
+ *                data - Initial selection data to set. This should be an array of objects with 'id'
+ *                       and 'text' properties. This option is mutually exclusive with 'value'.
+ *                element - The DOM element to which to attach the Select3 instance. This property
+ *                          is set automatically by the $.fn.select3() function.
+ *                value - Initial value to set. This should be an array of IDs. This property is
+ *                        mutually exclusive with 'data'.
  */
 function Select3(options) {
 
+    /**
+     * jQuery container for the element to which this instance is attached.
+     */
+    this.$el = $(options.element);
+
+    /**
+     * Array of items from which to select. If set, this will be an array of objects with 'id' and
+     * 'text' properties.
+     *
+     * If given, all items are expected to be available locally and all selection operations operate
+     * on this local array only. If null, items are not available locally, and a query function
+     * should be provided to fetch remote data.
+     */
+    this.items = null;
+
+    /**
+     * Mapping of templates.
+     *
+     * Custom templates can be specified in the options object.
+     */
+    this.templates = $.extend({}, Select3.Templates);
+
     this.setOptions(options);
+
+    if (options.value) {
+        this.value(options.value);
+    } else {
+        this.data(options.data || null);
+    }
 }
 
 /**
@@ -86,9 +118,49 @@ function Select3(options) {
 $.extend(Select3.prototype, {
 
     /**
+     * Sets or gets the selection data.
+     *
+     * The selection data contains both IDs and text labels. If you only want to set or get the IDs,
+     * you should use the value() method.
+     *
+     * @param newData Optional new data to set. For a MultipleSelect3 instance the data must be
+     *                an array of objects with 'id' and 'text' properties, for a SingleSelect3
+     *                instance the data must be a single such object or null to indicate no item is
+     *                selected.
+     *
+     * @return If newData is omitted, this method returns the current data.
+     */
+    data: function(newData) {
+
+        if ($.type(newData) === 'undefined') {
+            return this._data;
+        } else {
+            newData = this.validateData(newData);
+
+            this._data = newData;
+            this._value = this.getValueForData(newData);
+
+            this.$el.trigger('change');
+        }
+    },
+
+    /**
      * Sets one or more options on this Select3 instance.
      *
      * @param options Options object. May contain one or more of the following properties:
+     *                initSelection - Function to map values by ID to selection data. This function
+     *                                receives two arguments, 'value' and 'callback'. The value is
+     *                                the current value of the selection, which is an ID or an array
+     *                                of IDs depending on the input type. The callback should be
+     *                                invoked with an object or array of objects, respectively,
+     *                                containing 'id' and 'text' properties.
+     *                items - Array of items from which to select. Should be an array of objects
+     *                        with 'id' and 'text' properties. As convenience, you may also pass an
+     *                        array of strings, in which case the same string is used for both the
+     *                        'id' and 'text' properties. If items are given, all items are expected
+     *                        to be available locally and all selection operations operate on this
+     *                        local array only. If null, items are not available locally, and a
+     *                        query function should be provided to fetch remote data.
      *                query - Function to use for fetching items.
      *                templates - Object with instance-specific templates to override the global
      *                            templates assigned to Select3.Templates.
@@ -101,8 +173,36 @@ $.extend(Select3.prototype, {
             if (options.hasOwnProperty(key)) {
                 var value = options[key];
                 switch (key) {
+                case 'initSelection':
+                    if ($.type(value) !== 'function') {
+                        throw new Error('initSelection must be a function');
+                    }
+                    break;
+
+                case 'items':
+                    if ($.type(value) === 'array') {
+                        this.items = value.map(function(item) {
+                            if (item && Select3.isValidID(item.id)) {
+                                return item;
+                            } else if (Select3.isValidID(item)) {
+                                return { id: item, text: '' + item };
+                            } else {
+                                throw new Error('items array contains invalid items');
+                            }
+                        });
+                    } else {
+                        throw new Error('items must be an array');
+                    }
+                    break;
+
+                case 'query':
+                    if ($.type(value) !== 'function') {
+                        throw new Error('query must be a function');
+                    }
+                    break;
+
                 case 'templates':
-                    this.templates = $.extend({}, Select3.Templates, this.templates, value);
+                    this.templates = $.extend({}, this.templates, value);
                     break;
                 }
             }
@@ -131,7 +231,51 @@ $.extend(Select3.prototype, {
         } else {
             throw new Error('Unknown template: ' + templateName);
         }
+    },
+
+    /**
+     * Sets or gets the value of the selection.
+     *
+     * The value of the selection only concerns the IDs of the selection items. If you are
+     * interested in the IDs and the text labels, you should use the data() method.
+     *
+     * Note that if neither the items option nor the initSelection option have been set, Select3
+     * will have no way to determine what text labels should be used with the given IDs in which
+     * case it will assume the text is equal to the ID. This is useful if you're working with tags,
+     * or selecting e-mail addresses for instance, but may not always be what you want.
+     *
+     * @param newValue Optional new value to set. For a MultipleSelect3 instance the value must be
+     *                 an array of IDs, for a SingleSelect3 instance the value must be a single ID
+     *                 (a string or a number) or null to indicate no item is selected.
+     *
+     * @return If newValue is omitted, this method returns the current value.
+     */
+    value: function(newValue) {
+
+        var self = this;
+        if ($.type(newValue) === 'undefined') {
+            return self._value;
+        } else {
+            newValue = self.validateValue(newValue);
+
+            self._value = newValue;
+
+            if (self.options.initSelection) {
+                self.options.initSelection(newValue, function(data) {
+                    if (self._value === newValue) {
+                        self._data = self.validateData(data);
+
+                        self.$el.trigger('change');
+                    }
+                });
+            } else {
+                self._data = self.getDataForValue(newValue);
+
+                self.$el.trigger('change');
+            }
+        }
     }
+
 });
 
 /**
@@ -139,6 +283,20 @@ $.extend(Select3.prototype, {
  * for a useful set of default templates, as well as for documentation of the individual templates.
  */
 Select3.Templates = {};
+
+/**
+ * Checks whether a value can be used as a valid ID for selection items. Only numbers and strings
+ * are accepted to be used as IDs.
+ *
+ * @param id The value to check whether it is a valid ID.
+ *
+ * @return true if the value is a valid ID, false otherwise.
+ */
+Select3.isValidID = function(id) {
+
+    var type = $.type(id);
+    return type === 'number' || type === 'string';
+};
 
 /**
  * Static function that transforms text in order to find matches. The default implementation
@@ -160,7 +318,11 @@ Select3.transformText = function(string) {
  *                   already has a Select3 instance, the result is the same as if the setOptions()
  *                   method is called.
  * @param options Optional options object to pass to the given method or the constructor. See the
- *                documentation for the respective methods to see which options they accept.
+ *                documentation for the respective methods to see which options they accept. In case
+ *                a new instance is being created, the following property is used:
+ *                multiple - Boolean determining whether multiple items may be selected
+ *                           (default: false). If true, a MultipleSelect3 instance is created,
+ *                           otherwise a SingleSelect3 instance is created.
  *
  * @return If the given method returns a value, this method returns the value of that method
  *         executed on the first element in the set of matched elements.
@@ -170,8 +332,8 @@ $.fn.select3 = function(methodName, options) {
     var result;
 
     this.each(function() {
-        var $this = $(this);
-        var instance = $this.data('Select3');
+        var instance = this.select3;
+
         if (instance) {
             if ($.type(methodName) !== 'string') {
                 options = methodName;
@@ -189,13 +351,9 @@ $.fn.select3 = function(methodName, options) {
             if ($.type(methodName) === 'string') {
                 throw new Error('Cannot call method on element without Select3 instance');
             } else {
-                options = methodName;
-                if (options.multiple) {
-                    instance = new (_dereq_('./select3-multiple'))(options);
-                } else {
-                    instance = new (_dereq_('./select3-single'))(options);
-                }
-                $this.data('Select3', instance);
+                options = $.extend({}, methodName, { element: this });
+                this.select3 = new (options.multiple ? _dereq_('./select3-multiple')
+                                                     : _dereq_('./select3-single'))(options);
             }
         }
     });
@@ -205,7 +363,7 @@ $.fn.select3 = function(methodName, options) {
 
 module.exports = Select3;
 
-},{"./select3-multiple":5,"./select3-single":6}],4:[function(_dereq_,module,exports){
+},{"./select3-multiple":5,"./select3-single":6,"jquery":"jquery"}],4:[function(_dereq_,module,exports){
 'use strict';
 
 var DIACRITICS = {
@@ -1072,7 +1230,7 @@ Select3.transformText = function(string) {
 },{"./select3-base":3}],5:[function(_dereq_,module,exports){
 'use strict';
 
-var $ = window.$;
+var $ = window.jQuery;
 
 var Select3 = _dereq_('./select3-base');
 
@@ -1084,6 +1242,8 @@ var Select3 = _dereq_('./select3-base');
 function MultipleSelect3(options) {
 
     Select3.call(this, options);
+
+    this.$el.html(this.template('multiSelectInput', this.options));
 }
 
 MultipleSelect3.prototype = Object.create(Select3.prototype);
@@ -1094,15 +1254,102 @@ MultipleSelect3.prototype.constructor = MultipleSelect3;
  */
 $.extend(MultipleSelect3.prototype, {
 
+    /**
+     * Returns the correct data for a given value.
+     *
+     * @param value The value to get the data for. Should be an array of IDs.
+     *
+     * @return The corresponding data. Will be an array of objects with 'id' and 'text' properties.
+     *         Note that if no items are defined, this method assumes the text labels will be equal
+     *         to the IDs.
+     */
+    getDataForValue: function(value) {
+
+        var items = this.items;
+        if (items) {
+            var length = items.length;
+            return value.map(function(id) {
+                for (var i = 0; i < length; i++) {
+                    if (items[i].id === id) {
+                        return items[i];
+                    }
+                }
+            }).filter(function(item) { return !!item; });
+        } else {
+            return value.map(function(id) {
+                return { id: id, value: '' + id };
+            });
+        }
+    },
+
+    /**
+     * Returns the correct value for the given data.
+     *
+     * @param data The data to get the value for. Should be an array of objects with 'id' and 'text'
+     *             properties.
+     *
+     * @return The corresponding value. Will be an array of IDs.
+     */
+    getValueForData: function(data) {
+
+        return data.map(function(item) { return item.id; });
+    },
+
+    /**
+     * Validates data to set. Throws an exception if the data is invalid.
+     *
+     * @param data The data to validate. Should be an array of objects with 'id' and 'text'
+     *             properties.
+     *
+     * @return The validated data. This may differ from the input data.
+     */
+    validateData: function(data) {
+
+        if (data === null) {
+            return [];
+        } else if ($.type(data) === 'array') {
+            if (data.every(function(item) {
+                return item && Select3.isValidID(item.id) && $.type(item.text) === 'string';
+            })) {
+                return data;
+            } else {
+                throw new Error('All data items should have id and text properties');
+            }
+        } else {
+            throw new Error('Data for MultiSelect3 instance should be array');
+        }
+    },
+
+    /**
+     * Validates a value to set. Throws an exception if the value is invalid.
+     *
+     * @param value The value to validate. Should be an array of IDs.
+     *
+     * @return The validated value. This may differ from the input value.
+     */
+    validateValue: function(value) {
+
+        if (value === null) {
+            return [];
+        } else if ($.type(value) === 'array') {
+            if (value.every(Select3.isValidID)) {
+                return value;
+            } else {
+                throw new Error('Value contains invalid IDs');
+            }
+        } else {
+            throw new Error('Value for MultiSelect3 instance should be an array');
+        }
+    }
 
 });
 
 module.exports = MultipleSelect3;
 
-},{"./select3-base":3}],6:[function(_dereq_,module,exports){
+},{"./select3-base":3,"jquery":"jquery"}],6:[function(_dereq_,module,exports){
 'use strict';
 
-var $ = window.$;
+var $ = window.jQuery;
 
 var Select3 = _dereq_('./select3-base');
 
@@ -1124,12 +1371,82 @@ SingleSelect3.prototype.constructor = SingleSelect3;
  */
 $.extend(SingleSelect3.prototype, {
 
+    /**
+     * Returns the correct data for a given value.
+     *
+     * @param value The value to get the data for. Should be an ID.
+     *
+     * @return The corresponding data. Will be an object with 'id' and 'text' properties. Note that
+     *         if no items are defined, this method assumes the text label will be equal to the ID.
+     */
+    getDataForValue: function(value) {
+
+        var items = this.items;
+        if (items) {
+            for (var i = 0, length = items.length; i < length; i++) {
+                if (items[i].id === value) {
+                    return items[i];
+                }
+            }
+            return null;
+        } else {
+            return { id: value, text: '' + value };
+        }
+    },
+
+    /**
+     * Returns the correct value for the given data.
+     *
+     * @param data The data to get the value for. Should be an object with 'id' and 'text'
+     *             properties or null.
+     *
+     * @return The corresponding value. Will be an ID or null.
+     */
+    getValueForData: function(data) {
+
+        return (data ? data.id : null);
+    },
+
+    /**
+     * Validates data to set. Throws an exception if the data is invalid.
+     *
+     * @param data The data to validate. Should be an object with 'id' and 'text' properties or null
+     *             to indicate no item is selected.
+     *
+     * @return The validated data. This may differ from the input data.
+     */
+    validateData: function(data) {
+
+        if (data === null) {
+            return data;
+        } else if (data && Select3.isValidID(data.id) || $.type(data.text) === 'string') {
+            return data;
+        } else {
+            throw new Error('Data item should have id and text properties');
+        }
+    },
+
+    /**
+     * Validates a value to set. Throws an exception if the value is invalid.
+     *
+     * @param value The value to validate. Should be null or a valid ID.
+     *
+     * @return The validated value. This may differ from the input value.
+     */
+    validateValue: function(value) {
+
+        if (value === null || Select3.isValidID(value)) {
+            return value;
+        } else {
+            throw new Error('Value for SingleSelect3 instance should be a valid ID or null');
+        }
+    }
 
 });
 
 module.exports = SingleSelect3;
 
-},{"./select3-base":3}],7:[function(_dereq_,module,exports){
+},{"./select3-base":3,"jquery":"jquery"}],7:[function(_dereq_,module,exports){
 'use strict';
 
 var escape = _dereq_('./escape');
@@ -1187,8 +1504,8 @@ Select3.Templates = {
      *
      * @param options Options object containing the following properties:
      *                id - Identifier for the item.
-     *                label - Text label which the user sees.
      *                selected - Boolean whether this item is currently selected.
+     *                text - Text label which the user sees.
      */
     multiSelectItem: function(options) {
         return (

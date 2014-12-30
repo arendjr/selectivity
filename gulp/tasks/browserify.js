@@ -6,6 +6,7 @@ var glob = require('glob');
 var gulp = require('gulp');
 var derequire = require('gulp-derequire');
 var gulpif = require('gulp-if');
+var replace = require('gulp-replace');
 var uglify = require('gulp-uglify');
 var gutil = require('gulp-util');
 var path = require('path');
@@ -34,7 +35,8 @@ module.exports = function() {
             this.end();
         })
         .pipe(source('select3-full' + (argv.minify ? '.min' : '') + '.js'))
-        .pipe(gulpif(argv.minify, buffer()))
+        .pipe(buffer())
+        .pipe(replace(/require\(['"]jquery['"]\)/g, 'window.jQuery'))
         .pipe(gulpif(argv.minify, uglify()))
         .pipe(gulpif(argv.derequire, derequire()))
         .pipe(gulp.dest('dist/'));
