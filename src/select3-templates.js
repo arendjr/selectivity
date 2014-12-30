@@ -1,8 +1,8 @@
 'use strict';
 
-var escape = require('lodash.escape').escape;
+var escape = require('./escape');
 
-var Select3 = require('./select3-core');
+var Select3 = require('./select3-base');
 
 /**
  * Default set of templates to use with Select3.

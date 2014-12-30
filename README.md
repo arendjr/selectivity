@@ -1,7 +1,7 @@
 select3
 =======
 
-More flexible and extensible alternative to Select2.
+Flexible and modular alternative to Select2.
 
 Motivation
 ----------

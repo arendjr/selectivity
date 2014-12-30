@@ -2,12 +2,12 @@
 
 var $ = window.$;
 
-var Select3 = require('./select3-core');
+var Select3 = require('./select3-base');
 
 /**
  * MultipleSelect3 Constructor.
  *
- * @param options Options object. Accepts all options from the Select3 Core Constructor.
+ * @param options Options object. Accepts all options from the Select3 Base Constructor.
  */
 function MultipleSelect3(options) {
 

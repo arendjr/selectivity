@@ -842,7 +842,7 @@ var DIACRITICS = {
     '\u03C2': '\u03C3'
 };
 
-var Select3 = require('./select3-core');
+var Select3 = require('./select3-base');
 var previousTransform = Select3.transformText;
 
 /**

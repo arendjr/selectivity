@@ -3,7 +3,7 @@
 var $ = window.$;
 
 /**
- * Select3 Core Constructor.
+ * Select3 Base Constructor.
  *
  * You will never use this constructor directly. Instead, you use $(selector).select3(options) to
  * create an instance of either MultipleSelect3 or SingleSelect3. This class defines all

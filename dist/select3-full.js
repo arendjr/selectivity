@@ -1,22 +1,42 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(_dereq_,module,exports){
 'use strict';
 
-_dereq_('./select3-core');
+_dereq_('./select3-base');
 _dereq_('./select3-diacritics');
 _dereq_('./select3-templates');
 
-},{"./select3-core":13,"./select3-diacritics":14,"./select3-templates":17}],2:[function(_dereq_,module,exports){
+},{"./select3-base":3,"./select3-diacritics":4,"./select3-templates":7}],2:[function(_dereq_,module,exports){
+'use strict';
+
 /**
+ * @license
  * Lo-Dash 2.4.1 (Custom Build) <http://lodash.com/>
- * Build: `lodash modularize modern exports="npm" -o ./npm/`
  * Copyright 2012-2013 The Dojo Foundation <http://dojofoundation.org/>
  * Based on Underscore.js 1.5.2 <http://underscorejs.org/LICENSE>
  * Copyright 2009-2013 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
  * Available under MIT license <http://lodash.com/license>
  */
-var escapeHtmlChar = _dereq_('lodash._escapehtmlchar'),
-    keys = _dereq_('lodash.keys'),
-    reUnescapedHtml = _dereq_('lodash._reunescapedhtml');
+
+var htmlEscapes = {
+    '&': '&amp;',
+    '<': '&lt;',
+    '>': '&gt;',
+    '"': '&quot;',
+    "'": '&#39;'
+};
+
+/**
+ * Used by `escape` to convert characters to HTML entities.
+ *
+ * @private
+ * @param {string} match The matched character to escape.
+ * @returns {string} Returns the escaped character.
+ */
+function escapeHtmlChar(match) {
+    return htmlEscapes[match];
+}
+
+var reUnescapedHtml = new RegExp('[' + Object.keys(htmlEscapes).join('') + ']', 'g');
 
 /**
  * Converts the characters `&`, `<`, `>`, `"`, and `'` in `string` to their
@@ -33,268 +53,18 @@ var escapeHtmlChar = _dereq_('lodash._escapehtmlchar'),
  * // => 'Fred, Wilma, &amp; Pebbles'
  */
 function escape(string) {
-  return string == null ? '' : String(string).replace(reUnescapedHtml, escapeHtmlChar);
+    return string ? String(string).replace(reUnescapedHtml, escapeHtmlChar) : '';
 }
 
 module.exports = escape;
 
-},{"lodash._escapehtmlchar":3,"lodash._reunescapedhtml":5,"lodash.keys":7}],3:[function(_dereq_,module,exports){
-/**
- * Lo-Dash 2.4.1 (Custom Build) <http://lodash.com/>
- * Build: `lodash modularize modern exports="npm" -o ./npm/`
- * Copyright 2012-2013 The Dojo Foundation <http://dojofoundation.org/>
- * Based on Underscore.js 1.5.2 <http://underscorejs.org/LICENSE>
- * Copyright 2009-2013 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
- * Available under MIT license <http://lodash.com/license>
- */
-var htmlEscapes = _dereq_('lodash._htmlescapes');
-
-/**
- * Used by `escape` to convert characters to HTML entities.
- *
- * @private
- * @param {string} match The matched character to escape.
- * @returns {string} Returns the escaped character.
- */
-function escapeHtmlChar(match) {
-  return htmlEscapes[match];
-}
-
-module.exports = escapeHtmlChar;
-
-},{"lodash._htmlescapes":4}],4:[function(_dereq_,module,exports){
-/**
- * Lo-Dash 2.4.1 (Custom Build) <http://lodash.com/>
- * Build: `lodash modularize modern exports="npm" -o ./npm/`
- * Copyright 2012-2013 The Dojo Foundation <http://dojofoundation.org/>
- * Based on Underscore.js 1.5.2 <http://underscorejs.org/LICENSE>
- * Copyright 2009-2013 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
- * Available under MIT license <http://lodash.com/license>
- */
-
-/**
- * Used to convert characters to HTML entities:
- *
- * Though the `>` character is escaped for symmetry, characters like `>` and `/`
- * don't require escaping in HTML and have no special meaning unless they're part
- * of a tag or an unquoted attribute value.
- * http://mathiasbynens.be/notes/ambiguous-ampersands (under "semi-related fun fact")
- */
-var htmlEscapes = {
-  '&': '&amp;',
-  '<': '&lt;',
-  '>': '&gt;',
-  '"': '&quot;',
-  "'": '&#39;'
-};
-
-module.exports = htmlEscapes;
-
-},{}],5:[function(_dereq_,module,exports){
-/**
- * Lo-Dash 2.4.1 (Custom Build) <http://lodash.com/>
- * Build: `lodash modularize modern exports="npm" -o ./npm/`
- * Copyright 2012-2013 The Dojo Foundation <http://dojofoundation.org/>
- * Based on Underscore.js 1.5.2 <http://underscorejs.org/LICENSE>
- * Copyright 2009-2013 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
- * Available under MIT license <http://lodash.com/license>
- */
-var htmlEscapes = _dereq_('lodash._htmlescapes'),
-    keys = _dereq_('lodash.keys');
-
-/** Used to match HTML entities and HTML characters */
-var reUnescapedHtml = RegExp('[' + keys(htmlEscapes).join('') + ']', 'g');
-
-module.exports = reUnescapedHtml;
-
-},{"lodash._htmlescapes":6,"lodash.keys":7}],6:[function(_dereq_,module,exports){
-module.exports=_dereq_(4)
-},{"/home/arendjr/Projects/select3/node_modules/lodash.escape/node_modules/lodash._escapehtmlchar/node_modules/lodash._htmlescapes/index.js":4}],7:[function(_dereq_,module,exports){
-/**
- * Lo-Dash 2.4.1 (Custom Build) <http://lodash.com/>
- * Build: `lodash modularize modern exports="npm" -o ./npm/`
- * Copyright 2012-2013 The Dojo Foundation <http://dojofoundation.org/>
- * Based on Underscore.js 1.5.2 <http://underscorejs.org/LICENSE>
- * Copyright 2009-2013 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
- * Available under MIT license <http://lodash.com/license>
- */
-var isNative = _dereq_('lodash._isnative'),
-    isObject = _dereq_('lodash.isobject'),
-    shimKeys = _dereq_('lodash._shimkeys');
-
-/* Native method shortcuts for methods with the same name as other `lodash` methods */
-var nativeKeys = isNative(nativeKeys = Object.keys) && nativeKeys;
-
-/**
- * Creates an array composed of the own enumerable property names of an object.
- *
- * @static
- * @memberOf _
- * @category Objects
- * @param {Object} object The object to inspect.
- * @returns {Array} Returns an array of property names.
- * @example
- *
- * _.keys({ 'one': 1, 'two': 2, 'three': 3 });
- * // => ['one', 'two', 'three'] (property order is not guaranteed across environments)
- */
-var keys = !nativeKeys ? shimKeys : function(object) {
-  if (!isObject(object)) {
-    return [];
-  }
-  return nativeKeys(object);
-};
-
-module.exports = keys;
-
-},{"lodash._isnative":8,"lodash._shimkeys":9,"lodash.isobject":11}],8:[function(_dereq_,module,exports){
-/**
- * Lo-Dash 2.4.1 (Custom Build) <http://lodash.com/>
- * Build: `lodash modularize modern exports="npm" -o ./npm/`
- * Copyright 2012-2013 The Dojo Foundation <http://dojofoundation.org/>
- * Based on Underscore.js 1.5.2 <http://underscorejs.org/LICENSE>
- * Copyright 2009-2013 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
- * Available under MIT license <http://lodash.com/license>
- */
-
-/** Used for native method references */
-var objectProto = Object.prototype;
-
-/** Used to resolve the internal [[Class]] of values */
-var toString = objectProto.toString;
-
-/** Used to detect if a method is native */
-var reNative = RegExp('^' +
-  String(toString)
-    .replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
-    .replace(/toString| for [^\]]+/g, '.*?') + '$'
-);
-
-/**
- * Checks if `value` is a native function.
- *
- * @private
- * @param {*} value The value to check.
- * @returns {boolean} Returns `true` if the `value` is a native function, else `false`.
- */
-function isNative(value) {
-  return typeof value == 'function' && reNative.test(value);
-}
-
-module.exports = isNative;
-
-},{}],9:[function(_dereq_,module,exports){
-/**
- * Lo-Dash 2.4.1 (Custom Build) <http://lodash.com/>
- * Build: `lodash modularize modern exports="npm" -o ./npm/`
- * Copyright 2012-2013 The Dojo Foundation <http://dojofoundation.org/>
- * Based on Underscore.js 1.5.2 <http://underscorejs.org/LICENSE>
- * Copyright 2009-2013 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
- * Available under MIT license <http://lodash.com/license>
- */
-var objectTypes = _dereq_('lodash._objecttypes');
-
-/** Used for native method references */
-var objectProto = Object.prototype;
-
-/** Native method shortcuts */
-var hasOwnProperty = objectProto.hasOwnProperty;
-
-/**
- * A fallback implementation of `Object.keys` which produces an array of the
- * given object's own enumerable property names.
- *
- * @private
- * @type Function
- * @param {Object} object The object to inspect.
- * @returns {Array} Returns an array of property names.
- */
-var shimKeys = function(object) {
-  var index, iterable = object, result = [];
-  if (!iterable) return result;
-  if (!(objectTypes[typeof object])) return result;
-    for (index in iterable) {
-      if (hasOwnProperty.call(iterable, index)) {
-        result.push(index);
-      }
-    }
-  return result
-};
-
-module.exports = shimKeys;
-
-},{"lodash._objecttypes":10}],10:[function(_dereq_,module,exports){
-/**
- * Lo-Dash 2.4.1 (Custom Build) <http://lodash.com/>
- * Build: `lodash modularize modern exports="npm" -o ./npm/`
- * Copyright 2012-2013 The Dojo Foundation <http://dojofoundation.org/>
- * Based on Underscore.js 1.5.2 <http://underscorejs.org/LICENSE>
- * Copyright 2009-2013 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
- * Available under MIT license <http://lodash.com/license>
- */
-
-/** Used to determine if values are of the language type Object */
-var objectTypes = {
-  'boolean': false,
-  'function': true,
-  'object': true,
-  'number': false,
-  'string': false,
-  'undefined': false
-};
-
-module.exports = objectTypes;
-
-},{}],11:[function(_dereq_,module,exports){
-/**
- * Lo-Dash 2.4.1 (Custom Build) <http://lodash.com/>
- * Build: `lodash modularize modern exports="npm" -o ./npm/`
- * Copyright 2012-2013 The Dojo Foundation <http://dojofoundation.org/>
- * Based on Underscore.js 1.5.2 <http://underscorejs.org/LICENSE>
- * Copyright 2009-2013 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
- * Available under MIT license <http://lodash.com/license>
- */
-var objectTypes = _dereq_('lodash._objecttypes');
-
-/**
- * Checks if `value` is the language type of Object.
- * (e.g. arrays, functions, objects, regexes, `new Number(0)`, and `new String('')`)
- *
- * @static
- * @memberOf _
- * @category Objects
- * @param {*} value The value to check.
- * @returns {boolean} Returns `true` if the `value` is an object, else `false`.
- * @example
- *
- * _.isObject({});
- * // => true
- *
- * _.isObject([1, 2, 3]);
- * // => true
- *
- * _.isObject(1);
- * // => false
- */
-function isObject(value) {
-  // check if the value is the ECMAScript language type of Object
-  // http://es5.github.io/#x8
-  // and avoid a V8 bug
-  // http://code.google.com/p/v8/issues/detail?id=2291
-  return !!(value && objectTypes[typeof value]);
-}
-
-module.exports = isObject;
-
-},{"lodash._objecttypes":12}],12:[function(_dereq_,module,exports){
-module.exports=_dereq_(10)
-},{"/home/arendjr/Projects/select3/node_modules/lodash.escape/node_modules/lodash.keys/node_modules/lodash._shimkeys/node_modules/lodash._objecttypes/index.js":10}],13:[function(_dereq_,module,exports){
+},{}],3:[function(_dereq_,module,exports){
 'use strict';
 
 var $ = window.$;
 
 /**
- * Select3 Core Constructor.
+ * Select3 Base Constructor.
  *
  * You will never use this constructor directly. Instead, you use $(selector).select3(options) to
  * create an instance of either MultipleSelect3 or SingleSelect3. This class defines all
@@ -435,7 +205,7 @@ $.fn.select3 = function(methodName, options) {
 
 module.exports = Select3;
 
-},{"./select3-multiple":15,"./select3-single":16}],14:[function(_dereq_,module,exports){
+},{"./select3-multiple":5,"./select3-single":6}],4:[function(_dereq_,module,exports){
 'use strict';
 
 var DIACRITICS = {
@@ -1280,7 +1050,7 @@ var DIACRITICS = {
     '\u03C2': '\u03C3'
 };
 
-var Select3 = _dereq_('./select3-core');
+var Select3 = _dereq_('./select3-base');
 var previousTransform = Select3.transformText;
 
 /**
@@ -1299,17 +1069,17 @@ Select3.transformText = function(string) {
     return previousTransform(result);
 };
 
-},{"./select3-core":13}],15:[function(_dereq_,module,exports){
+},{"./select3-base":3}],5:[function(_dereq_,module,exports){
 'use strict';
 
 var $ = window.$;
 
-var Select3 = _dereq_('./select3-core');
+var Select3 = _dereq_('./select3-base');
 
 /**
  * MultipleSelect3 Constructor.
  *
- * @param options Options object. Accepts all options from the Select3 Core Constructor.
+ * @param options Options object. Accepts all options from the Select3 Base Constructor.
  */
 function MultipleSelect3(options) {
 
@@ -1329,17 +1099,17 @@ $.extend(MultipleSelect3.prototype, {
 
 module.exports = MultipleSelect3;
 
-},{"./select3-core":13}],16:[function(_dereq_,module,exports){
+},{"./select3-base":3}],6:[function(_dereq_,module,exports){
 'use strict';
 
 var $ = window.$;
 
-var Select3 = _dereq_('./select3-core');
+var Select3 = _dereq_('./select3-base');
 
 /**
  * SingleSelect3 Constructor.
  *
- * @param options Options object. Accepts all options from the Select3 Core Constructor.
+ * @param options Options object. Accepts all options from the Select3 Base Constructor.
  */
 function SingleSelect3(options) {
 
@@ -1359,12 +1129,12 @@ $.extend(SingleSelect3.prototype, {
 
 module.exports = SingleSelect3;
 
-},{"./select3-core":13}],17:[function(_dereq_,module,exports){
+},{"./select3-base":3}],7:[function(_dereq_,module,exports){
 'use strict';
 
-var escape = _dereq_('lodash.escape').escape;
+var escape = _dereq_('./escape');
 
-var Select3 = _dereq_('./select3-core');
+var Select3 = _dereq_('./select3-base');
 
 /**
  * Default set of templates to use with Select3.
@@ -1434,4 +1204,4 @@ Select3.Templates = {
 
 };
 
-},{"./select3-core":13,"lodash.escape":2}]},{},[1]);
+},{"./escape":2,"./select3-base":3}]},{},[1]);
