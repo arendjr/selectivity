@@ -47,7 +47,7 @@ $.extend(MultipleSelect3.prototype, {
             }).filter(function(item) { return !!item; });
         } else {
             return value.map(function(id) {
-                return { id: id, value: '' + id };
+                return { id: id, text: '' + id };
             });
         }
     },

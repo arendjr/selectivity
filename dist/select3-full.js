@@ -169,6 +169,16 @@ $.extend(Select3.prototype, {
 
         this.options = options;
 
+        function processItem(item) {
+            if (item && Select3.isValidID(item.id)) {
+                return item;
+            } else if (Select3.isValidID(item)) {
+                return { id: item, text: '' + item };
+            } else {
+                throw new Error('items array contains invalid items');
+            }
+        }
+
         for (var key in options) {
             if (options.hasOwnProperty(key)) {
                 var value = options[key];
@@ -181,15 +191,7 @@ $.extend(Select3.prototype, {
 
                 case 'items':
                     if ($.type(value) === 'array') {
-                        this.items = value.map(function(item) {
-                            if (item && Select3.isValidID(item.id)) {
-                                return item;
-                            } else if (Select3.isValidID(item)) {
-                                return { id: item, text: '' + item };
-                            } else {
-                                throw new Error('items array contains invalid items');
-                            }
-                        });
+                        this.items = value.map(processItem);
                     } else {
                         throw new Error('items must be an array');
                     }
@@ -352,8 +354,8 @@ $.fn.select3 = function(methodName, options) {
                 throw new Error('Cannot call method on element without Select3 instance');
             } else {
                 options = $.extend({}, methodName, { element: this });
-                this.select3 = new (options.multiple ? _dereq_('./select3-multiple')
-                                                     : _dereq_('./select3-single'))(options);
+                this.select3 = (options.multiple ? new (_dereq_('./select3-multiple'))(options)
+                                                 : new (_dereq_('./select3-single'))(options));
             }
         }
     });
@@ -1277,7 +1279,7 @@ $.extend(MultipleSelect3.prototype, {
             }).filter(function(item) { return !!item; });
         } else {
             return value.map(function(id) {
-                return { id: id, value: '' + id };
+                return { id: id, text: '' + id };
             });
         }
     },

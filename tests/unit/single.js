@@ -48,3 +48,32 @@ exports.testNoData = DomUtil.createDomTest(
     }
 );
 
+exports.testSetValue = DomUtil.createDomTest(
+    ['base', 'single', 'templates'],
+    function(test, $input) {
+        $input.select3({ items: [ 'Amsterdam', 'Antwerp', 'Athens' ], value: 'Amsterdam' });
+
+        test.deepEqual($input.select3('value'), 'Amsterdam');
+
+        $input.select3('value', 'Antwerp');
+
+        test.deepEqual($input.select3('value'), 'Antwerp');
+
+        test.deepEqual($input.select3('data'), { id: 'Antwerp', text: 'Antwerp' });
+    }
+);
+
+exports.testSetValueWithoutItems = DomUtil.createDomTest(
+    ['base', 'single', 'templates'],
+    function(test, $input) {
+        $input.select3({ value: 'Amsterdam' });
+
+        test.deepEqual($input.select3('value'), 'Amsterdam');
+
+        $input.select3('value', 'Antwerp');
+
+        test.deepEqual($input.select3('value'), 'Antwerp');
+
+        test.deepEqual($input.select3('data'), { id: 'Antwerp', text: 'Antwerp' });
+    }
+);
