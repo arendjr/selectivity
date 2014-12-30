@@ -61,7 +61,7 @@ module.exports = escape;
 },{}],3:[function(_dereq_,module,exports){
 'use strict';
 
-var $ = window.jQuery;
+var $ = window.jQuery || window.Zepto;
 
 /**
  * Select3 Base Constructor.
@@ -1232,7 +1232,7 @@ Select3.transformText = function(string) {
 },{"./select3-base":3}],5:[function(_dereq_,module,exports){
 'use strict';
 
-var $ = window.jQuery;
+var $ = window.jQuery || window.Zepto;
 
 var Select3 = _dereq_('./select3-base');
 
@@ -1351,7 +1351,7 @@ module.exports = MultipleSelect3;
 },{"./select3-base":3,"jquery":"jquery"}],6:[function(_dereq_,module,exports){
 'use strict';
 
-var $ = window.jQuery;
+var $ = window.jQuery || window.Zepto;
 
 var Select3 = _dereq_('./select3-base');
 

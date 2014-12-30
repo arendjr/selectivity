@@ -36,7 +36,7 @@ module.exports = function() {
         })
         .pipe(source('select3-full' + (argv.minify ? '.min' : '') + '.js'))
         .pipe(buffer())
-        .pipe(replace(/require\(['"]jquery['"]\)/g, 'window.jQuery'))
+        .pipe(replace(/require\(['"]jquery['"]\)/g, 'window.jQuery || window.Zepto'))
         .pipe(gulpif(argv.minify, uglify()))
         .pipe(gulpif(argv.derequire, derequire()))
         .pipe(gulp.dest('dist/'));

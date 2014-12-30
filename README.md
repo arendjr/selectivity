@@ -20,7 +20,8 @@ specifically, I wanted to make the following changes:
 - I wanted to make it easier to support a use case where Select2 is used without any selection
   dropdown, but with the proper tokenization.
 - Make Select2 work with jQuery builds without Sizzle for better performance. Patches for this have
-  been accepted in Select2, but unfortunately it's a moving target causing repeated breakage.
+  been accepted in Select2, but unfortunately it's a moving target causing repeated breakage. Also,
+  once Sizzle is no longer required, it becomes much easier to support Zepto.js.
 - Personally, I preferred a more modern codebase to work with, rather than the huge monolithic
   library that is Select2. This also includes proper documentation of the code as well as good test
   coverage. At this point also support for any IE version older than 10 can be dropped.
@@ -28,6 +29,19 @@ specifically, I wanted to make the following changes:
 Having said that, if you're a user of Select2 and don't recognize yourself in any of these issues,
 I advise you to keep using Select2. It's feature-rich and actively supported, so don't fix what
 ain't broken ;)
+
+Browser Support
+---------------
+
+- Chrome
+- Firefox
+- Internet Explorer 10+
+- Safari 6+
+
+Dependencies
+------------
+
+Select3 only relies on jQuery or Zepto.js being loaded on the page.
 
 Build System
 ------------
