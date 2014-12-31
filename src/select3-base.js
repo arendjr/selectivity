@@ -26,6 +26,24 @@ function Select3(options) {
     this.$el = $(options.element);
 
     /**
+     * Reference to the currently open dropdown.
+     */
+    this.dropdown = null;
+
+    /**
+     * Boolean whether the browser has touch input.
+     */
+    this.hasTouch = (typeof window !== 'undefined' && 'ontouchstart' in window);
+
+    /**
+     * Boolean whether the browser has a physical keyboard attached to it.
+     *
+     * Given that there is no way for JavaScript to reliably detect this yet, we just assume it's
+     * the opposite of hasTouch for now.
+     */
+    this.hasKeyboard = !this.hasTouch;
+
+    /**
      * Array of items from which to select. If set, this will be an array of objects with 'id' and
      * 'text' properties.
      *
@@ -34,6 +52,21 @@ function Select3(options) {
      * should be provided to fetch remote data.
      */
     this.items = null;
+
+    /**
+     * The function to be used for matching search results.
+     */
+    this.matcher = Select3.matcher;
+
+    /**
+     * Results from a search query.
+     */
+    this.results = [];
+
+    /**
+     * The currently highlighted result.
+     */
+    this.highlightedResult = null;
 
     /**
      * Mapping of templates.
@@ -49,12 +82,35 @@ function Select3(options) {
     } else {
         this.data(options.data || null);
     }
+
+    this._events = [];
+
+    this.delegateEvents();
 }
 
 /**
  * Methods.
  */
 $.extend(Select3.prototype, {
+
+    /**
+     * Convenience shortcut for this.$el.find(selector).
+     */
+    $: function(selector) {
+
+        return this.$el.find(selector);
+    },
+
+    /**
+     * Closes the dropdown.
+     */
+    close: function() {
+
+        if (this.dropdown) {
+            this.dropdown.remove();
+            this.dropdown = null;
+        }
+    },
 
     /**
      * Sets or gets the selection data.
@@ -78,8 +134,110 @@ $.extend(Select3.prototype, {
 
             this._data = newData;
             this._value = this.getValueForData(newData);
+        }
+    },
 
-            this.$el.trigger('change');
+    /**
+     * Attaches all listeners from the events map to the instance's element.
+     *
+     * Normally, you should not have to call this method yourself as it's called automatically in
+     * the constructor.
+     */
+    delegateEvents: function() {
+
+        this.undelegateEvents();
+
+        $.each(this.events, function(event, listener) {
+            var selector, index = event.indexOf(' ');
+            if (index > -1) {
+                selector = event.slice(index + 1);
+                event = event.slice(0, index);
+            }
+
+            if ($.type(listener) === 'string') {
+                listener = this[listener];
+            }
+
+            listener = listener.bind(this);
+
+            if (selector) {
+                this.$el.on(event, selector, listener);
+            } else {
+                this.$el.on(event, listener);
+            }
+
+            this._events.push({ event: event, selector: selector, listener: listener });
+        }.bind(this));
+    },
+
+    /**
+     * Destroys the Select3 instance.
+     */
+    destroy: function() {
+
+        this.undelegateEvents();
+
+        var $el = this.$el;
+        $el.children().remove();
+        $el[0].select3 = null;
+        $el = null;
+    },
+
+    /**
+     * Returns the correct item for a given ID.
+     *
+     * @param id The ID to get the item for.
+     *
+     * @return The corresponding item. Will be an object with 'id' and 'text' properties or null if
+     *         the item cannot be found. Note that if no items are defined, this method assumes the
+     *         text labels will be equal to the IDs.
+     */
+    getItemForId: function(id) {
+
+        var items = this.items;
+        if (items) {
+            return Select3.findById(items, id);
+        } else {
+            return { id: id, text: '' + id };
+        }
+    },
+
+    /**
+     * Opens the dropdown.
+     */
+    open: function() {
+
+        this.dropdown = new Select3.Dropdown();
+    },
+
+    /**
+     * Searches for results based on a search term entered by the user.
+     *
+     * If an items array has been passed with the options to the Select3 instance, a local search
+     * will be performed among those items. Otherwise, the query function specified in the options
+     * will be used to perform the search. If neither is defined, nothing happens.
+     *
+     * @param term The search term the user is searching for.
+     */
+    search: function(term) {
+
+        if (this.items) {
+            term = Select3.transformText(term);
+            var matcher = this.matcher;
+            this._setResults(this.items.filter(function(item) {
+                return matcher(term, item.text);
+            }));
+        } else if (this.options.query) {
+            this.options.query({
+                callback: function(response) {
+                    this._setResults(
+                        this.validateData(response.results),
+                        { hasMore: !!response.more }
+                    );
+                }.bind(this),
+                offset: 0,
+                term: term,
+            });
         }
     },
 
@@ -100,7 +258,32 @@ $.extend(Select3.prototype, {
      *                        to be available locally and all selection operations operate on this
      *                        local array only. If null, items are not available locally, and a
      *                        query function should be provided to fetch remote data.
-     *                query - Function to use for fetching items.
+     *                matcher - Function to determine whether text matches a given search term. Note
+     *                          this function is only used if you have specified an array of items.
+     *                          Receives two arguments:
+     *                          term - The search term. Note that for performance reasons, the term
+     *                                 has always been already processed using
+     *                                 Select3.transformText().
+     *                          text - The text that should match the search term.
+     *                placeholder - Placeholder text to display when the element has no focus and
+     *                              selected items.
+     *                query - Function to use for querying items. Receives a single object as
+     *                        argument with the following properties:
+     *                        callback - Callback to invoke when the results are available. This
+     *                                   callback should be passed a single object as argument with
+     *                                   the following properties:
+     *                                   more - Boolean that can be set to true to indicate there
+     *                                          are more results available. Additional results may
+     *                                          be fetched by the user through pagination.
+     *                                   results - Array of result items. The format for the result
+     *                                             items is the same as for passing local items.
+     *                        offset - This property is only used for pagination and indicates how
+     *                                 many results should be skipped when returning more results.
+     *                        term - The search term the user is searching for. Unlike with the
+     *                               matcher function, the term has not been processed using
+     *                               Select3.transformText().
+     *                showDropdown - Set to false if you don't want to use any dropdown (you can
+     *                               still open it programmatically using open()).
      *                templates - Object with instance-specific templates to override the global
      *                            templates assigned to Select3.Templates.
      */
@@ -109,45 +292,55 @@ $.extend(Select3.prototype, {
         this.options = options;
 
         function processItem(item) {
-            if (item && Select3.isValidID(item.id)) {
+            if (item && Select3.isValidId(item.id)) {
                 return item;
-            } else if (Select3.isValidID(item)) {
+            } else if (Select3.isValidId(item)) {
                 return { id: item, text: '' + item };
             } else {
                 throw new Error('items array contains invalid items');
             }
         }
 
-        for (var key in options) {
-            if (options.hasOwnProperty(key)) {
-                var value = options[key];
-                switch (key) {
-                case 'initSelection':
-                    if ($.type(value) !== 'function') {
-                        throw new Error('initSelection must be a function');
-                    }
-                    break;
-
-                case 'items':
-                    if ($.type(value) === 'array') {
-                        this.items = value.map(processItem);
-                    } else {
-                        throw new Error('items must be an array');
-                    }
-                    break;
-
-                case 'query':
-                    if ($.type(value) !== 'function') {
-                        throw new Error('query must be a function');
-                    }
-                    break;
-
-                case 'templates':
-                    this.templates = $.extend({}, this.templates, value);
-                    break;
+        $.each(options, function(key, value) {
+            switch (key) {
+            case 'initSelection':
+                if ($.type(value) !== 'function') {
+                    throw new Error('initSelection must be a function');
                 }
+                break;
+
+            case 'items':
+                if ($.type(value) === 'array') {
+                    this.items = value.map(processItem);
+                } else {
+                    throw new Error('items must be an array');
+                }
+                break;
+
+            case 'matcher':
+                if ($.type(value) !== 'function') {
+                    throw new Error('matcher must be a function');
+                }
+                this.matcher = value;
+                break;
+
+            case 'placeholder':
+                if ($.type(value) !== 'string') {
+                    throw new Error('placeholder must be a string');
+                }
+                break;
+
+            case 'query':
+                if ($.type(value) !== 'function') {
+                    throw new Error('query must be a function');
+                }
+                break;
+
+            case 'templates':
+                this.templates = $.extend({}, this.templates, value);
+                break;
             }
-        }
+        }.bind(this));
     },
 
     /**
@@ -175,6 +368,49 @@ $.extend(Select3.prototype, {
     },
 
     /**
+     * Detaches all listeners from the events map from the instance's element.
+     *
+     * Normally, you should not have to call this method yourself as it's called automatically in
+     * the destroy() method.
+     */
+    undelegateEvents: function() {
+
+        this._events.forEach(function(event) {
+            if (event.selector) {
+                this.$el.off(event.event, event.selector, event.listener);
+            } else {
+                this.$el.off(event.event, event.listener);
+            }
+        }, this);
+
+        this._events = [];
+    },
+
+    /**
+     * Shorthand for value().
+     */
+    val: function(newValue) {
+
+        return this.value(newValue);
+    },
+
+    /**
+     * Validates a single item. Throws an exception if the item is invalid.
+     *
+     * @param item The item to validate.
+     *
+     * @return The validated item. May differ from the input item.
+     */
+    validateItem: function(item) {
+
+        if (item && Select3.isValidId(item.id) && $.type(item.text) === 'string') {
+            return item;
+        } else {
+            throw new Error('Item should have id (number or string) and text (string) properties');
+        }
+    },
+
+    /**
      * Sets or gets the value of the selection.
      *
      * The value of the selection only concerns the IDs of the selection items. If you are
@@ -193,37 +429,92 @@ $.extend(Select3.prototype, {
      */
     value: function(newValue) {
 
-        var self = this;
         if ($.type(newValue) === 'undefined') {
-            return self._value;
+            return this._value;
         } else {
-            newValue = self.validateValue(newValue);
+            newValue = this.validateValue(newValue);
 
-            self._value = newValue;
+            this._value = newValue;
 
-            if (self.options.initSelection) {
-                self.options.initSelection(newValue, function(data) {
-                    if (self._value === newValue) {
-                        self._data = self.validateData(data);
-
-                        self.$el.trigger('change');
+            if (this.options.initSelection) {
+                this.options.initSelection(newValue, function(data) {
+                    if (this._value === newValue) {
+                        this._data = this.validateData(data);
                     }
-                });
+                }.bind(this));
             } else {
-                self._data = self.getDataForValue(newValue);
-
-                self.$el.trigger('change');
+                this._data = this.getDataForValue(newValue);
             }
+        }
+    },
+
+    _setResults: function(results, options) {
+
+        this.results = results;
+
+        if (this.dropdown) {
+            this.dropdown.showResults(results, options || {});
         }
     }
 
 });
 
 /**
+ * Dropdown class to use for displaying dropdowns.
+ */
+Select3.Dropdown = null;
+
+/**
+ * Mapping of keys.
+ */
+Select3.Keys = {
+    BACKSPACE: 8,
+    DELETE: 46,
+    DOWN_ARROW: 40,
+    ENTER: 13,
+    ESCAPE: 27,
+    LEFT_ARROW: 37,
+    RIGHT_ARROW: 39,
+    UP_ARROW: 38
+};
+
+/**
  * Mapping with templates to use for rendering select boxes and dropdowns. See select3-templates.js
  * for a useful set of default templates, as well as for documentation of the individual templates.
  */
 Select3.Templates = {};
+
+/**
+ * Finds an item in the given array with the specified ID.
+ *
+ * @param array Array to search in.
+ * @param id ID to search for.
+ *
+ * @return The item in the array with the given ID, or null if the item was not found.
+ */
+Select3.findById = function(array, id) {
+
+    var index = Select3.findIndexById(array, id);
+    return (index > -1 ? array[index] : null);
+};
+
+/**
+ * Finds the index of an item in the given array with the specified ID.
+ *
+ * @param array Array to search in.
+ * @param id ID to search for.
+ *
+ * @return The index of the item in the array with the given ID, or -1 if the item was not found.
+ */
+Select3.findIndexById = function(array, id) {
+
+    for (var i = 0, length = array.length; i < length; i++) {
+        if (array[i].id === id) {
+            return i;
+        }
+    }
+    return -1;
+};
 
 /**
  * Checks whether a value can be used as a valid ID for selection items. Only numbers and strings
@@ -233,21 +524,51 @@ Select3.Templates = {};
  *
  * @return true if the value is a valid ID, false otherwise.
  */
-Select3.isValidID = function(id) {
+Select3.isValidId = function(id) {
 
     var type = $.type(id);
     return type === 'number' || type === 'string';
 };
 
 /**
- * Static function that transforms text in order to find matches. The default implementation
- * casts all strings to lower-case so that any matches found will be case-insensitive.
+ * Decides whether a given text string matches a search term. The default implementation simply
+ * checks whether the term is contained within the text, after transforming them using
+ * transformText().
+ *
+ * @param term The search term. Note that for performance reasons, the term has always been already
+ *             processed using transformText().
+ * @param text The text that should match the search term.
+ *
+ * @return true if the text matches the term, false otherwise.
+ */
+Select3.matcher = function(term, text) {
+
+    return Select3.transformText(text).indexOf(term) > -1;
+};
+
+/**
+ * Quotes a string so it can be used in a CSS attribute selector. It adds double quotes to the
+ * string and escapes all occurrences of the quote character inside the string.
+ *
+ * @param string The string to quote.
+ *
+ * @return The quoted string.
+ */
+Select3.quoteCssAttr = function(string) {
+
+    return '"' + ('' + string).replace(/\\/g, '\\\\').replace(/"/g, '\\"') + '"';
+};
+
+/**
+ * Transforms text in order to find matches. The default implementation casts all strings to
+ * lower-case so that any matches found will be case-insensitive.
  *
  * @param string The string to transform.
  *
  * @return The transformed string.
  */
 Select3.transformText = function(string) {
+
     return string.toLowerCase();
 };
 

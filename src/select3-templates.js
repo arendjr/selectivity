@@ -13,16 +13,17 @@ var Select3 = require('./select3-base');
  */
 Select3.Templates = {
 
+    dropdown: (
+        '<div class="select3-dropdown">' +
+        '</div>'
+    ),
+
     /**
      * Renders multi-selection input boxes.
      *
      * The template is expected to have at least have elements with the following classes:
-     * 'select3-multiple-input-container' - Container element containing the selected items. Any
-     *                                      items that are selected are added as children of this
-     *                                      element.
      * 'select3-multiple-input' - The actual input element that allows the user to type to search
-     *                            for more items. When selected items are added to the
-     *                            '.select3-multiple-input-container' element, they are inserted
+     *                            for more items. When selected items are added, they are inserted
      *                            right before this element.
      * 'select3-width-detector' - This element is optional, but important to make sure the
      *                            '.select3-multiple-input' element will fit in the container. The
@@ -49,21 +50,25 @@ Select3.Templates = {
     /**
      * Renders multi-selection input boxes.
      *
-     * The template is expected to have a top-level element with the class 'select3-item'. This
-     * element is also required to have a 'data-item-id' attribute with the ID set to that passed
-     * through the options object.
+     * The template is expected to have a top-level element with the class 'select3-selected-item'.
+     * This element is also required to have a 'data-item-id' attribute with the ID set to that
+     * passed through the options object.
+     *
+     * An element with the class 'select3-item-remove' should be present which, when clicked, will
+     * cause the element to be removed.
      *
      * @param options Options object containing the following properties:
+     *                highlighted - Boolean whether this item is currently highlighted.
      *                id - Identifier for the item.
-     *                selected - Boolean whether this item is currently selected.
      *                text - Text label which the user sees.
      */
     multiSelectItem: function(options) {
+        var extraClass = (options.highlighted ? ' highlighted' : '');
         return (
-            '<span class="select3-item' + (options.selected ? ' selected' : '') + '" ' +
+            '<span class="select3-selected-item' + extraClass + '" ' +
                   'data-item-id="' + escape(options.id) + '">' +
                 escape(options.text) +
-                '<a class="select3-item-remove action-remove-item">' +
+                '<a class="select3-item-remove">' +
                     '<i class="fa fa-remove"></i>' +
                 '</a>' +
             '</span>'

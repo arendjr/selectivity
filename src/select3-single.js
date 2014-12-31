@@ -23,6 +23,13 @@ SingleSelect3.prototype.constructor = SingleSelect3;
 $.extend(SingleSelect3.prototype, {
 
     /**
+     * Events map.
+     *
+     * Follows the same format as Backbone: http://backbonejs.org/#View-delegateEvents
+     */
+    events: {},
+
+    /**
      * Returns the correct data for a given value.
      *
      * @param value The value to get the data for. Should be an ID.
@@ -32,17 +39,7 @@ $.extend(SingleSelect3.prototype, {
      */
     getDataForValue: function(value) {
 
-        var items = this.items;
-        if (items) {
-            for (var i = 0, length = items.length; i < length; i++) {
-                if (items[i].id === value) {
-                    return items[i];
-                }
-            }
-            return null;
-        } else {
-            return { id: value, text: '' + value };
-        }
+        return this.getItemForId(value);
     },
 
     /**
@@ -68,13 +65,7 @@ $.extend(SingleSelect3.prototype, {
      */
     validateData: function(data) {
 
-        if (data === null) {
-            return data;
-        } else if (data && Select3.isValidID(data.id) || $.type(data.text) === 'string') {
-            return data;
-        } else {
-            throw new Error('Data item should have id and text properties');
-        }
+        return (data === null ? data : this.validateItem(data));
     },
 
     /**
@@ -86,7 +77,7 @@ $.extend(SingleSelect3.prototype, {
      */
     validateValue: function(value) {
 
-        if (value === null || Select3.isValidID(value)) {
+        if (value === null || Select3.isValidId(value)) {
             return value;
         } else {
             throw new Error('Value for SingleSelect3 instance should be a valid ID or null');

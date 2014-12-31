@@ -19,8 +19,8 @@
     padding: 5px;
 }
 
-.select3-multiple-select-input,
-input[type="text"].select3-multiple-select-input {
+.select3-multiple-input,
+input[type="text"].select3-multiple-input {
     background-color: transparent;
     border: none;
     float: left;
@@ -31,17 +31,18 @@ input[type="text"].select3-multiple-select-input {
     padding: 0;
 }
 
-.select3-multiple-select-input:focus,
-input[type="text"].select3-multiple-select-input:focus {
+.select3-multiple-input:focus,
+input[type="text"].select3-multiple-input:focus {
     background-color: transparent;
     box-shadow: none;
     outline: none;
 }
 
-.select3-multiple-select-input.select3-width-detector {
+.select3-multiple-input.select3-width-detector {
     left: 0;
     position: absolute;
     top: -10000px;
+    white-space: pre;
 }
 
 .select3-selected-item {
@@ -56,7 +57,7 @@ input[type="text"].select3-multiple-select-input:focus {
     white-space: nowrap;
 }
 
-.select3-selected-item.selected {
+.select3-selected-item.highlighted {
     background-color: #e6e6e6;
 }
 
@@ -67,17 +68,4 @@ input[type="text"].select3-multiple-select-input:focus {
 
 .selector-placeholder, input[type="text"].multi-select-input.selector-placeholder {
     padding: 0px 6px;
-}
-
-.selected-members {
-    background: #fff;
-    border-bottom: 1px solid #dadada;
-    position: relative;
-    z-index: 2;
-
-    .multi-select-input-container {
-        height: 50px;
-        min-height: 30px;
-        overflow-y: scroll;
-    }
 }
