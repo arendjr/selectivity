@@ -15,7 +15,7 @@ exports.testInitialData = DomUtil.createDomTest(
                 { id: 2, text: 'Antwerp' },
                 { id: 3, text: 'Athens' }
             ],
-            multiple: true,
+            implementation: require('../../src/select3-multiple')
         });
 
         test.deepEqual($input.select3('data'), [
@@ -32,7 +32,7 @@ exports.testInitialValue = DomUtil.createDomTest(
     function(test, $input) {
         $input.select3({
             items: [ 'Amsterdam', 'Antwerp', 'Athens' ],
-            multiple: true,
+            implementation: require('../../src/select3-multiple'),
             value: ['Amsterdam', 'Antwerp']
         });
 
@@ -54,7 +54,7 @@ exports.testNoData = DomUtil.createDomTest(
                 { id: 2, text: 'Antwerp' },
                 { id: 3, text: 'Athens' }
             ],
-            multiple: true,
+            implementation: require('../../src/select3-multiple')
         });
 
         test.deepEqual($input.select3('data'), []);
@@ -64,11 +64,11 @@ exports.testNoData = DomUtil.createDomTest(
 );
 
 exports.testSetValue = DomUtil.createDomTest(
-    ['base', 'single', 'templates'],
+    ['base', 'multiple', 'templates'],
     function(test, $input) {
         $input.select3({
             items: [ 'Amsterdam', 'Antwerp', 'Athens' ],
-            multiple: true,
+            implementation: require('../../src/select3-multiple'),
             value: ['Amsterdam']
         });
 
@@ -86,7 +86,7 @@ exports.testSetValue = DomUtil.createDomTest(
 );
 
 exports.testSetValueWithInitSelection = DomUtil.createDomTest(
-    ['base', 'single', 'templates'],
+    ['base', 'multiple', 'templates'],
     function(test, $input) {
         $input.select3({
             initSelection: function(value, callback) {
@@ -97,7 +97,7 @@ exports.testSetValueWithInitSelection = DomUtil.createDomTest(
                 };
                 callback(value.map(function(id) { return { id: id, text: cities[id] }; }));
             },
-            multiple: true,
+            implementation: require('../../src/select3-multiple'),
             value: [1]
         });
 
@@ -117,10 +117,10 @@ exports.testSetValueWithInitSelection = DomUtil.createDomTest(
 );
 
 exports.testSetValueWithoutItems = DomUtil.createDomTest(
-    ['base', 'single', 'templates'],
+    ['base', 'multiple', 'templates'],
     function(test, $input) {
         $input.select3({
-            multiple: true,
+            implementation: require('../../src/select3-multiple'),
             value: ['Amsterdam']
         });
 

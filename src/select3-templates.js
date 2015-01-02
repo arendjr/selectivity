@@ -4,6 +4,8 @@ var escape = require('./escape');
 
 var Select3 = require('./select3-base');
 
+require('./select3-locale');
+
 /**
  * Default set of templates to use with Select3.
  *
@@ -13,9 +15,26 @@ var Select3 = require('./select3-base');
  */
 Select3.Templates = {
 
+    /**
+     * Renders the dropdown.
+     *
+     * The template is expected to have at least one element with the class
+     * 'select3-results-container', which is where all results will be added to.
+     */
     dropdown: (
         '<div class="select3-dropdown">' +
+            '<div class="select3-results-container"></div>' +
         '</div>'
+    ),
+
+    /**
+     * Load more indicator.
+     *
+     * This template is expected to have an element with a 'select3-load-more' class which, when
+     * clicked, will load more results.
+     */
+    loadMore: (
+        '<div class="select3-load-more">' + Select3.Locale.loadMore + '</div>'
     ),
 
     /**
@@ -67,11 +86,30 @@ Select3.Templates = {
         return (
             '<span class="select3-selected-item' + extraClass + '" ' +
                   'data-item-id="' + escape(options.id) + '">' +
-                escape(options.text) +
-                '<a class="select3-item-remove">' +
+                '<a class="select3-selected-item-remove">' +
                     '<i class="fa fa-remove"></i>' +
                 '</a>' +
+                escape(options.text) +
             '</span>'
+        );
+    },
+
+    /**
+     * Render a result item in the dropdown.
+     *
+     * The template is expected to have a top-level element with the class 'select3-result-item'.
+     * This element is also required to have a 'data-item-id' attribute with the ID set to that
+     * passed through the options object.
+     *
+     * @param options Options object containing the following properties:
+     *                id - Identifier for the item.
+     *                text - Text label which the user sees.
+     */
+    resultItem: function(options) {
+        return (
+            '<div class="select3-result-item" data-item-id="' + escape(options.id) + '">' +
+                escape(options.text) +
+            '</div>'
         );
     }
 

@@ -7,6 +7,7 @@ exports.testInitialData = DomUtil.createDomTest(
     function(test, $input) {
         $input.select3({
             data: { id: 1, text: 'Amsterdam' },
+            implementation: require('../../src/select3-single'),
             items: [
                 { id: 1, text: 'Amsterdam' },
                 { id: 2, text: 'Antwerp' },
@@ -23,7 +24,11 @@ exports.testInitialData = DomUtil.createDomTest(
 exports.testInitialValue = DomUtil.createDomTest(
     ['base', 'single', 'templates'],
     function(test, $input) {
-        $input.select3({ items: [ 'Amsterdam', 'Antwerp', 'Athens' ], value: 'Amsterdam' });
+        $input.select3({
+            implementation: require('../../src/select3-single'),
+            items: [ 'Amsterdam', 'Antwerp', 'Athens' ],
+            value: 'Amsterdam'
+        });
 
         test.deepEqual($input.select3('data'), { id: 'Amsterdam', text: 'Amsterdam' });
 
@@ -35,6 +40,7 @@ exports.testNoData = DomUtil.createDomTest(
     ['base', 'single', 'templates'],
     function(test, $input) {
         $input.select3({
+            implementation: require('../../src/select3-single'),
             items: [
                 { id: 1, text: 'Amsterdam' },
                 { id: 2, text: 'Antwerp' },
@@ -51,7 +57,11 @@ exports.testNoData = DomUtil.createDomTest(
 exports.testSetValue = DomUtil.createDomTest(
     ['base', 'single', 'templates'],
     function(test, $input) {
-        $input.select3({ items: [ 'Amsterdam', 'Antwerp', 'Athens' ], value: 'Amsterdam' });
+        $input.select3({
+            implementation: require('../../src/select3-single'),
+            items: [ 'Amsterdam', 'Antwerp', 'Athens' ],
+            value: 'Amsterdam'
+        });
 
         test.deepEqual($input.select3('value'), 'Amsterdam');
 
@@ -67,6 +77,7 @@ exports.testSetValueWithInitSelection = DomUtil.createDomTest(
     ['base', 'single', 'templates'],
     function(test, $input) {
         $input.select3({
+            implementation: require('../../src/select3-single'),
             initSelection: function(value, callback) {
                 var cities = {
                     1: 'Amsterdam',
@@ -93,7 +104,10 @@ exports.testSetValueWithInitSelection = DomUtil.createDomTest(
 exports.testSetValueWithoutItems = DomUtil.createDomTest(
     ['base', 'single', 'templates'],
     function(test, $input) {
-        $input.select3({ value: 'Amsterdam' });
+        $input.select3({
+            implementation: require('../../src/select3-single'),
+            value: 'Amsterdam'
+        });
 
         test.deepEqual($input.select3('value'), 'Amsterdam');
 

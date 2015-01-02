@@ -42,11 +42,17 @@ $.extend(MultipleSelect3.prototype, {
                 if (this.options.initSelection) {
                     this.options.initSelection([item], function(data) {
                         if (this._value.lastIndexOf(item) > -1) {
-                            this._data.push(this.validateItem(data[0]));
+                            item = this.validateItem(data[0]);
+                            this._data.push(item);
+
+                            this.triggerChange({ added: item });
                         }
                     }.bind(this));
                 } else {
-                    this._data.push(this.getItemForId(item));
+                    item = this.getItemForId(item);
+                    this._data.push(item);
+
+                    this.triggerChange({ added: item });
                 }
             }
         } else {
@@ -54,6 +60,8 @@ $.extend(MultipleSelect3.prototype, {
             if (this._value.indexOf(item.id) === -1) {
                 this._data.push(item);
                 this._value.push(item.id);
+
+                this.triggerChange({ added: item });
             }
         }
     },
@@ -65,13 +73,15 @@ $.extend(MultipleSelect3.prototype, {
      */
     events: {
         'change': '_rerenderSelection',
-        'click .select3-item-remove': '_itemRemoveClicked',
+        'click': '_clicked',
+        'click .select3-selected-item-remove': '_itemRemoveClicked',
         'click .select3-selected-item': '_itemClicked',
-        'focus .select3-selected-item': '_focused',
+        'focus .select3-multiple-input': '_focused',
         'keyup .select3-multiple-input': '_keyReleased',
         'paste .select3-multiple-input': function() {
             setTimeout(this.search.bind(this), 10);
-        }
+        },
+        'select3-selecting': '_resultSelected'
     },
 
     /**
@@ -118,14 +128,20 @@ $.extend(MultipleSelect3.prototype, {
 
         var id = ($.type(item) === 'object' ? item.id : item);
 
-        var index = Select3.findIndexById(this.items, id);
+        var removedItem;
+        var index = Select3.findIndexById(this._data, id);
         if (index > -1) {
+            removedItem = this._data[index];
             this._data.splice(index, 1);
         }
 
         index = this._value.indexOf(id);
         if (index > -1) {
             this._value.splice(index, 1);
+        }
+
+        if (removedItem) {
+            this.triggerChange({ removed: removedItem });
         }
 
         if (id === this._highlightedItemId) {
@@ -174,6 +190,9 @@ $.extend(MultipleSelect3.prototype, {
         }
     },
 
+    /**
+     * @private
+     */
     _backspacePressed: function() {
 
         if (this._highlightedItemId) {
@@ -183,6 +202,18 @@ $.extend(MultipleSelect3.prototype, {
         }
     },
 
+    /**
+     * @private
+     */
+    _clicked: function() {
+
+        this.focus();
+        return false;
+    },
+
+    /**
+     * @private
+     */
     _deletePressed: function() {
 
         if (this._highlightedItemId) {
@@ -192,6 +223,9 @@ $.extend(MultipleSelect3.prototype, {
         }
     },
 
+    /**
+     * @private
+     */
     _focused: function() {
 
         if (this.options.showDropdown !== false) {
@@ -199,34 +233,17 @@ $.extend(MultipleSelect3.prototype, {
         }
     },
 
+    /**
+     * @private
+     */
     _getInput: function() {
 
         return this.$('.select3-multiple-input:not(.select3-width-detector)');
     },
 
-    _getItemId: function(event) {
-
-        // returns the item ID related to an event target.
-        // IDs can be either numbers or strings, but attribute values are always strings, so we
-        // will have to find out whether the item ID ought to be a number or string ourselves.
-        // $.fn.data() is a bit overzealous for our case, because it returns a number whenever the
-        // attribute value can be parsed as a number. however, it is possible an item had an ID
-        // which is a string but which is parseable as number, in which case we verify if the ID
-        // as number is actually found among the data or results. if it isn't, we assume it was
-        // supposed to be a string after all...
-
-        var id = $(event.target).closest('[data-item-id]').data('item-id');
-        if ($.type(id) === 'string') {
-            return id;
-        } else {
-            if (Select3.findById(this.data, id) || Select3.findById(this.results, id)) {
-                return id;
-            } else {
-                return '' + id;
-            }
-        }
-    },
-
+    /**
+     * @private
+     */
     _highlightItem: function(id) {
 
         this._highlightedItemId = id;
@@ -238,11 +255,17 @@ $.extend(MultipleSelect3.prototype, {
         }
     },
 
+    /**
+     * @private
+     */
     _itemClicked: function(event) {
 
         this._highlightItem(this._getItemId(event));
     },
 
+    /**
+     * @private
+     */
     _itemRemoveClicked: function(event) {
 
         this.remove(this._getItemId(event));
@@ -250,6 +273,9 @@ $.extend(MultipleSelect3.prototype, {
         return false;
     },
 
+    /**
+     * @private
+     */
     _keyReleased: function(event) {
 
         var inputHasText = this._getInput().val();
@@ -279,30 +305,64 @@ $.extend(MultipleSelect3.prototype, {
         this._updateInputWidth();
     },
 
-    _rerenderSelection: function() {
+    /**
+     * @private
+     */
+    _rerenderSelection: function(event) {
 
-        this.$('.select3-selected-item').remove();
+        event = event || {};
 
         var $input = this._getInput();
-        this._data.forEach(function(item) {
+        if (event.added) {
             $input.before(this.template('multiSelectItem', $.extend({
-                highlighted: (item.id === this._highlightedItemId)
-            }, item)));
-        }, this);
+                highlighted: (event.added.id === this._highlightedItemId)
+            }, event.added)));
+        } else if (event.removed) {
+            var quotedId = Select3.quoteCssAttr(event.removed.id);
+            this.$('.select3-selected-item[data-item-id=' + quotedId + ']').remove();
+        } else {
+            this.$('.select3-selected-item').remove();
+
+            this._data.forEach(function(item) {
+                $input.before(this.template('multiSelectItem', $.extend({
+                    highlighted: (item.id === this._highlightedItemId)
+                }, item)));
+            }, this);
+        }
     },
 
+    /**
+     * @private
+     */
+    _resultSelected: function(event) {
+
+        if (this._value.indexOf(event.id) === -1) {
+            this.add(event.item);
+        } else {
+            this.remove(event.item);
+        }
+    },
+
+    /**
+     * @private
+     */
     _search: function() {
 
         this.search(this._getInput().val());
     },
 
+    /**
+     * @private
+     */
     _updateInputWidth: function() {
 
         var $input = this._getInput(), $widthDetector = this.$('.select3-width-detector');
-        $widthDetector.text($input.val() || this._data.length && this.options.placeholder || '');
+        $widthDetector.text($input.val() || !this._data.length && this.options.placeholder || '');
         $input.width($widthDetector.width() + 20);
     }
 
 });
+
+Select3.Implementations.Multiple = MultipleSelect3;
 
 module.exports = MultipleSelect3;

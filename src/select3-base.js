@@ -3,6 +3,73 @@
 var $ = require('jquery');
 
 /**
+ * Create a new Select3 instance or invoke a method on an instance.
+ *
+ * @param methodName Optional name of a method to call. If omitted, a Select3 instance is created
+ *                   for each element in the set of matched elements. If an element in the set
+ *                   already has a Select3 instance, the result is the same as if the setOptions()
+ *                   method is called.
+ * @param options Optional options object to pass to the given method or the constructor. See the
+ *                documentation for the respective methods to see which options they accept. In case
+ *                a new instance is being created, the following property is used:
+ *                implementation - The implementation to use. Default implementations include
+ *                                 'Multiple' and 'Single', but you can add custom implementations
+ *                                 to the Implementations map. The default value is 'Single', unless
+ *                                 multiple is true in which case it is 'Multiple'.
+ *                multiple - Boolean determining whether multiple items may be selected
+ *                           (default: false). If true, a MultipleSelect3 instance is created,
+ *                           otherwise a SingleSelect3 instance is created.
+ *
+ * @return If the given method returns a value, this method returns the value of that method
+ *         executed on the first element in the set of matched elements.
+ */
+function select3(methodName, options) {
+    /* jshint validthis: true */
+
+    var result;
+
+    this.each(function() {
+        var instance = this.select3;
+
+        if (instance) {
+            if ($.type(methodName) !== 'string') {
+                options = methodName;
+                methodName = 'setOptions';
+            }
+
+            if ($.type(instance[methodName]) === 'function') {
+                if ($.type(result) === 'undefined') {
+                    result = instance[methodName].call(instance, options);
+                }
+            } else {
+                throw new Error('Unknown method: ' + methodName);
+            }
+        } else {
+            if ($.type(methodName) === 'string') {
+                throw new Error('Cannot call method on element without Select3 instance');
+            } else {
+                options = $.extend({}, methodName, { element: this });
+
+                var Implementations = Select3.Implementations;
+                var Implementation = (options.implementation || (options.multiple ? 'Multiple'
+                                                                                  : 'Single'));
+                if ($.type(Implementation) !== 'function') {
+                    if (Implementations[Implementation]) {
+                        Implementation = Implementations[Implementation];
+                    } else {
+                        throw new Error('Unknown Select3 implementation: ' + Implementation);
+                    }
+                }
+
+                this.select3 = new Implementation(options);
+            }
+        }
+    });
+
+    return result;
+}
+
+/**
  * Select3 Base Constructor.
  *
  * You will never use this constructor directly. Instead, you use $(selector).select3(options) to
@@ -20,10 +87,14 @@ var $ = require('jquery');
  */
 function Select3(options) {
 
+    if (!(this instanceof Select3)) {
+        return select3.apply(this, arguments);
+    }
+
     /**
      * jQuery container for the element to which this instance is attached.
      */
-    this.$el = $(options.element);
+    this.$el = $(options.element).on('select3-close', this._closed.bind(this));
 
     /**
      * Reference to the currently open dropdown.
@@ -107,8 +178,7 @@ $.extend(Select3.prototype, {
     close: function() {
 
         if (this.dropdown) {
-            this.dropdown.remove();
-            this.dropdown = null;
+            this.dropdown.close();
         }
     },
 
@@ -134,6 +204,8 @@ $.extend(Select3.prototype, {
 
             this._data = newData;
             this._value = this.getValueForData(newData);
+
+            this.triggerChange();
         }
     },
 
@@ -207,7 +279,11 @@ $.extend(Select3.prototype, {
      */
     open: function() {
 
-        this.dropdown = new Select3.Dropdown();
+        if (!this.dropdown) {
+            this.dropdown = new Select3.Dropdown({ select3: this });
+
+            this.search('');
+        }
     },
 
     /**
@@ -231,7 +307,7 @@ $.extend(Select3.prototype, {
             this.options.query({
                 callback: function(response) {
                     this._setResults(
-                        this.validateData(response.results),
+                        this.validateData(response.results.map(Select3.processItem)),
                         { hasMore: !!response.more }
                     );
                 }.bind(this),
@@ -291,16 +367,6 @@ $.extend(Select3.prototype, {
 
         this.options = options;
 
-        function processItem(item) {
-            if (item && Select3.isValidId(item.id)) {
-                return item;
-            } else if (Select3.isValidId(item)) {
-                return { id: item, text: '' + item };
-            } else {
-                throw new Error('items array contains invalid items');
-            }
-        }
-
         $.each(options, function(key, value) {
             switch (key) {
             case 'initSelection':
@@ -311,7 +377,7 @@ $.extend(Select3.prototype, {
 
             case 'items':
                 if ($.type(value) === 'array') {
-                    this.items = value.map(processItem);
+                    this.items = value.map(Select3.processItem);
                 } else {
                     throw new Error('items must be an array');
                 }
@@ -365,6 +431,23 @@ $.extend(Select3.prototype, {
         } else {
             throw new Error('Unknown template: ' + templateName);
         }
+    },
+
+    /**
+     * Triggers the change event.
+     *
+     * The event object at least contains the following properties:
+     * data - The new data of the Select3 instance.
+     * val - The new value of the Select3 instance.
+     *
+     * @param Optional additional options added to the event object.
+     */
+    triggerChange: function(options) {
+
+        this.$el.trigger($.Event('change', $.extend({
+            data: this._data,
+            val: this._value
+        }, options)));
     },
 
     /**
@@ -440,14 +523,55 @@ $.extend(Select3.prototype, {
                 this.options.initSelection(newValue, function(data) {
                     if (this._value === newValue) {
                         this._data = this.validateData(data);
+
+                        this.triggerChange();
                     }
                 }.bind(this));
             } else {
                 this._data = this.getDataForValue(newValue);
+
+                this.triggerChange();
             }
         }
     },
 
+    /**
+     * @private
+     */
+    _closed: function() {
+
+        this.dropdown = null;
+    },
+
+    /**
+     * @private
+     */
+    _getItemId: function(event) {
+
+        // returns the item ID related to an event target.
+        // IDs can be either numbers or strings, but attribute values are always strings, so we
+        // will have to find out whether the item ID ought to be a number or string ourselves.
+        // $.fn.data() is a bit overzealous for our case, because it returns a number whenever the
+        // attribute value can be parsed as a number. however, it is possible an item had an ID
+        // which is a string but which is parseable as number, in which case we verify if the ID
+        // as number is actually found among the data or results. if it isn't, we assume it was
+        // supposed to be a string after all...
+
+        var id = $(event.target).closest('[data-item-id]').data('item-id');
+        if ($.type(id) === 'string') {
+            return id;
+        } else {
+            if (Select3.findById(this.data, id) || Select3.findById(this.results, id)) {
+                return id;
+            } else {
+                return '' + id;
+            }
+        }
+    },
+
+    /**
+     * @private
+     */
     _setResults: function(results, options) {
 
         this.results = results;
@@ -463,6 +587,11 @@ $.extend(Select3.prototype, {
  * Dropdown class to use for displaying dropdowns.
  */
 Select3.Dropdown = null;
+
+/**
+ * Mapping of implementations.
+ */
+Select3.Implementations = {};
 
 /**
  * Mapping of keys.
@@ -547,6 +676,25 @@ Select3.matcher = function(term, text) {
 };
 
 /**
+ * Helper function for processing items.
+ *
+ * @param item The item to process, either as object containing 'id' and 'text' properties or just
+ *             as ID.
+ *
+ * @return Object containing 'id' and 'text' properties.
+ */
+Select3.processItem = function(item) {
+
+    if (Select3.isValidId(item)) {
+        return { id: item, text: '' + item };
+    } else if (item && Select3.isValidId(item.id)) {
+        return item;
+    } else {
+        throw new Error('items array contains invalid items');
+    }
+};
+
+/**
  * Quotes a string so it can be used in a CSS attribute selector. It adds double quotes to the
  * string and escapes all occurrences of the quote character inside the string.
  *
@@ -572,55 +720,6 @@ Select3.transformText = function(string) {
     return string.toLowerCase();
 };
 
-/**
- * Create a new Select3 instance or invoke a method on an instance.
- *
- * @param methodName Optional name of a method to call. If omitted, a Select3 instance is created
- *                   for each element in the set of matched elements. If an element in the set
- *                   already has a Select3 instance, the result is the same as if the setOptions()
- *                   method is called.
- * @param options Optional options object to pass to the given method or the constructor. See the
- *                documentation for the respective methods to see which options they accept. In case
- *                a new instance is being created, the following property is used:
- *                multiple - Boolean determining whether multiple items may be selected
- *                           (default: false). If true, a MultipleSelect3 instance is created,
- *                           otherwise a SingleSelect3 instance is created.
- *
- * @return If the given method returns a value, this method returns the value of that method
- *         executed on the first element in the set of matched elements.
- */
-$.fn.select3 = function(methodName, options) {
-
-    var result;
-
-    this.each(function() {
-        var instance = this.select3;
-
-        if (instance) {
-            if ($.type(methodName) !== 'string') {
-                options = methodName;
-                methodName = 'setOptions';
-            }
-
-            if ($.type(instance[methodName]) === 'function') {
-                if ($.type(result) === 'undefined') {
-                    result = instance[methodName].call(instance, options);
-                }
-            } else {
-                throw new Error('Unknown method: ' + methodName);
-            }
-        } else {
-            if ($.type(methodName) === 'string') {
-                throw new Error('Cannot call method on element without Select3 instance');
-            } else {
-                options = $.extend({}, methodName, { element: this });
-                this.select3 = (options.multiple ? new (require('./select3-multiple'))(options)
-                                                 : new (require('./select3-single'))(options));
-            }
-        }
-    });
-
-    return result;
-};
+$.fn.select3 = Select3;
 
 module.exports = Select3;

@@ -8,6 +8,15 @@
  * patch versions and any changes necessary to templates will be documented in the changelog.
  */
 
+.clearfix {
+    clear: both;
+}
+
+.select3-input {
+    display: inline-block;
+    width: 250px;
+}
+
 /**
  * Multi-selection input.
  */
@@ -15,7 +24,7 @@
 .select3-multiple-input-container {
     background: #eee;
     border-radius: 2px;
-    min-height: 28px;
+    min-height: 2.3em;
     padding: 5px;
 }
 
@@ -24,8 +33,7 @@ input[type="text"].select3-multiple-input {
     background-color: transparent;
     border: none;
     float: left;
-    height: 28px;
-    line-height: 28px;
+    height: 2.3em;
     max-width: calc(100% - 10px);
     outline: 0;
     padding: 0;
@@ -46,26 +54,42 @@ input[type="text"].select3-multiple-input:focus {
 }
 
 .select3-selected-item {
+    background: #4484c7;
     border-radius: 3px;
+    color: #fff;
     cursor: default;
     float: left;
-    font-size: 12px;
-    line-height: 24px;
+    line-height: 2em;
     margin: 2px;
-    padding: 0 5px 0 8px;
+    padding: 0 5px 0 0;
     position: relative;
     white-space: nowrap;
 }
 
 .select3-selected-item.highlighted {
-    background-color: #e6e6e6;
+    background-color: #ccc;
 }
 
 .select3-selected-item-remove {
-    padding: 6px 0;
+    cursor: pointer;
+    padding: 5px;
 }
 
+/**
+ * Dropdown
+ */
 
-.selector-placeholder, input[type="text"].multi-select-input.selector-placeholder {
-    padding: 0px 6px;
+.select3-dropdown {
+    background: #fff;
+    border-radius: 4px;
+    box-shadow: 0 1px 5px 1px rgba(0, 0, 0, .15),
+                0 10px 16px 0 rgba(0, 0, 0, .2);
+    position: absolute;
+    z-index: 9999;
+}
+
+.select3-load-more,
+.select3-result-item {
+    cursor: pointer;
+    padding: 6px;
 }
