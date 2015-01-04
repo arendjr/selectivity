@@ -51,7 +51,7 @@ given selector. The following options are supported:
 
 Option         | Type                   | Description
 -------------- | ---------------------- | -----------
-closeOnSelect  | `Boolean               | Set to `false` to keep the dropdown open after the user has selected an item. This is useful if you want to allow the user to quickly select multiple items. The default value is `true`.
+closeOnSelect  | `Boolean`              | Set to `false` to keep the dropdown open after the user has selected an item. This is useful if you want to allow the user to quickly select multiple items. The default value is `true`.
 data           | `Object` or `Array`    | Initial selection data to set. This should be an object with `id` and `text` properties in the case of a SingleSelect3 instance, or an array of such objects in the case of a MultipleSelect3 instance. This option is mutually exclusive with `value`.
 value          | `ID` or `Array`        | Initial value to set. This should be an ID (string or number) in the case of a SingleSelect3 instance, or array of IDs in the case of a MultipleSelect3 instance. This property is mutually exclusive with `data`.
 implementation | `String` or `Function` | The implementation to use. Default implementations include 'Multiple' and 'Single', but you can add custom implementations to the `Select3.Implementations` map. The default value is 'Single', unless multiple is true in which case it is 'Multiple'.
