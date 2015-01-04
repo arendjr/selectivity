@@ -24,6 +24,7 @@
 .select3-multiple-input-container {
     background: #eee;
     border-radius: 2px;
+    cursor: text;
     min-height: 2.3em;
     padding: 5px;
 }
