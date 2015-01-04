@@ -109,8 +109,8 @@ Module         | Description
 **base**       | The Select3 base module which is pulled in automatically into every build.
 **diacritics** | Diacritics support. This will make sure that `"Łódź"` will match when the user searches for `"Lodz"`, for example. However, if you always query a server when searching for results, you may want to solve matching of diacritics server-side, in which case this module can be ommitted.
 **dropdown**   | Module that implements the dropdown. You will most likely want to include this, unless you only want to use Select3 without any dropdown or you provide a completely custom implementation instead.
-**multiple**   | Implements the MultipleSelect3 class. If you only want to use Select3 with single values, you can leave this out.
 **locale**     | Localizable content pulled in by the default templates. You may or may not decide to use these with your own templates.
+**multiple**   | Implements the MultipleSelect3 class. If you only want to use Select3 with single values, you can leave this out.
 **single**     | Implements the SingleSelect3 class. If you only want to use Select3 with multiple values, you can leave this out.
 **templates**  | Default templates to use with Select3. If you provide your own templates, you may want to skip this.
 
@@ -144,6 +144,18 @@ Unit Tests
 Unit tests are available and can be ran using the following command:
 
     $ gulp unit-tests
+
+Project Status
+--------------
+
+Select3 is in an early stage of development. The following items are on my direct TODO list:
+
+* Remove already selected results from dropdown in multi-value input implementation.
+* Hover support in dropdown.
+* Keyboard support.
+* Single-value input implementation.
+* Add support for labels (optgroup).
+* Add module that can transform an existing &lt;select&gt; input in the DOM into a Select3 instance.
 
 Contributing
 ------------

@@ -33,9 +33,9 @@ Select3.Templates = {
      * This template is expected to have an element with a 'select3-load-more' class which, when
      * clicked, will load more results.
      */
-    loadMore: (
-        '<div class="select3-load-more">' + Select3.Locale.loadMore + '</div>'
-    ),
+    loadMore: function() {
+        return '<div class="select3-load-more">' + Select3.Locale.loadMore + '</div>'
+    },
 
     /**
      * Renders multi-selection input boxes.
