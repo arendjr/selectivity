@@ -49,46 +49,19 @@ API
 Call `$(selector).select3(options)` to initialize a Select3 instance on the element specified by the
 given selector. The following options are supported:
 
-Option | Type | Description
---- | --- | ---
-closeOnSelect | Boolean | Set to `false` to keep the dropdown open after the user has selected an
-item. This is useful if you want to allow the user to quickly select multiple items. The default
-value is `true`.
-data | Object or Array | Initial selection data to set. This should be an object with `id` and
-`text` properties in the case of a SingleSelect3 instance, or an array of such objects in the case
-of a MultipleSelect3 instance. This option is mutually exclusive with `value`.
-value | ID or Array | Initial value to set. This should be an ID (string or number) in the case of a
-SingleSelect3 instance, or array of IDs in the case of a MultipleSelect3 instance. This property is
-mutually exclusive with `data`.
-implementation | String or Function | The implementation to use. Default implementations include
-'Multiple' and 'Single', but you can add custom implementations to the `Select3.Implementations`
-map. The default value is 'Single', unless multiple is true in which case it is 'Multiple'.
-initSelection | Function | Function to map values by ID to selection data. This function receives
-two arguments, `value` and `callback`. The value is the current value of the selection, which is an
-ID or an array of IDs depending on the input type. The callback should be invoked with an object or
-array of objects, respectively, containing `id` and `text` properties.
-items | Array | Array of items from which to select. Should be an array of objects with `id` and
-`text` properties. As convenience, you may also pass an array of strings, in which case the same
-string is used for both the ID and the text. If items are given, all items are expected to be
-available locally and all selection operations operate on this local array only. If `null`, items
-are not available locally, and the `query` option should be provided to fetch remote data.
-matcher | Function | Function to determine whether text matches a given search term. Note this
-function is only used if you have specified an array of items. Receives two arguments: `term` and
-`text`. The term is the search term, which for performance reasons has always been already processed
-using `Select3.transformText()`. The text is the text that should match the search term.
-placeholder | String | Placeholder text to display when the element has no focus and selected items.
-query | Function  | Function to use for querying items. Receives a single object as argument with
-the `callback`, `offset` and `term` properties. The callback should be invoked when the results are
-available. It should be passed a single object with `results` and `more` properties. The first is an
-array with result items and the latter is an optional boolean that may be set to `true` indicate
-more results are available through pagination. Offset is a property is only used for pagination and
-indicates how many results should be skipped when returning more results. The term is the search
-term the user is searching for. Unlike with the matcher function, the term has not been processed
-using `Select3.transformText()`. This option is ignored if the `items` option is used.
-showDropdown | Boolean | Set to false if you don't want to use any dropdown (you can still open
-still open it programmatically using `open()`).
-templates | Object | Object with instance-specific templates to override the global templates
-assigned to `Select3.Templates`.
+Option         | Type                   | Description
+-------------- | ---------------------- | -----------
+closeOnSelect  | `Boolean               | Set to `false` to keep the dropdown open after the user has selected an item. This is useful if you want to allow the user to quickly select multiple items. The default value is `true`.
+data           | `Object` or `Array`    | Initial selection data to set. This should be an object with `id` and `text` properties in the case of a SingleSelect3 instance, or an array of such objects in the case of a MultipleSelect3 instance. This option is mutually exclusive with `value`.
+value          | `ID` or `Array`        | Initial value to set. This should be an ID (string or number) in the case of a SingleSelect3 instance, or array of IDs in the case of a MultipleSelect3 instance. This property is mutually exclusive with `data`.
+implementation | `String` or `Function` | The implementation to use. Default implementations include 'Multiple' and 'Single', but you can add custom implementations to the `Select3.Implementations` map. The default value is 'Single', unless multiple is true in which case it is 'Multiple'.
+initSelection  | `Function`             | Function to map values by ID to selection data. This function receives two arguments, `value` and `callback`. The value is the current value of the selection, which is an ID or an array of IDs depending on the input type. The callback should be invoked with an object or array of objects, respectively, containing `id` and `text` properties.
+items          | `Array`                | Array of items from which to select. Should be an array of objects with `id` and `text` properties. As convenience, you may also pass an array of strings, in which case the same string is used for both the ID and the text. If items are given, all items are expected to be available locally and all selection operations operate on this local array only. If `null`, items are not available locally, and the `query` option should be provided to fetch remote data.
+matcher        | `Function`             | Function to determine whether text matches a given search term. Note this function is only used if you have specified an array of items. Receives two arguments: `term` and `text`. The term is the search term, which for performance reasons has always been already processed using `Select3.transformText()`. The text is the text that should match the search term.
+placeholder    | `String`               | Placeholder text to display when the element has no focus and selected items.
+query          | `Function`             | Function to use for querying items. Receives a single object as argument with the `callback`, `offset` and `term` properties. The callback should be invoked when the results are available. It should be passed a single object with `results` and `more` properties. The first is an array with result items and the latter is an optional boolean that may be set to `true` indicate more results are available through pagination. Offset is a property is only used for pagination and indicates how many results should be skipped when returning more results. The term is the search term the user is searching for. Unlike with the matcher function, the term has not been processed using `Select3.transformText()`. This option is ignored if the `items` option is used.
+showDropdown   | `Boolean`              | Set to false if you don't want to use any dropdown (you can still open still open it programmatically using `open()`).
+templates      | `Object`               | Object with instance-specific templates to override the global templates assigned to `Select3.Templates`.
 
 For documentation about all the available methods once Select3 has been instantiated, I refer to the
 inline documentation in the source files for now.
@@ -99,19 +72,14 @@ Events
 All of these events are emitted on the element to which the Select3 instance is attached and can be
 listened to using jQuery's `on()` method.
 
-Event | Description
---- | ---
-change | Emitted when the selection has been changed. Additional properties on the event
- object: `added`, `data`, `removed` and `val`.
-select3-closed | Emitted when the dropdown is closed.
-select3-open | Emitted when the dropdown is opened.
-select3-opening | Emitted when the dropdown is about to be opened. You can call `preventDefault()`
-on the event object to cancel the opening of the dropdown.
-select3-selected | Emitted when an item has been selected. Additional properties on the event
-object: `id` and `item`.
-select3-selecting | Emitted when an item is about to be selected. You can call `preventDefault()` on
-on the event object to prevent the item from being selected. Additional properties on the event
-object: `id` and `item`.
+Event             | Description
+----------------- | -----------
+change            | Emitted when the selection has been changed. Additional properties on the event object: `added`, `data`, `removed` and `val`.
+select3-closed    | Emitted when the dropdown is closed.
+select3-open      | Emitted when the dropdown is opened.
+select3-opening   | Emitted when the dropdown is about to be opened. You can call `preventDefault()` on the event object to cancel the opening of the dropdown.
+select3-selected  | Emitted when an item has been selected. Additional properties on the event object: `id` and `item`.
+select3-selecting | Emitted when an item is about to be selected. You can call `preventDefault()` on on the event object to prevent the item from being selected. Additional properties on the event object: `id` and `item`.
 
 Build System
 ------------
