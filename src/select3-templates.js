@@ -34,7 +34,7 @@ Select3.Templates = {
      * clicked, will load more results.
      */
     loadMore: function() {
-        return '<div class="select3-load-more">' + Select3.Locale.loadMore + '</div>'
+        return '<div class="select3-load-more">' + Select3.Locale.loadMore + '</div>';
     },
 
     /**
