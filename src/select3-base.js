@@ -280,9 +280,24 @@ $.extend(Select3.prototype, {
     open: function() {
 
         if (!this.dropdown) {
-            this.dropdown = new Select3.Dropdown({ select3: this });
+            var event = $.Event('select3-opening');
+            select3.$el.trigger(event);
 
-            this.search('');
+            if (!event.isDefaultPrevented()) {
+                this.dropdown = new Select3.Dropdown({ select3: this });
+
+                this.search('');
+            }
+        }
+    },
+
+    /**
+     * (Re-)positions the dropdown.
+     */
+    positionDropdown: function() {
+
+        if (this.dropdown) {
+            this.dropdown.position();
         }
     },
 

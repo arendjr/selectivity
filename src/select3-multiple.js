@@ -81,7 +81,7 @@ $.extend(MultipleSelect3.prototype, {
         'paste .select3-multiple-input': function() {
             setTimeout(this.search.bind(this), 10);
         },
-        'select3-selecting': '_resultSelected'
+        'select3-selected': '_resultSelected'
     },
 
     /**
@@ -284,25 +284,19 @@ $.extend(MultipleSelect3.prototype, {
             if (this.highlightedResult) {
                 this.add(this.highlightedResult);
             }
-
-            return false;
         } else if (event.keyCode === Select3.Keys.BACKSPACE && !inputHasText) {
             this._backspacePressed();
-
-            return false;
         } else if (event.keyCode === Select3.Keys.DELETE && !inputHasText) {
             this._deletePressed();
-
-            return false;
         } else if (event.keyCode === Select3.Keys.ESCAPE) {
             this.close();
-
-            return false;
         } else {
             this._search();
         }
 
         this._updateInputWidth();
+
+        return false;
     },
 
     /**
@@ -329,6 +323,8 @@ $.extend(MultipleSelect3.prototype, {
                 }, item)));
             }, this);
         }
+
+        this.positionDropdown();
     },
 
     /**
@@ -359,6 +355,8 @@ $.extend(MultipleSelect3.prototype, {
         var $input = this._getInput(), $widthDetector = this.$('.select3-width-detector');
         $widthDetector.text($input.val() || !this._data.length && this.options.placeholder || '');
         $input.width($widthDetector.width() + 20);
+
+        this.positionDropdown();
     }
 
 });

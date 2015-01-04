@@ -28,6 +28,8 @@ function Select3Dropdown(options) {
     this.setupCloseHandler();
 
     this._delegateEvents();
+
+    select3.$el.trigger('select3-open');
 }
 
 /**
@@ -160,7 +162,15 @@ $.extend(Select3Dropdown.prototype, {
         var select3 = this.select3;
         var id = select3._getItemId(event);
         var item = Select3.findById(select3.results, id);
-        select3.$el.trigger($.Event('select3-selecting', { id: id, item: item }));
+
+        var options = { id: id, item: item };
+        event = $.Event('select3-selecting', options);
+        select3.$el.trigger(event);
+
+        if (!event.isDefaultPrevented()) {
+            event = $.Event('select3-selected', options);
+            select3.$el.trigger(event);
+        }
 
         return false;
     }
