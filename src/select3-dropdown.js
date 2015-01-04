@@ -19,7 +19,7 @@ function Select3Dropdown(options) {
     this.select3 = select3;
 
     this.addToDom();
-    this.applyPosition();
+    this.position();
     this.setupCloseHandler();
 
     this._delegateEvents();
@@ -47,17 +47,6 @@ $.extend(Select3Dropdown.prototype, {
     },
 
     /**
-     * Positions the dropdown inside the DOM.
-     */
-    applyPosition: function() {
-
-        var $selectEl = this.select3.$el;
-        var offset = $selectEl.offset();
-        this.$el.offset({ left: offset.left, top: offset.top + $selectEl.height() })
-                .width($selectEl.width());
-    },
-
-    /**
      * Closes the dropdown.
      */
     close: function() {
@@ -77,6 +66,17 @@ $.extend(Select3Dropdown.prototype, {
     events: {
         'click .select3-load-more': '_loadMoreClicked',
         'click .select3-result-item': '_resultClicked'
+    },
+
+    /**
+     * Positions the dropdown inside the DOM.
+     */
+    position: function() {
+
+        var $selectEl = this.select3.$el;
+        var offset = $selectEl.offset();
+        this.$el.offset({ left: offset.left, top: offset.top + $selectEl.height() })
+                .width($selectEl.width());
     },
 
     /**
