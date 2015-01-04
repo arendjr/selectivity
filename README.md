@@ -72,14 +72,14 @@ Events
 All of these events are emitted on the element to which the Select3 instance is attached and can be
 listened to using jQuery's `on()` method.
 
-Event             | Description
------------------ | -----------
-change            | Emitted when the selection has been changed. Additional properties on the event object: `added`, `data`, `removed` and `val`.
-select3-closed    | Emitted when the dropdown is closed.
-select3-open      | Emitted when the dropdown is opened.
-select3-opening   | Emitted when the dropdown is about to be opened. You can call `preventDefault()` on the event object to cancel the opening of the dropdown.
-select3-selected  | Emitted when an item has been selected. Additional properties on the event object: `id` and `item`.
-select3-selecting | Emitted when an item is about to be selected. You can call `preventDefault()` on on the event object to prevent the item from being selected. Additional properties on the event object: `id` and `item`.
+Event                 | Description
+--------------------- | -----------
+`"change"`            | Emitted when the selection has been changed. Additional properties on the event object: `added`, `data`, `removed` and `val`.
+`"select3-closed"`    | Emitted when the dropdown is closed.
+`"select3-open"`      | Emitted when the dropdown is opened.
+`"select3-opening"`   | Emitted when the dropdown is about to be opened. You can call `preventDefault()` on the event object to cancel the opening of the dropdown.
+`"select3-selected"`  | Emitted when an item has been selected. Additional properties on the event object: `id` and `item`.
+`"select3-selecting"` | Emitted when an item is about to be selected. You can call `preventDefault()` on on the event object to prevent the item from being selected. Additional properties on the event object: `id` and `item`.
 
 Build System
 ------------
