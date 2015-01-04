@@ -16,9 +16,17 @@ var argv = require('yargs').argv;
 
 module.exports = function() {
 
-    var b = browserify({ debug: argv['source-map'] !== false });
+    var b = browserify({ debug: argv['source-map'] === true });
 
-    b.add('./src/select3-full.js');
+    if (!argv.modules) {
+        console.log('No modules specified for custom build.\n' +
+                    'Usage: gulp custom [--minify] --modules=<comma-separated-module-list>');
+        process.exit(1);
+    }
+
+    argv.modules.split(',').forEach(function(module) {
+        b.add('./src/select3-' + module + '.js');
+    })
 
     glob.sync('vendor/*.js').forEach(function(file) {
         var basename = path.basename(file, '.js');
@@ -31,10 +39,10 @@ module.exports = function() {
 
     return b.bundle()
         .on('error', function(error) {
-            gutil.log(gutil.colors.red('Error building bundle: ') + error.toString());
+            gutil.log(gutil.colors.red('Error creating bundle: ') + error.toString());
             this.end();
         })
-        .pipe(source('select3-full' + (argv.minify ? '.min' : '') + '.js'))
+        .pipe(source('select3-custom' + (argv.minify ? '.min' : '') + '.js'))
         .pipe(buffer())
         .pipe(replace(/require\(['"]jquery['"]\)/g, 'window.jQuery || window.Zepto'))
         .pipe(gulpif(argv.minify, uglify()))
