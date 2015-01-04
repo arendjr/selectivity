@@ -5,9 +5,9 @@
         <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
         <link href="dist/select3.css" rel="stylesheet">
         <style>
-            .select3-input {
-                display: inline-block;
-                width: 200px;
+            body, input {
+                font-family: Helvetica, sans-serif;
+                font-size: 12px;
             }
         </style>
         <script src="vendor/zepto.js"></script>
@@ -81,6 +81,7 @@
                 // example query function that returns at most 10 cities matching the given text
                 function queryFunction(query) {
                     var term = query.term;
+                    var offset = query.offset || 0;
                     var results = cities.filter(function(city) {
                         return transformText(city).indexOf(transformText(term)) > -1;
                     });
@@ -94,17 +95,19 @@
                         }
                     });
                     setTimeout(query.callback({
-                        more: results.length > 10,
-                        results: results.slice(0, 10)
+                        more: results.length > offset + 10,
+                        results: results.slice(offset, 10)
                     }), 500);
                 }
 
                 $('#single-input').select3({
+                    placeholder: 'No city selected',
                     query: queryFunction
                 });
 
                 $('#multiple-input').select3({
                     multiple: true,
+                    placeholder: 'Type to search cities',
                     query: queryFunction
                 });
             });
@@ -117,4 +120,3 @@
         <p><span id="multiple-input" class="select3-input"></span></p>
     </body>
 </html>
-

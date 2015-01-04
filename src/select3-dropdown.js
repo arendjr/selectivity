@@ -81,7 +81,7 @@ $.extend(Select3Dropdown.prototype, {
 
         var $selectEl = this.select3.$el;
         var offset = $selectEl.offset();
-        this.$el.offset({ left: offset.left, top: offset.top + $selectEl.height() })
+        this.$el.css({ left: offset.left + 'px', top: offset.top + $selectEl.height() + 'px' })
                 .width($selectEl.width());
     },
 
