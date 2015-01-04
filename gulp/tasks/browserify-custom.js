@@ -26,7 +26,7 @@ module.exports = function() {
 
     argv.modules.split(',').forEach(function(module) {
         b.add('./src/select3-' + module + '.js');
-    })
+    });
 
     glob.sync('vendor/*.js').forEach(function(file) {
         var basename = path.basename(file, '.js');
