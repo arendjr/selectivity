@@ -18,6 +18,11 @@ function Select3Dropdown(options) {
 
     this.select3 = select3;
 
+    this._closeProxy = this.close.bind(this);
+    if (select3.options.closeOnSelect !== false) {
+        select3.$el.on('select3-selecting', this._closeProxy);
+    }
+
     this.addToDom();
     this.position();
     this.setupCloseHandler();
@@ -55,7 +60,8 @@ $.extend(Select3Dropdown.prototype, {
 
         this.removeCloseHandler();
 
-        this.select3.$el.trigger('select3-close');
+        this.select3.$el.off('select3-selecting', this._closeProxy)
+                        .trigger('select3-close');
     },
 
     /**
@@ -92,7 +98,6 @@ $.extend(Select3Dropdown.prototype, {
      */
     setupCloseHandler: function() {
 
-        this._closeProxy = this.close.bind(this);
         $('body').on('click', this._closeProxy);
     },
 
@@ -156,6 +161,8 @@ $.extend(Select3Dropdown.prototype, {
         var id = select3._getItemId(event);
         var item = Select3.findById(select3.results, id);
         select3.$el.trigger($.Event('select3-selecting', { id: id, item: item }));
+
+        return false;
     }
 
 });

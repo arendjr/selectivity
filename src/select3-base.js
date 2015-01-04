@@ -321,6 +321,9 @@ $.extend(Select3.prototype, {
      * Sets one or more options on this Select3 instance.
      *
      * @param options Options object. May contain one or more of the following properties:
+     *                closeOnSelect - Set to false to keep the dropdown open after the user has
+     *                                selected an item. This is useful if you want to allow the user
+     *                                to quickly select multiple items. The default value is true.
      *                initSelection - Function to map values by ID to selection data. This function
      *                                receives two arguments, 'value' and 'callback'. The value is
      *                                the current value of the selection, which is an ID or an array
@@ -369,6 +372,12 @@ $.extend(Select3.prototype, {
 
         $.each(options, function(key, value) {
             switch (key) {
+            case 'closeOnSelect':
+                if ($.type(value) !== 'boolean') {
+                    throw new Error('closeOnSelect must be a boolean');
+                }
+                break;
+
             case 'initSelection':
                 if ($.type(value) !== 'function') {
                     throw new Error('initSelection must be a function');
