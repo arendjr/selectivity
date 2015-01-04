@@ -1,6 +1,7 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(_dereq_,module,exports){
 'use strict';
 
+_dereq_('./select3-backdrop');
 _dereq_('./select3-base');
 _dereq_('./select3-diacritics');
 _dereq_('./select3-dropdown');
@@ -8,7 +9,7 @@ _dereq_('./select3-multiple');
 _dereq_('./select3-single');
 _dereq_('./select3-templates');
 
-},{"./select3-base":3,"./select3-diacritics":4,"./select3-dropdown":5,"./select3-multiple":7,"./select3-single":8,"./select3-templates":9}],2:[function(_dereq_,module,exports){
+},{"./select3-backdrop":3,"./select3-base":4,"./select3-diacritics":5,"./select3-dropdown":6,"./select3-multiple":8,"./select3-single":9,"./select3-templates":10}],2:[function(_dereq_,module,exports){
 'use strict';
 
 /**
@@ -62,6 +63,62 @@ function escape(string) {
 module.exports = escape;
 
 },{}],3:[function(_dereq_,module,exports){
+'use strict';
+
+var $ = window.jQuery || window.Zepto;
+
+var Select3Dropdown = _dereq_('./select3-dropdown');
+
+var BACKDROP_Z_INDEX = 9998;
+var FOREGROUND_Z_INDEX = 9999;
+
+/**
+ * Methods.
+ */
+$.extend(Select3Dropdown.prototype, {
+
+    /**
+     * @inherit
+     */
+    addToDom: function() {
+
+        var $select3El = this.select3.$el;
+        $select3El.css({ zIndex: FOREGROUND_Z_INDEX, position: 'relative' });
+        this.$el.appendTo($select3El[0].ownerDocument.body).css('zIndex', FOREGROUND_Z_INDEX);
+    },
+
+    /**
+     * @inherit
+     */
+    removeCloseHandler: function() {
+
+        this._$backdrop.remove();
+        this._$backdrop = null;
+    },
+
+    /**
+     * @inherit
+     */
+    setupCloseHandler: function() {
+
+        var $backdrop = $('<div>').addClass('.select3-backdrop').css({
+            background: 'transparent',
+            bottom: 0,
+            left: 0,
+            position: 'fixed',
+            right: 0,
+            top: 0,
+            zIndex: BACKDROP_Z_INDEX
+        }).on('click', this.close.bind(this));
+
+        $('body').append($backdrop);
+
+        this._$backdrop = $backdrop;
+    }
+
+});
+
+},{"./select3-dropdown":6,"jquery":"jquery"}],4:[function(_dereq_,module,exports){
 'use strict';
 
 var $ = window.jQuery || window.Zepto;
@@ -344,9 +401,24 @@ $.extend(Select3.prototype, {
     open: function() {
 
         if (!this.dropdown) {
-            this.dropdown = new Select3.Dropdown({ select3: this });
+            var event = $.Event('select3-opening');
+            select3.$el.trigger(event);
 
-            this.search('');
+            if (!event.isDefaultPrevented()) {
+                this.dropdown = new Select3.Dropdown({ select3: this });
+
+                this.search('');
+            }
+        }
+    },
+
+    /**
+     * (Re-)positions the dropdown.
+     */
+    positionDropdown: function() {
+
+        if (this.dropdown) {
+            this.dropdown.position();
         }
     },
 
@@ -385,6 +457,9 @@ $.extend(Select3.prototype, {
      * Sets one or more options on this Select3 instance.
      *
      * @param options Options object. May contain one or more of the following properties:
+     *                closeOnSelect - Set to false to keep the dropdown open after the user has
+     *                                selected an item. This is useful if you want to allow the user
+     *                                to quickly select multiple items. The default value is true.
      *                initSelection - Function to map values by ID to selection data. This function
      *                                receives two arguments, 'value' and 'callback'. The value is
      *                                the current value of the selection, which is an ID or an array
@@ -433,6 +508,12 @@ $.extend(Select3.prototype, {
 
         $.each(options, function(key, value) {
             switch (key) {
+            case 'closeOnSelect':
+                if ($.type(value) !== 'boolean') {
+                    throw new Error('closeOnSelect must be a boolean');
+                }
+                break;
+
             case 'initSelection':
                 if ($.type(value) !== 'function') {
                     throw new Error('initSelection must be a function');
@@ -788,7 +869,7 @@ $.fn.select3 = Select3;
 
 module.exports = Select3;
 
-},{"jquery":"jquery"}],4:[function(_dereq_,module,exports){
+},{"jquery":"jquery"}],5:[function(_dereq_,module,exports){
 'use strict';
 
 var DIACRITICS = {
@@ -1652,7 +1733,7 @@ Select3.transformText = function(string) {
     return previousTransform(result);
 };
 
-},{"./select3-base":3}],5:[function(_dereq_,module,exports){
+},{"./select3-base":4}],6:[function(_dereq_,module,exports){
 'use strict';
 
 var $ = window.jQuery || window.Zepto;
@@ -1673,11 +1754,18 @@ function Select3Dropdown(options) {
 
     this.select3 = select3;
 
+    this._closeProxy = this.close.bind(this);
+    if (select3.options.closeOnSelect !== false) {
+        select3.$el.on('select3-selecting', this._closeProxy);
+    }
+
     this.addToDom();
-    this.applyPosition();
+    this.position();
     this.setupCloseHandler();
 
     this._delegateEvents();
+
+    select3.$el.trigger('select3-open');
 }
 
 /**
@@ -1702,17 +1790,6 @@ $.extend(Select3Dropdown.prototype, {
     },
 
     /**
-     * Positions the dropdown inside the DOM.
-     */
-    applyPosition: function() {
-
-        var $selectEl = this.select3.$el;
-        var offset = $selectEl.offset();
-        this.$el.offset({ left: offset.left, top: offset.top + $selectEl.height() })
-                .width($selectEl.width());
-    },
-
-    /**
      * Closes the dropdown.
      */
     close: function() {
@@ -1721,7 +1798,8 @@ $.extend(Select3Dropdown.prototype, {
 
         this.removeCloseHandler();
 
-        this.select3.$el.trigger('select3-close');
+        this.select3.$el.off('select3-selecting', this._closeProxy)
+                        .trigger('select3-close');
     },
 
     /**
@@ -1732,6 +1810,17 @@ $.extend(Select3Dropdown.prototype, {
     events: {
         'click .select3-load-more': '_loadMoreClicked',
         'click .select3-result-item': '_resultClicked'
+    },
+
+    /**
+     * Positions the dropdown inside the DOM.
+     */
+    position: function() {
+
+        var $selectEl = this.select3.$el;
+        var offset = $selectEl.offset();
+        this.$el.css({ left: offset.left + 'px', top: offset.top + $selectEl.height() + 'px' })
+                .width($selectEl.width());
     },
 
     /**
@@ -1747,7 +1836,6 @@ $.extend(Select3Dropdown.prototype, {
      */
     setupCloseHandler: function() {
 
-        this._closeProxy = this.close.bind(this);
         $('body').on('click', this._closeProxy);
     },
 
@@ -1810,7 +1898,17 @@ $.extend(Select3Dropdown.prototype, {
         var select3 = this.select3;
         var id = select3._getItemId(event);
         var item = Select3.findById(select3.results, id);
-        select3.$el.trigger($.Event('select3-selecting', { id: id, item: item }));
+
+        var options = { id: id, item: item };
+        event = $.Event('select3-selecting', options);
+        select3.$el.trigger(event);
+
+        if (!event.isDefaultPrevented()) {
+            event = $.Event('select3-selected', options);
+            select3.$el.trigger(event);
+        }
+
+        return false;
     }
 
 });
@@ -1819,7 +1917,7 @@ Select3.Dropdown = Select3Dropdown;
 
 module.exports = Select3Dropdown;
 
-},{"./select3-base":3,"jquery":"jquery"}],6:[function(_dereq_,module,exports){
+},{"./select3-base":4,"jquery":"jquery"}],7:[function(_dereq_,module,exports){
 'use strict';
 
 var Select3 = _dereq_('./select3-base');
@@ -1833,7 +1931,7 @@ Select3.Locale = {
 
 };
 
-},{"./select3-base":3}],7:[function(_dereq_,module,exports){
+},{"./select3-base":4}],8:[function(_dereq_,module,exports){
 'use strict';
 
 var $ = window.jQuery || window.Zepto;
@@ -1917,7 +2015,7 @@ $.extend(MultipleSelect3.prototype, {
         'paste .select3-multiple-input': function() {
             setTimeout(this.search.bind(this), 10);
         },
-        'select3-selecting': '_resultSelected'
+        'select3-selected': '_resultSelected'
     },
 
     /**
@@ -2120,25 +2218,19 @@ $.extend(MultipleSelect3.prototype, {
             if (this.highlightedResult) {
                 this.add(this.highlightedResult);
             }
-
-            return false;
         } else if (event.keyCode === Select3.Keys.BACKSPACE && !inputHasText) {
             this._backspacePressed();
-
-            return false;
         } else if (event.keyCode === Select3.Keys.DELETE && !inputHasText) {
             this._deletePressed();
-
-            return false;
         } else if (event.keyCode === Select3.Keys.ESCAPE) {
             this.close();
-
-            return false;
         } else {
             this._search();
         }
 
         this._updateInputWidth();
+
+        return false;
     },
 
     /**
@@ -2165,6 +2257,8 @@ $.extend(MultipleSelect3.prototype, {
                 }, item)));
             }, this);
         }
+
+        this.positionDropdown();
     },
 
     /**
@@ -2195,6 +2289,8 @@ $.extend(MultipleSelect3.prototype, {
         var $input = this._getInput(), $widthDetector = this.$('.select3-width-detector');
         $widthDetector.text($input.val() || !this._data.length && this.options.placeholder || '');
         $input.width($widthDetector.width() + 20);
+
+        this.positionDropdown();
     }
 
 });
@@ -2203,7 +2299,7 @@ Select3.Implementations.Multiple = MultipleSelect3;
 
 module.exports = MultipleSelect3;
 
-},{"./select3-base":3,"jquery":"jquery"}],8:[function(_dereq_,module,exports){
+},{"./select3-base":4,"jquery":"jquery"}],9:[function(_dereq_,module,exports){
 'use strict';
 
 var $ = window.jQuery || window.Zepto;
@@ -2296,7 +2392,7 @@ Select3.Implementations.Single = SingleSelect3;
 
 module.exports = SingleSelect3;
 
-},{"./select3-base":3,"jquery":"jquery"}],9:[function(_dereq_,module,exports){
+},{"./select3-base":4,"jquery":"jquery"}],10:[function(_dereq_,module,exports){
 'use strict';
 
 var escape = _dereq_('./escape');
@@ -2414,4 +2510,4 @@ Select3.Templates = {
 
 };
 
-},{"./escape":2,"./select3-base":3,"./select3-locale":6}]},{},[1]);
+},{"./escape":2,"./select3-base":4,"./select3-locale":7}]},{},[1]);
