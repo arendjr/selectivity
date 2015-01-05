@@ -110,6 +110,7 @@ $.extend(Select3Dropdown.prototype, {
     events: {
         'click .select3-load-more': '_loadMoreClicked',
         'click .select3-result-item': '_resultClicked',
+        'mouseenter .select3-load-more': 'highlightLoadMore',
         'mouseenter .select3-result-item': '_resultHovered'
     },
 
