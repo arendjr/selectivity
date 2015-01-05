@@ -6,8 +6,8 @@ Flexible and modular alternative to Select2.
 Motivation
 ----------
 
-I've used Select2 for a long time because I reckon it is the best and most feature-rich selection
-library out there.
+I've used [Select2](http://ivaynberg.github.io/select2/) for a long time because I reckon it is the
+best and most feature-rich selection library out there.
 
 However, time and again I've ran into its limitations. It is difficult to customize the styling, and
 introducing subtle tweaks to its behavior typically meant maintaining a private fork. More
@@ -41,7 +41,11 @@ Browser Support
 Dependencies
 ------------
 
-Select3 only relies on jQuery or Zepto.js being loaded on the page.
+Select3 only relies on [jQuery](http://jquery.com/) or [Zepto.js](http://zeptojs.com/) being loaded
+on the page to work.
+
+In addition, the default templates assume that you have included
+[FontAwesome](http://fortawesome.github.io/Font-Awesome/) in your page to display the icons.
 
 API
 ---
