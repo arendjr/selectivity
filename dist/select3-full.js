@@ -1869,7 +1869,8 @@ $.extend(Select3Dropdown.prototype, {
      */
     events: {
         'click .select3-load-more': '_loadMoreClicked',
-        'click .select3-result-item': '_resultClicked'
+        'click .select3-result-item': '_resultClicked',
+        'mouseenter .select3-result-item': '_resultHovered'
     },
 
     /**
@@ -1897,7 +1898,7 @@ $.extend(Select3Dropdown.prototype, {
      *
      * @param item The item to highlight.
      */
-    highlightLoadMore: function(item) {
+    highlightLoadMore: function() {
 
         this.$('.select3-result-item').removeClass('highlight');
         this.$('.select3-load-more').addClass('highlight');
@@ -2054,13 +2055,25 @@ $.extend(Select3Dropdown.prototype, {
     /**
      * @private
      */
+    _resultHovered: function(event) {
+
+        var id = this.select3._getItemId(event);
+        var item = Select3.findById(this.results, id);
+        if (item) {
+            this.highlight(item);
+        }
+    },
+
+    /**
+     * @private
+     */
     _selectItem: function(id) {
 
         var select3 = this.select3;
         var item = Select3.findById(select3.results, id);
 
         var options = { id: id, item: item };
-        event = $.Event('select3-selecting', options);
+        var event = $.Event('select3-selecting', options);
         select3.$el.trigger(event);
 
         if (!event.isDefaultPrevented()) {
@@ -2425,6 +2438,7 @@ $.extend(MultipleSelect3.prototype, {
         if (event.keyCode === Select3.Keys.ENTER && !event.ctrlKey) {
             if (dropdown) {
                 dropdown.clickHighlight();
+                this._$input.val('');
             }
         } else if (event.keyCode === Select3.Keys.BACKSPACE && !inputHadText) {
             this._backspacePressed();

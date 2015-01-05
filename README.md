@@ -55,8 +55,8 @@ given selector. The following options are supported:
 
 Option         | Type                   | Description
 -------------- | ---------------------- | -----------
-backspaceHighlightsBeforeDelete | `Boolean` | If set to `true`, when the user enters a backspace while there is no text in the search field but there are selected items, the last selected item will be highlighted and when a second backspace is entered the item is deleted. If `false` (the default), the item gets deleted on the first backspace.
 allowClear     | `Boolean`              | Set to `true` to allow the selection to be cleared. This option only applies to single-value inputs.
+backspaceHighlightsBeforeDelete | `Boolean` | If set to `true`, when the user enters a backspace while there is no text in the search field but there are selected items, the last selected item will be highlighted and when a second backspace is entered the item is deleted. If `false` (the default), the item gets deleted on the first backspace.
 closeOnSelect  | `Boolean`              | Set to `false` to keep the dropdown open after the user has selected an item. This is useful if you want to allow the user to quickly select multiple items. The default value is `true`.
 data           | `Object` or `Array`    | Initial selection data to set. This should be an object with `id` and `text` properties in the case of a SingleSelect3 instance, or an array of such objects in the case of a MultipleSelect3 instance. This option is mutually exclusive with `value`.
 value          | `ID` or `Array`        | Initial value to set. This should be an ID (string or number) in the case of a SingleSelect3 instance, or array of IDs in the case of a MultipleSelect3 instance. This property is mutually exclusive with `data`.
@@ -157,7 +157,6 @@ Project Status
 
 Select3 is in an early stage of development. The following items are on my direct TODO list:
 
-* Hover support in dropdown.
 * Implement pagination.
 * Add search input to dropdown for single-value inputs.
 * Add support for labels (optgroup).

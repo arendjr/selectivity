@@ -109,7 +109,8 @@ $.extend(Select3Dropdown.prototype, {
      */
     events: {
         'click .select3-load-more': '_loadMoreClicked',
-        'click .select3-result-item': '_resultClicked'
+        'click .select3-result-item': '_resultClicked',
+        'mouseenter .select3-result-item': '_resultHovered'
     },
 
     /**
@@ -289,6 +290,18 @@ $.extend(Select3Dropdown.prototype, {
         this._selectItem(this.select3._getItemId(event));
 
         return false;
+    },
+
+    /**
+     * @private
+     */
+    _resultHovered: function(event) {
+
+        var id = this.select3._getItemId(event);
+        var item = Select3.findById(this.results, id);
+        if (item) {
+            this.highlight(item);
+        }
     },
 
     /**

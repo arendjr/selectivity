@@ -333,6 +333,7 @@ $.extend(MultipleSelect3.prototype, {
         if (event.keyCode === Select3.Keys.ENTER && !event.ctrlKey) {
             if (dropdown) {
                 dropdown.clickHighlight();
+                this._$input.val('');
             }
         } else if (event.keyCode === Select3.Keys.BACKSPACE && !inputHadText) {
             this._backspacePressed();
