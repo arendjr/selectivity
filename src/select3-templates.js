@@ -41,6 +41,8 @@ Select3.Templates = {
      * Renders multi-selection input boxes.
      *
      * The template is expected to have at least have elements with the following classes:
+     * 'select3-multiple-input-container' - The element containing all the selected items and the
+     *                                      input for selecting additional items.
      * 'select3-multiple-input' - The actual input element that allows the user to type to search
      *                            for more items. When selected items are added, they are inserted
      *                            right before this element.
@@ -49,22 +51,15 @@ Select3.Templates = {
      *                            width detector also has the 'select2-multiple-input' class on
      *                            purpose to be able to detect the width of text entered in the
      *                            input element.
-     *
-     * @param options Options object containing the following property:
-     *                placeholder - String containing the placeholder text to display if no items
-     *                              are selected. May be empty if no placeholder is defined.
      */
-    multiSelectInput: function(options) {
-        return (
-            '<div class="select3-multiple-input-container">' +
-                '<input type="text" autocomplete="off" autocorrect="off" autocapitalize="off" ' +
-                       'class="select3-multiple-input" ' +
-                       'placeholder="' + escape(options.placeholder) + '">' +
-                '<span class="select3-multiple-input select3-width-detector"></span>' +
-                '<div class="clearfix"></div>' +
-            '</div>'
-        );
-    },
+    multiSelectInput: (
+        '<div class="select3-multiple-input-container">' +
+            '<input type="text" autocomplete="off" autocorrect="off" autocapitalize="off" ' +
+                   'class="select3-multiple-input">' +
+            '<span class="select3-multiple-input select3-width-detector"></span>' +
+            '<div class="clearfix"></div>' +
+        '</div>'
+    ),
 
     /**
      * Renders multi-selection input boxes.

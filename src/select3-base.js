@@ -256,6 +256,21 @@ $.extend(Select3.prototype, {
     },
 
     /**
+     * Filters the results to be displayed in the dropdown.
+     *
+     * The default implementation simply returns the results unfiltered, but the MultiSelect3 class
+     * overrides this method to filter out any items that have already been selected.
+     *
+     * @param results Array of items with 'id' and 'text' properties.
+     *
+     * @return The filtered array.
+     */
+    filterResults: function(results) {
+
+        return results;
+    },
+
+    /**
      * Returns the correct item for a given ID.
      *
      * @param id The ID to get the item for.
@@ -281,7 +296,7 @@ $.extend(Select3.prototype, {
 
         if (!this.dropdown) {
             var event = $.Event('select3-opening');
-            select3.$el.trigger(event);
+            this.$el.trigger(event);
 
             if (!event.isDefaultPrevented()) {
                 this.dropdown = new Select3.Dropdown({ select3: this });
@@ -599,9 +614,10 @@ $.extend(Select3.prototype, {
     _setResults: function(results, options) {
 
         this.results = results;
+        this.resultsOptions = options;
 
         if (this.dropdown) {
-            this.dropdown.showResults(results, options || {});
+            this.dropdown.showResults(this.filterResults(results), options || {});
         }
     }
 

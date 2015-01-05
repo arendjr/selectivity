@@ -76,12 +76,21 @@ $.extend(MultipleSelect3.prototype, {
         'click': '_clicked',
         'click .select3-selected-item-remove': '_itemRemoveClicked',
         'click .select3-selected-item': '_itemClicked',
-        'focus .select3-multiple-input': '_focused',
         'keyup .select3-multiple-input': '_keyReleased',
         'paste .select3-multiple-input': function() {
             setTimeout(this.search.bind(this), 10);
         },
         'select3-selected': '_resultSelected'
+    },
+
+    /**
+     * @inherit
+     */
+    filterResults: function(results) {
+
+        return results.filter(function(item) {
+            return !Select3.findById(this._data, item.id);
+        }, this);
     },
 
     /**
@@ -208,6 +217,11 @@ $.extend(MultipleSelect3.prototype, {
     _clicked: function() {
 
         this.focus();
+
+        if (this.options.showDropdown !== false) {
+            this.open();
+        }
+
         return false;
     },
 
@@ -220,16 +234,6 @@ $.extend(MultipleSelect3.prototype, {
             this.remove(this._highlightedItemId);
 
             this.$el.trigger('change');
-        }
-    },
-
-    /**
-     * @private
-     */
-    _focused: function() {
-
-        if (this.options.showDropdown !== false) {
-            this.open();
         }
     },
 
@@ -311,6 +315,8 @@ $.extend(MultipleSelect3.prototype, {
             $input.before(this.template('multiSelectItem', $.extend({
                 highlighted: (event.added.id === this._highlightedItemId)
             }, event.added)));
+
+            this._scrollToBottom();
         } else if (event.removed) {
             var quotedId = Select3.quoteCssAttr(event.removed.id);
             this.$('.select3-selected-item[data-item-id=' + quotedId + ']').remove();
@@ -324,7 +330,19 @@ $.extend(MultipleSelect3.prototype, {
             }, this);
         }
 
+        if (event.added || event.removed) {
+            if (this.dropdown) {
+                this.dropdown.showResults(this.filterResults(this.results), this.resultsOptions);
+            }
+
+            if (this.hasKeyboard) {
+                this.focus();
+            }
+        }
+
         this.positionDropdown();
+
+        $input.attr('placeholder', this._data.length ? '' : this.options.placeholder);
     },
 
     /**
@@ -337,6 +355,15 @@ $.extend(MultipleSelect3.prototype, {
         } else {
             this.remove(event.item);
         }
+    },
+
+    /**
+     * @private
+     */
+    _scrollToBottom: function() {
+
+        var $inputContainer = this.$('.select3-multiple-input-container');
+        $inputContainer.scrollTop($inputContainer.outerHeight());
     },
 
     /**
