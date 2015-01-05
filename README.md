@@ -55,6 +55,7 @@ given selector. The following options are supported:
 
 Option         | Type                   | Description
 -------------- | ---------------------- | -----------
+allowClear     | `Boolean`              | Set to `true` to allow the selection to be cleared. This option only applies to single-value inputs.
 closeOnSelect  | `Boolean`              | Set to `false` to keep the dropdown open after the user has selected an item. This is useful if you want to allow the user to quickly select multiple items. The default value is `true`.
 data           | `Object` or `Array`    | Initial selection data to set. This should be an object with `id` and `text` properties in the case of a SingleSelect3 instance, or an array of such objects in the case of a MultipleSelect3 instance. This option is mutually exclusive with `value`.
 value          | `ID` or `Array`        | Initial value to set. This should be an ID (string or number) in the case of a SingleSelect3 instance, or array of IDs in the case of a MultipleSelect3 instance. This property is mutually exclusive with `data`.
