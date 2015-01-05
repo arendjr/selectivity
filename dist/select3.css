@@ -62,7 +62,7 @@ input[type="text"].select3-multiple-input:focus {
     float: left;
     line-height: 2em;
     margin: 2px;
-    padding: 0 5px 0 0;
+    padding-left: 5px;
     position: relative;
     white-space: nowrap;
 }

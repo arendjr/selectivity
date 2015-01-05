@@ -81,10 +81,10 @@ Select3.Templates = {
         return (
             '<span class="select3-multiple-selected-item' + extraClass + '" ' +
                   'data-item-id="' + escape(options.id) + '">' +
+                escape(options.text) +
                 '<a class="select3-multiple-selected-item-remove">' +
                     '<i class="fa fa-remove"></i>' +
                 '</a>' +
-                escape(options.text) +
             '</span>'
         );
     },
