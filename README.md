@@ -157,7 +157,7 @@ Select3 is in an early stage of development. The following items are on my direc
 * Hover support in dropdown.
 * Keyboard support.
 * Implement pagination.
-* Single-value input implementation.
+* Add search input to dropdown for single-value inputs.
 * Add support for labels (optgroup).
 * Add module that can transform an existing &lt;select&gt; input in the DOM into a Select3 instance.
 

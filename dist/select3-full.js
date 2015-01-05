@@ -457,10 +457,18 @@ $.extend(Select3.prototype, {
         } else if (this.options.query) {
             this.options.query({
                 callback: function(response) {
-                    this._setResults(
-                        this.validateData(response.results.map(Select3.processItem)),
-                        { hasMore: !!response.more }
-                    );
+                    if (response && response.results) {
+                        if ($.type(response.results) === 'array') {
+                            this._setResults(
+                                response.results.map(Select3.processItem),
+                                { hasMore: !!response.more }
+                            );
+                        } else {
+                            throw new Error('results must be an array');
+                        }
+                    } else {
+                        throw new Error('callback must be passed a response object');
+                    }
                 }.bind(this),
                 offset: 0,
                 term: term,
@@ -851,7 +859,7 @@ Select3.processItem = function(item) {
     } else if (item && Select3.isValidId(item.id)) {
         return item;
     } else {
-        throw new Error('items array contains invalid items');
+        throw new Error('invalid item');
     }
 };
 
@@ -1963,7 +1971,7 @@ function MultipleSelect3(options) {
 
     Select3.call(this, options);
 
-    this.$el.html(this.template('multiSelectInput', this.options));
+    this.$el.html(this.template('multipleSelectInput'));
 
     this._highlightedItemId = null;
 
@@ -2024,8 +2032,8 @@ $.extend(MultipleSelect3.prototype, {
     events: {
         'change': '_rerenderSelection',
         'click': '_clicked',
-        'click .select3-selected-item-remove': '_itemRemoveClicked',
-        'click .select3-selected-item': '_itemClicked',
+        'click .select3-multiple-selected-item-remove': '_itemRemoveClicked',
+        'click .select3-multiple-selected-item': '_itemClicked',
         'keyup .select3-multiple-input': '_keyReleased',
         'paste .select3-multiple-input': function() {
             setTimeout(this.search.bind(this), 10);
@@ -2201,7 +2209,7 @@ $.extend(MultipleSelect3.prototype, {
     _highlightItem: function(id) {
 
         this._highlightedItemId = id;
-        this.$('.select3-selected-item').removeClass('highlighted')
+        this.$('.select3-multiple-selected-item').removeClass('highlighted')
             .filter('[data-item-id=' + Select3.quoteCssAttr(id) + ']').addClass('highlighted');
 
         if (this.hasKeyboard) {
@@ -2224,6 +2232,8 @@ $.extend(MultipleSelect3.prototype, {
 
         this.remove(this._getItemId(event));
 
+        this._updateInputWidth();
+
         return false;
     },
 
@@ -2245,6 +2255,8 @@ $.extend(MultipleSelect3.prototype, {
         } else if (event.keyCode === Select3.Keys.ESCAPE) {
             this.close();
         } else {
+            this.open();
+
             this._search();
         }
 
@@ -2262,19 +2274,19 @@ $.extend(MultipleSelect3.prototype, {
 
         var $input = this._getInput();
         if (event.added) {
-            $input.before(this.template('multiSelectItem', $.extend({
+            $input.before(this.template('multipleSelectedItem', $.extend({
                 highlighted: (event.added.id === this._highlightedItemId)
             }, event.added)));
 
             this._scrollToBottom();
         } else if (event.removed) {
             var quotedId = Select3.quoteCssAttr(event.removed.id);
-            this.$('.select3-selected-item[data-item-id=' + quotedId + ']').remove();
+            this.$('.select3-multiple-selected-item[data-item-id=' + quotedId + ']').remove();
         } else {
-            this.$('.select3-selected-item').remove();
+            this.$('.select3-multiple-selected-item').remove();
 
             this._data.forEach(function(item) {
-                $input.before(this.template('multiSelectItem', $.extend({
+                $input.before(this.template('multipleSelectedItem', $.extend({
                     highlighted: (item.id === this._highlightedItemId)
                 }, item)));
             }, this);
@@ -2357,6 +2369,10 @@ var Select3 = _dereq_('./select3-base');
 function SingleSelect3(options) {
 
     Select3.call(this, options);
+
+    this.$el.html(this.template('singleSelectInput', this.options));
+
+    this._rerenderSelection();
 }
 
 SingleSelect3.prototype = Object.create(Select3.prototype);
@@ -2372,7 +2388,19 @@ $.extend(SingleSelect3.prototype, {
      *
      * Follows the same format as Backbone: http://backbonejs.org/#View-delegateEvents
      */
-    events: {},
+    events: {
+        'change': '_rerenderSelection',
+        'click': '_clicked',
+        'select3-selected': '_resultSelected'
+    },
+
+    /**
+     * Applies focus to the input.
+     */
+    focus: function() {
+
+        // TODO
+    },
 
     /**
      * Returns the correct data for a given value.
@@ -2399,6 +2427,28 @@ $.extend(SingleSelect3.prototype, {
 
         return (data ? data.id : null);
     },
+
+     /**
+      * @inherit
+      *
+      * @param options Options object. In addition to the options supported in the base
+      *                implementation, this may contain the following property:
+      *                allowClear - Boolean whether the selected item may be removed.
+      */
+     setOptions: function(options) {
+
+         Select3.prototype.setOptions.call(this, options);
+
+         $.each(options, function(key, value) {
+             switch (key) {
+             case 'allowClear':
+                 if ($.type(value) !== 'boolean') {
+                     throw new Error('allowClear must be a boolean');
+                 }
+                 break;
+             }
+         }.bind(this));
+     },
 
     /**
      * Validates data to set. Throws an exception if the data is invalid.
@@ -2427,6 +2477,47 @@ $.extend(SingleSelect3.prototype, {
         } else {
             throw new Error('Value for SingleSelect3 instance should be a valid ID or null');
         }
+    },
+
+    /**
+     * @private
+     */
+    _clicked: function() {
+
+        this.focus();
+
+        if (this.options.showDropdown !== false) {
+            this.open();
+        }
+
+        return false;
+    },
+
+    /**
+     * @private
+     */
+    _rerenderSelection: function() {
+
+        var $container = this.$('.select3-single-result-container');
+        if (this._data) {
+            $container.html(
+                this.template('singleSelectedItem', $.extend({
+                    showRemove: this.options.allowClear
+                }, this._data))
+            );
+        } else {
+            $container.html(
+                this.template('singleSelectPlaceholder', { placeholder: this.options.placeholder })
+            );
+        }
+    },
+
+    /**
+     * @private
+     */
+    _resultSelected: function(event) {
+
+        this.data(event.item);
     }
 
 });
@@ -2490,7 +2581,7 @@ Select3.Templates = {
      *                            purpose to be able to detect the width of text entered in the
      *                            input element.
      */
-    multiSelectInput: (
+    multipleSelectInput: (
         '<div class="select3-multiple-input-container">' +
             '<input type="text" autocomplete="off" autocorrect="off" autocapitalize="off" ' +
                    'class="select3-multiple-input">' +
@@ -2500,26 +2591,26 @@ Select3.Templates = {
     ),
 
     /**
-     * Renders multi-selection input boxes.
+     * Renders a selected item in multi-selection input boxes.
      *
-     * The template is expected to have a top-level element with the class 'select3-selected-item'.
-     * This element is also required to have a 'data-item-id' attribute with the ID set to that
-     * passed through the options object.
+     * The template is expected to have a top-level element with the class
+     * 'select3-multiple-selected-item'. This element is also required to have a 'data-item-id'
+     * attribute with the ID set to that passed through the options object.
      *
-     * An element with the class 'select3-item-remove' should be present which, when clicked, will
-     * cause the element to be removed.
+     * An element with the class 'select3-multiple-selected-item-remove' should be present which,
+     * when clicked, will cause the element to be removed.
      *
      * @param options Options object containing the following properties:
      *                highlighted - Boolean whether this item is currently highlighted.
      *                id - Identifier for the item.
      *                text - Text label which the user sees.
      */
-    multiSelectItem: function(options) {
+    multipleSelectedItem: function(options) {
         var extraClass = (options.highlighted ? ' highlighted' : '');
         return (
-            '<span class="select3-selected-item' + extraClass + '" ' +
+            '<span class="select3-multiple-selected-item' + extraClass + '" ' +
                   'data-item-id="' + escape(options.id) + '">' +
-                '<a class="select3-selected-item-remove">' +
+                '<a class="select3-multiple-selected-item-remove">' +
                     '<i class="fa fa-remove"></i>' +
                 '</a>' +
                 escape(options.text) +
@@ -2543,6 +2634,67 @@ Select3.Templates = {
             '<div class="select3-result-item" data-item-id="' + escape(options.id) + '">' +
                 escape(options.text) +
             '</div>'
+        );
+    },
+
+    /**
+     * Renders single-select input boxes.
+     *
+     * The template is expected to have at least one element with the class
+     * 'select3-single-result-container' which is the element containing the selected item or the
+     * placeholder.
+     */
+    singleSelectInput: (
+        '<div class="select3-single-select">' +
+            '<div class="select3-single-result-container"></div>' +
+            '<i class="fa fa-sort-desc select3-caret"></i>' +
+        '</div>'
+    ),
+
+    /**
+     * Renders the placeholder for single-select input boxes.
+     *
+     * The template is expected to have a top-level element with the class
+     * 'select3-single-input-placeholder'.
+     *
+     * @param options Options object containing the following property:
+     *                placeholder - The placeholder text.
+     */
+    singleSelectPlaceholder: function(options) {
+        return (
+            '<div class="select3-single-select-placeholder">' +
+                escape(options.placeholder) +
+            '</div>'
+        );
+    },
+
+    /**
+     * Renders the selected item in single-select input boxes.
+     *
+     * The template is expected to have a top-level element with the class
+     * 'select3-single-selected-item'. This element is also required to have a 'data-item-id'
+     * attribute with the ID set to that passed through the options object.
+     *
+     * @param options Options object containing the following properties:
+     *                id - Identifier for the item.
+     *                showRemove - Boolean whether a remove icon should be displayed.
+     *                text - Text label which the user sees.
+     */
+    singleSelectedItem: function(options) {
+        var removeIcon = '';
+        if (options.showRemove) {
+            removeIcon = (
+                '<a class="select3-single-selected-item-remove">' +
+                    '<i class="fa fa-remove"></i>' +
+                '</a>'
+            );
+        }
+        return (
+            '<span class="select3-single-selected-item" ' +
+                  'data-item-id="' + escape(options.id) + '">' +
+                escape(options.text) +
+                removeIcon +
+            '</span>'
         );
     }
 

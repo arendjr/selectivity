@@ -12,6 +12,10 @@ var Select3 = require('./select3-base');
 function SingleSelect3(options) {
 
     Select3.call(this, options);
+
+    this.$el.html(this.template('singleSelectInput', this.options));
+
+    this._rerenderSelection();
 }
 
 SingleSelect3.prototype = Object.create(Select3.prototype);
@@ -27,7 +31,19 @@ $.extend(SingleSelect3.prototype, {
      *
      * Follows the same format as Backbone: http://backbonejs.org/#View-delegateEvents
      */
-    events: {},
+    events: {
+        'change': '_rerenderSelection',
+        'click': '_clicked',
+        'select3-selected': '_resultSelected'
+    },
+
+    /**
+     * Applies focus to the input.
+     */
+    focus: function() {
+
+        // TODO
+    },
 
     /**
      * Returns the correct data for a given value.
@@ -54,6 +70,28 @@ $.extend(SingleSelect3.prototype, {
 
         return (data ? data.id : null);
     },
+
+     /**
+      * @inherit
+      *
+      * @param options Options object. In addition to the options supported in the base
+      *                implementation, this may contain the following property:
+      *                allowClear - Boolean whether the selected item may be removed.
+      */
+     setOptions: function(options) {
+
+         Select3.prototype.setOptions.call(this, options);
+
+         $.each(options, function(key, value) {
+             switch (key) {
+             case 'allowClear':
+                 if ($.type(value) !== 'boolean') {
+                     throw new Error('allowClear must be a boolean');
+                 }
+                 break;
+             }
+         }.bind(this));
+     },
 
     /**
      * Validates data to set. Throws an exception if the data is invalid.
@@ -82,6 +120,47 @@ $.extend(SingleSelect3.prototype, {
         } else {
             throw new Error('Value for SingleSelect3 instance should be a valid ID or null');
         }
+    },
+
+    /**
+     * @private
+     */
+    _clicked: function() {
+
+        this.focus();
+
+        if (this.options.showDropdown !== false) {
+            this.open();
+        }
+
+        return false;
+    },
+
+    /**
+     * @private
+     */
+    _rerenderSelection: function() {
+
+        var $container = this.$('.select3-single-result-container');
+        if (this._data) {
+            $container.html(
+                this.template('singleSelectedItem', $.extend({
+                    showRemove: this.options.allowClear
+                }, this._data))
+            );
+        } else {
+            $container.html(
+                this.template('singleSelectPlaceholder', { placeholder: this.options.placeholder })
+            );
+        }
+    },
+
+    /**
+     * @private
+     */
+    _resultSelected: function(event) {
+
+        this.data(event.item);
     }
 
 });

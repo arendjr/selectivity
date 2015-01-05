@@ -336,10 +336,18 @@ $.extend(Select3.prototype, {
         } else if (this.options.query) {
             this.options.query({
                 callback: function(response) {
-                    this._setResults(
-                        this.validateData(response.results.map(Select3.processItem)),
-                        { hasMore: !!response.more }
-                    );
+                    if (response && response.results) {
+                        if ($.type(response.results) === 'array') {
+                            this._setResults(
+                                response.results.map(Select3.processItem),
+                                { hasMore: !!response.more }
+                            );
+                        } else {
+                            throw new Error('results must be an array');
+                        }
+                    } else {
+                        throw new Error('callback must be passed a response object');
+                    }
                 }.bind(this),
                 offset: 0,
                 term: term,
@@ -730,7 +738,7 @@ Select3.processItem = function(item) {
     } else if (item && Select3.isValidId(item.id)) {
         return item;
     } else {
-        throw new Error('items array contains invalid items');
+        throw new Error('invalid item');
     }
 };
 

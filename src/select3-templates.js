@@ -52,7 +52,7 @@ Select3.Templates = {
      *                            purpose to be able to detect the width of text entered in the
      *                            input element.
      */
-    multiSelectInput: (
+    multipleSelectInput: (
         '<div class="select3-multiple-input-container">' +
             '<input type="text" autocomplete="off" autocorrect="off" autocapitalize="off" ' +
                    'class="select3-multiple-input">' +
@@ -62,26 +62,26 @@ Select3.Templates = {
     ),
 
     /**
-     * Renders multi-selection input boxes.
+     * Renders a selected item in multi-selection input boxes.
      *
-     * The template is expected to have a top-level element with the class 'select3-selected-item'.
-     * This element is also required to have a 'data-item-id' attribute with the ID set to that
-     * passed through the options object.
+     * The template is expected to have a top-level element with the class
+     * 'select3-multiple-selected-item'. This element is also required to have a 'data-item-id'
+     * attribute with the ID set to that passed through the options object.
      *
-     * An element with the class 'select3-item-remove' should be present which, when clicked, will
-     * cause the element to be removed.
+     * An element with the class 'select3-multiple-selected-item-remove' should be present which,
+     * when clicked, will cause the element to be removed.
      *
      * @param options Options object containing the following properties:
      *                highlighted - Boolean whether this item is currently highlighted.
      *                id - Identifier for the item.
      *                text - Text label which the user sees.
      */
-    multiSelectItem: function(options) {
+    multipleSelectedItem: function(options) {
         var extraClass = (options.highlighted ? ' highlighted' : '');
         return (
-            '<span class="select3-selected-item' + extraClass + '" ' +
+            '<span class="select3-multiple-selected-item' + extraClass + '" ' +
                   'data-item-id="' + escape(options.id) + '">' +
-                '<a class="select3-selected-item-remove">' +
+                '<a class="select3-multiple-selected-item-remove">' +
                     '<i class="fa fa-remove"></i>' +
                 '</a>' +
                 escape(options.text) +
@@ -105,6 +105,67 @@ Select3.Templates = {
             '<div class="select3-result-item" data-item-id="' + escape(options.id) + '">' +
                 escape(options.text) +
             '</div>'
+        );
+    },
+
+    /**
+     * Renders single-select input boxes.
+     *
+     * The template is expected to have at least one element with the class
+     * 'select3-single-result-container' which is the element containing the selected item or the
+     * placeholder.
+     */
+    singleSelectInput: (
+        '<div class="select3-single-select">' +
+            '<div class="select3-single-result-container"></div>' +
+            '<i class="fa fa-sort-desc select3-caret"></i>' +
+        '</div>'
+    ),
+
+    /**
+     * Renders the placeholder for single-select input boxes.
+     *
+     * The template is expected to have a top-level element with the class
+     * 'select3-single-input-placeholder'.
+     *
+     * @param options Options object containing the following property:
+     *                placeholder - The placeholder text.
+     */
+    singleSelectPlaceholder: function(options) {
+        return (
+            '<div class="select3-single-select-placeholder">' +
+                escape(options.placeholder) +
+            '</div>'
+        );
+    },
+
+    /**
+     * Renders the selected item in single-select input boxes.
+     *
+     * The template is expected to have a top-level element with the class
+     * 'select3-single-selected-item'. This element is also required to have a 'data-item-id'
+     * attribute with the ID set to that passed through the options object.
+     *
+     * @param options Options object containing the following properties:
+     *                id - Identifier for the item.
+     *                showRemove - Boolean whether a remove icon should be displayed.
+     *                text - Text label which the user sees.
+     */
+    singleSelectedItem: function(options) {
+        var removeIcon = '';
+        if (options.showRemove) {
+            removeIcon = (
+                '<a class="select3-single-selected-item-remove">' +
+                    '<i class="fa fa-remove"></i>' +
+                '</a>'
+            );
+        }
+        return (
+            '<span class="select3-single-selected-item" ' +
+                  'data-item-id="' + escape(options.id) + '">' +
+                escape(options.text) +
+                removeIcon +
+            '</span>'
         );
     }
 

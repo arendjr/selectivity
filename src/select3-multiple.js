@@ -13,7 +13,7 @@ function MultipleSelect3(options) {
 
     Select3.call(this, options);
 
-    this.$el.html(this.template('multiSelectInput', this.options));
+    this.$el.html(this.template('multipleSelectInput'));
 
     this._highlightedItemId = null;
 
@@ -74,8 +74,8 @@ $.extend(MultipleSelect3.prototype, {
     events: {
         'change': '_rerenderSelection',
         'click': '_clicked',
-        'click .select3-selected-item-remove': '_itemRemoveClicked',
-        'click .select3-selected-item': '_itemClicked',
+        'click .select3-multiple-selected-item-remove': '_itemRemoveClicked',
+        'click .select3-multiple-selected-item': '_itemClicked',
         'keyup .select3-multiple-input': '_keyReleased',
         'paste .select3-multiple-input': function() {
             setTimeout(this.search.bind(this), 10);
@@ -251,7 +251,7 @@ $.extend(MultipleSelect3.prototype, {
     _highlightItem: function(id) {
 
         this._highlightedItemId = id;
-        this.$('.select3-selected-item').removeClass('highlighted')
+        this.$('.select3-multiple-selected-item').removeClass('highlighted')
             .filter('[data-item-id=' + Select3.quoteCssAttr(id) + ']').addClass('highlighted');
 
         if (this.hasKeyboard) {
@@ -274,6 +274,8 @@ $.extend(MultipleSelect3.prototype, {
 
         this.remove(this._getItemId(event));
 
+        this._updateInputWidth();
+
         return false;
     },
 
@@ -295,6 +297,8 @@ $.extend(MultipleSelect3.prototype, {
         } else if (event.keyCode === Select3.Keys.ESCAPE) {
             this.close();
         } else {
+            this.open();
+
             this._search();
         }
 
@@ -312,19 +316,19 @@ $.extend(MultipleSelect3.prototype, {
 
         var $input = this._getInput();
         if (event.added) {
-            $input.before(this.template('multiSelectItem', $.extend({
+            $input.before(this.template('multipleSelectedItem', $.extend({
                 highlighted: (event.added.id === this._highlightedItemId)
             }, event.added)));
 
             this._scrollToBottom();
         } else if (event.removed) {
             var quotedId = Select3.quoteCssAttr(event.removed.id);
-            this.$('.select3-selected-item[data-item-id=' + quotedId + ']').remove();
+            this.$('.select3-multiple-selected-item[data-item-id=' + quotedId + ']').remove();
         } else {
-            this.$('.select3-selected-item').remove();
+            this.$('.select3-multiple-selected-item').remove();
 
             this._data.forEach(function(item) {
-                $input.before(this.template('multiSelectItem', $.extend({
+                $input.before(this.template('multipleSelectedItem', $.extend({
                     highlighted: (item.id === this._highlightedItemId)
                 }, item)));
             }, this);

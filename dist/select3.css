@@ -35,7 +35,7 @@ input[type="text"].select3-multiple-input {
     border: none;
     float: left;
     height: 2.3em;
-    max-width: calc(100% - 10px);
+    max-width: 100%;
     outline: 0;
     padding: 0;
 }
@@ -54,7 +54,7 @@ input[type="text"].select3-multiple-input:focus {
     white-space: pre;
 }
 
-.select3-selected-item {
+.select3-multiple-selected-item {
     background: #4484c7;
     border-radius: 3px;
     color: #fff;
@@ -67,13 +67,52 @@ input[type="text"].select3-multiple-input:focus {
     white-space: nowrap;
 }
 
-.select3-selected-item.highlighted {
+.select3-multiple-selected-item.highlighted {
     background-color: #ccc;
 }
 
-.select3-selected-item-remove {
+.select3-multiple-selected-item-remove {
     cursor: pointer;
     padding: 5px;
+}
+
+/**
+ * Single-select input.
+ */
+
+.select3-single-select {
+    border-radius: 2px;
+    cursor: pointer;
+    min-height: 2em;
+    padding: 5px;
+    position: relative;
+}
+.select3-single-select:hover {
+    background: #eee;
+}
+
+.select3-single-result-container {
+    left: 5px;
+    overflow: hidden;
+    position: absolute;
+    right: 15px;
+    text-overflow: ellipsis;
+    top: 25%;
+    white-space: nowrap;
+}
+
+.select3-single-selected-item {
+    color: #000;
+}
+
+.select3-single-select-placeholder {
+    color: #999;
+}
+
+.select3-caret {
+    position: absolute;
+    right: 5px;
+    top: 25%;
 }
 
 /**
