@@ -97,12 +97,17 @@ input[type="text"].select3-multiple-input:focus {
     position: absolute;
     right: 15px;
     text-overflow: ellipsis;
-    top: 25%;
+    top: 30%;
     white-space: nowrap;
 }
 
 .select3-single-selected-item {
     color: #000;
+}
+
+.select3-single-selected-item-remove {
+    float: right;
+    padding: 0 5px;
 }
 
 .select3-single-select-placeholder {

@@ -34,6 +34,7 @@ $.extend(SingleSelect3.prototype, {
     events: {
         'change': '_rerenderSelection',
         'click': '_clicked',
+        'click .select3-single-selected-item-remove': '_itemRemoveClicked',
         'select3-selected': '_resultSelected'
     },
 
@@ -132,6 +133,16 @@ $.extend(SingleSelect3.prototype, {
         if (this.options.showDropdown !== false) {
             this.open();
         }
+
+        return false;
+    },
+
+    /**
+     * @private
+     */
+    _itemRemoveClicked: function() {
+
+        this.data(null);
 
         return false;
     },

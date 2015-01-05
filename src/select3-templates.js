@@ -163,8 +163,8 @@ Select3.Templates = {
         return (
             '<span class="select3-single-selected-item" ' +
                   'data-item-id="' + escape(options.id) + '">' +
-                escape(options.text) +
                 removeIcon +
+                escape(options.text) +
             '</span>'
         );
     }
