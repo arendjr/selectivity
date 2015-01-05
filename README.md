@@ -154,9 +154,9 @@ Project Status
 
 Select3 is in an early stage of development. The following items are on my direct TODO list:
 
-* Remove already selected results from dropdown in multi-value input implementation.
 * Hover support in dropdown.
 * Keyboard support.
+* Implement pagination.
 * Single-value input implementation.
 * Add support for labels (optgroup).
 * Add module that can transform an existing &lt;select&gt; input in the DOM into a Select3 instance.
