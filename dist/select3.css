@@ -136,5 +136,19 @@ input[type="text"].select3-multiple-input:focus {
 .select3-load-more,
 .select3-result-item {
     cursor: pointer;
-    padding: 6px;
+    padding: 7px;
+}
+
+.select3-load-more.highlight,
+.select3-result-item.highlight {
+    background: #4484c7;
+    color: white;
+}
+
+.select3-result-item:first-child {
+    border-radius: 4px 4px 0 0;
+}
+
+.select3-result-item:last-child {
+    border-radius: 0 0 4px 4px;
 }

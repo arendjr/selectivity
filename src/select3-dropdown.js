@@ -16,6 +16,30 @@ function Select3Dropdown(options) {
 
     this.$el = $(select3.template('dropdown'));
 
+    /**
+     * Boolean indicating whether more results are available than currently displayed in the
+     * dropdown.
+     */
+    this.hasMore = false;
+
+    /**
+     * The currently highlighted result item.
+     */
+    this.highlightedResult = null;
+
+    /**
+     * Boolean whether the load more link is currently highlighted.
+     */
+    this.loadMoreHighlighted = false;
+
+    /**
+     * The results displayed in the dropdown.
+     */
+    this.results = [];
+
+    /**
+     * Select3 instance.
+     */
     this.select3 = select3;
 
     this._closeProxy = this.close.bind(this);
@@ -54,6 +78,18 @@ $.extend(Select3Dropdown.prototype, {
     },
 
     /**
+     * Emulates a click on the highlighted item.
+     */
+    clickHighlight: function() {
+
+        if (this.highlightedResult) {
+            this._selectItem(this.highlightedResult.id);
+        } else if (this.loadMoreHighlighted) {
+            this._loadMoreClicked();
+        }
+    },
+
+    /**
      * Closes the dropdown.
      */
     close: function() {
@@ -74,6 +110,90 @@ $.extend(Select3Dropdown.prototype, {
     events: {
         'click .select3-load-more': '_loadMoreClicked',
         'click .select3-result-item': '_resultClicked'
+    },
+
+    /**
+     * Highlights a result item.
+     *
+     * @param item The item to highlight.
+     */
+    highlight: function(item) {
+
+        if (this.loadMoreHighlighted) {
+            this.$('.select3-load-more').removeClass('highlight');
+        }
+
+        this.$('.select3-result-item').removeClass('highlight')
+            .filter('[data-item-id=' + Select3.quoteCssAttr(item.id) + ']').addClass('highlight');
+
+        this.highlightedResult = item;
+        this.loadMoreHighlighted = false;
+
+        this.select3.triggerEvent('select2-highlight', { item: item, val: item.id });
+    },
+
+    /**
+     * Highlights the load more link.
+     *
+     * @param item The item to highlight.
+     */
+    highlightLoadMore: function() {
+
+        this.$('.select3-result-item').removeClass('highlight');
+        this.$('.select3-load-more').addClass('highlight');
+
+        this.highlightedResult = null;
+        this.loadMoreHighlighted = true;
+    },
+
+    /**
+     * Highlights the next result item.
+     */
+    highlightNext: function() {
+
+        var results = this.results;
+        if (results.length) {
+            var index = 0;
+            var highlightedResult = this.highlightedResult;
+            if (highlightedResult) {
+                index = Select3.findIndexById(results, highlightedResult.id) + 1;
+                if (index >= results.length) {
+                    if (this.hasMore) {
+                        this.highlightLoadMore();
+                        return;
+                    } else {
+                        index = 0;
+                    }
+                }
+            }
+
+            this.highlight(results[index]);
+        }
+    },
+
+    /**
+     * Highlights the previous result item.
+     */
+    highlightPrevious: function() {
+
+        var results = this.results;
+        if (results.length) {
+            var index = results.length - 1;
+            var highlightedResult = this.highlightedResult;
+            if (highlightedResult) {
+                index = Select3.findIndexById(results, highlightedResult.id) - 1;
+                if (index < 0) {
+                    if (this.hasMore) {
+                        this.highlightLoadMore();
+                        return;
+                    } else {
+                        index = results.length - 1;
+                    }
+                }
+            }
+
+            this.highlight(results[index]);
+        }
     },
 
     /**
@@ -124,6 +244,13 @@ $.extend(Select3Dropdown.prototype, {
         if (options.hasMore) {
             $resultsContainer.append(select3.template('loadMore'));
         }
+
+        this.hasMore = options.hasMore;
+        this.results = results;
+
+        if (results.length) {
+            this.highlight(results[0]);
+        }
     },
 
     /**
@@ -159,20 +286,27 @@ $.extend(Select3Dropdown.prototype, {
      */
     _resultClicked: function(event) {
 
+        this._selectItem(this.select3._getItemId(event));
+
+        return false;
+    },
+
+    /**
+     * @private
+     */
+    _selectItem: function(id) {
+
         var select3 = this.select3;
-        var id = select3._getItemId(event);
         var item = Select3.findById(select3.results, id);
 
         var options = { id: id, item: item };
-        event = $.Event('select3-selecting', options);
+        var event = $.Event('select3-selecting', options);
         select3.$el.trigger(event);
 
         if (!event.isDefaultPrevented()) {
             event = $.Event('select3-selected', options);
             select3.$el.trigger(event);
         }
-
-        return false;
     }
 
 });

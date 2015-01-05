@@ -72,27 +72,27 @@ $.extend(SingleSelect3.prototype, {
         return (data ? data.id : null);
     },
 
-     /**
-      * @inherit
-      *
-      * @param options Options object. In addition to the options supported in the base
-      *                implementation, this may contain the following property:
-      *                allowClear - Boolean whether the selected item may be removed.
-      */
-     setOptions: function(options) {
+    /**
+     * @inherit
+     *
+     * @param options Options object. In addition to the options supported in the base
+     *                implementation, this may contain the following property:
+     *                allowClear - Boolean whether the selected item may be removed.
+     */
+    setOptions: function(options) {
 
-         Select3.prototype.setOptions.call(this, options);
+        Select3.prototype.setOptions.call(this, options);
 
-         $.each(options, function(key, value) {
-             switch (key) {
-             case 'allowClear':
-                 if ($.type(value) !== 'boolean') {
-                     throw new Error('allowClear must be a boolean');
-                 }
-                 break;
-             }
-         }.bind(this));
-     },
+        $.each(options, function(key, value) {
+            switch (key) {
+            case 'allowClear':
+                if ($.type(value) !== 'boolean') {
+                    throw new Error('allowClear must be a boolean');
+                }
+                break;
+            }
+        }.bind(this));
+    },
 
     /**
      * Validates data to set. Throws an exception if the data is invalid.

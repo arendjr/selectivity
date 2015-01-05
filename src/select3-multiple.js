@@ -15,6 +15,8 @@ function MultipleSelect3(options) {
 
     this.$el.html(this.template('multipleSelectInput'));
 
+    this._$input = this.$('.select3-multiple-input:not(.select3-width-detector)');
+
     this._highlightedItemId = null;
 
     this._rerenderSelection();
@@ -76,6 +78,7 @@ $.extend(MultipleSelect3.prototype, {
         'click': '_clicked',
         'click .select3-multiple-selected-item-remove': '_itemRemoveClicked',
         'click .select3-multiple-selected-item': '_itemClicked',
+        'keydown .select3-multiple-input': '_keyHeld',
         'keyup .select3-multiple-input': '_keyReleased',
         'paste .select3-multiple-input': function() {
             setTimeout(this.search.bind(this), 10);
@@ -98,7 +101,7 @@ $.extend(MultipleSelect3.prototype, {
      */
     focus: function() {
 
-        this._getInput().focus();
+        this._$input.focus();
     },
 
     /**
@@ -159,6 +162,35 @@ $.extend(MultipleSelect3.prototype, {
     },
 
     /**
+     * @inherit
+     *
+     * @param options Options object. In addition to the options supported in the base
+     *                implementation, this may contain the following property:
+     *                backspaceHighlightsBeforeDelete - If set to true, when the user enters a
+     *                                                  backspace while there is no text in the
+     *                                                  search field but there are selected items,
+     *                                                  the last selected item will be highlighted
+     *                                                  and when a second backspace is entered the
+     *                                                  item is deleted. If false (the default),
+     *                                                  the item gets deleted on the first
+     *                                                  backspace.
+     */
+    setOptions: function(options) {
+
+        Select3.prototype.setOptions.call(this, options);
+
+        $.each(options, function(key, value) {
+            switch (key) {
+            case 'backspaceHighlightsBeforeDelete':
+                if ($.type(value) !== 'boolean') {
+                    throw new Error('backspaceHighlightsBeforeDelete must be a boolean');
+                }
+                break;
+            }
+        }.bind(this));
+    },
+
+    /**
      * Validates data to set. Throws an exception if the data is invalid.
      *
      * @param data The data to validate. Should be an array of objects with 'id' and 'text'
@@ -204,10 +236,14 @@ $.extend(MultipleSelect3.prototype, {
      */
     _backspacePressed: function() {
 
-        if (this._highlightedItemId) {
-            this._deletePressed();
+        if (this.options.backspaceHighlightsBeforeDelete) {
+            if (this._highlightedItemId) {
+                this._deletePressed();
+            } else if (this._value.length) {
+                this._highlightItem(this._value.slice(-1)[0]);
+            }
         } else if (this._value.length) {
-            this._highlightItem(this._value.slice(-1)[0]);
+            this.remove(this._value.slice(-1)[0]);
         }
     },
 
@@ -232,17 +268,7 @@ $.extend(MultipleSelect3.prototype, {
 
         if (this._highlightedItemId) {
             this.remove(this._highlightedItemId);
-
-            this.$el.trigger('change');
         }
-    },
-
-    /**
-     * @private
-     */
-    _getInput: function() {
-
-        return this.$('.select3-multiple-input:not(.select3-width-detector)');
     },
 
     /**
@@ -282,20 +308,44 @@ $.extend(MultipleSelect3.prototype, {
     /**
      * @private
      */
+    _keyHeld: function(event) {
+
+        this._originalValue = this._$input.val();
+
+        if (event.keyCode === Select3.Keys.DOWN_ARROW) {
+            if (this.dropdown) {
+                this.dropdown.highlightNext();
+            }
+        } else if (event.keyCode === Select3.Keys.UP_ARROW) {
+            if (this.dropdown) {
+                this.dropdown.highlightPrevious();
+            }
+        }
+    },
+
+    /**
+     * @private
+     */
     _keyReleased: function(event) {
 
-        var inputHasText = this._getInput().val();
+        var dropdown = this.dropdown, inputHadText = !!this._originalValue;
 
         if (event.keyCode === Select3.Keys.ENTER && !event.ctrlKey) {
-            if (this.highlightedResult) {
-                this.add(this.highlightedResult);
+            if (dropdown) {
+                dropdown.clickHighlight();
             }
-        } else if (event.keyCode === Select3.Keys.BACKSPACE && !inputHasText) {
+        } else if (event.keyCode === Select3.Keys.BACKSPACE && !inputHadText) {
             this._backspacePressed();
-        } else if (event.keyCode === Select3.Keys.DELETE && !inputHasText) {
+        } else if (event.keyCode === Select3.Keys.DELETE && !inputHadText) {
             this._deletePressed();
         } else if (event.keyCode === Select3.Keys.ESCAPE) {
             this.close();
+        } else if (event.keyCode === Select3.Keys.DOWN_ARROW ||
+                   event.keyCode === Select3.Keys.UP_ARROW) {
+            // handled in _keyHeld() because the response feels faster and it works with repeated
+            // events if the user holds the key for a longer period
+            // still, we issue an open() call here in case the dropdown was not yet open...
+            this.open();
         } else {
             this.open();
 
@@ -314,7 +364,7 @@ $.extend(MultipleSelect3.prototype, {
 
         event = event || {};
 
-        var $input = this._getInput();
+        var $input = this._$input;
         if (event.added) {
             $input.before(this.template('multipleSelectedItem', $.extend({
                 highlighted: (event.added.id === this._highlightedItemId)
@@ -336,7 +386,9 @@ $.extend(MultipleSelect3.prototype, {
 
         if (event.added || event.removed) {
             if (this.dropdown) {
-                this.dropdown.showResults(this.filterResults(this.results), this.resultsOptions);
+                this.dropdown.showResults(this.filterResults(this.results), {
+                    hasMore: this.dropdown.hasMore
+                });
             }
 
             if (this.hasKeyboard) {
@@ -375,7 +427,7 @@ $.extend(MultipleSelect3.prototype, {
      */
     _search: function() {
 
-        this.search(this._getInput().val());
+        this.search(this._$input.val());
     },
 
     /**
@@ -383,7 +435,7 @@ $.extend(MultipleSelect3.prototype, {
      */
     _updateInputWidth: function() {
 
-        var $input = this._getInput(), $widthDetector = this.$('.select3-width-detector');
+        var $input = this._$input, $widthDetector = this.$('.select3-width-detector');
         $widthDetector.text($input.val() || !this._data.length && this.options.placeholder || '');
         $input.width($widthDetector.width() + 20);
 

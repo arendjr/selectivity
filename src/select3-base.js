@@ -135,11 +135,6 @@ function Select3(options) {
     this.results = [];
 
     /**
-     * The currently highlighted result.
-     */
-    this.highlightedResult = null;
-
-    /**
      * Mapping of templates.
      *
      * Custom templates can be specified in the options object.
@@ -483,18 +478,24 @@ $.extend(Select3.prototype, {
     /**
      * Triggers the change event.
      *
-     * The event object at least contains the following properties:
-     * data - The new data of the Select3 instance.
+     * The event object at least contains the following property:
      * val - The new value of the Select3 instance.
      *
      * @param Optional additional options added to the event object.
      */
     triggerChange: function(options) {
 
-        this.$el.trigger($.Event('change', $.extend({
-            data: this._data,
-            val: this._value
-        }, options)));
+        this.triggerEvent('change', $.extend({ val: this._value }, options));
+    },
+
+    /**
+     * Triggers an event on the instance's element.
+     *
+     * @param Optional event data to be added to the event object.
+     */
+    triggerEvent: function(eventName, data) {
+
+        this.$el.trigger($.Event(eventName, data || {}));
     },
 
     /**
@@ -622,7 +623,6 @@ $.extend(Select3.prototype, {
     _setResults: function(results, options) {
 
         this.results = results;
-        this.resultsOptions = options;
 
         if (this.dropdown) {
             this.dropdown.showResults(this.filterResults(results), options || {});

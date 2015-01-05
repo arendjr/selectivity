@@ -55,6 +55,7 @@ given selector. The following options are supported:
 
 Option         | Type                   | Description
 -------------- | ---------------------- | -----------
+backspaceHighlightsBeforeDelete | `Boolean` | If set to `true`, when the user enters a backspace while there is no text in the search field but there are selected items, the last selected item will be highlighted and when a second backspace is entered the item is deleted. If `false` (the default), the item gets deleted on the first backspace.
 allowClear     | `Boolean`              | Set to `true` to allow the selection to be cleared. This option only applies to single-value inputs.
 closeOnSelect  | `Boolean`              | Set to `false` to keep the dropdown open after the user has selected an item. This is useful if you want to allow the user to quickly select multiple items. The default value is `true`.
 data           | `Object` or `Array`    | Initial selection data to set. This should be an object with `id` and `text` properties in the case of a SingleSelect3 instance, or an array of such objects in the case of a MultipleSelect3 instance. This option is mutually exclusive with `value`.
@@ -79,8 +80,9 @@ listened to using jQuery's `on()` method.
 
 Event                 | Description
 --------------------- | -----------
-`"change"`            | Emitted when the selection has been changed. Additional properties on the event object: `added`, `data`, `removed` and `val`.
+`"change"`            | Emitted when the selection has been changed. Additional properties on the event object: `added`, `removed` and `val`.
 `"select3-closed"`    | Emitted when the dropdown is closed.
+`"select3-highlight"` | Emitted when an item in the dropdown is highlighted. Additional properties on the event object: `item` and `val`.
 `"select3-open"`      | Emitted when the dropdown is opened.
 `"select3-opening"`   | Emitted when the dropdown is about to be opened. You can call `preventDefault()` on the event object to cancel the opening of the dropdown.
 `"select3-selected"`  | Emitted when an item has been selected. Additional properties on the event object: `id` and `item`.
@@ -156,7 +158,6 @@ Project Status
 Select3 is in an early stage of development. The following items are on my direct TODO list:
 
 * Hover support in dropdown.
-* Keyboard support.
 * Implement pagination.
 * Add search input to dropdown for single-value inputs.
 * Add support for labels (optgroup).

@@ -256,11 +256,6 @@ function Select3(options) {
     this.results = [];
 
     /**
-     * The currently highlighted result.
-     */
-    this.highlightedResult = null;
-
-    /**
      * Mapping of templates.
      *
      * Custom templates can be specified in the options object.
@@ -604,18 +599,24 @@ $.extend(Select3.prototype, {
     /**
      * Triggers the change event.
      *
-     * The event object at least contains the following properties:
-     * data - The new data of the Select3 instance.
+     * The event object at least contains the following property:
      * val - The new value of the Select3 instance.
      *
      * @param Optional additional options added to the event object.
      */
     triggerChange: function(options) {
 
-        this.$el.trigger($.Event('change', $.extend({
-            data: this._data,
-            val: this._value
-        }, options)));
+        this.triggerEvent('change', $.extend({ val: this._value }, options));
+    },
+
+    /**
+     * Triggers an event on the instance's element.
+     *
+     * @param Optional event data to be added to the event object.
+     */
+    triggerEvent: function(eventName, data) {
+
+        this.$el.trigger($.Event(eventName, data || {}));
     },
 
     /**
@@ -743,7 +744,6 @@ $.extend(Select3.prototype, {
     _setResults: function(results, options) {
 
         this.results = results;
-        this.resultsOptions = options;
 
         if (this.dropdown) {
             this.dropdown.showResults(this.filterResults(results), options || {});
@@ -1776,6 +1776,30 @@ function Select3Dropdown(options) {
 
     this.$el = $(select3.template('dropdown'));
 
+    /**
+     * Boolean indicating whether more results are available than currently displayed in the
+     * dropdown.
+     */
+    this.hasMore = false;
+
+    /**
+     * The currently highlighted result item.
+     */
+    this.highlightedResult = null;
+
+    /**
+     * Boolean whether the load more link is currently highlighted.
+     */
+    this.loadMoreHighlighted = false;
+
+    /**
+     * The results displayed in the dropdown.
+     */
+    this.results = [];
+
+    /**
+     * Select3 instance.
+     */
     this.select3 = select3;
 
     this._closeProxy = this.close.bind(this);
@@ -1814,6 +1838,18 @@ $.extend(Select3Dropdown.prototype, {
     },
 
     /**
+     * Emulates a click on the highlighted item.
+     */
+    clickHighlight: function() {
+
+        if (this.highlightedResult) {
+            this._selectItem(this.highlightedResult.id);
+        } else if (this.loadMoreHighlighted) {
+            this._loadMoreClicked();
+        }
+    },
+
+    /**
      * Closes the dropdown.
      */
     close: function() {
@@ -1834,6 +1870,90 @@ $.extend(Select3Dropdown.prototype, {
     events: {
         'click .select3-load-more': '_loadMoreClicked',
         'click .select3-result-item': '_resultClicked'
+    },
+
+    /**
+     * Highlights a result item.
+     *
+     * @param item The item to highlight.
+     */
+    highlight: function(item) {
+
+        if (this.loadMoreHighlighted) {
+            this.$('.select3-load-more').removeClass('highlight');
+        }
+
+        this.$('.select3-result-item').removeClass('highlight')
+            .filter('[data-item-id=' + Select3.quoteCssAttr(item.id) + ']').addClass('highlight');
+
+        this.highlightedResult = item;
+        this.loadMoreHighlighted = false;
+
+        this.select3.triggerEvent('select2-highlight', { item: item, val: item.id });
+    },
+
+    /**
+     * Highlights the load more link.
+     *
+     * @param item The item to highlight.
+     */
+    highlightLoadMore: function(item) {
+
+        this.$('.select3-result-item').removeClass('highlight');
+        this.$('.select3-load-more').addClass('highlight');
+
+        this.highlightedResult = null;
+        this.loadMoreHighlighted = true;
+    },
+
+    /**
+     * Highlights the next result item.
+     */
+    highlightNext: function() {
+
+        var results = this.results;
+        if (results.length) {
+            var index = 0;
+            var highlightedResult = this.highlightedResult;
+            if (highlightedResult) {
+                index = Select3.findIndexById(results, highlightedResult.id) + 1;
+                if (index >= results.length) {
+                    if (this.hasMore) {
+                        this.highlightLoadMore();
+                        return;
+                    } else {
+                        index = 0;
+                    }
+                }
+            }
+
+            this.highlight(results[index]);
+        }
+    },
+
+    /**
+     * Highlights the previous result item.
+     */
+    highlightPrevious: function() {
+
+        var results = this.results;
+        if (results.length) {
+            var index = results.length - 1;
+            var highlightedResult = this.highlightedResult;
+            if (highlightedResult) {
+                index = Select3.findIndexById(results, highlightedResult.id) - 1;
+                if (index < 0) {
+                    if (this.hasMore) {
+                        this.highlightLoadMore();
+                        return;
+                    } else {
+                        index = results.length - 1;
+                    }
+                }
+            }
+
+            this.highlight(results[index]);
+        }
     },
 
     /**
@@ -1884,6 +2004,13 @@ $.extend(Select3Dropdown.prototype, {
         if (options.hasMore) {
             $resultsContainer.append(select3.template('loadMore'));
         }
+
+        this.hasMore = options.hasMore;
+        this.results = results;
+
+        if (results.length) {
+            this.highlight(results[0]);
+        }
     },
 
     /**
@@ -1919,8 +2046,17 @@ $.extend(Select3Dropdown.prototype, {
      */
     _resultClicked: function(event) {
 
+        this._selectItem(this.select3._getItemId(event));
+
+        return false;
+    },
+
+    /**
+     * @private
+     */
+    _selectItem: function(id) {
+
         var select3 = this.select3;
-        var id = select3._getItemId(event);
         var item = Select3.findById(select3.results, id);
 
         var options = { id: id, item: item };
@@ -1931,8 +2067,6 @@ $.extend(Select3Dropdown.prototype, {
             event = $.Event('select3-selected', options);
             select3.$el.trigger(event);
         }
-
-        return false;
     }
 
 });
@@ -1972,6 +2106,8 @@ function MultipleSelect3(options) {
     Select3.call(this, options);
 
     this.$el.html(this.template('multipleSelectInput'));
+
+    this._$input = this.$('.select3-multiple-input:not(.select3-width-detector)');
 
     this._highlightedItemId = null;
 
@@ -2034,6 +2170,7 @@ $.extend(MultipleSelect3.prototype, {
         'click': '_clicked',
         'click .select3-multiple-selected-item-remove': '_itemRemoveClicked',
         'click .select3-multiple-selected-item': '_itemClicked',
+        'keydown .select3-multiple-input': '_keyHeld',
         'keyup .select3-multiple-input': '_keyReleased',
         'paste .select3-multiple-input': function() {
             setTimeout(this.search.bind(this), 10);
@@ -2056,7 +2193,7 @@ $.extend(MultipleSelect3.prototype, {
      */
     focus: function() {
 
-        this._getInput().focus();
+        this._$input.focus();
     },
 
     /**
@@ -2117,6 +2254,35 @@ $.extend(MultipleSelect3.prototype, {
     },
 
     /**
+     * @inherit
+     *
+     * @param options Options object. In addition to the options supported in the base
+     *                implementation, this may contain the following property:
+     *                backspaceHighlightsBeforeDelete - If set to true, when the user enters a
+     *                                                  backspace while there is no text in the
+     *                                                  search field but there are selected items,
+     *                                                  the last selected item will be highlighted
+     *                                                  and when a second backspace is entered the
+     *                                                  item is deleted. If false (the default),
+     *                                                  the item gets deleted on the first
+     *                                                  backspace.
+     */
+    setOptions: function(options) {
+
+        Select3.prototype.setOptions.call(this, options);
+
+        $.each(options, function(key, value) {
+            switch (key) {
+            case 'backspaceHighlightsBeforeDelete':
+                if ($.type(value) !== 'boolean') {
+                    throw new Error('backspaceHighlightsBeforeDelete must be a boolean');
+                }
+                break;
+            }
+        }.bind(this));
+    },
+
+    /**
      * Validates data to set. Throws an exception if the data is invalid.
      *
      * @param data The data to validate. Should be an array of objects with 'id' and 'text'
@@ -2162,10 +2328,14 @@ $.extend(MultipleSelect3.prototype, {
      */
     _backspacePressed: function() {
 
-        if (this._highlightedItemId) {
-            this._deletePressed();
+        if (this.options.backspaceHighlightsBeforeDelete) {
+            if (this._highlightedItemId) {
+                this._deletePressed();
+            } else if (this._value.length) {
+                this._highlightItem(this._value.slice(-1)[0]);
+            }
         } else if (this._value.length) {
-            this._highlightItem(this._value.slice(-1)[0]);
+            this.remove(this._value.slice(-1)[0]);
         }
     },
 
@@ -2190,17 +2360,7 @@ $.extend(MultipleSelect3.prototype, {
 
         if (this._highlightedItemId) {
             this.remove(this._highlightedItemId);
-
-            this.$el.trigger('change');
         }
-    },
-
-    /**
-     * @private
-     */
-    _getInput: function() {
-
-        return this.$('.select3-multiple-input:not(.select3-width-detector)');
     },
 
     /**
@@ -2240,20 +2400,44 @@ $.extend(MultipleSelect3.prototype, {
     /**
      * @private
      */
+    _keyHeld: function(event) {
+
+        this._originalValue = this._$input.val();
+
+        if (event.keyCode === Select3.Keys.DOWN_ARROW) {
+            if (this.dropdown) {
+                this.dropdown.highlightNext();
+            }
+        } else if (event.keyCode === Select3.Keys.UP_ARROW) {
+            if (this.dropdown) {
+                this.dropdown.highlightPrevious();
+            }
+        }
+    },
+
+    /**
+     * @private
+     */
     _keyReleased: function(event) {
 
-        var inputHasText = this._getInput().val();
+        var dropdown = this.dropdown, inputHadText = !!this._originalValue;
 
         if (event.keyCode === Select3.Keys.ENTER && !event.ctrlKey) {
-            if (this.highlightedResult) {
-                this.add(this.highlightedResult);
+            if (dropdown) {
+                dropdown.clickHighlight();
             }
-        } else if (event.keyCode === Select3.Keys.BACKSPACE && !inputHasText) {
+        } else if (event.keyCode === Select3.Keys.BACKSPACE && !inputHadText) {
             this._backspacePressed();
-        } else if (event.keyCode === Select3.Keys.DELETE && !inputHasText) {
+        } else if (event.keyCode === Select3.Keys.DELETE && !inputHadText) {
             this._deletePressed();
         } else if (event.keyCode === Select3.Keys.ESCAPE) {
             this.close();
+        } else if (event.keyCode === Select3.Keys.DOWN_ARROW ||
+                   event.keyCode === Select3.Keys.UP_ARROW) {
+            // handled in _keyHeld() because the response feels faster and it works with repeated
+            // events if the user holds the key for a longer period
+            // still, we issue an open() call here in case the dropdown was not yet open...
+            this.open();
         } else {
             this.open();
 
@@ -2272,7 +2456,7 @@ $.extend(MultipleSelect3.prototype, {
 
         event = event || {};
 
-        var $input = this._getInput();
+        var $input = this._$input;
         if (event.added) {
             $input.before(this.template('multipleSelectedItem', $.extend({
                 highlighted: (event.added.id === this._highlightedItemId)
@@ -2294,7 +2478,9 @@ $.extend(MultipleSelect3.prototype, {
 
         if (event.added || event.removed) {
             if (this.dropdown) {
-                this.dropdown.showResults(this.filterResults(this.results), this.resultsOptions);
+                this.dropdown.showResults(this.filterResults(this.results), {
+                    hasMore: this.dropdown.hasMore
+                });
             }
 
             if (this.hasKeyboard) {
@@ -2333,7 +2519,7 @@ $.extend(MultipleSelect3.prototype, {
      */
     _search: function() {
 
-        this.search(this._getInput().val());
+        this.search(this._$input.val());
     },
 
     /**
@@ -2341,7 +2527,7 @@ $.extend(MultipleSelect3.prototype, {
      */
     _updateInputWidth: function() {
 
-        var $input = this._getInput(), $widthDetector = this.$('.select3-width-detector');
+        var $input = this._$input, $widthDetector = this.$('.select3-width-detector');
         $widthDetector.text($input.val() || !this._data.length && this.options.placeholder || '');
         $input.width($widthDetector.width() + 20);
 
@@ -2429,27 +2615,27 @@ $.extend(SingleSelect3.prototype, {
         return (data ? data.id : null);
     },
 
-     /**
-      * @inherit
-      *
-      * @param options Options object. In addition to the options supported in the base
-      *                implementation, this may contain the following property:
-      *                allowClear - Boolean whether the selected item may be removed.
-      */
-     setOptions: function(options) {
+    /**
+     * @inherit
+     *
+     * @param options Options object. In addition to the options supported in the base
+     *                implementation, this may contain the following property:
+     *                allowClear - Boolean whether the selected item may be removed.
+     */
+    setOptions: function(options) {
 
-         Select3.prototype.setOptions.call(this, options);
+        Select3.prototype.setOptions.call(this, options);
 
-         $.each(options, function(key, value) {
-             switch (key) {
-             case 'allowClear':
-                 if ($.type(value) !== 'boolean') {
-                     throw new Error('allowClear must be a boolean');
-                 }
-                 break;
-             }
-         }.bind(this));
-     },
+        $.each(options, function(key, value) {
+            switch (key) {
+            case 'allowClear':
+                if ($.type(value) !== 'boolean') {
+                    throw new Error('allowClear must be a boolean');
+                }
+                break;
+            }
+        }.bind(this));
+    },
 
     /**
      * Validates data to set. Throws an exception if the data is invalid.
@@ -2621,10 +2807,10 @@ Select3.Templates = {
         return (
             '<span class="select3-multiple-selected-item' + extraClass + '" ' +
                   'data-item-id="' + escape(options.id) + '">' +
+                escape(options.text) +
                 '<a class="select3-multiple-selected-item-remove">' +
                     '<i class="fa fa-remove"></i>' +
                 '</a>' +
-                escape(options.text) +
             '</span>'
         );
     },
