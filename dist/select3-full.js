@@ -262,6 +262,11 @@ function Select3(options) {
      */
     this.templates = $.extend({}, Select3.Templates);
 
+    /**
+     * The last used search term.
+     */
+    this.term = '';
+
     this.setOptions(options);
 
     if (options.value) {
@@ -406,6 +411,34 @@ $.extend(Select3.prototype, {
     },
 
     /**
+     * Loads a follow-up page with results after a search.
+     *
+     * This method should only be called after a call to search() when the callback has indicated
+     * more results are available.
+     */
+    loadMore: function() {
+
+        this.options.query({
+            callback: function(response) {
+                if (response && response.results) {
+                    if ($.type(response.results) === 'array') {
+                        this._addResults(
+                            response.results.map(Select3.processItem),
+                            { hasMore: !!response.more }
+                        );
+                    } else {
+                        throw new Error('results must be an array');
+                    }
+                } else {
+                    throw new Error('callback must be passed a response object');
+                }
+            }.bind(this),
+            offset: this.results.length,
+            term: this.term,
+        });
+    },
+
+    /**
      * Opens the dropdown.
      */
     open: function() {
@@ -469,6 +502,8 @@ $.extend(Select3.prototype, {
                 term: term,
             });
         }
+
+        this.term = term;
     },
 
     /**
@@ -701,6 +736,18 @@ $.extend(Select3.prototype, {
 
                 this.triggerChange();
             }
+        }
+    },
+
+    /**
+     * @private
+     */
+    _addResults: function(results, options) {
+
+        this.results = this.results.concat(results);
+
+        if (this.dropdown) {
+            this.dropdown.showMoreResults(this.filterResults(results), options || {});
         }
     },
 
@@ -1870,6 +1917,7 @@ $.extend(Select3Dropdown.prototype, {
     events: {
         'click .select3-load-more': '_loadMoreClicked',
         'click .select3-result-item': '_resultClicked',
+        'mouseenter .select3-load-more': 'highlightLoadMore',
         'mouseenter .select3-result-item': '_resultHovered'
     },
 
@@ -1985,6 +2033,36 @@ $.extend(Select3Dropdown.prototype, {
     },
 
     /**
+     * Shows more search results as a result of pagination.
+     *
+     * @param results Array of result items.
+     * @param options Options object. May contain the following properties:
+     *                hasMore - Boolean whether more results can be fetched using the query()
+     *                          function.
+     */
+    showMoreResults: function(results, options) {
+
+        options = options || {};
+
+        var select3 = this.select3;
+        var $loadMore = this.$('.select3-load-more');
+        $loadMore.before(results.map(function(item) {
+            return select3.template('resultItem', item);
+        }).join(''));
+
+        if (!options.hasMore) {
+            $loadMore.remove();
+        }
+
+        this.hasMore = options.hasMore;
+        this.results = this.results.concat(results);
+
+        if (this.loadMoreHighlighted && results.length) {
+            this.highlight(results[0]);
+        }
+    },
+
+    /**
      * Shows the results from a search query.
      *
      * @param results Array of result items.
@@ -2039,7 +2117,7 @@ $.extend(Select3Dropdown.prototype, {
      */
     _loadMoreClicked: function() {
 
-        // TODO
+        this.select3.loadMore();
     },
 
     /**

@@ -226,6 +226,36 @@ $.extend(Select3Dropdown.prototype, {
     },
 
     /**
+     * Shows more search results as a result of pagination.
+     *
+     * @param results Array of result items.
+     * @param options Options object. May contain the following properties:
+     *                hasMore - Boolean whether more results can be fetched using the query()
+     *                          function.
+     */
+    showMoreResults: function(results, options) {
+
+        options = options || {};
+
+        var select3 = this.select3;
+        var $loadMore = this.$('.select3-load-more');
+        $loadMore.before(results.map(function(item) {
+            return select3.template('resultItem', item);
+        }).join(''));
+
+        if (!options.hasMore) {
+            $loadMore.remove();
+        }
+
+        this.hasMore = options.hasMore;
+        this.results = this.results.concat(results);
+
+        if (this.loadMoreHighlighted && results.length) {
+            this.highlight(results[0]);
+        }
+    },
+
+    /**
      * Shows the results from a search query.
      *
      * @param results Array of result items.
@@ -280,7 +310,7 @@ $.extend(Select3Dropdown.prototype, {
      */
     _loadMoreClicked: function() {
 
-        // TODO
+        this.select3.loadMore();
     },
 
     /**

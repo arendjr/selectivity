@@ -141,6 +141,11 @@ function Select3(options) {
      */
     this.templates = $.extend({}, Select3.Templates);
 
+    /**
+     * The last used search term.
+     */
+    this.term = '';
+
     this.setOptions(options);
 
     if (options.value) {
@@ -285,6 +290,34 @@ $.extend(Select3.prototype, {
     },
 
     /**
+     * Loads a follow-up page with results after a search.
+     *
+     * This method should only be called after a call to search() when the callback has indicated
+     * more results are available.
+     */
+    loadMore: function() {
+
+        this.options.query({
+            callback: function(response) {
+                if (response && response.results) {
+                    if ($.type(response.results) === 'array') {
+                        this._addResults(
+                            response.results.map(Select3.processItem),
+                            { hasMore: !!response.more }
+                        );
+                    } else {
+                        throw new Error('results must be an array');
+                    }
+                } else {
+                    throw new Error('callback must be passed a response object');
+                }
+            }.bind(this),
+            offset: this.results.length,
+            term: this.term,
+        });
+    },
+
+    /**
      * Opens the dropdown.
      */
     open: function() {
@@ -348,6 +381,8 @@ $.extend(Select3.prototype, {
                 term: term,
             });
         }
+
+        this.term = term;
     },
 
     /**
@@ -580,6 +615,18 @@ $.extend(Select3.prototype, {
 
                 this.triggerChange();
             }
+        }
+    },
+
+    /**
+     * @private
+     */
+    _addResults: function(results, options) {
+
+        this.results = this.results.concat(results);
+
+        if (this.dropdown) {
+            this.dropdown.showMoreResults(this.filterResults(results), options || {});
         }
     },
 

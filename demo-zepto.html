@@ -86,6 +86,8 @@
                         return transformText(city).indexOf(transformText(term)) > -1;
                     });
                     results.sort(function(a, b) {
+                        a = transformText(a);
+                        b = transformText(b);
                         var startA = (a.slice(0, term.length) === term),
                             startB = (b.slice(0, term.length) === term);
                         if (startA) {

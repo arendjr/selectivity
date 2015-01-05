@@ -133,6 +133,11 @@ input[type="text"].select3-multiple-input:focus {
     z-index: 9999;
 }
 
+.select3-results-container {
+    max-height: 350px;
+    overflow: auto;
+}
+
 .select3-load-more,
 .select3-result-item {
     cursor: pointer;
@@ -149,6 +154,7 @@ input[type="text"].select3-multiple-input:focus {
     border-radius: 4px 4px 0 0;
 }
 
+.select3-load-more,
 .select3-result-item:last-child {
     border-radius: 0 0 4px 4px;
 }
