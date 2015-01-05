@@ -377,6 +377,21 @@ $.extend(Select3.prototype, {
     },
 
     /**
+     * Filters the results to be displayed in the dropdown.
+     *
+     * The default implementation simply returns the results unfiltered, but the MultiSelect3 class
+     * overrides this method to filter out any items that have already been selected.
+     *
+     * @param results Array of items with 'id' and 'text' properties.
+     *
+     * @return The filtered array.
+     */
+    filterResults: function(results) {
+
+        return results;
+    },
+
+    /**
      * Returns the correct item for a given ID.
      *
      * @param id The ID to get the item for.
@@ -402,7 +417,7 @@ $.extend(Select3.prototype, {
 
         if (!this.dropdown) {
             var event = $.Event('select3-opening');
-            select3.$el.trigger(event);
+            this.$el.trigger(event);
 
             if (!event.isDefaultPrevented()) {
                 this.dropdown = new Select3.Dropdown({ select3: this });
@@ -720,9 +735,10 @@ $.extend(Select3.prototype, {
     _setResults: function(results, options) {
 
         this.results = results;
+        this.resultsOptions = options;
 
         if (this.dropdown) {
-            this.dropdown.showResults(results, options || {});
+            this.dropdown.showResults(this.filterResults(results), options || {});
         }
     }
 
@@ -2010,12 +2026,21 @@ $.extend(MultipleSelect3.prototype, {
         'click': '_clicked',
         'click .select3-selected-item-remove': '_itemRemoveClicked',
         'click .select3-selected-item': '_itemClicked',
-        'focus .select3-multiple-input': '_focused',
         'keyup .select3-multiple-input': '_keyReleased',
         'paste .select3-multiple-input': function() {
             setTimeout(this.search.bind(this), 10);
         },
         'select3-selected': '_resultSelected'
+    },
+
+    /**
+     * @inherit
+     */
+    filterResults: function(results) {
+
+        return results.filter(function(item) {
+            return !Select3.findById(this._data, item.id);
+        }, this);
     },
 
     /**
@@ -2142,6 +2167,11 @@ $.extend(MultipleSelect3.prototype, {
     _clicked: function() {
 
         this.focus();
+
+        if (this.options.showDropdown !== false) {
+            this.open();
+        }
+
         return false;
     },
 
@@ -2154,16 +2184,6 @@ $.extend(MultipleSelect3.prototype, {
             this.remove(this._highlightedItemId);
 
             this.$el.trigger('change');
-        }
-    },
-
-    /**
-     * @private
-     */
-    _focused: function() {
-
-        if (this.options.showDropdown !== false) {
-            this.open();
         }
     },
 
@@ -2245,6 +2265,8 @@ $.extend(MultipleSelect3.prototype, {
             $input.before(this.template('multiSelectItem', $.extend({
                 highlighted: (event.added.id === this._highlightedItemId)
             }, event.added)));
+
+            this._scrollToBottom();
         } else if (event.removed) {
             var quotedId = Select3.quoteCssAttr(event.removed.id);
             this.$('.select3-selected-item[data-item-id=' + quotedId + ']').remove();
@@ -2258,7 +2280,19 @@ $.extend(MultipleSelect3.prototype, {
             }, this);
         }
 
+        if (event.added || event.removed) {
+            if (this.dropdown) {
+                this.dropdown.showResults(this.filterResults(this.results), this.resultsOptions);
+            }
+
+            if (this.hasKeyboard) {
+                this.focus();
+            }
+        }
+
         this.positionDropdown();
+
+        $input.attr('placeholder', this._data.length ? '' : this.options.placeholder);
     },
 
     /**
@@ -2271,6 +2305,15 @@ $.extend(MultipleSelect3.prototype, {
         } else {
             this.remove(event.item);
         }
+    },
+
+    /**
+     * @private
+     */
+    _scrollToBottom: function() {
+
+        var $inputContainer = this.$('.select3-multiple-input-container');
+        $inputContainer.scrollTop($inputContainer.outerHeight());
     },
 
     /**
@@ -2428,14 +2471,16 @@ Select3.Templates = {
      * This template is expected to have an element with a 'select3-load-more' class which, when
      * clicked, will load more results.
      */
-    loadMore: (
-        '<div class="select3-load-more">' + Select3.Locale.loadMore + '</div>'
-    ),
+    loadMore: function() {
+        return '<div class="select3-load-more">' + Select3.Locale.loadMore + '</div>';
+    },
 
     /**
      * Renders multi-selection input boxes.
      *
      * The template is expected to have at least have elements with the following classes:
+     * 'select3-multiple-input-container' - The element containing all the selected items and the
+     *                                      input for selecting additional items.
      * 'select3-multiple-input' - The actual input element that allows the user to type to search
      *                            for more items. When selected items are added, they are inserted
      *                            right before this element.
@@ -2444,22 +2489,15 @@ Select3.Templates = {
      *                            width detector also has the 'select2-multiple-input' class on
      *                            purpose to be able to detect the width of text entered in the
      *                            input element.
-     *
-     * @param options Options object containing the following property:
-     *                placeholder - String containing the placeholder text to display if no items
-     *                              are selected. May be empty if no placeholder is defined.
      */
-    multiSelectInput: function(options) {
-        return (
-            '<div class="select3-multiple-input-container">' +
-                '<input type="text" autocomplete="off" autocorrect="off" autocapitalize="off" ' +
-                       'class="select3-multiple-input" ' +
-                       'placeholder="' + escape(options.placeholder) + '">' +
-                '<span class="select3-multiple-input select3-width-detector"></span>' +
-                '<div class="clearfix"></div>' +
-            '</div>'
-        );
-    },
+    multiSelectInput: (
+        '<div class="select3-multiple-input-container">' +
+            '<input type="text" autocomplete="off" autocorrect="off" autocapitalize="off" ' +
+                   'class="select3-multiple-input">' +
+            '<span class="select3-multiple-input select3-width-detector"></span>' +
+            '<div class="clearfix"></div>' +
+        '</div>'
+    ),
 
     /**
      * Renders multi-selection input boxes.
