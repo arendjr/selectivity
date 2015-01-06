@@ -15,7 +15,7 @@ exports.testInitialData = DomUtil.createDomTest(
                 { id: 2, text: 'Antwerp' },
                 { id: 3, text: 'Athens' }
             ],
-            implementation: require('../../src/select3-multiple')
+            inputType: require('../../src/select3-multiple')
         });
 
         test.deepEqual($input.select3('data'), [
@@ -32,7 +32,7 @@ exports.testInitialValue = DomUtil.createDomTest(
     function(test, $input) {
         $input.select3({
             items: [ 'Amsterdam', 'Antwerp', 'Athens' ],
-            implementation: require('../../src/select3-multiple'),
+            inputType: require('../../src/select3-multiple'),
             value: ['Amsterdam', 'Antwerp']
         });
 
@@ -54,7 +54,7 @@ exports.testNoData = DomUtil.createDomTest(
                 { id: 2, text: 'Antwerp' },
                 { id: 3, text: 'Athens' }
             ],
-            implementation: require('../../src/select3-multiple')
+            inputType: require('../../src/select3-multiple')
         });
 
         test.deepEqual($input.select3('data'), []);
@@ -68,7 +68,7 @@ exports.testSetValue = DomUtil.createDomTest(
     function(test, $input) {
         $input.select3({
             items: [ 'Amsterdam', 'Antwerp', 'Athens' ],
-            implementation: require('../../src/select3-multiple'),
+            inputType: require('../../src/select3-multiple'),
             value: ['Amsterdam']
         });
 
@@ -97,7 +97,7 @@ exports.testSetValueWithInitSelection = DomUtil.createDomTest(
                 };
                 callback(value.map(function(id) { return { id: id, text: cities[id] }; }));
             },
-            implementation: require('../../src/select3-multiple'),
+            inputType: require('../../src/select3-multiple'),
             value: [1]
         });
 
@@ -120,7 +120,7 @@ exports.testSetValueWithoutItems = DomUtil.createDomTest(
     ['base', 'multiple', 'templates'],
     function(test, $input) {
         $input.select3({
-            implementation: require('../../src/select3-multiple'),
+            inputType: require('../../src/select3-multiple'),
             value: ['Amsterdam']
         });
 

@@ -12,10 +12,10 @@ var $ = require('jquery');
  * @param options Optional options object to pass to the given method or the constructor. See the
  *                documentation for the respective methods to see which options they accept. In case
  *                a new instance is being created, the following property is used:
- *                implementation - The implementation to use. Default implementations include
- *                                 'Multiple' and 'Single', but you can add custom implementations
- *                                 to the Implementations map. The default value is 'Single', unless
- *                                 multiple is true in which case it is 'Multiple'.
+ *                inputType - The input type to use. Default input types include 'Multiple' and
+ *                            'Single', but you can add custom input types to the InputTypes map or
+ *                            just specify one here as a function. The default value is 'Single',
+ *                            unless multiple is true in which case it is 'Multiple'.
  *                multiple - Boolean determining whether multiple items may be selected
  *                           (default: false). If true, a MultipleSelect3 instance is created,
  *                           otherwise a SingleSelect3 instance is created.
@@ -50,18 +50,17 @@ function select3(methodName, options) {
             } else {
                 options = $.extend({}, methodName, { element: this });
 
-                var Implementations = Select3.Implementations;
-                var Implementation = (options.implementation || (options.multiple ? 'Multiple'
-                                                                                  : 'Single'));
-                if ($.type(Implementation) !== 'function') {
-                    if (Implementations[Implementation]) {
-                        Implementation = Implementations[Implementation];
+                var InputTypes = Select3.InputTypes;
+                var InputType = (options.inputType || (options.multiple ? 'Multiple' : 'Single'));
+                if ($.type(InputType) !== 'function') {
+                    if (InputTypes[InputType]) {
+                        InputType = InputTypes[InputType];
                     } else {
-                        throw new Error('Unknown Select3 implementation: ' + Implementation);
+                        throw new Error('Unknown Select3 input type: ' + InputType);
                     }
                 }
 
-                this.select3 = new Implementation(options);
+                this.select3 = new InputType(options);
             }
         }
     });
@@ -684,9 +683,9 @@ $.extend(Select3.prototype, {
 Select3.Dropdown = null;
 
 /**
- * Mapping of implementations.
+ * Mapping of input types.
  */
-Select3.Implementations = {};
+Select3.InputTypes = {};
 
 /**
  * Mapping of keys.

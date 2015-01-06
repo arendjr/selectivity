@@ -445,6 +445,6 @@ $.extend(MultipleSelect3.prototype, {
 
 });
 
-Select3.Implementations.Multiple = MultipleSelect3;
+Select3.InputTypes.Multiple = MultipleSelect3;
 
 module.exports = MultipleSelect3;

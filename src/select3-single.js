@@ -176,6 +176,6 @@ $.extend(SingleSelect3.prototype, {
 
 });
 
-Select3.Implementations.Single = SingleSelect3;
+Select3.InputTypes.Single = SingleSelect3;
 
 module.exports = SingleSelect3;
