@@ -2383,7 +2383,7 @@ Select3.Locale = {
 
     loadMore: 'Load more...',
     noResults: 'No results found',
-    noResultsForTerm: function(term) { return 'No results for <b>' + escape(term) + '</b>' }
+    noResultsForTerm: function(term) { return 'No results for <b>' + escape(term) + '</b>'; }
 
 };
 
@@ -2873,7 +2873,7 @@ $.extend(MultipleSelect3.prototype, {
     _scrollToBottom: function() {
 
         var $inputContainer = this.$('.select3-multiple-input-container');
-        $inputContainer.scrollTop($inputContainer.outerHeight());
+        $inputContainer.scrollTop($inputContainer.height());
     },
 
     /**

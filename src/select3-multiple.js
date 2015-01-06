@@ -483,7 +483,7 @@ $.extend(MultipleSelect3.prototype, {
     _scrollToBottom: function() {
 
         var $inputContainer = this.$('.select3-multiple-input-container');
-        $inputContainer.scrollTop($inputContainer.outerHeight());
+        $inputContainer.scrollTop($inputContainer.height());
     },
 
     /**
