@@ -4,6 +4,7 @@ var $ = require('jquery');
 
 var Select3 = require('./select3-base');
 var Select3Multiple = require('./select3-multiple');
+
 var setOptions = Select3Multiple.prototype.setOptions;
 
 function defaultTokenizer(input, selection, createToken, options) {

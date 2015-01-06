@@ -23,16 +23,48 @@ module.exports = {
 
                     var Select3 = proxyquire('../src/select3-base', { 'jquery': $ });
 
-                    modules.forEach(function(module) {
-                        if (module !== 'base') {
-                            proxyquire('../src/select3-' + module, {
-                                'jquery': $,
-                                './select3-base': Select3
+                    // I wish this could be solved without hard-coding the dependenies here...
+                    var dependencies = {
+                        'backdrop': ['dropdown'],
+                        'base': [],
+                        'diacritics': ['base'],
+                        'dropdown': ['base'],
+                        'email': ['base', 'multiple'],
+                        'locale': ['base'],
+                        'multiple': ['base'],
+                        'single': ['base'],
+                        'templates': ['base', 'locale'],
+                        'tokenizer': ['base', 'multiple']
+                    };
+
+                    var orderedModules = [];
+
+                    function insertDependencies(module) {
+                        if (dependencies[module]) {
+                            dependencies[module].forEach(function(dependency) {
+                                insertDependencies(dependency);
+                                if (orderedModules.indexOf(dependency) === -1) {
+                                    orderedModules.push(dependency);
+                                }
                             });
+                            if (orderedModules.indexOf(module) === -1) {
+                                orderedModules.push(module);
+                            }
+                        } else {
+                            throw new Error('Dependencies for module ' + module + ' not specified');
                         }
+                    }
+
+                    modules.forEach(insertDependencies);
+
+                    var stubs = { 'jquery': $ };
+
+                    orderedModules.forEach(function(module) {
+                        var Select3Module = proxyquire('../src/select3-' + module, stubs);
+                        stubs['./select3-' + module] = Select3Module;
                     });
 
-                    fn(test, window.$('#select3-input'));
+                    fn(test, window.$('#select3-input'), $);
                 });
 
                 test.done();
