@@ -254,9 +254,7 @@ $.extend(MultipleSelect3.prototype, {
 
         this.focus();
 
-        if (this.options.showDropdown !== false) {
-            this.open();
-        }
+        this._open();
 
         return false;
     },
@@ -345,10 +343,10 @@ $.extend(MultipleSelect3.prototype, {
                    event.keyCode === Select3.Keys.UP_ARROW) {
             // handled in _keyHeld() because the response feels faster and it works with repeated
             // events if the user holds the key for a longer period
-            // still, we issue an open() call here in case the dropdown was not yet open...
-            this.open();
+            // still, we issue an _open() call here in case the dropdown was not yet open...
+            this._open();
         } else {
-            this.open();
+            this._open();
 
             this._search();
         }
@@ -356,6 +354,16 @@ $.extend(MultipleSelect3.prototype, {
         this._updateInputWidth();
 
         return false;
+    },
+
+    /**
+     * @private
+     */
+    _open: function() {
+
+        if (this.options.showDropdown !== false) {
+            this.open();
+        }
     },
 
     /**

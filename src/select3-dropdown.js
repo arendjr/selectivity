@@ -142,6 +142,7 @@ $.extend(Select3Dropdown.prototype, {
     highlightLoadMore: function() {
 
         this.$('.select3-result-item').removeClass('highlight');
+
         this.$('.select3-load-more').addClass('highlight');
 
         this.highlightedResult = null;
@@ -162,6 +163,7 @@ $.extend(Select3Dropdown.prototype, {
                 if (index >= results.length) {
                     if (this.hasMore) {
                         this.highlightLoadMore();
+                        this._scrollToHighlight({ alignToTop: false });
                         return;
                     } else {
                         index = 0;
@@ -170,6 +172,7 @@ $.extend(Select3Dropdown.prototype, {
             }
 
             this.highlight(results[index]);
+            this._scrollToHighlight({ alignToTop: false });
         }
     },
 
@@ -187,6 +190,7 @@ $.extend(Select3Dropdown.prototype, {
                 if (index < 0) {
                     if (this.hasMore) {
                         this.highlightLoadMore();
+                        this._scrollToHighlight({ alignToTop: true });
                         return;
                     } else {
                         index = results.length - 1;
@@ -195,6 +199,7 @@ $.extend(Select3Dropdown.prototype, {
             }
 
             this.highlight(results[index]);
+            this._scrollToHighlight({ alignToTop: true });
         }
     },
 
@@ -311,6 +316,8 @@ $.extend(Select3Dropdown.prototype, {
     _loadMoreClicked: function() {
 
         this.select3.loadMore();
+
+        this.select3.focus();
     },
 
     /**
@@ -332,6 +339,29 @@ $.extend(Select3Dropdown.prototype, {
         var item = Select3.findById(this.results, id);
         if (item) {
             this.highlight(item);
+        }
+    },
+
+    /**
+     * @private
+     */
+    _scrollToHighlight: function(options) {
+
+        var el;
+        if (this.highlightedResult) {
+            var quotedId = Select3.quoteCssAttr(this.highlightedResult.id);
+            el = this.$('.select3-result-item[data-item-id=' + quotedId + ']')[0];
+        } else if (this.loadMoreHighlighted) {
+            el = this.$('.select3-load-more')[0];
+        } else {
+            return; // no highlight to scroll to
+        }
+
+        var rect = el.getBoundingClientRect(),
+            containerRect = this.$('.select3-results-container')[0].getBoundingClientRect();
+
+        if (rect.top < containerRect.top || rect.bottom > containerRect.bottom) {
+            el.scrollIntoView(options.alignToTop);
         }
     },
 
