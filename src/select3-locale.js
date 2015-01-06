@@ -13,6 +13,6 @@ Select3.Locale = {
 
     loadMore: 'Load more...',
     noResults: 'No results found',
-    noResultsForTerm: function(term) { return 'No results for <b>' + escape(term) + '</b>' }
+    noResultsForTerm: function(term) { return 'No results for <b>' + escape(term) + '</b>'; }
 
 };
