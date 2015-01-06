@@ -21,8 +21,15 @@ module.exports = {
                     var $ = require('../vendor/jquery')(window);
                     var proxyquire = require('proxyquire').noCallThru();
 
+                    var Select3 = proxyquire('../src/select3-base', { 'jquery': $ });
+
                     modules.forEach(function(module) {
-                        proxyquire('../src/select3-' + module, { 'jquery': $ });
+                        if (module !== 'base') {
+                            proxyquire('../src/select3-' + module, {
+                                'jquery': $,
+                                './select3-base': Select3
+                            });
+                        }
                     });
 
                     fn(test, window.$('#select3-input'));

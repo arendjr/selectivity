@@ -3,11 +3,10 @@
 var DomUtil = require('../dom-util');
 
 exports.testInitialData = DomUtil.createDomTest(
-    ['base', 'single', 'templates'],
+    ['single', 'templates'],
     function(test, $input) {
         $input.select3({
             data: { id: 1, text: 'Amsterdam' },
-            inputType: require('../../src/select3-single'),
             items: [
                 { id: 1, text: 'Amsterdam' },
                 { id: 2, text: 'Antwerp' },
@@ -22,10 +21,9 @@ exports.testInitialData = DomUtil.createDomTest(
 );
 
 exports.testInitialValue = DomUtil.createDomTest(
-    ['base', 'single', 'templates'],
+    ['single', 'templates'],
     function(test, $input) {
         $input.select3({
-            inputType: require('../../src/select3-single'),
             items: [ 'Amsterdam', 'Antwerp', 'Athens' ],
             value: 'Amsterdam'
         });
@@ -37,10 +35,9 @@ exports.testInitialValue = DomUtil.createDomTest(
 );
 
 exports.testNoData = DomUtil.createDomTest(
-    ['base', 'single', 'templates'],
+    ['single', 'templates'],
     function(test, $input) {
         $input.select3({
-            inputType: require('../../src/select3-single'),
             items: [
                 { id: 1, text: 'Amsterdam' },
                 { id: 2, text: 'Antwerp' },
@@ -55,10 +52,9 @@ exports.testNoData = DomUtil.createDomTest(
 );
 
 exports.testSetValue = DomUtil.createDomTest(
-    ['base', 'single', 'templates'],
+    ['single', 'templates'],
     function(test, $input) {
         $input.select3({
-            inputType: require('../../src/select3-single'),
             items: [ 'Amsterdam', 'Antwerp', 'Athens' ],
             value: 'Amsterdam'
         });
@@ -74,7 +70,7 @@ exports.testSetValue = DomUtil.createDomTest(
 );
 
 exports.testSetValueWithInitSelection = DomUtil.createDomTest(
-    ['base', 'single', 'templates'],
+    ['single', 'templates'],
     function(test, $input) {
         $input.select3({
             initSelection: function(value, callback) {
@@ -85,7 +81,6 @@ exports.testSetValueWithInitSelection = DomUtil.createDomTest(
                 };
                 callback({ id: value, text: cities[value] });
             },
-            inputType: require('../../src/select3-single'),
             value: 1
         });
 
@@ -102,10 +97,9 @@ exports.testSetValueWithInitSelection = DomUtil.createDomTest(
 );
 
 exports.testSetValueWithoutItems = DomUtil.createDomTest(
-    ['base', 'single', 'templates'],
+    ['single', 'templates'],
     function(test, $input) {
         $input.select3({
-            inputType: require('../../src/select3-single'),
             value: 'Amsterdam'
         });
 

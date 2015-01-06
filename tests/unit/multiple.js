@@ -3,7 +3,7 @@
 var DomUtil = require('../dom-util');
 
 exports.testInitialData = DomUtil.createDomTest(
-    ['base', 'multiple', 'templates'],
+    ['multiple', 'templates'],
     function(test, $input) {
         $input.select3({
             data: [
@@ -15,7 +15,7 @@ exports.testInitialData = DomUtil.createDomTest(
                 { id: 2, text: 'Antwerp' },
                 { id: 3, text: 'Athens' }
             ],
-            inputType: require('../../src/select3-multiple')
+            multiple: true
         });
 
         test.deepEqual($input.select3('data'), [
@@ -28,11 +28,11 @@ exports.testInitialData = DomUtil.createDomTest(
 );
 
 exports.testInitialValue = DomUtil.createDomTest(
-    ['base', 'multiple', 'templates'],
+    ['multiple', 'templates'],
     function(test, $input) {
         $input.select3({
             items: [ 'Amsterdam', 'Antwerp', 'Athens' ],
-            inputType: require('../../src/select3-multiple'),
+            multiple: true,
             value: ['Amsterdam', 'Antwerp']
         });
 
@@ -46,7 +46,7 @@ exports.testInitialValue = DomUtil.createDomTest(
 );
 
 exports.testNoData = DomUtil.createDomTest(
-    ['base', 'multiple', 'templates'],
+    ['multiple', 'templates'],
     function(test, $input) {
         $input.select3({
             items: [
@@ -54,7 +54,7 @@ exports.testNoData = DomUtil.createDomTest(
                 { id: 2, text: 'Antwerp' },
                 { id: 3, text: 'Athens' }
             ],
-            inputType: require('../../src/select3-multiple')
+            multiple: true
         });
 
         test.deepEqual($input.select3('data'), []);
@@ -64,11 +64,11 @@ exports.testNoData = DomUtil.createDomTest(
 );
 
 exports.testSetValue = DomUtil.createDomTest(
-    ['base', 'multiple', 'templates'],
+    ['multiple', 'templates'],
     function(test, $input) {
         $input.select3({
             items: [ 'Amsterdam', 'Antwerp', 'Athens' ],
-            inputType: require('../../src/select3-multiple'),
+            multiple: true,
             value: ['Amsterdam']
         });
 
@@ -86,7 +86,7 @@ exports.testSetValue = DomUtil.createDomTest(
 );
 
 exports.testSetValueWithInitSelection = DomUtil.createDomTest(
-    ['base', 'multiple', 'templates'],
+    ['multiple', 'templates'],
     function(test, $input) {
         $input.select3({
             initSelection: function(value, callback) {
@@ -97,7 +97,7 @@ exports.testSetValueWithInitSelection = DomUtil.createDomTest(
                 };
                 callback(value.map(function(id) { return { id: id, text: cities[id] }; }));
             },
-            inputType: require('../../src/select3-multiple'),
+            multiple: true,
             value: [1]
         });
 
@@ -117,10 +117,10 @@ exports.testSetValueWithInitSelection = DomUtil.createDomTest(
 );
 
 exports.testSetValueWithoutItems = DomUtil.createDomTest(
-    ['base', 'multiple', 'templates'],
+    ['multiple', 'templates'],
     function(test, $input) {
         $input.select3({
-            inputType: require('../../src/select3-multiple'),
+            multiple: true,
             value: ['Amsterdam']
         });
 
