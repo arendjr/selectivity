@@ -90,6 +90,21 @@ Select3.Templates = {
     },
 
     /**
+     * Renders a message there are no results for the given query.
+     *
+     * @param options Options object containing the following property:
+     *                term - Search term the user is searching for.
+     */
+    noResults: function(options) {
+        var Locale = Select3.Locale;
+        return (
+            '<div class="select3-no-results">' +
+                (options.term ? Locale.noResultsForTerm(options.term) : Locale.noResults) +
+            '</div>'
+        );
+    },
+
+    /**
      * Render a result item in the dropdown.
      *
      * The template is expected to have a top-level element with the class 'select3-result-item'.

@@ -131,7 +131,7 @@ $.extend(Select3Dropdown.prototype, {
         this.highlightedResult = item;
         this.loadMoreHighlighted = false;
 
-        this.select3.triggerEvent('select2-highlight', { item: item, val: item.id });
+        this.select3.triggerEvent('select3-highlight', { item: item, val: item.id });
     },
 
     /**
@@ -267,6 +267,7 @@ $.extend(Select3Dropdown.prototype, {
      * @param options Options object. May contain the following properties:
      *                hasMore - Boolean whether more results can be fetched using the query()
      *                          function.
+     *                term - The search term for which the results are displayed.
      */
     showResults: function(results, options) {
 
@@ -274,9 +275,9 @@ $.extend(Select3Dropdown.prototype, {
 
         var select3 = this.select3;
         var $resultsContainer = this.$('.select3-results-container');
-        $resultsContainer.html(results.map(function(item) {
+        $resultsContainer.html(results.length ? results.map(function(item) {
             return select3.template('resultItem', item);
-        }).join(''));
+        }).join('') : select3.template('noResults', { term: options.term }));
 
         if (options.hasMore) {
             $resultsContainer.append(select3.template('loadMore'));
@@ -287,6 +288,9 @@ $.extend(Select3Dropdown.prototype, {
 
         if (results.length) {
             this.highlight(results[0]);
+        } else {
+            this.highlightedResult = null;
+            this.loadMoreHighlighted = false;
         }
     },
 
@@ -372,14 +376,15 @@ $.extend(Select3Dropdown.prototype, {
 
         var select3 = this.select3;
         var item = Select3.findById(select3.results, id);
-
-        var options = { id: id, item: item };
-        var event = $.Event('select3-selecting', options);
-        select3.$el.trigger(event);
-
-        if (!event.isDefaultPrevented()) {
-            event = $.Event('select3-selected', options);
+        if (item) {
+            var options = { id: id, item: item };
+            var event = $.Event('select3-selecting', options);
             select3.$el.trigger(event);
+
+            if (!event.isDefaultPrevented()) {
+                event = $.Event('select3-selected', options);
+                select3.$el.trigger(event);
+            }
         }
     }
 

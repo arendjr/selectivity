@@ -64,6 +64,10 @@ input[type="text"].select3-multiple-input:focus {
     margin: 2px;
     padding-left: 5px;
     position: relative;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    -webkit-user-select: none;
+    user-select: none;
     white-space: nowrap;
 }
 
@@ -157,4 +161,8 @@ input[type="text"].select3-multiple-input:focus {
 .select3-load-more,
 .select3-result-item:last-child {
     border-radius: 0 0 4px 4px;
+}
+
+.select3-no-results {
+    padding: 7px;
 }

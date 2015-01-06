@@ -113,6 +113,18 @@
                     placeholder: 'Type to search cities',
                     query: queryFunction
                 });
+
+                $('#tags-input').select3({
+                    items: ['red', 'green', 'blue'],
+                    multiple: true,
+                    tokenSeparators: [' '],
+                    value: ['brown', 'red', 'green']
+                });
+
+                $('#emails-input').select3({
+                    inputType: 'Email',
+                    placeholder: 'Type or paste email addresses'
+                });
             });
         </script>
     </head>
@@ -121,5 +133,9 @@
         <p><span id="single-input" class="select3-input"></span></p>
         <h1>Select multiple cities</h1>
         <p><span id="multiple-input" class="select3-input"></span></p>
+        <h1>Select one or more tags</h1>
+        <p><span id="tags-input" class="select3-input"></span></p>
+        <h1>Enter one or more email addresses</h1>
+        <p><span id="emails-input" class="select3-input"></span></p>
     </body>
 </html>

@@ -7,7 +7,8 @@ var Select3 = require('./select3-base');
 /**
  * MultipleSelect3 Constructor.
  *
- * @param options Options object. Accepts all options from the Select3 Base Constructor.
+ * @param options Options object. Accepts all options from the Select3 Base Constructor in addition
+ *                to those accepted by MultipleSelect3.setOptions().
  */
 function MultipleSelect3(options) {
 
@@ -147,7 +148,9 @@ $.extend(MultipleSelect3.prototype, {
             this._data.splice(index, 1);
         }
 
-        index = this._value.indexOf(id);
+        if (this._value[index] !== id) {
+            index = this._value.indexOf(id);
+        }
         if (index > -1) {
             this._value.splice(index, 1);
         }
@@ -165,23 +168,52 @@ $.extend(MultipleSelect3.prototype, {
      * @inherit
      *
      * @param options Options object. In addition to the options supported in the base
-     *                implementation, this may contain the following property:
+     *                implementation, this may contain the following properties:
      *                backspaceHighlightsBeforeDelete - If set to true, when the user enters a
      *                                                  backspace while there is no text in the
      *                                                  search field but there are selected items,
      *                                                  the last selected item will be highlighted
      *                                                  and when a second backspace is entered the
-     *                                                  item is deleted. If false (the default),
-     *                                                  the item gets deleted on the first
-     *                                                  backspace.
+     *                                                  item is deleted. If false, the item gets
+     *                                                  deleted on the first backspace. The default
+     *                                                  value is true on devices that have touch
+     *                                                  input and false on devices that don't.
+     *                createTokenItem - Function to create a new item from a user's search term.
+     *                                  This is used to turn the term into an item when dropdowns
+     *                                  are disabled and the user presses Enter. It is also used by
+     *                                  the default tokenizer to create items for individual tokens.
+     *                                  The function receives a 'token' parameter which is the
+     *                                  search term (or part of a search term) to create an item for
+     *                                  and must return an item object with 'id' and 'text'
+     *                                  properties or null if no token can be created from the term.
+     *                                  The default is a function that returns an item where the id
+     *                                  and text both match the token for any non-empty string and
+     *                                  which returns null otherwise.
+     *                tokenizer - Function for tokenizing search terms. Will receive the following
+     *                            parameters:
+     *                            input - The input string to tokenize.
+     *                            selection - The current selection data.
+     *                            createToken - Callback to create a token from the search terms.
+     *                                          Should be passed an item object with 'id' and 'text'
+     *                                          properties.
+     *                            options - The options set on the Select3 instance.
+     *                            Any string returned by the tokenizer function is treated as the
+     *                            remainder of untokenized input.
      */
     setOptions: function(options) {
+
+        options = options || {};
+
+        var backspaceHighlightsBeforeDelete = 'backspaceHighlightsBeforeDelete';
+        if (options[backspaceHighlightsBeforeDelete] === undefined) {
+            options[backspaceHighlightsBeforeDelete] = this.hasTouch;
+        }
 
         Select3.prototype.setOptions.call(this, options);
 
         $.each(options, function(key, value) {
             switch (key) {
-            case 'backspaceHighlightsBeforeDelete':
+            case backspaceHighlightsBeforeDelete:
                 if ($.type(value) !== 'boolean') {
                     throw new Error('backspaceHighlightsBeforeDelete must be a boolean');
                 }
@@ -262,6 +294,23 @@ $.extend(MultipleSelect3.prototype, {
     /**
      * @private
      */
+    _createToken: function() {
+
+        var term = this._$input.val();
+
+        if (term && this.options.createTokenItem) {
+            var item = this.options.createTokenItem(term);
+            if (item) {
+                this.add(item);
+            }
+
+            this._$input.val('');
+        }
+    },
+
+    /**
+     * @private
+     */
     _deletePressed: function() {
 
         if (this._highlightedItemId) {
@@ -332,6 +381,10 @@ $.extend(MultipleSelect3.prototype, {
             if (dropdown) {
                 dropdown.clickHighlight();
                 this._$input.val('');
+            } else if (this.options.showDropdown !== false) {
+                this.open();
+            } else if (this.options.createTokenItem) {
+                this._createToken();
             }
         } else if (event.keyCode === Select3.Keys.BACKSPACE && !inputHadText) {
             this._backspacePressed();
@@ -391,6 +444,8 @@ $.extend(MultipleSelect3.prototype, {
                     highlighted: (item.id === this._highlightedItemId)
                 }, item)));
             }, this);
+
+            this._updateInputWidth();
         }
 
         if (event.added || event.removed) {
@@ -436,7 +491,21 @@ $.extend(MultipleSelect3.prototype, {
      */
     _search: function() {
 
-        this.search(this._$input.val());
+        var term = this._$input.val();
+
+        if (this.options.tokenizer) {
+            term = this.options.tokenizer(term, this._data, this.add.bind(this), this.options);
+
+            if ($.type(term) === 'string') {
+                this._$input.val(term);
+            } else {
+                term = '';
+            }
+        }
+
+        if (this.dropdown) {
+            this.search(term);
+        }
     },
 
     /**

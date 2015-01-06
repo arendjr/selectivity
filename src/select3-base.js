@@ -354,18 +354,23 @@ $.extend(Select3.prototype, {
      */
     search: function(term) {
 
-        if (this.items) {
+        var self = this;
+        function setResults(results, resultOptions) {
+            self._setResults(results, $.extend({ term: term }, resultOptions));
+        }
+
+        if (self.items) {
             term = Select3.transformText(term);
-            var matcher = this.matcher;
-            this._setResults(this.items.filter(function(item) {
+            var matcher = self.matcher;
+            setResults(self.items.filter(function(item) {
                 return matcher(term, item.text);
             }));
-        } else if (this.options.query) {
-            this.options.query({
+        } else if (self.options.query) {
+            self.options.query({
                 callback: function(response) {
                     if (response && response.results) {
                         if ($.type(response.results) === 'array') {
-                            this._setResults(
+                            setResults(
                                 response.results.map(Select3.processItem),
                                 { hasMore: !!response.more }
                             );
@@ -375,13 +380,13 @@ $.extend(Select3.prototype, {
                     } else {
                         throw new Error('callback must be passed a response object');
                     }
-                }.bind(this),
+                },
                 offset: 0,
                 term: term,
             });
         }
 
-        this.term = term;
+        self.term = term;
     },
 
     /**
@@ -434,6 +439,8 @@ $.extend(Select3.prototype, {
      *                            templates assigned to Select3.Templates.
      */
     setOptions: function(options) {
+
+        options = options || {};
 
         this.options = options;
 

@@ -5,11 +5,13 @@ _dereq_('./select3-backdrop');
 _dereq_('./select3-base');
 _dereq_('./select3-diacritics');
 _dereq_('./select3-dropdown');
+_dereq_('./select3-email');
 _dereq_('./select3-multiple');
 _dereq_('./select3-single');
 _dereq_('./select3-templates');
+_dereq_('./select3-tokenizer');
 
-},{"./select3-backdrop":3,"./select3-base":4,"./select3-diacritics":5,"./select3-dropdown":6,"./select3-multiple":8,"./select3-single":9,"./select3-templates":10}],2:[function(_dereq_,module,exports){
+},{"./select3-backdrop":3,"./select3-base":4,"./select3-diacritics":5,"./select3-dropdown":6,"./select3-email":7,"./select3-multiple":9,"./select3-single":10,"./select3-templates":11,"./select3-tokenizer":12}],2:[function(_dereq_,module,exports){
 'use strict';
 
 /**
@@ -475,18 +477,23 @@ $.extend(Select3.prototype, {
      */
     search: function(term) {
 
-        if (this.items) {
+        var self = this;
+        function setResults(results, resultOptions) {
+            self._setResults(results, $.extend({ term: term }, resultOptions));
+        }
+
+        if (self.items) {
             term = Select3.transformText(term);
-            var matcher = this.matcher;
-            this._setResults(this.items.filter(function(item) {
+            var matcher = self.matcher;
+            setResults(self.items.filter(function(item) {
                 return matcher(term, item.text);
             }));
-        } else if (this.options.query) {
-            this.options.query({
+        } else if (self.options.query) {
+            self.options.query({
                 callback: function(response) {
                     if (response && response.results) {
                         if ($.type(response.results) === 'array') {
-                            this._setResults(
+                            setResults(
                                 response.results.map(Select3.processItem),
                                 { hasMore: !!response.more }
                             );
@@ -496,13 +503,13 @@ $.extend(Select3.prototype, {
                     } else {
                         throw new Error('callback must be passed a response object');
                     }
-                }.bind(this),
+                },
                 offset: 0,
                 term: term,
             });
         }
 
-        this.term = term;
+        self.term = term;
     },
 
     /**
@@ -555,6 +562,8 @@ $.extend(Select3.prototype, {
      *                            templates assigned to Select3.Templates.
      */
     setOptions: function(options) {
+
+        options = options || {};
 
         this.options = options;
 
@@ -1937,7 +1946,7 @@ $.extend(Select3Dropdown.prototype, {
         this.highlightedResult = item;
         this.loadMoreHighlighted = false;
 
-        this.select3.triggerEvent('select2-highlight', { item: item, val: item.id });
+        this.select3.triggerEvent('select3-highlight', { item: item, val: item.id });
     },
 
     /**
@@ -1948,6 +1957,7 @@ $.extend(Select3Dropdown.prototype, {
     highlightLoadMore: function() {
 
         this.$('.select3-result-item').removeClass('highlight');
+
         this.$('.select3-load-more').addClass('highlight');
 
         this.highlightedResult = null;
@@ -1968,6 +1978,7 @@ $.extend(Select3Dropdown.prototype, {
                 if (index >= results.length) {
                     if (this.hasMore) {
                         this.highlightLoadMore();
+                        this._scrollToHighlight({ alignToTop: false });
                         return;
                     } else {
                         index = 0;
@@ -1976,6 +1987,7 @@ $.extend(Select3Dropdown.prototype, {
             }
 
             this.highlight(results[index]);
+            this._scrollToHighlight({ alignToTop: false });
         }
     },
 
@@ -1993,6 +2005,7 @@ $.extend(Select3Dropdown.prototype, {
                 if (index < 0) {
                     if (this.hasMore) {
                         this.highlightLoadMore();
+                        this._scrollToHighlight({ alignToTop: true });
                         return;
                     } else {
                         index = results.length - 1;
@@ -2001,6 +2014,7 @@ $.extend(Select3Dropdown.prototype, {
             }
 
             this.highlight(results[index]);
+            this._scrollToHighlight({ alignToTop: true });
         }
     },
 
@@ -2068,6 +2082,7 @@ $.extend(Select3Dropdown.prototype, {
      * @param options Options object. May contain the following properties:
      *                hasMore - Boolean whether more results can be fetched using the query()
      *                          function.
+     *                term - The search term for which the results are displayed.
      */
     showResults: function(results, options) {
 
@@ -2075,9 +2090,9 @@ $.extend(Select3Dropdown.prototype, {
 
         var select3 = this.select3;
         var $resultsContainer = this.$('.select3-results-container');
-        $resultsContainer.html(results.map(function(item) {
+        $resultsContainer.html(results.length ? results.map(function(item) {
             return select3.template('resultItem', item);
-        }).join(''));
+        }).join('') : select3.template('noResults', { term: options.term }));
 
         if (options.hasMore) {
             $resultsContainer.append(select3.template('loadMore'));
@@ -2088,6 +2103,9 @@ $.extend(Select3Dropdown.prototype, {
 
         if (results.length) {
             this.highlight(results[0]);
+        } else {
+            this.highlightedResult = null;
+            this.loadMoreHighlighted = false;
         }
     },
 
@@ -2117,6 +2135,8 @@ $.extend(Select3Dropdown.prototype, {
     _loadMoreClicked: function() {
 
         this.select3.loadMore();
+
+        this.select3.focus();
     },
 
     /**
@@ -2144,18 +2164,42 @@ $.extend(Select3Dropdown.prototype, {
     /**
      * @private
      */
+    _scrollToHighlight: function(options) {
+
+        var el;
+        if (this.highlightedResult) {
+            var quotedId = Select3.quoteCssAttr(this.highlightedResult.id);
+            el = this.$('.select3-result-item[data-item-id=' + quotedId + ']')[0];
+        } else if (this.loadMoreHighlighted) {
+            el = this.$('.select3-load-more')[0];
+        } else {
+            return; // no highlight to scroll to
+        }
+
+        var rect = el.getBoundingClientRect(),
+            containerRect = this.$('.select3-results-container')[0].getBoundingClientRect();
+
+        if (rect.top < containerRect.top || rect.bottom > containerRect.bottom) {
+            el.scrollIntoView(options.alignToTop);
+        }
+    },
+
+    /**
+     * @private
+     */
     _selectItem: function(id) {
 
         var select3 = this.select3;
         var item = Select3.findById(select3.results, id);
-
-        var options = { id: id, item: item };
-        var event = $.Event('select3-selecting', options);
-        select3.$el.trigger(event);
-
-        if (!event.isDefaultPrevented()) {
-            event = $.Event('select3-selected', options);
+        if (item) {
+            var options = { id: id, item: item };
+            var event = $.Event('select3-selecting', options);
             select3.$el.trigger(event);
+
+            if (!event.isDefaultPrevented()) {
+                event = $.Event('select3-selected', options);
+                select3.$el.trigger(event);
+            }
         }
     }
 
@@ -2168,18 +2212,182 @@ module.exports = Select3Dropdown;
 },{"./select3-base":4,"jquery":"jquery"}],7:[function(_dereq_,module,exports){
 'use strict';
 
+var $ = window.jQuery || window.Zepto;
+
+var Select3 = _dereq_('./select3-base');
+var MultipleSelect3 = _dereq_('./select3-multiple');
+
+function isValidEmail(email) {
+
+    var atIndex = email.indexOf('@');
+    var dotIndex = email.lastIndexOf('.');
+    var spaceIndex = email.indexOf(' ');
+    return (atIndex > 0 && dotIndex > atIndex + 1 &&
+            dotIndex < email.length - 2 && spaceIndex === -1);
+}
+
+function lastWord(token, length) {
+
+    length = (length === undefined ? token.length : length);
+    for (var i = length - 1; i >= 0; i--) {
+        if ((/\s/).test(token[i])) {
+            return token.slice(i + 1, length);
+        }
+    }
+    return token.slice(0, length);
+}
+
+function stripEnclosure(token, enclosure) {
+
+    if (token.slice(0, 1) === enclosure[0] && token.slice(-1) === enclosure[1]) {
+        return token.slice(1, -1).trim();
+    } else {
+        return token.trim();
+    }
+}
+
+function createEmailItem(token) {
+
+    var email = lastWord(token);
+    var name = token.slice(0, -email.length).trim();
+    if (isValidEmail(email)) {
+        email = stripEnclosure(stripEnclosure(email, '()'), '<>');
+        name = stripEnclosure(name, '""').trim() || email;
+        return { id: email, text: name };
+    } else {
+        return (token.trim() ? { id: token, text: token } : null);
+    }
+}
+
+function emailTokenizer(input, selection, createToken) {
+
+    function hasToken(input) {
+        if (input) {
+            for (var i = 0, length = input.length; i < length; i++) {
+                var char = input[i];
+                switch (char) {
+                case ';':
+                case ',':
+                case '\n':
+                    return true;
+                case ' ':
+                case '\t':
+                    if (isValidEmail(lastWord(input, i))) {
+                        return true;
+                    }
+                    break;
+                case '"':
+                    do { i++; } while(i < length && input[i] !== '"');
+                    break;
+                default:
+                    continue;
+                }
+            }
+        }
+        return false;
+    }
+
+    function takeToken(input) {
+        for (var i = 0, length = input.length; i < length; i++) {
+            var char = input[i];
+            switch (char) {
+            case ';':
+            case ',':
+            case '\n':
+                return { term: input.slice(0, i), input: input.slice(i + 1) };
+            case ' ':
+            case '\t':
+                var word = lastWord(input, i);
+                if (isValidEmail(word)) {
+                    return { term: input.slice(0, i), input: input.slice(i + 1) };
+                }
+                break;
+            case '"':
+                do { i++; } while(i < length && input[i] !== '"');
+                break;
+            default:
+                continue;
+            }
+        }
+        return {};
+    }
+
+    while (hasToken(input)) {
+        var token = takeToken(input);
+        if (token.term) {
+            var item = createEmailItem(token.term);
+            if (item && !(item.id && Select3.findById(selection, item.id))) {
+                createToken(item);
+            }
+        }
+        input = token.input;
+    }
+
+    return input;
+}
+
+/**
+ * EmailSelect3 Constructor.
+ *
+ * @param options Options object. Accepts all options from the MultipleSelect3 Constructor.
+ */
+function EmailSelect3(options) {
+
+    MultipleSelect3.call(this, options);
+}
+
+EmailSelect3.prototype = Object.create(MultipleSelect3.prototype);
+EmailSelect3.prototype.constructor = EmailSelect3;
+
+/**
+ * Methods.
+ */
+$.extend(EmailSelect3.prototype, {
+
+    /**
+     * @inherit
+     *
+     * Note that for the Email input type the option showDropdown is set to false and the tokenizer
+     * option is set to a tokenizer specialized for email addresses.
+     */
+    setOptions: function(options) {
+
+        options = $.extend({
+            createTokenItem: createEmailItem,
+            showDropdown: false,
+            tokenizer: emailTokenizer
+        }, options);
+
+        MultipleSelect3.prototype.setOptions.call(this, options);
+    }
+
+});
+
+Select3.InputTypes.Email = EmailSelect3;
+
+module.exports = EmailSelect3;
+
+},{"./select3-base":4,"./select3-multiple":9,"jquery":"jquery"}],8:[function(_dereq_,module,exports){
+'use strict';
+
+var escape = _dereq_('./escape');
 var Select3 = _dereq_('./select3-base');
 
 /**
  * Localizable elements of the Select3 Templates.
+ *
+ * Be aware that these strings are added straight to the HTML output of the templates, so any
+ * non-safe strings should be escaped.
  */
 Select3.Locale = {
 
-    loadMore: 'Load more...'
+    loadMore: 'Load more...',
+    noResults: 'No results found',
+    noResultsForTerm: function(term) { return 'No results for <b>' + escape(term) + '</b>' }
 
 };
 
-},{"./select3-base":4}],8:[function(_dereq_,module,exports){
+},{"./escape":2,"./select3-base":4}],9:[function(_dereq_,module,exports){
 'use strict';
 
 var $ = window.jQuery || window.Zepto;
@@ -2189,7 +2397,8 @@ var Select3 = _dereq_('./select3-base');
 /**
  * MultipleSelect3 Constructor.
  *
- * @param options Options object. Accepts all options from the Select3 Base Constructor.
+ * @param options Options object. Accepts all options from the Select3 Base Constructor in addition
+ *                to those accepted by MultipleSelect3.setOptions().
  */
 function MultipleSelect3(options) {
 
@@ -2329,7 +2538,9 @@ $.extend(MultipleSelect3.prototype, {
             this._data.splice(index, 1);
         }
 
-        index = this._value.indexOf(id);
+        if (this._value[index] !== id) {
+            index = this._value.indexOf(id);
+        }
         if (index > -1) {
             this._value.splice(index, 1);
         }
@@ -2347,23 +2558,52 @@ $.extend(MultipleSelect3.prototype, {
      * @inherit
      *
      * @param options Options object. In addition to the options supported in the base
-     *                implementation, this may contain the following property:
+     *                implementation, this may contain the following properties:
      *                backspaceHighlightsBeforeDelete - If set to true, when the user enters a
      *                                                  backspace while there is no text in the
      *                                                  search field but there are selected items,
      *                                                  the last selected item will be highlighted
      *                                                  and when a second backspace is entered the
-     *                                                  item is deleted. If false (the default),
-     *                                                  the item gets deleted on the first
-     *                                                  backspace.
+     *                                                  item is deleted. If false, the item gets
+     *                                                  deleted on the first backspace. The default
+     *                                                  value is true on devices that have touch
+     *                                                  input and false on devices that don't.
+     *                createTokenItem - Function to create a new item from a user's search term.
+     *                                  This is used to turn the term into an item when dropdowns
+     *                                  are disabled and the user presses Enter. It is also used by
+     *                                  the default tokenizer to create items for individual tokens.
+     *                                  The function receives a 'token' parameter which is the
+     *                                  search term (or part of a search term) to create an item for
+     *                                  and must return an item object with 'id' and 'text'
+     *                                  properties or null if no token can be created from the term.
+     *                                  The default is a function that returns an item where the id
+     *                                  and text both match the token for any non-empty string and
+     *                                  which returns null otherwise.
+     *                tokenizer - Function for tokenizing search terms. Will receive the following
+     *                            parameters:
+     *                            input - The input string to tokenize.
+     *                            selection - The current selection data.
+     *                            createToken - Callback to create a token from the search terms.
+     *                                          Should be passed an item object with 'id' and 'text'
+     *                                          properties.
+     *                            options - The options set on the Select3 instance.
+     *                            Any string returned by the tokenizer function is treated as the
+     *                            remainder of untokenized input.
      */
     setOptions: function(options) {
+
+        options = options || {};
+
+        var backspaceHighlightsBeforeDelete = 'backspaceHighlightsBeforeDelete';
+        if (options[backspaceHighlightsBeforeDelete] === undefined) {
+            options[backspaceHighlightsBeforeDelete] = this.hasTouch;
+        }
 
         Select3.prototype.setOptions.call(this, options);
 
         $.each(options, function(key, value) {
             switch (key) {
-            case 'backspaceHighlightsBeforeDelete':
+            case backspaceHighlightsBeforeDelete:
                 if ($.type(value) !== 'boolean') {
                     throw new Error('backspaceHighlightsBeforeDelete must be a boolean');
                 }
@@ -2436,11 +2676,26 @@ $.extend(MultipleSelect3.prototype, {
 
         this.focus();
 
-        if (this.options.showDropdown !== false) {
-            this.open();
-        }
+        this._open();
 
         return false;
+    },
+
+    /**
+     * @private
+     */
+    _createToken: function() {
+
+        var term = this._$input.val();
+
+        if (term && this.options.createTokenItem) {
+            var item = this.options.createTokenItem(term);
+            if (item) {
+                this.add(item);
+            }
+
+            this._$input.val('');
+        }
     },
 
     /**
@@ -2516,6 +2771,10 @@ $.extend(MultipleSelect3.prototype, {
             if (dropdown) {
                 dropdown.clickHighlight();
                 this._$input.val('');
+            } else if (this.options.showDropdown !== false) {
+                this.open();
+            } else if (this.options.createTokenItem) {
+                this._createToken();
             }
         } else if (event.keyCode === Select3.Keys.BACKSPACE && !inputHadText) {
             this._backspacePressed();
@@ -2527,10 +2786,10 @@ $.extend(MultipleSelect3.prototype, {
                    event.keyCode === Select3.Keys.UP_ARROW) {
             // handled in _keyHeld() because the response feels faster and it works with repeated
             // events if the user holds the key for a longer period
-            // still, we issue an open() call here in case the dropdown was not yet open...
-            this.open();
+            // still, we issue an _open() call here in case the dropdown was not yet open...
+            this._open();
         } else {
-            this.open();
+            this._open();
 
             this._search();
         }
@@ -2538,6 +2797,16 @@ $.extend(MultipleSelect3.prototype, {
         this._updateInputWidth();
 
         return false;
+    },
+
+    /**
+     * @private
+     */
+    _open: function() {
+
+        if (this.options.showDropdown !== false) {
+            this.open();
+        }
     },
 
     /**
@@ -2565,6 +2834,8 @@ $.extend(MultipleSelect3.prototype, {
                     highlighted: (item.id === this._highlightedItemId)
                 }, item)));
             }, this);
+
+            this._updateInputWidth();
         }
 
         if (event.added || event.removed) {
@@ -2610,7 +2881,21 @@ $.extend(MultipleSelect3.prototype, {
      */
     _search: function() {
 
-        this.search(this._$input.val());
+        var term = this._$input.val();
+
+        if (this.options.tokenizer) {
+            term = this.options.tokenizer(term, this._data, this.add.bind(this), this.options);
+
+            if ($.type(term) === 'string') {
+                this._$input.val(term);
+            } else {
+                term = '';
+            }
+        }
+
+        if (this.dropdown) {
+            this.search(term);
+        }
     },
 
     /**
@@ -2631,7 +2916,7 @@ Select3.InputTypes.Multiple = MultipleSelect3;
 
 module.exports = MultipleSelect3;
 
-},{"./select3-base":4,"jquery":"jquery"}],9:[function(_dereq_,module,exports){
+},{"./select3-base":4,"jquery":"jquery"}],10:[function(_dereq_,module,exports){
 'use strict';
 
 var $ = window.jQuery || window.Zepto;
@@ -2641,7 +2926,8 @@ var Select3 = _dereq_('./select3-base');
 /**
  * SingleSelect3 Constructor.
  *
- * @param options Options object. Accepts all options from the Select3 Base Constructor.
+ * @param options Options object. Accepts all options from the Select3 Base Constructor in addition
+ *                to those accepted by SingleSelect3.setOptions().
  */
 function SingleSelect3(options) {
 
@@ -2814,7 +3100,7 @@ Select3.InputTypes.Single = SingleSelect3;
 
 module.exports = SingleSelect3;
 
-},{"./select3-base":4,"jquery":"jquery"}],10:[function(_dereq_,module,exports){
+},{"./select3-base":4,"jquery":"jquery"}],11:[function(_dereq_,module,exports){
 'use strict';
 
 var escape = _dereq_('./escape');
@@ -2907,6 +3193,21 @@ Select3.Templates = {
     },
 
     /**
+     * Renders a message there are no results for the given query.
+     *
+     * @param options Options object containing the following property:
+     *                term - Search term the user is searching for.
+     */
+    noResults: function(options) {
+        var Locale = Select3.Locale;
+        return (
+            '<div class="select3-no-results">' +
+                (options.term ? Locale.noResultsForTerm(options.term) : Locale.noResults) +
+            '</div>'
+        );
+    },
+
+    /**
      * Render a result item in the dropdown.
      *
      * The template is expected to have a top-level element with the class 'select3-result-item'.
@@ -2988,4 +3289,79 @@ Select3.Templates = {
 
 };
 
-},{"./escape":2,"./select3-base":4,"./select3-locale":7}]},{},[1]);
+},{"./escape":2,"./select3-base":4,"./select3-locale":8}],12:[function(_dereq_,module,exports){
+'use strict';
+
+var $ = window.jQuery || window.Zepto;
+
+var Select3 = _dereq_('./select3-base');
+var Select3Multiple = _dereq_('./select3-multiple');
+var setOptions = Select3Multiple.prototype.setOptions;
+
+function defaultTokenizer(input, selection, createToken, options) {
+
+    var createTokenItem = options.createTokenItem || function(token) {
+        return token ? { id: token, text: token } : null;
+    };
+
+    var separators = options.tokenSeparators;
+
+    function hasToken(input) {
+        return input ? separators.some(function(separator) {
+            return input.indexOf(separator) > -1;
+        }) : false;
+    }
+
+    function takeToken(input) {
+        for (var i = 0, length = input.length; i < length; i++) {
+            if (separators.indexOf(input[i]) > -1) {
+                return { term: input.slice(0, i), input: input.slice(i + 1) };
+            }
+        }
+        return {};
+    }
+
+    while (hasToken(input)) {
+        var token = takeToken(input);
+        if (token.term) {
+            var item = createTokenItem(token.term);
+            if (item && !Select3.findById(selection, item.id)) {
+                createToken(item);
+            }
+        }
+        input = token.input;
+    }
+
+    return input;
+}
+
+/**
+ * Extends Select3Multiple.setOptions() with a default tokenizer which is used when the
+ * tokenSeparators option is specified.
+ *
+ * @param options Options object. In addition to the options supported in the multi-input
+ *                implementation, this may contain the following property:
+ *                tokenSeparators - Array of string separators which are used to separate the search
+ *                                  string into tokens. If specified and the tokenizer property is
+ *                                  not set, the tokenizer property will be set to a function which
+ *                                  splits the search term into tokens separated by any of the given
+ *                                  separators. The tokens will be converted into selectable items
+ *                                  using the 'createTokenItem' function. The default tokenizer also
+ *                                  filters out already selected items.
+ */
+Select3Multiple.prototype.setOptions = function(options) {
+
+    options = options || {};
+
+    if (options.tokenSeparators) {
+        if ($.type(options.tokenSeparators) === 'array') {
+            options.tokenizer = options.tokenizer || defaultTokenizer;
+        } else {
+            throw new Error('tokenSeparators must be an array');
+        }
+    }
+
+    setOptions.call(this, options);
+};
+
+},{"./select3-base":4,"./select3-multiple":9,"jquery":"jquery"}]},{},[1]);

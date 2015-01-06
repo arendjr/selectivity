@@ -53,21 +53,24 @@ API
 Call `$(selector).select3(options)` to initialize a Select3 instance on the element specified by the
 given selector. The following options are supported:
 
-Option         | Type                   | Description
--------------- | ---------------------- | -----------
-allowClear     | `Boolean`              | Set to `true` to allow the selection to be cleared. This option only applies to single-value inputs.
-backspaceHighlightsBeforeDelete | `Boolean` | If set to `true`, when the user enters a backspace while there is no text in the search field but there are selected items, the last selected item will be highlighted and when a second backspace is entered the item is deleted. If `false` (the default), the item gets deleted on the first backspace.
-closeOnSelect  | `Boolean`              | Set to `false` to keep the dropdown open after the user has selected an item. This is useful if you want to allow the user to quickly select multiple items. The default value is `true`.
-data           | `Object` or `Array`    | Initial selection data to set. This should be an object with `id` and `text` properties in the case of a SingleSelect3 instance, or an array of such objects in the case of a MultipleSelect3 instance. This option is mutually exclusive with `value`.
-value          | `ID` or `Array`        | Initial value to set. This should be an ID (string or number) in the case of a SingleSelect3 instance, or array of IDs in the case of a MultipleSelect3 instance. This property is mutually exclusive with `data`.
-initSelection  | `Function`             | Function to map values by ID to selection data. This function receives two arguments, `value` and `callback`. The value is the current value of the selection, which is an ID or an array of IDs depending on the input type. The callback should be invoked with an object or array of objects, respectively, containing `id` and `text` properties.
-inputType      | `String` or `Function` | The input type to use. Default input types include 'Multiple' and 'Single', but you can add custom input types to the `Select3.InputTypes` map or just specify one here as a function. The default value is 'Single', unless `multiple` is `true` in which case it is 'Multiple'.
-items          | `Array`                | Array of items from which to select. Should be an array of objects with `id` and `text` properties. As convenience, you may also pass an array of strings, in which case the same string is used for both the ID and the text. If items are given, all items are expected to be available locally and all selection operations operate on this local array only. If `null`, items are not available locally, and the `query` option should be provided to fetch remote data.
-matcher        | `Function`             | Function to determine whether text matches a given search term. Note this function is only used if you have specified an array of items. Receives two arguments: `term` and `text`. The term is the search term, which for performance reasons has always been already processed using `Select3.transformText()`. The text is the text that should match the search term.
-placeholder    | `String`               | Placeholder text to display when the element has no focus and selected items.
-query          | `Function`             | Function to use for querying items. Receives a single object as argument with the `callback`, `offset` and `term` properties. The callback should be invoked when the results are available. It should be passed a single object with `results` and `more` properties. The first is an array with result items and the latter is an optional boolean that may be set to `true` indicate more results are available through pagination. Offset is a property is only used for pagination and indicates how many results should be skipped when returning more results. The term is the search term the user is searching for. Unlike with the matcher function, the term has not been processed using `Select3.transformText()`. This option is ignored if the `items` option is used.
-showDropdown   | `Boolean`              | Set to false if you don't want to use any dropdown (you can still open still open it programmatically using `open()`).
-templates      | `Object`               | Object with instance-specific templates to override the global templates assigned to `Select3.Templates`.
+Option          | Type                      | Description
+--------------- | ------------------------- | -----------
+allowClear      | `Boolean`                 | Set to `true` to allow the selection to be cleared. This option only applies to single-value inputs.
+backspaceHighlightsBeforeDelete | `Boolean` | If set to `true`, when the user enters a backspace while there is no text in the search field but there are selected items, the last selected item will be highlighted and when a second backspace is entered the item is deleted. If `false`, the item gets deleted on the first backspace. The default value is true on devices that have touch input and false on devices that don't.
+closeOnSelect   | `Boolean`                 | Set to `false` to keep the dropdown open after the user has selected an item. This is useful if you want to allow the user to quickly select multiple items. The default value is `true`.
+createTokenItem | `Function`                | Function to create a new item from a user's search term. This is used to turn the term into an item when dropdowns are disabled and the user presses Enter. It is also used by the default tokenizer to create items for individual tokens. The function receives a `token` parameter which is the search term (or part of a search term) to create an item for and must return an item object with `id` and `text` properties or `null` if no token can be created from the term. The default is a function that returns an item where the id and text both match the term for any non-empty string and which returns `null` otherwise. This option only applies to multiple-value inputs.
+data            | `Object` or `Array`       | Initial selection data to set. This should be an object with `id` and `text` properties in the case of a SingleSelect3 instance, or an array of such objects in the case of a MultipleSelect3 instance. This option is mutually exclusive with `value`.
+value           | `ID` or `Array`           | Initial value to set. This should be an ID (string or number) in the case of a SingleSelect3 instance, or array of IDs in the case of a MultipleSelect3 instance. This property is mutually exclusive with `data`.
+initSelection   | `Function`                | Function to map values by ID to selection data. This function receives two arguments, `value` and `callback`. The value is the current value of the selection, which is an ID or an array of IDs depending on the input type. The callback should be invoked with an object or array of objects, respectively, containing `id` and `text` properties.
+inputType       | `String` or `Function`    | The input type to use. Default input types include 'Multiple' and 'Single', but you can add custom input types to the `Select3.InputTypes` map or just specify one here as a function. The default value is 'Single', unless `multiple` is `true` in which case it is 'Multiple'.
+items           | `Array`                   | Array of items from which to select. Should be an array of objects with `id` and `text` properties. As convenience, you may also pass an array of strings, in which case the same string is used for both the ID and the text. If items are given, all items are expected to be available locally and all selection operations operate on this local array only. If `null`, items are not available locally, and the `query` option should be provided to fetch remote data.
+matcher         | `Function`                | Function to determine whether text matches a given search term. Note this function is only used if you have specified an array of items. Receives two arguments: `term` and `text`. The term is the search term, which for performance reasons has always been already processed using `Select3.transformText()`. The text is the text that should match the search term.
+placeholder     | `String`                  | Placeholder text to display when the element has no focus and selected items.
+query           | `Function`                | Function to use for querying items. Receives a single object as argument with the `callback`, `offset` and `term` properties. The callback should be invoked when the results are available. It should be passed a single object with `results` and `more` properties. The first is an array with result items and the latter is an optional boolean that may be set to `true` indicate more results are available through pagination. Offset is a property is only used for pagination and indicates how many results should be skipped when returning more results. The term is the search term the user is searching for. Unlike with the matcher function, the term has not been processed using `Select3.transformText()`. This option is ignored if the `items` option is used.
+showDropdown    | `Boolean`                 | Set to false if you don't want to use any dropdown (you can still open still open it programmatically using `open()`).
+templates       | `Object`                  | Object with instance-specific templates to override the global templates assigned to `Select3.Templates`.
+tokenizer       | `Function`                | Function for tokenizing search terms. Will receive the `input` (the input string to tokenize), `selection` (the current selection data), `createToken` (callback to create a token from the search terms, should be passed an item object with `id` and `text` properties) and `options` (the options set on the Select3 instance) arguments. Any string returned by the tokenizer function is treated as the remainder of untokenized input. This option only applies to multiple-value inputs.
+tokenSeparators | `Array`                   | Array of string separators which are used to separate the search term into tokens. If specified and the tokenizer property is not set, the tokenizer property will be set to a function which splits the search term into tokens separated by any of the given separators. The tokens will be converted into selectable items using the `createTokenItem` function. The default tokenizer also filters out already selected items. This option only applies to multiple-value inputs.
 
 For documentation about all the available methods once Select3 has been instantiated, I refer to the
 inline documentation in the source files for now.
@@ -87,6 +90,55 @@ Event                 | Description
 `"select3-opening"`   | Emitted when the dropdown is about to be opened. You can call `preventDefault()` on the event object to cancel the opening of the dropdown.
 `"select3-selected"`  | Emitted when an item has been selected. Additional properties on the event object: `id` and `item`.
 `"select3-selecting"` | Emitted when an item is about to be selected. You can call `preventDefault()` on on the event object to prevent the item from being selected. Additional properties on the event object: `id` and `item`.
+
+Migrating from Select2
+----------------------
+
+Before you decide to migrate from Select2 to Select3, you should consider that not every feature
+supported by Select2 is supported by Select3. So check beforehand whether Select3 actually meets
+your requirements.
+
+### Unsupported features
+
+The following is an (incomplete) list of features which Select3 currently lacks:
+
+ * Labels (optgroups). This is a planned TODO item and Select3 will support this in the (near)
+   future.
+ * There is no search field in the dropdown for single-select inputs. This is a planned TODO item
+   and Select3 will support this in the (near) future.
+ * Nested items. Select3 lacks upport for nested items, ie. the dropdown cannot display hierarchical
+   results. No support for this is currently planned.
+ * Reordering of selected items. Select2 allows reordering of selected items, for example through
+   drag 'n drop. Select3 doesn't and there are curently no plans to implement this.
+ * AJAX. Select2 has a built-in AJAX query function that makes it easier to perform AJAX requests
+   for fetching requests. This is a convenience feature as you can achieve the same result by
+   calling `$.ajax()` in the query function, but it is one Select3 currently lacks.
+ * Formatting functions. Select2 allows you to specify a wide range of `format*()` functions in the
+   options. With Select3, it is hoped you won't have much need for these as Select3 allows for much
+   easier customization of templates. However, practice will have to show if some of these are still
+   desired.
+ * Options. Select3 lacks some miscellaneous options supported by Select2. Notable omissions are
+   `selectOnBlur`, `maximumSelectionSize`, and `minimumInputLength` among others.
+ * Events. Select2 currently emits more events than Select3 does. Notable omissions are
+   'select2-clearing', 'select2-focus' and 'select2-blur' among others.
+
+### Notable differences
+
+ * With Select2, you can take a &lt;select&gt; or &lt;input&gt; element in the DOM and initialize
+   your Select2 instance based on that. Instead, to position a Select3 instance in the DOM you
+   attach it to an empty &lt;div&gt; element and all options you want pass to Select3 are specified
+   through the constructor method. An additional module is planned for Select3 that will simulate
+   the Select2 approach, but this is not a high priority right now.
+ * Select2 has explicit support for tags through the `tags` option. With Select3, tagging is also
+   supported, but works through the regular `items` option.
+
+### Miscellaneous
+
+ * If you have customized the CSS you use with Select2, you will have to take into account that you
+   may need to customize it again for Select3 as the templates are very different.
+ * Some properties are named differently, even though they have very similar meaning. Examples:
+   * `createSearchChoice` is now `createTokenItem`.
+   * The `choice` parameter to events is now called `item`.
 
 Build System
 ------------
@@ -120,6 +172,7 @@ Module         | Description
 **multiple**   | Implements the MultipleSelect3 class. If you only want to use Select3 with single values, you can leave this out.
 **single**     | Implements the SingleSelect3 class. If you only want to use Select3 with multiple values, you can leave this out.
 **templates**  | Default templates to use with Select3. If you provide your own templates, you may want to skip this.
+**tokenizer**  | Default tokenizer implementation. This module adds support for the `tokenSeparators` option which is used by the default tokenizer. Support for tokenizers themselves is already included in the "multiple" module, so you can omit this module if you don't want to use any tokenizers or want to specify your own tokenizer.
 
 Note that the build system automatically resolves dependencies between modules, so you never need to
 explicitly specify that you want to include the base module, as it will be pulled in by others.
@@ -155,12 +208,14 @@ Unit tests are available and can be ran using the following command:
 Project Status
 --------------
 
-Select3 is in an early stage of development. The following items are on my direct TODO list:
+Select3 is in an early stage of development. The following items are on the short-term TODO list:
 
-* Implement pagination.
-* Add search input to dropdown for single-value inputs.
-* Add support for labels (optgroup).
-* Add module that can transform an existing &lt;select&gt; input in the DOM into a Select3 instance.
+ * Implement automatic pagination.
+ * Add search input to dropdown for single-value inputs.
+ * Add support for labels (optgroup).
+ * Add module that will easily perform AJAX requests instead of doing this through the query()
+   function.
+ * Add module that can transform an existing &lt;select&gt; input in the DOM into a Select3 instance.
 
 Contributing
 ------------

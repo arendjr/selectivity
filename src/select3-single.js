@@ -7,7 +7,8 @@ var Select3 = require('./select3-base');
 /**
  * SingleSelect3 Constructor.
  *
- * @param options Options object. Accepts all options from the Select3 Base Constructor.
+ * @param options Options object. Accepts all options from the Select3 Base Constructor in addition
+ *                to those accepted by SingleSelect3.setOptions().
  */
 function SingleSelect3(options) {
 
