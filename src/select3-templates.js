@@ -20,12 +20,35 @@ Select3.Templates = {
      *
      * The template is expected to have at least one element with the class
      * 'select3-results-container', which is where all results will be added to.
+     *
+     * @param options Options object containing the following property:
+     *                searchInputPlaceholder - Optional placeholder text to display in the search
+     *                                         input in the dropdown.
+     *                showSearchInput - Boolean whether a search input should be shown. If true,
+     *                                  an input element with the 'select3-search-input' is
+     *                                  expected.
      */
-    dropdown: (
-        '<div class="select3-dropdown">' +
-            '<div class="select3-results-container"></div>' +
-        '</div>'
-    ),
+    dropdown: function(options) {
+        var extraClass = '', searchInput = '';
+        if (options.showSearchInput) {
+            extraClass = ' has-search-input';
+
+            var placeholder = options.searchInputPlaceholder;
+            searchInput = (
+                '<div class="select3-search-input-container">' +
+                    '<input class="select3-search-input"' +
+                            (placeholder ? ' placeholder="' + escape(placeholder) + '"'
+                                         : '') + '>' +
+                '</div>'
+            );
+        }
+        return (
+            '<div class="select3-dropdown' + extraClass + '">' +
+                searchInput +
+                '<div class="select3-results-container"></div>' +
+            '</div>'
+        );
+    },
 
     /**
      * Load more indicator.

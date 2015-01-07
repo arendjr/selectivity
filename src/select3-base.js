@@ -318,15 +318,24 @@ $.extend(Select3.prototype, {
 
     /**
      * Opens the dropdown.
+     *
+     * @param options Optional options object. May contain the following property:
+     *                showSearchInput - Boolean whether a search input should be shown in the
+     *                                  dropdown. Default is false.
      */
-    open: function() {
+    open: function(options) {
+
+        options = options || {};
 
         if (!this.dropdown) {
             var event = $.Event('select3-opening');
             this.$el.trigger(event);
 
             if (!event.isDefaultPrevented()) {
-                this.dropdown = new Select3.Dropdown({ select3: this });
+                this.dropdown = new Select3.Dropdown({
+                    select3: this,
+                    showSearchInput: options.showSearchInput
+                });
 
                 this.search('');
             }

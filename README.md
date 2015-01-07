@@ -67,7 +67,9 @@ items           | `Array`                   | Array of items from which to selec
 matcher         | `Function`                | Function to determine whether text matches a given search term. Note this function is only used if you have specified an array of items. Receives two arguments: `term` and `text`. The term is the search term, which for performance reasons has always been already processed using `Select3.transformText()`. The text is the text that should match the search term.
 placeholder     | `String`                  | Placeholder text to display when the element has no focus and selected items.
 query           | `Function`                | Function to use for querying items. Receives a single object as argument with the `callback`, `offset` and `term` properties. The callback should be invoked when the results are available. It should be passed a single object with `results` and `more` properties. The first is an array with result items and the latter is an optional boolean that may be set to `true` indicate more results are available through pagination. Offset is a property is only used for pagination and indicates how many results should be skipped when returning more results. The term is the search term the user is searching for. Unlike with the matcher function, the term has not been processed using `Select3.transformText()`. This option is ignored if the `items` option is used.
-showDropdown    | `Boolean`                 | Set to false if you don't want to use any dropdown (you can still open still open it programmatically using `open()`).
+searchInputPlaceholder | `String`           | Placeholder text to display in the search input in the dropdown.
+showDropdown    | `Boolean`                 | Set to `false` if you don't want to use any dropdown (you can still open still open it programmatically using `open()`).
+showSearchInputInDropdown | `Boolean`       | Set to `false` to remove the search input used in dropdowns. This option only applies to single-value inputs, as multiple-value inputs don't have the search input in the dropdown to begin with. The default is `true`.
 templates       | `Object`                  | Object with instance-specific templates to override the global templates assigned to `Select3.Templates`.
 tokenizer       | `Function`                | Function for tokenizing search terms. Will receive the `input` (the input string to tokenize), `selection` (the current selection data), `createToken` (callback to create a token from the search terms, should be passed an item object with `id` and `text` properties) and `options` (the options set on the Select3 instance) arguments. Any string returned by the tokenizer function is treated as the remainder of untokenized input. This option only applies to multiple-value inputs.
 tokenSeparators | `Array`                   | Array of string separators which are used to separate the search term into tokens. If specified and the tokenizer property is not set, the tokenizer property will be set to a function which splits the search term into tokens separated by any of the given separators. The tokens will be converted into selectable items using the `createTokenItem` function. The default tokenizer also filters out already selected items. This option only applies to multiple-value inputs.
@@ -104,8 +106,6 @@ The following is an (incomplete) list of features which Select3 currently lacks:
 
  * Labels (optgroups). This is a planned TODO item and Select3 will support this in the (near)
    future.
- * There is no search field in the dropdown for single-select inputs. This is a planned TODO item
-   and Select3 will support this in the (near) future.
  * Nested items. Select3 lacks upport for nested items, ie. the dropdown cannot display hierarchical
    results. No support for this is currently planned.
  * Reordering of selected items. Select2 allows reordering of selected items, for example through
@@ -212,7 +212,6 @@ Project Status
 Select3 is in an early stage of development. The following items are on the short-term TODO list:
 
  * Implement automatic pagination.
- * Add search input to dropdown for single-value inputs.
  * Add support for labels (optgroup).
  * Add module that will easily perform AJAX requests instead of doing this through the query()
    function.

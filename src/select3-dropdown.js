@@ -9,12 +9,16 @@ var Select3 = require('./select3-base');
  *
  * @param options Options object. Should have the following properties:
  *                select3 - Select3 instance to show the dropdown for.
+ *                showSearchInput - Boolean whether a search input should be shown.
  */
 function Select3Dropdown(options) {
 
     var select3 = options.select3;
 
-    this.$el = $(select3.template('dropdown'));
+    this.$el = $(select3.template('dropdown', {
+        searchInputPlaceholder: select3.options.searchInputPlaceholder,
+        showSearchInput: options.showSearchInput
+    }));
 
     /**
      * Boolean indicating whether more results are available than currently displayed in the
@@ -31,6 +35,11 @@ function Select3Dropdown(options) {
      * Boolean whether the load more link is currently highlighted.
      */
     this.loadMoreHighlighted = false;
+
+    /**
+     * Options passed to the dropdown.
+     */
+    this.options = options;
 
     /**
      * The results displayed in the dropdown.
@@ -50,6 +59,12 @@ function Select3Dropdown(options) {
     this.addToDom();
     this.position();
     this.setupCloseHandler();
+
+    if (options.showSearchInput) {
+        var $input = this.$('.select3-search-input');
+        $input.focus();
+        this._$input = $input;
+    }
 
     this._delegateEvents();
 
@@ -110,6 +125,8 @@ $.extend(Select3Dropdown.prototype, {
     events: {
         'click .select3-load-more': '_loadMoreClicked',
         'click .select3-result-item': '_resultClicked',
+        'keydown .select3-search-input': '_keyHeld',
+        'keyup .select3-search-input': '_keyReleased',
         'mouseenter .select3-load-more': 'highlightLoadMore',
         'mouseenter .select3-result-item': '_resultHovered'
     },
@@ -312,6 +329,39 @@ $.extend(Select3Dropdown.prototype, {
 
             this.$el.on(event, selector, listener);
         }.bind(this));
+    },
+
+    /**
+     * @private
+     */
+    _keyHeld: function(event) {
+
+        if (event.keyCode === Select3.Keys.DOWN_ARROW) {
+            this.highlightNext();
+        } else if (event.keyCode === Select3.Keys.UP_ARROW) {
+            this.highlightPrevious();
+        }
+    },
+
+    /**
+     * @private
+     */
+    _keyReleased: function(event) {
+
+        if (event.keyCode === Select3.Keys.ENTER && !event.ctrlKey) {
+            this.clickHighlight();
+            this._$input.val('');
+        } else if (event.keyCode === Select3.Keys.ESCAPE) {
+            this.close();
+        } else if (event.keyCode === Select3.Keys.DOWN_ARROW ||
+                   event.keyCode === Select3.Keys.UP_ARROW) {
+            // handled in _keyHeld() because the response feels faster and it works with repeated
+            // events if the user holds the key for a longer period
+        } else {
+            this.select3.search(this._$input.val());
+        }
+
+        return false;
     },
 
     /**

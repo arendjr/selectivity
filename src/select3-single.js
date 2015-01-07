@@ -77,8 +77,10 @@ $.extend(SingleSelect3.prototype, {
      * @inherit
      *
      * @param options Options object. In addition to the options supported in the base
-     *                implementation, this may contain the following property:
+     *                implementation, this may contain the following properties:
      *                allowClear - Boolean whether the selected item may be removed.
+     *                showSearchInputInDropdown - Set to false to remove the search input used in
+     *                                            dropdowns. The default is true.
      */
     setOptions: function(options) {
 
@@ -89,6 +91,12 @@ $.extend(SingleSelect3.prototype, {
             case 'allowClear':
                 if ($.type(value) !== 'boolean') {
                     throw new Error('allowClear must be a boolean');
+                }
+                break;
+
+            case 'showSearchInputInDropdown':
+                if ($.type(value) !== 'boolean') {
+                    throw new Error('showSearchInputInDropdown must be a boolean');
                 }
                 break;
             }
@@ -129,10 +137,14 @@ $.extend(SingleSelect3.prototype, {
      */
     _clicked: function() {
 
-        this.focus();
+        if (this.dropdown) {
+            this.close();
+        } else {
+            this.focus();
 
-        if (this.options.showDropdown !== false) {
-            this.open();
+            if (this.options.showDropdown !== false) {
+                this.open({ showSearchInput: this.options.showSearchInputInDropdown !== false });
+            }
         }
 
         return false;

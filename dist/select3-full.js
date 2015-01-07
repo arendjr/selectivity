@@ -441,15 +441,24 @@ $.extend(Select3.prototype, {
 
     /**
      * Opens the dropdown.
+     *
+     * @param options Optional options object. May contain the following property:
+     *                showSearchInput - Boolean whether a search input should be shown in the
+     *                                  dropdown. Default is false.
      */
-    open: function() {
+    open: function(options) {
+
+        options = options || {};
 
         if (!this.dropdown) {
             var event = $.Event('select3-opening');
             this.$el.trigger(event);
 
             if (!event.isDefaultPrevented()) {
-                this.dropdown = new Select3.Dropdown({ select3: this });
+                this.dropdown = new Select3.Dropdown({
+                    select3: this,
+                    showSearchInput: options.showSearchInput
+                });
 
                 this.search('');
             }
@@ -1824,12 +1833,16 @@ var Select3 = _dereq_('./select3-base');
  *
  * @param options Options object. Should have the following properties:
  *                select3 - Select3 instance to show the dropdown for.
+ *                showSearchInput - Boolean whether a search input should be shown.
  */
 function Select3Dropdown(options) {
 
     var select3 = options.select3;
 
-    this.$el = $(select3.template('dropdown'));
+    this.$el = $(select3.template('dropdown', {
+        searchInputPlaceholder: select3.options.searchInputPlaceholder,
+        showSearchInput: options.showSearchInput
+    }));
 
     /**
      * Boolean indicating whether more results are available than currently displayed in the
@@ -1846,6 +1859,11 @@ function Select3Dropdown(options) {
      * Boolean whether the load more link is currently highlighted.
      */
     this.loadMoreHighlighted = false;
+
+    /**
+     * Options passed to the dropdown.
+     */
+    this.options = options;
 
     /**
      * The results displayed in the dropdown.
@@ -1865,6 +1883,12 @@ function Select3Dropdown(options) {
     this.addToDom();
     this.position();
     this.setupCloseHandler();
+
+    if (options.showSearchInput) {
+        var $input = this.$('.select3-search-input');
+        $input.focus();
+        this._$input = $input;
+    }
 
     this._delegateEvents();
 
@@ -1925,6 +1949,8 @@ $.extend(Select3Dropdown.prototype, {
     events: {
         'click .select3-load-more': '_loadMoreClicked',
         'click .select3-result-item': '_resultClicked',
+        'keydown .select3-search-input': '_keyHeld',
+        'keyup .select3-search-input': '_keyReleased',
         'mouseenter .select3-load-more': 'highlightLoadMore',
         'mouseenter .select3-result-item': '_resultHovered'
     },
@@ -2127,6 +2153,39 @@ $.extend(Select3Dropdown.prototype, {
 
             this.$el.on(event, selector, listener);
         }.bind(this));
+    },
+
+    /**
+     * @private
+     */
+    _keyHeld: function(event) {
+
+        if (event.keyCode === Select3.Keys.DOWN_ARROW) {
+            this.highlightNext();
+        } else if (event.keyCode === Select3.Keys.UP_ARROW) {
+            this.highlightPrevious();
+        }
+    },
+
+    /**
+     * @private
+     */
+    _keyReleased: function(event) {
+
+        if (event.keyCode === Select3.Keys.ENTER && !event.ctrlKey) {
+            this.clickHighlight();
+            this._$input.val('');
+        } else if (event.keyCode === Select3.Keys.ESCAPE) {
+            this.close();
+        } else if (event.keyCode === Select3.Keys.DOWN_ARROW ||
+                   event.keyCode === Select3.Keys.UP_ARROW) {
+            // handled in _keyHeld() because the response feels faster and it works with repeated
+            // events if the user holds the key for a longer period
+        } else {
+            this.select3.search(this._$input.val());
+        }
+
+        return false;
     },
 
     /**
@@ -2996,8 +3055,10 @@ $.extend(SingleSelect3.prototype, {
      * @inherit
      *
      * @param options Options object. In addition to the options supported in the base
-     *                implementation, this may contain the following property:
+     *                implementation, this may contain the following properties:
      *                allowClear - Boolean whether the selected item may be removed.
+     *                showSearchInputInDropdown - Set to false to remove the search input used in
+     *                                            dropdowns. The default is true.
      */
     setOptions: function(options) {
 
@@ -3008,6 +3069,12 @@ $.extend(SingleSelect3.prototype, {
             case 'allowClear':
                 if ($.type(value) !== 'boolean') {
                     throw new Error('allowClear must be a boolean');
+                }
+                break;
+
+            case 'showSearchInputInDropdown':
+                if ($.type(value) !== 'boolean') {
+                    throw new Error('showSearchInputInDropdown must be a boolean');
                 }
                 break;
             }
@@ -3048,10 +3115,14 @@ $.extend(SingleSelect3.prototype, {
      */
     _clicked: function() {
 
-        this.focus();
+        if (this.dropdown) {
+            this.close();
+        } else {
+            this.focus();
 
-        if (this.options.showDropdown !== false) {
-            this.open();
+            if (this.options.showDropdown !== false) {
+                this.open({ showSearchInput: this.options.showSearchInputInDropdown !== false });
+            }
         }
 
         return false;
@@ -3123,12 +3194,35 @@ Select3.Templates = {
      *
      * The template is expected to have at least one element with the class
      * 'select3-results-container', which is where all results will be added to.
+     *
+     * @param options Options object containing the following property:
+     *                searchInputPlaceholder - Optional placeholder text to display in the search
+     *                                         input in the dropdown.
+     *                showSearchInput - Boolean whether a search input should be shown. If true,
+     *                                  an input element with the 'select3-search-input' is
+     *                                  expected.
      */
-    dropdown: (
-        '<div class="select3-dropdown">' +
-            '<div class="select3-results-container"></div>' +
-        '</div>'
-    ),
+    dropdown: function(options) {
+        var extraClass = '', searchInput = '';
+        if (options.showSearchInput) {
+            extraClass = ' has-search-input';
+
+            var placeholder = options.searchInputPlaceholder;
+            searchInput = (
+                '<div class="select3-search-input-container">' +
+                    '<input class="select3-search-input"' +
+                            (placeholder ? ' placeholder="' + escape(placeholder) + '"'
+                                         : '') + '>' +
+                '</div>'
+            );
+        }
+        return (
+            '<div class="select3-dropdown' + extraClass + '">' +
+                searchInput +
+                '<div class="select3-results-container"></div>' +
+            '</div>'
+        );
+    },
 
     /**
      * Load more indicator.
@@ -3296,6 +3390,7 @@ var $ = window.jQuery || window.Zepto;
 
 var Select3 = _dereq_('./select3-base');
 var Select3Multiple = _dereq_('./select3-multiple');
+
 var setOptions = Select3Multiple.prototype.setOptions;
 
 function defaultTokenizer(input, selection, createToken, options) {
