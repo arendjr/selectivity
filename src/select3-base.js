@@ -299,14 +299,10 @@ $.extend(Select3.prototype, {
         this.options.query({
             callback: function(response) {
                 if (response && response.results) {
-                    if ($.type(response.results) === 'array') {
-                        this._addResults(
-                            response.results.map(Select3.processItem),
-                            { hasMore: !!response.more }
-                        );
-                    } else {
-                        throw new Error('results must be an array');
-                    }
+                    this._addResults(
+                        Select3.processItems(response.results),
+                        { hasMore: !!response.more }
+                    );
                 } else {
                     throw new Error('callback must be passed a response object');
                 }
@@ -371,21 +367,19 @@ $.extend(Select3.prototype, {
         if (self.items) {
             term = Select3.transformText(term);
             var matcher = self.matcher;
-            setResults(self.items.filter(function(item) {
-                return matcher(term, item.text);
+            setResults(self.items.map(function(item) {
+                return matcher(item, term);
+            }).filter(function(item) {
+                return !!item;
             }));
         } else if (self.options.query) {
             self.options.query({
                 callback: function(response) {
                     if (response && response.results) {
-                        if ($.type(response.results) === 'array') {
-                            setResults(
-                                response.results.map(Select3.processItem),
-                                { hasMore: !!response.more }
-                            );
-                        } else {
-                            throw new Error('results must be an array');
-                        }
+                        setResults(
+                            Select3.processItems(response.results),
+                            { hasMore: !!response.more }
+                        );
                     } else {
                         throw new Error('callback must be passed a response object');
                     }
@@ -421,10 +415,15 @@ $.extend(Select3.prototype, {
      *                matcher - Function to determine whether text matches a given search term. Note
      *                          this function is only used if you have specified an array of items.
      *                          Receives two arguments:
+     *                          item - The item that should match the search term.
      *                          term - The search term. Note that for performance reasons, the term
      *                                 has always been already processed using
      *                                 Select3.transformText().
-     *                          text - The text that should match the search term.
+     *                          The method should return the item if it matches, and null otherwise.
+     *                          If the item has a children array, the matcher is expected to filter
+     *                          those itself (be sure to only return the filtered array of children
+     *                          in the returned item and not to modify the children of the item
+     *                          argument).
      *                placeholder - Placeholder text to display when the element has no focus and
      *                              selected items.
      *                query - Function to use for querying items. Receives a single object as
@@ -468,11 +467,7 @@ $.extend(Select3.prototype, {
                 break;
 
             case 'items':
-                if ($.type(value) === 'array') {
-                    this.items = value.map(Select3.processItem);
-                } else {
-                    throw new Error('items must be an array');
-                }
+                this.items = Select3.processItems(value);
                 break;
 
             case 'matcher':
@@ -656,9 +651,9 @@ $.extend(Select3.prototype, {
     /**
      * @private
      */
-    _getItemId: function(event) {
+    _getItemId: function(elementOrEvent) {
 
-        // returns the item ID related to an event target.
+        // returns the item ID related to an element or event target.
         // IDs can be either numbers or strings, but attribute values are always strings, so we
         // will have to find out whether the item ID ought to be a number or string ourselves.
         // $.fn.data() is a bit overzealous for our case, because it returns a number whenever the
@@ -667,11 +662,21 @@ $.extend(Select3.prototype, {
         // as number is actually found among the data or results. if it isn't, we assume it was
         // supposed to be a string after all...
 
-        var id = $(event.target).closest('[data-item-id]').data('item-id');
+        var $element;
+        if (elementOrEvent instanceof $.Event) {
+            $element = $(elementOrEvent.target).closest('[data-item-id]');
+        } else if (elementOrEvent.length) {
+            $element = elementOrEvent;
+        } else {
+            $element = $(elementOrEvent);
+        }
+
+        var id = $element.data('item-id');
         if ($.type(id) === 'string') {
             return id;
         } else {
-            if (Select3.findById(this.data, id) || Select3.findById(this.results, id)) {
+            if (Select3.findById(this._data || [], id) ||
+                Select3.findNestedById(this.results, id)) {
                 return id;
             } else {
                 return '' + id;
@@ -756,6 +761,33 @@ Select3.findIndexById = function(array, id) {
 };
 
 /**
+ * Finds an item in the given array with the specified ID. Items in the array may contain 'children'
+ * properties which in turn will be searched for the item.
+ *
+ * @param array Array to search in.
+ * @param id ID to search for.
+ *
+ * @return The item in the array with the given ID, or null if the item was not found. The item will
+ *         have an 'indices' property added to it which is an array with the index at which the item
+ *         was found for every level of the hierarchy.
+ */
+Select3.findNestedById = function(array, id) {
+
+    for (var i = 0, length = array.length; i < length; i++) {
+        var item = array[i];
+        if (item.id === id) {
+            return $.extend({}, item, { indices: [i] });
+        } else if (item.children) {
+            var result = Select3.findNestedById(item.children, id);
+            if (result) {
+                return $.extend(result, { indices: [i].concat(result.indices) });
+            }
+        }
+    }
+    return null;
+};
+
+/**
  * Checks whether a value can be used as a valid ID for selection items. Only numbers and strings
  * are accepted to be used as IDs.
  *
@@ -770,26 +802,40 @@ Select3.isValidId = function(id) {
 };
 
 /**
- * Decides whether a given text string matches a search term. The default implementation simply
- * checks whether the term is contained within the text, after transforming them using
+ * Decides whether a given item matches a search term. The default implementation simply
+ * checks whether the term is contained within the item's text, after transforming them using
  * transformText().
  *
+ * @param item The item that should match the search term.
  * @param term The search term. Note that for performance reasons, the term has always been already
  *             processed using transformText().
- * @param text The text that should match the search term.
  *
  * @return true if the text matches the term, false otherwise.
  */
-Select3.matcher = function(term, text) {
+Select3.matcher = function(item, term) {
 
-    return Select3.transformText(text).indexOf(term) > -1;
+    var result = null;
+    if (Select3.transformText(item.text).indexOf(term) > -1) {
+        result = item;
+    } else if (item.children) {
+        var matchingChildren = item.children.map(function(child) {
+            return Select3.matcher(child, term);
+        }).filter(function(child) {
+            return !!child;
+        });
+        if (matchingChildren.length) {
+            result = { id: item.id, text: item.text, children: matchingChildren };
+        }
+    }
+    return result;
 };
 
 /**
  * Helper function for processing items.
  *
  * @param item The item to process, either as object containing 'id' and 'text' properties or just
- *             as ID.
+ *             as ID. The 'id' property of an item is optional if it has a 'children' property
+ *             containing an array of items.
  *
  * @return Object containing 'id' and 'text' properties.
  */
@@ -797,10 +843,32 @@ Select3.processItem = function(item) {
 
     if (Select3.isValidId(item)) {
         return { id: item, text: '' + item };
-    } else if (item && Select3.isValidId(item.id)) {
+    } else if (item &&
+               (Select3.isValidId(item.id) || item.children) &&
+               $.type(item.text) === 'string') {
+        if (item.children) {
+            item.children = Select3.processItems(item.children);
+        }
+
         return item;
     } else {
         throw new Error('invalid item');
+    }
+};
+
+/**
+ * Helper function for processing an array of items.
+ *
+ * @param items Array of items to process. See processItem() for details about a single item.
+ *
+ * @return Array with items.
+ */
+Select3.processItems = function(items) {
+
+    if ($.type(items) === 'array') {
+        return items.map(Select3.processItem);
+    } else {
+        throw new Error('invalid items');
     }
 };
 

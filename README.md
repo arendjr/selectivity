@@ -64,7 +64,7 @@ value           | `ID` or `Array`           | Initial value to set. This should 
 initSelection   | `Function`                | Function to map values by ID to selection data. This function receives two arguments, `value` and `callback`. The value is the current value of the selection, which is an ID or an array of IDs depending on the input type. The callback should be invoked with an object or array of objects, respectively, containing `id` and `text` properties.
 inputType       | `String` or `Function`    | The input type to use. Default input types include 'Multiple', 'Single' and 'Email', but you can add custom input types to the `Select3.InputTypes` map or just specify one here as a function. The default value is 'Single', unless `multiple` is `true` in which case it is 'Multiple'.
 items           | `Array`                   | Array of items from which to select. Should be an array of objects with `id` and `text` properties. As convenience, you may also pass an array of strings, in which case the same string is used for both the ID and the text. If items are given, all items are expected to be available locally and all selection operations operate on this local array only. If `null`, items are not available locally, and the `query` option should be provided to fetch remote data.
-matcher         | `Function`                | Function to determine whether text matches a given search term. Note this function is only used if you have specified an array of items. Receives two arguments: `term` and `text`. The term is the search term, which for performance reasons has always been already processed using `Select3.transformText()`. The text is the text that should match the search term.
+matcher         | `Function`                | Function to determine whether text matches a given search term. Note this function is only used if you have specified an array of items. Receives two arguments: `item` and `term`. The item is the item that should match the search term. The term is the search term, which for performance reasons has always been already processed using `Select3.transformText()`. The method should return the item if it matches, and `null` otherwise. If the item has a `children` array, the matcher is expected to filter those itself (be sure to only return the filtered array of children in the returned item and not to modify the children of the `item` argument).
 placeholder     | `String`                  | Placeholder text to display when the element has no focus and selected items.
 query           | `Function`                | Function to use for querying items. Receives a single object as argument with the `callback`, `offset` and `term` properties. The callback should be invoked when the results are available. It should be passed a single object with `results` and `more` properties. The first is an array with result items and the latter is an optional boolean that may be set to `true` indicate more results are available through pagination. Offset is a property is only used for pagination and indicates how many results should be skipped when returning more results. The term is the search term the user is searching for. Unlike with the matcher function, the term has not been processed using `Select3.transformText()`. This option is ignored if the `items` option is used.
 searchInputPlaceholder | `String`           | Placeholder text to display in the search input in the dropdown.
@@ -104,10 +104,6 @@ your requirements.
 
 The following is an (incomplete) list of features which Select3 currently lacks:
 
- * Labels (optgroups). This is a planned TODO item and Select3 will support this in the (near)
-   future.
- * Nested items. Select3 lacks upport for nested items, ie. the dropdown cannot display hierarchical
-   results. No support for this is currently planned.
  * Reordering of selected items. Select2 allows reordering of selected items, for example through
    drag 'n drop. Select3 doesn't and there are curently no plans to implement this.
  * AJAX. Select2 has a built-in AJAX query function that makes it easier to perform AJAX requests
@@ -212,7 +208,6 @@ Project Status
 Select3 is in an early stage of development. The following items are on the short-term TODO list:
 
  * Implement automatic pagination.
- * Add support for labels (optgroup).
  * Add module that will easily perform AJAX requests instead of doing this through the query()
    function.
  * Add module that can transform an existing &lt;select&gt; input in the DOM into a Select3 instance.

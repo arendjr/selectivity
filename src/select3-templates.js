@@ -128,6 +128,18 @@ Select3.Templates = {
     },
 
     /**
+     * Renders a container for item children.
+     *
+     * The template is expected to have an element with the class 'select3-result-children'.
+     *
+     * @param options Options object containing the following property:
+     *                childrenHtml - Rendered HTML for the children.
+     */
+    resultChildren: function(options) {
+        return '<div class="select3-result-children">' + options.childrenHtml + '</div>';
+    },
+
+    /**
      * Render a result item in the dropdown.
      *
      * The template is expected to have a top-level element with the class 'select3-result-item'.
@@ -144,6 +156,18 @@ Select3.Templates = {
                 escape(options.text) +
             '</div>'
         );
+    },
+
+    /**
+     * Render a result label in the dropdown.
+     *
+     * The template is expected to have a top-level element with the class 'select3-result-label'.
+     *
+     * @param options Options object containing the following properties:
+     *                text - Text label.
+     */
+    resultLabel: function(options) {
+        return '<div class="select3-result-label">' + escape(options.text) + '</div>';
     },
 
     /**

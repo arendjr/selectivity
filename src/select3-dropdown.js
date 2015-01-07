@@ -5,6 +5,20 @@ var $ = require('jquery');
 var Select3 = require('./select3-base');
 
 /**
+ * Returns the index of the first element in the jQuery container $elements that matches the given
+ * selector, or -1 if no elements match the selector.
+ */
+function findElementIndex($elements, selector) {
+
+    for (var i = 0, length = $elements.length; i < length; i++) {
+        if ($elements.eq(i).is(selector)) {
+            return i;
+        }
+    }
+    return -1;
+}
+
+/**
  * Select3 Dropdown Constructor.
  *
  * @param options Options object. Should have the following properties:
@@ -168,11 +182,13 @@ $.extend(Select3Dropdown.prototype, {
 
         var results = this.results;
         if (results.length) {
+            var $results = this.$('.select3-result-item');
             var index = 0;
             var highlightedResult = this.highlightedResult;
             if (highlightedResult) {
-                index = Select3.findIndexById(results, highlightedResult.id) + 1;
-                if (index >= results.length) {
+                var quotedId = Select3.quoteCssAttr(highlightedResult.id);
+                index = findElementIndex($results, '[data-item-id=' + quotedId + ']') + 1;
+                if (index >= $results.length) {
                     if (this.hasMore) {
                         this.highlightLoadMore();
                         this._scrollToHighlight({ alignToTop: false });
@@ -183,8 +199,11 @@ $.extend(Select3Dropdown.prototype, {
                 }
             }
 
-            this.highlight(results[index]);
-            this._scrollToHighlight({ alignToTop: false });
+            var result = Select3.findNestedById(results, this.select3._getItemId($results[index]));
+            if (result) {
+                this.highlight(result);
+                this._scrollToHighlight({ alignToTop: false });
+            }
         }
     },
 
@@ -195,23 +214,28 @@ $.extend(Select3Dropdown.prototype, {
 
         var results = this.results;
         if (results.length) {
-            var index = results.length - 1;
+            var $results = this.$('.select3-result-item');
+            var index = $results.length - 1;
             var highlightedResult = this.highlightedResult;
             if (highlightedResult) {
-                index = Select3.findIndexById(results, highlightedResult.id) - 1;
+                var quotedId = Select3.quoteCssAttr(highlightedResult.id);
+                index = findElementIndex($results, '[data-item-id=' + quotedId + ']') - 1;
                 if (index < 0) {
                     if (this.hasMore) {
                         this.highlightLoadMore();
                         this._scrollToHighlight({ alignToTop: true });
                         return;
                     } else {
-                        index = results.length - 1;
+                        index = $results.length - 1;
                     }
                 }
             }
 
-            this.highlight(results[index]);
-            this._scrollToHighlight({ alignToTop: true });
+            var result = Select3.findNestedById(results, this.select3._getItemId($results[index]));
+            if (result) {
+                this.highlight(result);
+                this._scrollToHighlight({ alignToTop: true });
+            }
         }
     },
 
@@ -256,9 +280,7 @@ $.extend(Select3Dropdown.prototype, {
 
         var select3 = this.select3;
         var $loadMore = this.$('.select3-load-more');
-        $loadMore.before(results.map(function(item) {
-            return select3.template('resultItem', item);
-        }).join(''));
+        $loadMore.before(this._renderItems(results));
 
         if (!options.hasMore) {
             $loadMore.remove();
@@ -287,9 +309,10 @@ $.extend(Select3Dropdown.prototype, {
 
         var select3 = this.select3;
         var $resultsContainer = this.$('.select3-results-container');
-        $resultsContainer.html(results.length ? results.map(function(item) {
-            return select3.template('resultItem', item);
-        }).join('') : select3.template('noResults', { term: options.term }));
+        $resultsContainer.html(
+            results.length ? this._renderItems(results)
+                           : select3.template('noResults', { term: options.term })
+        );
 
         if (options.hasMore) {
             $resultsContainer.append(select3.template('loadMore'));
@@ -372,6 +395,23 @@ $.extend(Select3Dropdown.prototype, {
     /**
      * @private
      */
+    _renderItems: function(items) {
+
+        var select3 = this.select3;
+        return items.map(function(item) {
+            var result = select3.template(item.id ? 'resultItem' : 'resultLabel', item);
+            if (item.children) {
+                result += select3.template('resultChildren', {
+                    childrenHtml: this._renderItems(item.children)
+                });
+            }
+            return result;
+        }.bind(this)).join('');
+    },
+
+    /**
+     * @private
+     */
     _resultClicked: function(event) {
 
         this._selectItem(this.select3._getItemId(event));
@@ -385,7 +425,7 @@ $.extend(Select3Dropdown.prototype, {
     _resultHovered: function(event) {
 
         var id = this.select3._getItemId(event);
-        var item = Select3.findById(this.results, id);
+        var item = Select3.findNestedById(this.results, id);
         if (item) {
             this.highlight(item);
         }
@@ -420,7 +460,7 @@ $.extend(Select3Dropdown.prototype, {
     _selectItem: function(id) {
 
         var select3 = this.select3;
-        var item = Select3.findById(select3.results, id);
+        var item = Select3.findNestedById(select3.results, id);
         if (item) {
             var options = { id: id, item: item };
             var event = $.Event('select3-selecting', options);

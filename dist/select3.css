@@ -102,7 +102,7 @@ input[type="text"].select3-multiple-input:focus {
     position: absolute;
     right: 15px;
     text-overflow: ellipsis;
-    top: 30%;
+    top: 10px;
     white-space: nowrap;
 }
 
@@ -122,7 +122,7 @@ input[type="text"].select3-multiple-input:focus {
 .select3-caret {
     position: absolute;
     right: 5px;
-    top: 25%;
+    top: 8px;
 }
 
 /**
@@ -138,10 +138,13 @@ input[type="text"].select3-multiple-input:focus {
     z-index: 9999;
 }
 
+.select3-search-input-container {
+    border-bottom: 1px solid #eee;
+}
+
 .select3-search-input {
     background: transparent;
     border: 0;
-    border-bottom: 1px solid #eee;
     outline: 0;
     width: 100%;
 }
@@ -155,6 +158,10 @@ input[type="text"].select3-multiple-input:focus {
 .select3-result-item {
     cursor: pointer;
     padding: 7px;
+}
+
+.select3-result-children .select3-result-item {
+    padding-left: 17px;
 }
 
 .select3-load-more.highlight,
@@ -171,12 +178,22 @@ input[type="text"].select3-multiple-input:focus {
     border-radius: 0;
 }
 
+.select3-result-label {
+    font-weight: bold;
+}
+
 .select3-load-more,
-.select3-result-item:last-child {
+.select3-result-item:last-child,
+.select3-result-children:last-child .select3-result-item:last-child {
     border-radius: 0 0 4px 4px;
 }
 
-.select3-search-input,
+.select3-result-children .select3-result-item:last-child {
+    border-radius: 0;
+}
+
+.select3-search-input-container,
+.select3-result-label,
 .select3-no-results {
     padding: 7px;
 }
