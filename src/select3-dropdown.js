@@ -37,11 +37,6 @@ function Select3Dropdown(options) {
     this.loadMoreHighlighted = false;
 
     /**
-     * Options passed to the dropdown.
-     */
-    this.options = options;
-
-    /**
      * The results displayed in the dropdown.
      */
     this.results = [];
