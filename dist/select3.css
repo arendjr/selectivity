@@ -25,7 +25,8 @@
     background: #eee;
     border-radius: 2px;
     cursor: text;
-    min-height: 2.3em;
+    max-height: 10em;
+    min-height: 28px;
     padding: 5px;
 }
 
@@ -34,7 +35,7 @@ input[type="text"].select3-multiple-input {
     background-color: transparent;
     border: none;
     float: left;
-    height: 2.3em;
+    height: 28px;
     max-width: 100%;
     outline: 0;
     padding: 0;
@@ -60,7 +61,7 @@ input[type="text"].select3-multiple-input:focus {
     color: #fff;
     cursor: default;
     float: left;
-    line-height: 2em;
+    line-height: 24px;
     margin: 2px;
     padding-left: 5px;
     position: relative;
@@ -87,7 +88,7 @@ input[type="text"].select3-multiple-input:focus {
 .select3-single-select {
     border-radius: 2px;
     cursor: pointer;
-    min-height: 2em;
+    min-height: 24px;
     padding: 5px;
     position: relative;
 }
