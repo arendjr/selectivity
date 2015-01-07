@@ -278,7 +278,6 @@ $.extend(Select3Dropdown.prototype, {
 
         options = options || {};
 
-        var select3 = this.select3;
         var $loadMore = this.$('.select3-load-more');
         $loadMore.before(this._renderItems(results));
 
