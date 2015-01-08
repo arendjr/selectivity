@@ -65,7 +65,7 @@ function select3(methodName, options) {
         }
     });
 
-    return result;
+    return (result === undefined ? this : result);
 }
 
 /**
@@ -86,7 +86,7 @@ function select3(methodName, options) {
  */
 function Select3(options) {
 
-    if (!(this instanceof Select3)) {
+    if (this instanceof $) {
         return select3.apply(this, arguments);
     }
 

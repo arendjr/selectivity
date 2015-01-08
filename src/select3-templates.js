@@ -51,6 +51,13 @@ Select3.Templates = {
     },
 
     /**
+     * Renders a loading indicator in the dropdown.
+     */
+    loading: function() {
+        return '<div class="select3-loading">' + Select3.Locale.loading + '</div>';
+    },
+
+    /**
      * Load more indicator.
      *
      * This template is expected to have an element with a 'select3-load-more' class which, when

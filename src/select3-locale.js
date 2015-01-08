@@ -11,6 +11,7 @@ var Select3 = require('./select3-base');
  */
 Select3.Locale = {
 
+    loading: 'Loading...',
     loadMore: 'Load more...',
     noResults: 'No results found',
     noResultsForTerm: function(term) { return 'No results for <b>' + escape(term) + '</b>'; }

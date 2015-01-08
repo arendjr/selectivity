@@ -192,6 +192,7 @@ input[type="text"].select3-multiple-input:focus {
     border-radius: 0;
 }
 
+.select3-loading,
 .select3-search-input-container,
 .select3-result-label,
 .select3-no-results {
