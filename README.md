@@ -183,8 +183,14 @@ will be saved in `dist/select3-custom.js`. The dropdown will not feature a backd
 no diacritics support, you will have to provide your own templates with their localizable content,
 and you cannot use this build for creating a single-select input.
 
-Finally, you may wish to specify the `--minify` option to minimize the size of your custom builds.
-This will run Browserify's bundle-collapser plugin on the build and minimize the code using
+Note that because Select3 uses Browserify internally, the build will contain various `require()`
+calls, which may sometimes interfere with build systems that scan for those calls. If this gives
+problems for you, you can pass the `--derequire` parameter to rename those calls. Of course, if
+you're using Browserify in your own project you may even decide to skip the whole build process and
+just copy the relevant modules from the `src/` directory straight into your project.
+
+Finally, you may wish to specify the `--minify` parameter to minimize the size of your custom
+builds. This will run Browserify's bundle-collapser plugin on the build and minimize the code using
 UglifyJS. The resulting build will be saved in `dist/select3-custom.min.js`.
 
 ### Development server
@@ -210,7 +216,8 @@ Select3 is in an early stage of development. The following items are on the shor
  * Implement automatic pagination.
  * Add module that will easily perform AJAX requests instead of doing this through the query()
    function.
- * Add module that can transform an existing &lt;select&gt; input in the DOM into a Select3 instance.
+ * Add module that can transform an existing &lt;select&gt; input in the DOM into a Select3
+   instance.
 
 Contributing
 ------------
