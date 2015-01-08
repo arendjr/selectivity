@@ -272,9 +272,9 @@ function Select3(options) {
     this.setOptions(options);
 
     if (options.value) {
-        this.value(options.value);
+        this.value(options.value, { triggerChange: false });
     } else {
-        this.data(options.data || null);
+        this.data(options.data || null, { triggerChange: false });
     }
 
     this._events = [];
@@ -315,10 +315,14 @@ $.extend(Select3.prototype, {
      *                an array of objects with 'id' and 'text' properties, for a SingleSelect3
      *                instance the data must be a single such object or null to indicate no item is
      *                selected.
+     * @param options Optional options object. May contain the following property:
+     *                triggerChange - Set to false to suppress the "change" event being triggered.
      *
      * @return If newData is omitted, this method returns the current data.
      */
-    data: function(newData) {
+    data: function(newData, options) {
+
+        options = options || {};
 
         if ($.type(newData) === 'undefined') {
             return this._data;
@@ -328,7 +332,9 @@ $.extend(Select3.prototype, {
             this._data = newData;
             this._value = this.getValueForData(newData);
 
-            this.triggerChange();
+            if (options.triggerChange !== false) {
+                this.triggerChange();
+            }
         }
     },
 
@@ -724,10 +730,14 @@ $.extend(Select3.prototype, {
      * @param newValue Optional new value to set. For a MultipleSelect3 instance the value must be
      *                 an array of IDs, for a SingleSelect3 instance the value must be a single ID
      *                 (a string or a number) or null to indicate no item is selected.
+     * @param options Optional options object. May contain the following property:
+     *                triggerChange - Set to false to suppress the "change" event being triggered.
      *
      * @return If newValue is omitted, this method returns the current value.
      */
-    value: function(newValue) {
+    value: function(newValue, options) {
+
+        options = options || {};
 
         if ($.type(newValue) === 'undefined') {
             return this._value;
@@ -741,13 +751,17 @@ $.extend(Select3.prototype, {
                     if (this._value === newValue) {
                         this._data = this.validateData(data);
 
-                        this.triggerChange();
+                        if (options.triggerChange !== false) {
+                            this.triggerChange();
+                        }
                     }
                 }.bind(this));
             } else {
                 this._data = this.getDataForValue(newValue);
 
-                this.triggerChange();
+                if (options.triggerChange !== false) {
+                    this.triggerChange();
+                }
             }
         }
     },
