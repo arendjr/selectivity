@@ -16,7 +16,7 @@ var argv = require('yargs').argv;
 
 module.exports = function() {
 
-    var b = browserify({ debug: argv['source-map'] !== false });
+    var b = browserify({ debug: argv['source-map'] !== false, standalone: 'Select3' });
 
     b.add('./src/select3-full.js');
 
