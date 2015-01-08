@@ -28,9 +28,7 @@ module.exports = function() {
             'Options:',
             '--derequire               Renames all calls to require() to avoid conflicts',
             '                          with build systems.',
-            '--minify                  Minifies the bundle to reduce file size.',
-            '--module-format=<format>  Specify the format of the output module, possible',
-            '                          values are "commonjs", "amd", "hybrid" and "plain".'
+            '--minify                  Minifies the bundle to reduce file size.'
         ].join('\n'));
         process.exit(1);
     }
