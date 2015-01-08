@@ -648,13 +648,13 @@ $.extend(Select3.prototype, {
      * Triggers the change event.
      *
      * The event object at least contains the following property:
-     * val - The new value of the Select3 instance.
+     * value - The new value of the Select3 instance.
      *
      * @param Optional additional options added to the event object.
      */
     triggerChange: function(options) {
 
-        this.triggerEvent('change', $.extend({ val: this._value }, options));
+        this.triggerEvent('change', $.extend({ value: this._value }, options));
     },
 
     /**
@@ -2050,7 +2050,7 @@ $.extend(Select3Dropdown.prototype, {
         this.highlightedResult = item;
         this.loadMoreHighlighted = false;
 
-        this.select3.triggerEvent('select3-highlight', { item: item, val: item.id });
+        this.select3.triggerEvent('select3-highlight', { item: item, value: item.id });
     },
 
     /**

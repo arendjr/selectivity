@@ -60,7 +60,6 @@ backspaceHighlightsBeforeDelete | `Boolean` | If set to `true`, when the user en
 closeOnSelect   | `Boolean`                 | Set to `false` to keep the dropdown open after the user has selected an item. This is useful if you want to allow the user to quickly select multiple items. The default value is `true`.
 createTokenItem | `Function`                | Function to create a new item from a user's search term. This is used to turn the term into an item when dropdowns are disabled and the user presses Enter. It is also used by the default tokenizer to create items for individual tokens. The function receives a `token` parameter which is the search term (or part of a search term) to create an item for and must return an item object with `id` and `text` properties or `null` if no token can be created from the term. The default is a function that returns an item where the id and text both match the term for any non-empty string and which returns `null` otherwise. This option only applies to multiple-value inputs.
 data            | `Object` or `Array`       | Initial selection data to set. This should be an object with `id` and `text` properties in the case of input type 'Single', or an array of such objects otherwise. This option is mutually exclusive with `value`.
-value           | `ID` or `Array`           | Initial value to set. This should be an ID (string or number) in the case of input type 'Single', or array of IDs otherwise. This property is mutually exclusive with `data`.
 initSelection   | `Function`                | Function to map values by ID to selection data. This function receives two arguments, `value` and `callback`. The value is the current value of the selection, which is an ID or an array of IDs depending on the input type. The callback should be invoked with an object or array of objects, respectively, containing `id` and `text` properties.
 inputType       | `String` or `Function`    | The input type to use. Default input types include 'Multiple', 'Single' and 'Email', but you can add custom input types to the `Select3.InputTypes` map or just specify one here as a function. The default value is 'Single', unless `multiple` is `true` in which case it is 'Multiple'.
 items           | `Array`                   | Array of items from which to select. Should be an array of objects with `id` and `text` properties. As convenience, you may also pass an array of strings, in which case the same string is used for both the ID and the text. If items are given, all items are expected to be available locally and all selection operations operate on this local array only. If `null`, items are not available locally, and the `query` option should be provided to fetch remote data.
@@ -73,6 +72,7 @@ showSearchInputInDropdown | `Boolean`       | Set to `false` to remove the searc
 templates       | `Object`                  | Object with instance-specific templates to override the global templates assigned to `Select3.Templates`.
 tokenizer       | `Function`                | Function for tokenizing search terms. Will receive the `input` (the input string to tokenize), `selection` (the current selection data), `createToken` (callback to create a token from the search terms, should be passed an item object with `id` and `text` properties) and `options` (the options set on the Select3 instance) arguments. Any string returned by the tokenizer function is treated as the remainder of untokenized input. This option only applies to multiple-value inputs.
 tokenSeparators | `Array`                   | Array of string separators which are used to separate the search term into tokens. If specified and the tokenizer property is not set, the tokenizer property will be set to a function which splits the search term into tokens separated by any of the given separators. The tokens will be converted into selectable items using the `createTokenItem` function. The default tokenizer also filters out already selected items. This option only applies to multiple-value inputs.
+value           | `ID` or `Array`           | Initial value to set. This should be an ID (string or number) in the case of input type 'Single', or array of IDs otherwise. This property is mutually exclusive with `data`.
 
 For documentation about all the available methods once Select3 has been instantiated, I refer to the
 inline documentation in the source files for now.
@@ -85,9 +85,9 @@ listened to using jQuery's `on()` method.
 
 Event                 | Description
 --------------------- | -----------
-`"change"`            | Emitted when the selection has been changed. Additional properties on the event object: `added`, `removed` and `val`.
+`"change"`            | Emitted when the selection has been changed. Additional properties on the event object: `added`, `removed` and `value`.
 `"select3-closed"`    | Emitted when the dropdown is closed.
-`"select3-highlight"` | Emitted when an item in the dropdown is highlighted. Additional properties on the event object: `item` and `val`.
+`"select3-highlight"` | Emitted when an item in the dropdown is highlighted. Additional properties on the event object: `item` and `value`.
 `"select3-open"`      | Emitted when the dropdown is opened.
 `"select3-opening"`   | Emitted when the dropdown is about to be opened. You can call `preventDefault()` on the event object to cancel the opening of the dropdown.
 `"select3-selected"`  | Emitted when an item has been selected. Additional properties on the event object: `id` and `item`.
