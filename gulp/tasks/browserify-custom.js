@@ -18,14 +18,21 @@ module.exports = function() {
 
     var b = browserify({ debug: argv['source-map'] === true });
 
-    if (!argv.modules) {
-        console.log('No modules specified for custom build.\n' +
-                    'Usage: gulp custom [--minify] --modules=<comma-separated-module-list>');
+    if (typeof argv.modules !== 'string') {
+        console.log(['No modules specified for custom build.',
+                     '',
+                     'Usage: gulp custom [options] --modules=<comma-separated-module-list>',
+                     '',
+                     'Options:',
+                     '--derequire  Renames all calls to require() to avoid conflicts with build',
+                     '             systems.',
+                     '--minify     Minifies the bundle to reduce file size.'].join('\n'));
         process.exit(1);
     }
 
     argv.modules.split(',').forEach(function(module) {
         b.add('./src/select3-' + module + '.js');
+        b.require('./src/select3-' + module + '.js');
     });
 
     glob.sync('vendor/*.js').forEach(function(file) {
@@ -33,9 +40,7 @@ module.exports = function() {
         b.external(basename);
     });
 
-    if (argv.minify) {
-        b.plugin(collapse);
-    }
+    b.plugin(collapse);
 
     return b.bundle()
         .on('error', function(error) {
