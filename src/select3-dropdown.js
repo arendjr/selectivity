@@ -498,41 +498,48 @@ $.extend(Select3Dropdown.prototype, {
     },
 
     /**
-      * @private
-      */
-     _suppressMouseWheel: function() {
+     * @private
+     */
+    _suppressMouseWheel: function() {
 
-         // Thanks to Troy Alford:
-         // http://stackoverflow.com/questions/5802467/prevent-scrolling-of-parent-element
+        var suppressMouseWheelSelector = this.select3.options.suppressMouseWheelSelector;
+        if (suppressMouseWheelSelector === null) {
+            return;
+        }
 
-         this.$('.select3-results-container').on('DOMMouseScroll mousewheel', function(event) {
+        var selector = suppressMouseWheelSelector || '.select3-results-container';
+        this.$el.on('DOMMouseScroll mousewheel', selector, function(event) {
 
-             var $el = $(this),
-                 scrollTop = this.scrollTop,
-                 scrollHeight = this.scrollHeight,
-                 height = $el.height(),
-                 delta = (event.type === 'DOMMouseScroll' ? event.originalEvent.detail * -40
-                                                          : event.originalEvent.wheelDelta),
-                 up = delta > 0;
+            // Thanks to Troy Alford:
+            // http://stackoverflow.com/questions/5802467/prevent-scrolling-of-parent-element
 
-             function prevent() {
-                 event.stopPropagation();
-                 event.preventDefault();
-                 event.returnValue = false;
-                 return false;
-             }
+            var $el = $(this),
+                scrollTop = this.scrollTop,
+                scrollHeight = this.scrollHeight,
+                height = $el.height(),
+                originalEvent = event.originalEvent,
+                delta = (event.type === 'DOMMouseScroll' ? originalEvent.detail * -40
+                                                         : originalEvent.wheelDelta),
+                up = delta > 0;
 
-             if (!up && -delta > scrollHeight - height - scrollTop) {
-                 // Scrolling down, but this will take us past the bottom.
-                 $el.scrollTop(scrollHeight);
-                 return prevent();
-             } else if (up && delta > scrollTop) {
-                 // Scrolling up, but this will take us past the top.
-                 $el.scrollTop(0);
-                 return prevent();
-             }
-         });
-     }
+            function prevent() {
+                event.stopPropagation();
+                event.preventDefault();
+                event.returnValue = false;
+                return false;
+            }
+
+            if (!up && -delta > scrollHeight - height - scrollTop) {
+                // Scrolling down, but this will take us past the bottom.
+                $el.scrollTop(scrollHeight);
+                return prevent();
+            } else if (up && delta > scrollTop) {
+                // Scrolling up, but this will take us past the top.
+                $el.scrollTop(0);
+                return prevent();
+            }
+        });
+    }
 
 });
 
