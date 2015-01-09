@@ -30,6 +30,7 @@ function Select3Dropdown(options) {
     var select3 = options.select3;
 
     this.$el = $(select3.template('dropdown', {
+        dropdownCssClass: select3.options.dropdownCssClass,
         searchInputPlaceholder: select3.options.searchInputPlaceholder,
         showSearchInput: options.showSearchInput
     }));

@@ -33,7 +33,7 @@ Select3.Templates = {
         var extraClass = (options.dropdownCssClass ? ' ' + options.dropdownCssClass : ''),
             searchInput = '';
         if (options.showSearchInput) {
-            extraClass = ' has-search-input';
+            extraClass += ' has-search-input';
 
             var placeholder = options.searchInputPlaceholder;
             searchInput = (
