@@ -436,6 +436,12 @@ $.extend(Select3.prototype, {
      *                          argument).
      *                placeholder - Placeholder text to display when the element has no focus and
      *                              selected items.
+     *                positionDropdown - Function to position the dropdown. Receives two arguments:
+     *                                   $dropdownEl - The element to be positioned.
+     *                                   $selectEl - The element of the Select3 instance, that you
+     *                                               can position the dropdown to.
+     *                                   The default implementation positions the dropdown element
+     *                                   under the Select3's element and gives it the same width.
      *                query - Function to use for querying items. Receives a single object as
      *                        argument with the following properties:
      *                        callback - Callback to invoke when the results are available. This
@@ -468,6 +474,7 @@ $.extend(Select3.prototype, {
             initSelection: 'function',
             matcher: 'function',
             placeholder: 'string',
+            positionDropdown: 'function',
             query: 'function'
         }, options.allowedTypes);
 

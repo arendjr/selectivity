@@ -248,10 +248,15 @@ $.extend(Select3Dropdown.prototype, {
      */
     position: function() {
 
-        var $selectEl = this.select3.$el;
-        var offset = $selectEl.offset();
-        this.$el.css({ left: offset.left + 'px', top: offset.top + $selectEl.height() + 'px' })
-                .width($selectEl.width());
+        var select3 = this.select3;
+
+        var positionDropdown = select3.options.positionDropdown || function($el, $selectEl) {
+            var offset = $selectEl.offset();
+            $el.css({ left: offset.left + 'px', top: offset.top + $selectEl.height() + 'px' })
+               .width($selectEl.width());
+        };
+
+        positionDropdown(this.$el, select3.$el);
     },
 
     /**
