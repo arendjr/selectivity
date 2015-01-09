@@ -76,7 +76,7 @@ $.extend(MultipleSelect3.prototype, {
      */
     events: {
         'change': '_rerenderSelection',
-        'change .select3-multiple-input': function() { return false },
+        'change .select3-multiple-input': function() { return false; },
         'click': '_clicked',
         'click .select3-multiple-selected-item-remove': '_itemRemoveClicked',
         'click .select3-multiple-selected-item': '_itemClicked',
