@@ -288,7 +288,7 @@ $.extend(Select3.prototype, {
 
         var items = this.items;
         if (items) {
-            return Select3.findById(items, id);
+            return Select3.findNestedById(items, id);
         } else {
             return { id: id, text: '' + id };
         }

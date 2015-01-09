@@ -412,7 +412,7 @@ $.extend(Select3.prototype, {
 
         var items = this.items;
         if (items) {
-            return Select3.findById(items, id);
+            return Select3.findNestedById(items, id);
         } else {
             return { id: id, text: '' + id };
         }
@@ -560,6 +560,12 @@ $.extend(Select3.prototype, {
      *                          argument).
      *                placeholder - Placeholder text to display when the element has no focus and
      *                              selected items.
+     *                positionDropdown - Function to position the dropdown. Receives two arguments:
+     *                                   $dropdownEl - The element to be positioned.
+     *                                   $selectEl - The element of the Select3 instance, that you
+     *                                               can position the dropdown to.
+     *                                   The default implementation positions the dropdown element
+     *                                   under the Select3's element and gives it the same width.
      *                query - Function to use for querying items. Receives a single object as
      *                        argument with the following properties:
      *                        callback - Callback to invoke when the results are available. This
@@ -592,6 +598,7 @@ $.extend(Select3.prototype, {
             initSelection: 'function',
             matcher: 'function',
             placeholder: 'string',
+            positionDropdown: 'function',
             query: 'function'
         }, options.allowedTypes);
 
@@ -2144,10 +2151,15 @@ $.extend(Select3Dropdown.prototype, {
      */
     position: function() {
 
-        var $selectEl = this.select3.$el;
-        var offset = $selectEl.offset();
-        this.$el.css({ left: offset.left + 'px', top: offset.top + $selectEl.height() + 'px' })
-                .width($selectEl.width());
+        var select3 = this.select3;
+
+        var positionDropdown = select3.options.positionDropdown || function($el, $selectEl) {
+            var offset = $selectEl.offset();
+            $el.css({ left: offset.left + 'px', top: offset.top + $selectEl.height() + 'px' })
+               .width($selectEl.width());
+        };
+
+        positionDropdown(this.$el, select3.$el);
     },
 
     /**
@@ -2688,7 +2700,7 @@ $.extend(MultipleSelect3.prototype, {
      */
     events: {
         'change': '_rerenderSelection',
-        'change .select3-multiple-input': function() { return false },
+        'change .select3-multiple-input': function() { return false; },
         'click': '_clicked',
         'click .select3-multiple-selected-item-remove': '_itemRemoveClicked',
         'click .select3-multiple-selected-item': '_itemClicked',

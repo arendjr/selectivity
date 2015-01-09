@@ -24,7 +24,7 @@ exports.testInitialValue = DomUtil.createDomTest(
     ['single', 'templates'],
     function(test, $input) {
         $input.select3({
-            items: [ 'Amsterdam', 'Antwerp', 'Athens' ],
+            items: ['Amsterdam', 'Antwerp', 'Athens'],
             value: 'Amsterdam'
         });
 
@@ -39,6 +39,40 @@ exports.testNestedData = DomUtil.createDomTest(
     function(test, $input) {
         $input.select3({
             data: { id: 2, text: 'Antwerp' },
+            items: [
+                {
+                    text: 'Austria',
+                    children: [
+                        { id: 54, text: 'Vienna' }
+                     ]
+                },
+                {
+                    text: 'Belgium',
+                    children: [
+                        { id: 2, text: 'Antwerp' },
+                        { id: 9, text: 'Brussels' }
+                    ]
+                },
+                {
+                    text: 'Bulgaria',
+                    children: [
+                        { id: 48, text: 'Sofia' }
+                    ]
+                }
+            ]
+        });
+
+        test.deepEqual($input.select3('data'), { id: 2, text: 'Antwerp' });
+
+        test.deepEqual($input.select3('value'), 2);
+    }
+);
+
+exports.testNestedValue = DomUtil.createDomTest(
+    ['single', 'templates'],
+    function(test, $input) {
+        $input.select3({
+            value: 2,
             items: [
                 {
                     text: 'Austria',
