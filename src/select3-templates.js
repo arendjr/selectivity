@@ -22,6 +22,7 @@ Select3.Templates = {
      * 'select3-results-container', which is where all results will be added to.
      *
      * @param options Options object containing the following property:
+     *                dropdownCssClass - Optional CSS class to add to the top-level element.
      *                searchInputPlaceholder - Optional placeholder text to display in the search
      *                                         input in the dropdown.
      *                showSearchInput - Boolean whether a search input should be shown. If true,
@@ -29,7 +30,8 @@ Select3.Templates = {
      *                                  expected.
      */
     dropdown: function(options) {
-        var extraClass = '', searchInput = '';
+        var extraClass = (options.dropdownCssClass ? ' ' + options.dropdownCssClass : ''),
+            searchInput = '';
         if (options.showSearchInput) {
             extraClass = ' has-search-input';
 
