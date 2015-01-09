@@ -76,6 +76,7 @@ $.extend(MultipleSelect3.prototype, {
      */
     events: {
         'change': '_rerenderSelection',
+        'change .select3-multiple-input': function() { return false },
         'click': '_clicked',
         'click .select3-multiple-selected-item-remove': '_itemRemoveClicked',
         'click .select3-multiple-selected-item': '_itemClicked',
@@ -209,17 +210,10 @@ $.extend(MultipleSelect3.prototype, {
             options[backspaceHighlightsBeforeDelete] = this.hasTouch;
         }
 
-        Select3.prototype.setOptions.call(this, options);
+        options.allowedTypes = options.allowedTypes || {};
+        options.allowedTypes[backspaceHighlightsBeforeDelete] = 'boolean';
 
-        $.each(options, function(key, value) {
-            switch (key) {
-            case backspaceHighlightsBeforeDelete:
-                if ($.type(value) !== 'boolean') {
-                    throw new Error('backspaceHighlightsBeforeDelete must be a boolean');
-                }
-                break;
-            }
-        }.bind(this));
+        Select3.prototype.setOptions.call(this, options);
     },
 
     /**

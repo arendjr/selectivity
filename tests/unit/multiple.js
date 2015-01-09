@@ -2,6 +2,32 @@
 
 var DomUtil = require('../dom-util');
 
+exports.testChangeEvent = DomUtil.createDomTest(
+    ['multiple', 'dropdown', 'templates'],
+    function(test, $input, $) {
+        var numChangeEvents = 0;
+
+        $input.select3({
+            items: ['Amsterdam', 'Antwerp', 'Athens'],
+            multiple: true
+        }).on('change', function(event) {
+            numChangeEvents++;
+
+            test.deepEqual(event.added, { id: 'Amsterdam', text: 'Amsterdam' });
+            test.deepEqual(event.value, ['Amsterdam']);
+        });
+
+        $input.find('.select3-multiple-input').val('Amsterdam')
+                                              .trigger('keyup')
+                                              .trigger('change')
+                                              .trigger(new $.Event('keyup', { keyCode: 13 }));
+
+        test.deepEqual($input.select3('value'), ['Amsterdam']);
+
+        test.equal(numChangeEvents, 1);
+    }
+);
+
 exports.testInitialData = DomUtil.createDomTest(
     ['multiple', 'templates'],
     function(test, $input) {
@@ -31,7 +57,7 @@ exports.testInitialValue = DomUtil.createDomTest(
     ['multiple', 'templates'],
     function(test, $input) {
         $input.select3({
-            items: [ 'Amsterdam', 'Antwerp', 'Athens' ],
+            items: ['Amsterdam', 'Antwerp', 'Athens'],
             multiple: true,
             value: ['Amsterdam', 'Antwerp']
         });
@@ -108,7 +134,7 @@ exports.testSetValue = DomUtil.createDomTest(
     ['multiple', 'templates'],
     function(test, $input) {
         $input.select3({
-            items: [ 'Amsterdam', 'Antwerp', 'Athens' ],
+            items: ['Amsterdam', 'Antwerp', 'Athens'],
             multiple: true,
             value: ['Amsterdam']
         });

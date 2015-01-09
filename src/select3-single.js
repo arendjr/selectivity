@@ -84,23 +84,14 @@ $.extend(SingleSelect3.prototype, {
      */
     setOptions: function(options) {
 
+        options = options || {};
+
+        options.allowedTypes = $.extend(options.allowedTypes, {
+            allowClear: 'boolean',
+            showSearchInputInDropdown: 'boolean'
+        });
+
         Select3.prototype.setOptions.call(this, options);
-
-        $.each(options, function(key, value) {
-            switch (key) {
-            case 'allowClear':
-                if ($.type(value) !== 'boolean') {
-                    throw new Error('allowClear must be a boolean');
-                }
-                break;
-
-            case 'showSearchInputInDropdown':
-                if ($.type(value) !== 'boolean') {
-                    throw new Error('showSearchInputInDropdown must be a boolean');
-                }
-                break;
-            }
-        }.bind(this));
     },
 
     /**

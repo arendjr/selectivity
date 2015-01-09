@@ -334,10 +334,13 @@ $.extend(Select3.prototype, {
             this.$el.trigger(event);
 
             if (!event.isDefaultPrevented()) {
-                this.dropdown = new Select3.Dropdown({
-                    select3: this,
-                    showSearchInput: options.showSearchInput
-                });
+                var Dropdown = this.options.dropdown || Select3.Dropdown;
+                if (Dropdown) {
+                    this.dropdown = new Dropdown({
+                        select3: this,
+                        showSearchInput: options.showSearchInput
+                    });
+                }
 
                 this.search('');
             }
@@ -405,6 +408,7 @@ $.extend(Select3.prototype, {
      *                closeOnSelect - Set to false to keep the dropdown open after the user has
      *                                selected an item. This is useful if you want to allow the user
      *                                to quickly select multiple items. The default value is true.
+     *                dropdown - Custom dropdown implementation to use for this instance.
      *                initSelection - Function to map values by ID to selection data. This function
      *                                receives two arguments, 'value' and 'callback'. The value is
      *                                the current value of the selection, which is an ID or an array
@@ -458,41 +462,28 @@ $.extend(Select3.prototype, {
 
         this.options = options;
 
+        var allowedTypes = $.extend({
+            closeOnSelect: 'boolean',
+            dropdown: 'function',
+            initSelection: 'function',
+            matcher: 'function',
+            placeholder: 'string',
+            query: 'function'
+        }, options.allowedTypes);
+
         $.each(options, function(key, value) {
+            var type = allowedTypes[key];
+            if (type && $.type(value) !== type) {
+                throw new Error(key + ' must be of type ' + type);
+            }
+
             switch (key) {
-            case 'closeOnSelect':
-                if ($.type(value) !== 'boolean') {
-                    throw new Error('closeOnSelect must be a boolean');
-                }
-                break;
-
-            case 'initSelection':
-                if ($.type(value) !== 'function') {
-                    throw new Error('initSelection must be a function');
-                }
-                break;
-
             case 'items':
                 this.items = Select3.processItems(value);
                 break;
 
             case 'matcher':
-                if ($.type(value) !== 'function') {
-                    throw new Error('matcher must be a function');
-                }
                 this.matcher = value;
-                break;
-
-            case 'placeholder':
-                if ($.type(value) !== 'string') {
-                    throw new Error('placeholder must be a string');
-                }
-                break;
-
-            case 'query':
-                if ($.type(value) !== 'function') {
-                    throw new Error('query must be a function');
-                }
                 break;
 
             case 'templates':
@@ -781,20 +772,18 @@ Select3.findIndexById = function(array, id) {
  * @param array Array to search in.
  * @param id ID to search for.
  *
- * @return The item in the array with the given ID, or null if the item was not found. The item will
- *         have an 'indices' property added to it which is an array with the index at which the item
- *         was found for every level of the hierarchy.
+ * @return The item in the array with the given ID, or null if the item was not found.
  */
 Select3.findNestedById = function(array, id) {
 
     for (var i = 0, length = array.length; i < length; i++) {
         var item = array[i];
         if (item.id === id) {
-            return $.extend({}, item, { indices: [i] });
+            return item;
         } else if (item.children) {
             var result = Select3.findNestedById(item.children, id);
             if (result) {
-                return $.extend(result, { indices: [i].concat(result.indices) });
+                return result;
             }
         }
     }
