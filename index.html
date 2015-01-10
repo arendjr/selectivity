@@ -150,6 +150,16 @@ given selector. The following options are supported:</p>
 <td>Initial selection data to set. This should be an object with <code>id</code> and <code>text</code> properties in the case of input type 'Single', or an array of such objects otherwise. This option is mutually exclusive with <code>value</code>.</td>
 </tr>
 <tr>
+<td>dropdown</td>
+<td><code>Function</code></td>
+<td>Custom dropdown implementation to use for this instance.</td>
+</tr>
+<tr>
+<td>dropdownCssClass</td>
+<td><code>String</code></td>
+<td>Optional CSS class to add to the top-level dropdown element.</td>
+</tr>
+<tr>
 <td>value</td>
 <td>
 <code>ID</code> or <code>Array</code>
@@ -184,6 +194,11 @@ given selector. The following options are supported:</p>
 <td>Placeholder text to display when the element has no focus and selected items.</td>
 </tr>
 <tr>
+<td>positionDropdown</td>
+<td><code>Function</code></td>
+<td>Function to position the dropdown. Receives <code>$dropdownEl</code> (the element to be positioned) and <code>$selectEl</code> (the element of the Select3 instance) as arguments. The default implementation positions the dropdown element under the Select3's element and gives it the same width as well.</td>
+</tr>
+<tr>
 <td>query</td>
 <td><code>Function</code></td>
 <td>Function to use for querying items. Receives a single object as argument with the <code>callback</code>, <code>offset</code> and <code>term</code> properties. The callback should be invoked when the results are available. It should be passed a single object with <code>results</code> and <code>more</code> properties. The first is an array with result items and the latter is an optional boolean that may be set to <code>true</code> indicate more results are available through pagination. Offset is a property is only used for pagination and indicates how many results should be skipped when returning more results. The term is the search term the user is searching for. Unlike with the matcher function, the term has not been processed using <code>Select3.transformText()</code>. This option is ignored if the <code>items</code> option is used.</td>
@@ -192,6 +207,16 @@ given selector. The following options are supported:</p>
 <td>showDropdown</td>
 <td><code>Boolean</code></td>
 <td>Set to false if you don't want to use any dropdown (you can still open still open it programmatically using <code>open()</code>).</td>
+</tr>
+<tr>
+<td>show<wbr>SearchInput<wbr>InDropdown</td>
+<td><code>Boolean</code></td>
+<td>Set to <code>false</code> to remove the search input used in dropdowns. This option only applies to single-value inputs, as multiple-value inputs don't have the search input in the dropdown to begin with. The default is <code>true</code>.</td>
+</tr>
+<tr>
+<td>suppressMouseWheelSelector</td>
+<td><code>String</code> or <code>null</code></td>
+<td>The Select3 Dropdown by default suppresses mousewheel events so that any scrolling in the dropdown doesn't affect the scroll position of the page. Through this option you can select which selector should be monited for scroll events to suppress. Set it to <code>null</code> to disable suppressing of mousewheel events altogether. The default value is <code>".select3-results-container"</code>.</td>
 </tr>
 <tr>
 <td>templates</td>
