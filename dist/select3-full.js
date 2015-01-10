@@ -210,7 +210,7 @@ function select3(methodName, options) {
  */
 function Select3(options) {
 
-    if (this instanceof $) {
+    if (!(this instanceof Select3)) {
         return select3.apply(this, arguments);
     }
 
@@ -799,7 +799,7 @@ $.extend(Select3.prototype, {
         // supposed to be a string after all...
 
         var $element;
-        if (elementOrEvent instanceof $.Event) {
+        if (elementOrEvent.target) {
             $element = $(elementOrEvent.target).closest('[data-item-id]');
         } else if (elementOrEvent.length) {
             $element = elementOrEvent;
@@ -2216,9 +2216,9 @@ $.extend(Select3Dropdown.prototype, {
         this.hasMore = options.hasMore;
         this.results = this.results.concat(results);
 
-        if (this.loadMoreHighlighted && results.length) {
-            this.highlight(results[0]);
-        }
+        if (this.loadMoreHighlighted) {
+            this._highlightFirstItem(results);
+        }        
     },
 
     /**
@@ -2248,12 +2248,7 @@ $.extend(Select3Dropdown.prototype, {
         this.hasMore = options.hasMore;
         this.results = results;
 
-        if (results.length) {
-            this.highlight(results[0]);
-        } else {
-            this.highlightedResult = null;
-            this.loadMoreHighlighted = false;
-        }
+        this._highlightFirstItem(results);
     },
 
     /**
@@ -2274,6 +2269,34 @@ $.extend(Select3Dropdown.prototype, {
 
             this.$el.on(event, selector, listener);
         }.bind(this));
+    },
+
+    /**
+     * @private
+     */
+    _highlightFirstItem: function(results) {
+
+        function findFirstItem(results) {
+            for (var i = 0, length = results.length; i < length; i++) {
+                var result = results[i];
+                if (result.id) {
+                    return result;
+                } else if (result.children) {
+                    var item = findFirstItem(result.children);
+                    if (item) {
+                        return item;
+                    }
+                }
+            }
+        }
+
+        var firstItem = findFirstItem(results);
+        if (firstItem) {
+            this.highlight(firstItem);
+        } else {
+            this.highlightedResult = null;
+            this.loadMoreHighlighted = false;
+        }
     },
 
     /**
@@ -3241,7 +3264,7 @@ $.extend(SingleSelect3.prototype, {
 
         options = options || {};
 
-        options.allowedTypes = $.extend(options.allowedTypes, {
+        options.allowedTypes = $.extend(options.allowedTypes || {}, {
             allowClear: 'boolean',
             showSearchInputInDropdown: 'boolean'
         });
