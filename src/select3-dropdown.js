@@ -313,9 +313,9 @@ $.extend(Select3Dropdown.prototype, {
         this.hasMore = options.hasMore;
         this.results = this.results.concat(results);
 
-        if (this.loadMoreHighlighted && results.length) {
-            this.highlight(results[0]);
-        }
+        if (this.loadMoreHighlighted) {
+            this._highlightFirstItem(results);
+        }        
     },
 
     /**
@@ -345,12 +345,7 @@ $.extend(Select3Dropdown.prototype, {
         this.hasMore = options.hasMore;
         this.results = results;
 
-        if (results.length) {
-            this.highlight(results[0]);
-        } else {
-            this.highlightedResult = null;
-            this.loadMoreHighlighted = false;
-        }
+        this._highlightFirstItem(results);
     },
 
     /**
@@ -371,6 +366,34 @@ $.extend(Select3Dropdown.prototype, {
 
             this.$el.on(event, selector, listener);
         }.bind(this));
+    },
+
+    /**
+     * @private
+     */
+    _highlightFirstItem: function(results) {
+
+        function findFirstItem(results) {
+            for (var i = 0, length = results.length; i < length; i++) {
+                var result = results[i];
+                if (result.id) {
+                    return result;
+                } else if (result.children) {
+                    var item = findFirstItem(result.children);
+                    if (item) {
+                        return item;
+                    }
+                }
+            }
+        }
+
+        var firstItem = findFirstItem(results);
+        if (firstItem) {
+            this.highlight(firstItem);
+        } else {
+            this.highlightedResult = null;
+            this.loadMoreHighlighted = false;
+        }
     },
 
     /**

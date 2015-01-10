@@ -119,6 +119,42 @@ exports.testNoData = DomUtil.createDomTest(
     }
 );
 
+exports.testSelectNestedItemByKeyboard = DomUtil.createDomTest(
+    ['single', 'dropdown', 'templates'],
+    function(test, $input, $) {
+        $input.select3({
+            items: [
+                {
+                    text: 'Austria',
+                    children: [
+                        { id: 54, text: 'Vienna' }
+                     ]
+                },
+                {
+                    text: 'Belgium',
+                    children: [
+                        { id: 2, text: 'Antwerp' },
+                        { id: 9, text: 'Brussels' }
+                    ]
+                },
+                {
+                    text: 'Bulgaria',
+                    children: [
+                        { id: 48, text: 'Sofia' }
+                    ]
+                }
+            ]
+        });
+
+        $input.click();
+        $('.select3-search-input').val('belg')
+                                  .trigger('keyup')
+                                  .trigger(new $.Event('keyup', { keyCode: 13 }));
+
+        test.deepEqual($input.select3('value'), 2);
+    }
+);
+
 exports.testSetValue = DomUtil.createDomTest(
     ['single', 'templates'],
     function(test, $input) {
