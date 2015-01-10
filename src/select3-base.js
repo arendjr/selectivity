@@ -86,7 +86,7 @@ function select3(methodName, options) {
  */
 function Select3(options) {
 
-    if (this instanceof $) {
+    if (!(this instanceof Select3)) {
         return select3.apply(this, arguments);
     }
 
@@ -675,7 +675,7 @@ $.extend(Select3.prototype, {
         // supposed to be a string after all...
 
         var $element;
-        if (elementOrEvent instanceof $.Event) {
+        if (elementOrEvent.target) {
             $element = $(elementOrEvent.target).closest('[data-item-id]');
         } else if (elementOrEvent.length) {
             $element = elementOrEvent;

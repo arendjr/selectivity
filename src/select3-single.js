@@ -86,7 +86,7 @@ $.extend(SingleSelect3.prototype, {
 
         options = options || {};
 
-        options.allowedTypes = $.extend(options.allowedTypes, {
+        options.allowedTypes = $.extend(options.allowedTypes || {}, {
             allowClear: 'boolean',
             showSearchInputInDropdown: 'boolean'
         });
