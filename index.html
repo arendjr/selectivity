@@ -7,6 +7,8 @@
     <meta name="description" content="Select3 : Flexible and modular alternative to Select2">
 
     <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
+    <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/select3.css">
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css">
 
     <title>Select3</title>
   </head>
@@ -19,64 +21,87 @@
           <a id="forkme_banner" href="https://github.com/arendjr/select3">View on GitHub</a>
 
           <h1 id="project_title">Select3</h1>
-          <h2 id="project_tagline">Flexible and modular alternative to Select2</h2>
+          <h2 id="project_tagline">Modular and light-weight selection library for jQuery and Zepto.js</h2>
 
             <section id="downloads">
-              <a class="zip_download_link" href="https://github.com/arendjr/select3/zipball/master">Download this project as a .zip file</a>
               <a class="tar_download_link" href="https://github.com/arendjr/select3/tarball/master">Download this project as a tar.gz file</a>
             </section>
         </header>
     </div>
 
-    <!-- MAIN CONTENT -->
-    <div id="main_content_wrap" class="outer">
-      <section id="main_content" class="inner">
-        <h1>
-<a id="examples" class="anchor" href="#examples" aria-hidden="true"><span class="octicon octicon-link"></span></a>Examples</h1>
+<!-- MAIN CONTENT -->
+<div id="main_content_wrap" class="outer">
+<section id="main_content" class="inner">
+
+<h1>Benefits</h1>
+
+<ul>
+<li><b>Rich UI.</b> Select boxes made by Select3 have rich functionality, work out of the box and
+are customizable.</li>
+<li><b>Modular.</b> Select3's modular approach is aimed to make it easy to create custom builds with
+just the features that you care about and to easily swap modules for custom ones.</li>
+<li><b>Light-weight.</b> Select3 is smaller than comparable selection libraries, even if you're
+using the &amp;full&amp; build with all features packed in.</li>
+<li><b>Compatibility.</b> Select3 can be used with both jQuery and Zepto.js and is compatible with
+jQuery builds without Sizzle.</li>
+</ul>
 
 <h1>
-<a id="select-a-single-city" class="anchor" href="#select-a-single-city" aria-hidden="true"><span class="octicon octicon-link"></span></a>Select a single city</h1>
+<a id="examples" class="anchor" href="#examples" aria-hidden="true"><span class="octicon octicon-link"></span></a>Examples</h1>
+
+<h2>
+<a id="select-a-single-city" class="anchor" href="#select-a-single-city" aria-hidden="true"><span class="octicon octicon-link"></span></a>Select a single city</h2>
 
 <p></p>
 
-<pre><code>$('#single-input').select3({
+<div id="example-1" class="select3-input example-input"></div>
+
+<pre class="example-code"><code>$('#example-1').select3({
     allowClear: true,
     items: ['Amsterdam', 'Antwerp'/*, ...*/],
     placeholder: 'No city selected'
 });
 </code></pre>
 
-<h1>
-<a id="select-multiple-cities" class="anchor" href="#select-multiple-cities" aria-hidden="true"><span class="octicon octicon-link"></span></a>Select multiple cities</h1>
+<h2>
+<a id="select-multiple-cities" class="anchor" href="#select-multiple-cities" aria-hidden="true"><span class="octicon octicon-link"></span></a>Select multiple cities</h2>
 
 <p></p>
 
-<pre><code>$('#multiple-input').select3({
+<div id="example-2" class="select3-input example-input"></div>
+
+<pre class="example-code"><code>$('#example-2').select3({
     items: ['Amsterdam', 'Antwerp'/*, ...*/],
     multiple: true,
+    placeholder: 'Type to search a city'
+});
+</code></pre>
+
+<h2>
+<a id="select-a-city-by-country" class="anchor" href="#select-a-city-by-country" aria-hidden="true"><span class="octicon octicon-link"></span></a>Select a city by country</h2>
+
+<p></p>
+
+<div id="example-3" class="select3-input example-input"></div>
+
+<pre class="example-code"><code>$('#example-3').select3({
+    allowClear: true,
+    items: [{
+        text: 'Austria',
+        children: [ { id: 54, text: 'Vienna' } ]
+    } /*, ...*/],
     placeholder: 'No city selected'
 });
 </code></pre>
 
-<h1>
-<a id="select-one-or-more-tags" class="anchor" href="#select-one-or-more-tags" aria-hidden="true"><span class="octicon octicon-link"></span></a>Select one or more tags</h1>
+<h2>
+<a id="enter-one-or-more-email-addresses" class="anchor" href="#enter-one-or-more-email-addresses" aria-hidden="true"><span class="octicon octicon-link"></span></a>Enter one or more email addresses</h2>
 
 <p></p>
 
-<pre><code>$('#tags-input').select3({
-    items: ['red', 'green', 'blue'],
-    multiple: true,
-    tokenSeparators: [' '],
-    value: ['brown', 'red', 'green']
-});
-</code></pre>
+<div id="example-4" class="select3-input example-input"></div>
 
-<h1>
-<a id="enter-one-or-more-email-addresses" class="anchor" href="#enter-one-or-more-email-addresses" aria-hidden="true"><span class="octicon octicon-link"></span></a>Enter one or more email addresses</h1>
-
-<p></p>
-
-<pre><code>$('#emails-input').select3({
+<pre class="example-code"><code>$('#example-4').select3({
     inputType: 'Email',
     placeholder: 'Type or paste email addresses'
 });
@@ -103,7 +128,7 @@ given selector. The following options are supported:</p>
 <td>Set to <code>true</code> to allow the selection to be cleared. This option only applies to single-value inputs.</td>
 </tr>
 <tr>
-<td>backspaceHighlightsBeforeDelete</td>
+<td>backspace<wbr>Highlights<wbr>BeforeDelete</td>
 <td><code>Boolean</code></td>
 <td>If set to <code>true</code>, when the user enters a backspace while there is no text in the search field but there are selected items, the last selected item will be highlighted and when a second backspace is entered the item is deleted. If <code>false</code>, the item gets deleted on the first backspace. The default value is true on devices that have touch input and false on devices that don't.</td>
 </tr>
@@ -233,18 +258,26 @@ listened to using jQuery's <code>on()</code> method.</p>
 </tr>
 </tbody>
 </table>
-      </section>
-    </div>
+
+<h1>
+<a id="events" class="anchor" href="#more-information" aria-hidden="true"><span class="octicon octicon-link"></span></a>More information</h1>
+
+<p>For more information, see the <a href="https://github.com/arendjr/select3/">GitHub page</a>.</p>
+
+</section>
+</div>
 
     <!-- FOOTER  -->
     <div id="footer_wrap" class="outer">
       <footer class="inner">
         <p class="copyright">Select3 maintained by <a href="https://github.com/arendjr">arendjr</a></p>
-        <p>Published with <a href="http://pages.github.com">GitHub Pages</a></p>
       </footer>
     </div>
 
     
 
+    <script src="javascripts/jquery.js"></script>
+    <script src="javascripts/select3-full.js"></script>
+    <script src="javascripts/main.js"></script>
   </body>
 </html>
