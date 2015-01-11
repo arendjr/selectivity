@@ -1,7 +1,7 @@
-select3
+Select3
 =======
 
-Flexible and modular alternative to Select2.
+Modular and light-weight selection library for jQuery and Zepto.js.
 
 Motivation
 ----------
