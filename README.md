@@ -38,6 +38,10 @@ Browser Support
 - Internet Explorer 10+
 - Safari 6+
 
+Note that while Internet Explorer versions older than 10 are not supported, you might be able
+to get them to work, possibly with the use of some polyfills. Reports of success or patches
+to create a &quot;legacy&quot; build would be welcomed.
+
 Dependencies
 ------------
 
