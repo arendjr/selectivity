@@ -454,10 +454,7 @@ $.extend(Select3.prototype, {
         options = options || {};
 
         if (!this.dropdown) {
-            var event = $.Event('select3-opening');
-            this.$el.trigger(event);
-
-            if (!event.isDefaultPrevented()) {
+            if (this.triggerEvent('select3-opening')) {
                 var Dropdown = this.options.dropdown || Select3.Dropdown;
                 if (Dropdown) {
                     this.dropdown = new Dropdown({
@@ -618,7 +615,7 @@ $.extend(Select3.prototype, {
                 break;
 
             case 'templates':
-                this.templates = $.extend({}, this.templates, value);
+                $.extend(this.templates, value);
                 break;
             }
         }.bind(this));
@@ -665,10 +662,15 @@ $.extend(Select3.prototype, {
      * Triggers an event on the instance's element.
      *
      * @param Optional event data to be added to the event object.
+     *
+     * @return Whether the default action of the event may be executed, ie. returns false if
+     *         preventDefault() has been called.
      */
     triggerEvent: function(eventName, data) {
 
-        this.$el.trigger($.Event(eventName, data || {}));
+        var event = $.Event(eventName, data || {});
+        this.$el.trigger(event);
+        return !event.isDefaultPrevented();
     },
 
     /**
@@ -2413,12 +2415,8 @@ $.extend(Select3Dropdown.prototype, {
         var item = Select3.findNestedById(select3.results, id);
         if (item) {
             var options = { id: id, item: item };
-            var event = $.Event('select3-selecting', options);
-            select3.$el.trigger(event);
-
-            if (!event.isDefaultPrevented()) {
-                event = $.Event('select3-selected', options);
-                select3.$el.trigger(event);
+            if (select3.triggerEvent('select3-selecting', options)) {
+                select3.triggerEvent('select3-selected', options);
             }
         }
     },

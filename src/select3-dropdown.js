@@ -510,12 +510,8 @@ $.extend(Select3Dropdown.prototype, {
         var item = Select3.findNestedById(select3.results, id);
         if (item) {
             var options = { id: id, item: item };
-            var event = $.Event('select3-selecting', options);
-            select3.$el.trigger(event);
-
-            if (!event.isDefaultPrevented()) {
-                event = $.Event('select3-selected', options);
-                select3.$el.trigger(event);
+            if (select3.triggerEvent('select3-selecting', options)) {
+                select3.triggerEvent('select3-selected', options);
             }
         }
     },
