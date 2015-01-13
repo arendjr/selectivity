@@ -3,7 +3,7 @@
 var DomUtil = require('../dom-util');
 
 exports.testChangeEvent = DomUtil.createDomTest(
-    ['multiple', 'dropdown', 'templates'],
+    ['multiple', 'dropdown', 'keyboard', 'templates'],
     function(test, $input, $) {
         var numChangeEvents = 0;
 
@@ -36,8 +36,7 @@ exports.testClickAfterSearch = DomUtil.createDomTest(
             multiple: true
         });
 
-        $input.find('.select3-multiple-input').val('amster')
-                                              .trigger('keyup');
+        $input.find('.select3-multiple-input').click().val('amster').trigger('keyup');
         $('.select3-result-item[data-item-id="Amsterdam"]').click();
 
         test.deepEqual($input.select3('value'), ['Amsterdam']);

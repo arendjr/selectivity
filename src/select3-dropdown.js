@@ -73,9 +73,8 @@ function Select3Dropdown(options) {
     this._suppressMouseWheel();
 
     if (options.showSearchInput) {
-        var $input = this.$('.select3-search-input');
-        $input.focus();
-        this._$input = $input;
+        select3.initSearchInput(this.$('.select3-search-input'));
+        select3.focus();
     }
 
     this._delegateEvents();
@@ -107,18 +106,6 @@ $.extend(Select3Dropdown.prototype, {
     },
 
     /**
-     * Emulates a click on the highlighted item.
-     */
-    clickHighlight: function() {
-
-        if (this.highlightedResult) {
-            this._selectItem(this.highlightedResult.id);
-        } else if (this.loadMoreHighlighted) {
-            this._loadMoreClicked();
-        }
-    },
-
-    /**
      * Closes the dropdown.
      */
     close: function() {
@@ -139,8 +126,6 @@ $.extend(Select3Dropdown.prototype, {
     events: {
         'click .select3-load-more': '_loadMoreClicked',
         'click .select3-result-item': '_resultClicked',
-        'keydown .select3-search-input': '_keyHeld',
-        'keyup .select3-search-input': '_keyReleased',
         'mouseenter .select3-load-more': 'highlightLoadMore',
         'mouseenter .select3-result-item': '_resultHovered'
     },
@@ -269,6 +254,18 @@ $.extend(Select3Dropdown.prototype, {
     },
 
     /**
+     * Selects the highlighted item.
+     */
+    selectHighlight: function() {
+
+        if (this.highlightedResult) {
+            this._selectItem(this.highlightedResult.id);
+        } else if (this.loadMoreHighlighted) {
+            this._loadMoreClicked();
+        }
+    },
+
+    /**
      * Sets up an event handler that will close the dropdown when the Select3 control loses focus.
      */
     setupCloseHandler: function() {
@@ -394,39 +391,6 @@ $.extend(Select3Dropdown.prototype, {
             this.highlightedResult = null;
             this.loadMoreHighlighted = false;
         }
-    },
-
-    /**
-     * @private
-     */
-    _keyHeld: function(event) {
-
-        if (event.keyCode === Select3.Keys.DOWN_ARROW) {
-            this.highlightNext();
-        } else if (event.keyCode === Select3.Keys.UP_ARROW) {
-            this.highlightPrevious();
-        }
-    },
-
-    /**
-     * @private
-     */
-    _keyReleased: function(event) {
-
-        if (event.keyCode === Select3.Keys.ENTER && !event.ctrlKey) {
-            this.clickHighlight();
-            this._$input.val('');
-        } else if (event.keyCode === Select3.Keys.ESCAPE) {
-            this.close();
-        } else if (event.keyCode === Select3.Keys.DOWN_ARROW ||
-                   event.keyCode === Select3.Keys.UP_ARROW) {
-            // handled in _keyHeld() because the response feels faster and it works with repeated
-            // events if the user holds the key for a longer period
-        } else {
-            this.select3.search(this._$input.val());
-        }
-
-        return false;
     },
 
     /**

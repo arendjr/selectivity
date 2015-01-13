@@ -30,6 +30,7 @@ module.exports = {
                         'diacritics': ['base'],
                         'dropdown': ['base'],
                         'email': ['base', 'multiple'],
+                        'keyboard': ['base'],
                         'locale': ['base'],
                         'multiple': ['base'],
                         'single': ['base'],

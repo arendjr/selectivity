@@ -120,7 +120,7 @@ exports.testNoData = DomUtil.createDomTest(
 );
 
 exports.testSelectNestedItemByKeyboard = DomUtil.createDomTest(
-    ['single', 'dropdown', 'templates'],
+    ['single', 'dropdown', 'keyboard', 'templates'],
     function(test, $input, $) {
         $input.select3({
             items: [

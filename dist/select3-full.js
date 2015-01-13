@@ -5,6 +5,7 @@ _dereq_('./select3-backdrop');
 _dereq_('./select3-diacritics');
 _dereq_('./select3-dropdown');
 _dereq_('./select3-email');
+_dereq_('./select3-keyboard');
 _dereq_('./select3-multiple');
 _dereq_('./select3-single');
 _dereq_('./select3-templates');
@@ -12,7 +13,7 @@ _dereq_('./select3-tokenizer');
 
 module.exports = _dereq_('./select3-base');
 
-},{"./select3-backdrop":3,"./select3-base":4,"./select3-diacritics":5,"./select3-dropdown":6,"./select3-email":7,"./select3-multiple":9,"./select3-single":10,"./select3-templates":11,"./select3-tokenizer":12}],2:[function(_dereq_,module,exports){
+},{"./select3-backdrop":3,"./select3-base":4,"./select3-diacritics":5,"./select3-dropdown":6,"./select3-email":7,"./select3-keyboard":8,"./select3-multiple":10,"./select3-single":11,"./select3-templates":12,"./select3-tokenizer":13}],2:[function(_dereq_,module,exports){
 'use strict';
 
 /**
@@ -220,6 +221,13 @@ function Select3(options) {
     this.$el = $(options.element).on('select3-close', this._closed.bind(this));
 
     /**
+     * jQuery container for the search input.
+     *
+     * May be null as long as there is no visible search input. It is set by initSearchInput().
+     */
+    this.$searchInput = null;
+
+    /**
      * Reference to the currently open dropdown.
      */
     this.dropdown = null;
@@ -256,6 +264,13 @@ function Select3(options) {
      * Results from a search query.
      */
     this.results = [];
+
+    /**
+     * Array of search input listeners.
+     *
+     * Custom listeners can be specified in the options object.
+     */
+    this.searchInputListeners = Select3.SearchInputListeners;
 
     /**
      * Mapping of templates.
@@ -400,6 +415,16 @@ $.extend(Select3.prototype, {
     },
 
     /**
+     * Applies focus to the input.
+     */
+    focus: function() {
+
+        if (this.$searchInput) {
+            this.$searchInput.focus();
+        }
+    },
+
+    /**
      * Returns the correct item for a given ID.
      *
      * @param id The ID to get the item for.
@@ -416,6 +441,27 @@ $.extend(Select3.prototype, {
         } else {
             return { id: id, text: '' + id };
         }
+    },
+
+    /**
+     * Initializes the search input element.
+     *
+     * Sets the $searchInput property, invokes all search input listeners and attaches the default
+     * action of searching when something is typed.
+     */
+    initSearchInput: function($input) {
+
+        this.$searchInput = $input;
+
+        this.searchInputListeners.forEach(function(listener) {
+            listener(this, $input);
+        }.bind(this));
+
+        $input.on('keyup', function(event) {
+            if (!event.isDefaultPrevented()) {
+                this.search();
+            }
+        }.bind(this));
     },
 
     /**
@@ -479,20 +525,24 @@ $.extend(Select3.prototype, {
     },
 
     /**
-     * Searches for results based on a search term entered by the user.
+     * Searches for results based on the term entered in the search input.
      *
      * If an items array has been passed with the options to the Select3 instance, a local search
      * will be performed among those items. Otherwise, the query function specified in the options
      * will be used to perform the search. If neither is defined, nothing happens.
-     *
-     * @param term The search term the user is searching for.
      */
-    search: function(term) {
+    search: function() {
+
+        if (!this.$searchInput) {
+            return;
+        }
 
         var self = this;
         function setResults(results, resultOptions) {
             self._setResults(results, $.extend({ term: term }, resultOptions));
         }
+
+        var term = this.$searchInput.val();
 
         if (self.items) {
             term = Select3.transformText(term);
@@ -578,6 +628,8 @@ $.extend(Select3.prototype, {
      *                        term - The search term the user is searching for. Unlike with the
      *                               matcher function, the term has not been processed using
      *                               Select3.transformText().
+     *                searchInputListeners - Array of search input listeners. By default, the global
+     *                                       array Select3.SearchInputListeners is used.
      *                showDropdown - Set to false if you don't want to use any dropdown (you can
      *                               still open it programmatically using open()).
      *                templates - Object with instance-specific templates to override the global
@@ -596,7 +648,8 @@ $.extend(Select3.prototype, {
             matcher: 'function',
             placeholder: 'string',
             positionDropdown: 'function',
-            query: 'function'
+            query: 'function',
+            searchInputListeners: 'array'
         }, options.allowedTypes);
 
         $.each(options, function(key, value) {
@@ -612,6 +665,10 @@ $.extend(Select3.prototype, {
 
             case 'matcher':
                 this.matcher = value;
+                break;
+
+            case 'searchInputListeners':
+                this.searchInputListeners = value;
                 break;
 
             case 'templates':
@@ -838,6 +895,8 @@ $.extend(Select3.prototype, {
 
 /**
  * Dropdown class to use for displaying dropdowns.
+ *
+ * The default implementation of a dropdown is defined in the select3-dropdown module.
  */
 Select3.Dropdown = null;
 
@@ -847,18 +906,17 @@ Select3.Dropdown = null;
 Select3.InputTypes = {};
 
 /**
- * Mapping of keys.
+ * Array of search input listeners.
+ *
+ * Listeners are invoked when initSearchInput() is called (typically right after the search input is
+ * created). Every listener receives two arguments:
+ *
+ * select3 - The Select3 instance.
+ * $input - jQuery container with the search input.
+ *
+ * An example of a search input listener is the select3-keyboard module.
  */
-Select3.Keys = {
-    BACKSPACE: 8,
-    DELETE: 46,
-    DOWN_ARROW: 40,
-    ENTER: 13,
-    ESCAPE: 27,
-    LEFT_ARROW: 37,
-    RIGHT_ARROW: 39,
-    UP_ARROW: 38
-};
+Select3.SearchInputListeners = [];
 
 /**
  * Mapping with templates to use for rendering select boxes and dropdowns. See select3-templates.js
@@ -1978,9 +2036,8 @@ function Select3Dropdown(options) {
     this._suppressMouseWheel();
 
     if (options.showSearchInput) {
-        var $input = this.$('.select3-search-input');
-        $input.focus();
-        this._$input = $input;
+        select3.initSearchInput(this.$('.select3-search-input'));
+        select3.focus();
     }
 
     this._delegateEvents();
@@ -2012,18 +2069,6 @@ $.extend(Select3Dropdown.prototype, {
     },
 
     /**
-     * Emulates a click on the highlighted item.
-     */
-    clickHighlight: function() {
-
-        if (this.highlightedResult) {
-            this._selectItem(this.highlightedResult.id);
-        } else if (this.loadMoreHighlighted) {
-            this._loadMoreClicked();
-        }
-    },
-
-    /**
      * Closes the dropdown.
      */
     close: function() {
@@ -2044,8 +2089,6 @@ $.extend(Select3Dropdown.prototype, {
     events: {
         'click .select3-load-more': '_loadMoreClicked',
         'click .select3-result-item': '_resultClicked',
-        'keydown .select3-search-input': '_keyHeld',
-        'keyup .select3-search-input': '_keyReleased',
         'mouseenter .select3-load-more': 'highlightLoadMore',
         'mouseenter .select3-result-item': '_resultHovered'
     },
@@ -2174,6 +2217,18 @@ $.extend(Select3Dropdown.prototype, {
     },
 
     /**
+     * Selects the highlighted item.
+     */
+    selectHighlight: function() {
+
+        if (this.highlightedResult) {
+            this._selectItem(this.highlightedResult.id);
+        } else if (this.loadMoreHighlighted) {
+            this._loadMoreClicked();
+        }
+    },
+
+    /**
      * Sets up an event handler that will close the dropdown when the Select3 control loses focus.
      */
     setupCloseHandler: function() {
@@ -2299,39 +2354,6 @@ $.extend(Select3Dropdown.prototype, {
             this.highlightedResult = null;
             this.loadMoreHighlighted = false;
         }
-    },
-
-    /**
-     * @private
-     */
-    _keyHeld: function(event) {
-
-        if (event.keyCode === Select3.Keys.DOWN_ARROW) {
-            this.highlightNext();
-        } else if (event.keyCode === Select3.Keys.UP_ARROW) {
-            this.highlightPrevious();
-        }
-    },
-
-    /**
-     * @private
-     */
-    _keyReleased: function(event) {
-
-        if (event.keyCode === Select3.Keys.ENTER && !event.ctrlKey) {
-            this.clickHighlight();
-            this._$input.val('');
-        } else if (event.keyCode === Select3.Keys.ESCAPE) {
-            this.close();
-        } else if (event.keyCode === Select3.Keys.DOWN_ARROW ||
-                   event.keyCode === Select3.Keys.UP_ARROW) {
-            // handled in _keyHeld() because the response feels faster and it works with repeated
-            // events if the user holds the key for a longer period
-        } else {
-            this.select3.search(this._$input.val());
-        }
-
-        return false;
     },
 
     /**
@@ -2629,7 +2651,72 @@ Select3.InputTypes.Email = EmailSelect3;
 
 module.exports = EmailSelect3;
 
-},{"./select3-base":4,"./select3-multiple":9,"jquery":"jquery"}],8:[function(_dereq_,module,exports){
+},{"./select3-base":4,"./select3-multiple":10,"jquery":"jquery"}],8:[function(_dereq_,module,exports){
+'use strict';
+
+var $ = window.jQuery || window.Zepto;
+
+var Select3 = _dereq_('./select3-base');
+
+var KEY_DOWN_ARROW = 40;
+var KEY_ENTER = 13;
+var KEY_ESCAPE = 27;
+var KEY_UP_ARROW = 38;
+
+/**
+ * Search input listener providing keyboard support for navigating the dropdown.
+ */
+function listener(select3, $input) {
+
+    function keyHeld(event) {
+        var dropdown = select3.dropdown;
+        if (dropdown) {
+            if (event.keyCode === KEY_DOWN_ARROW) {
+                dropdown.highlightNext();
+            } else if (event.keyCode === KEY_UP_ARROW) {
+                dropdown.highlightPrevious();
+            }
+        }
+    }
+
+    function keyReleased(event) {
+        var dropdown = select3.dropdown;
+        if (event.keyCode === KEY_ENTER && !event.ctrlKey) {
+            if (dropdown) {
+                dropdown.selectHighlight();
+            } else if (select3.options.showDropdown !== false) {
+                open();
+            }
+
+            event.preventDefault();
+        } else if (event.keyCode === KEY_ESCAPE) {
+            select3.close();
+
+            event.preventDefault();
+        } else if (event.keyCode === KEY_DOWN_ARROW || event.keyCode === KEY_UP_ARROW) {
+            // handled in keyHeld() because the response feels faster and it works with repeated
+            // events if the user holds the key for a longer period
+            // still, we issue an open() call here in case the dropdown was not yet open...
+            open();
+
+            event.preventDefault();
+        } else {
+            open();
+        }
+    }
+
+    function open() {
+        if (select3.options.showDropdown !== false) {
+            select3.open();
+        }
+    }
+
+    $input.on('keydown', keyHeld).on('keyup', keyReleased);
+}
+
+Select3.SearchInputListeners.push(listener);
+
+},{"./select3-base":4,"jquery":"jquery"}],9:[function(_dereq_,module,exports){
 'use strict';
 
 var escape = _dereq_('./escape');
@@ -2650,12 +2737,16 @@ Select3.Locale = {
 
 };
 
-},{"./escape":2,"./select3-base":4}],9:[function(_dereq_,module,exports){
+},{"./escape":2,"./select3-base":4}],10:[function(_dereq_,module,exports){
 'use strict';
 
 var $ = window.jQuery || window.Zepto;
 
 var Select3 = _dereq_('./select3-base');
+
+var KEY_BACKSPACE = 8;
+var KEY_DELETE = 46;
+var KEY_ENTER = 13;
 
 /**
  * MultipleSelect3 Constructor.
@@ -2669,9 +2760,9 @@ function MultipleSelect3(options) {
 
     this.$el.html(this.template('multipleSelectInput'));
 
-    this._$input = this.$('.select3-multiple-input:not(.select3-width-detector)');
-
     this._highlightedItemId = null;
+
+    this.initSearchInput(this.$('.select3-multiple-input:not(.select3-width-detector)'));
 
     this._rerenderSelection();
 }
@@ -2721,7 +2812,7 @@ $.extend(MultipleSelect3.prototype, {
             }
         }
 
-        this._$input.val('');
+        this.$searchInput.val('');
     },
 
     /**
@@ -2751,14 +2842,6 @@ $.extend(MultipleSelect3.prototype, {
         return results.filter(function(item) {
             return !Select3.findById(this._data, item.id);
         }, this);
-    },
-
-    /**
-     * Applies focus to the input.
-     */
-    focus: function() {
-
-        this._$input.focus();
     },
 
     /**
@@ -2817,6 +2900,28 @@ $.extend(MultipleSelect3.prototype, {
 
         if (id === this._highlightedItemId) {
             this._highlightedItemId = null;
+        }
+    },
+
+    /**
+     * @inherit
+     */
+    search: function() {
+
+        var term = this.$searchInput.val();
+
+        if (this.options.tokenizer) {
+            term = this.options.tokenizer(term, this._data, this.add.bind(this), this.options);
+
+            if ($.type(term) === 'string') {
+                this.$searchInput.val(term);
+            } else {
+                term = '';
+            }
+        }
+
+        if (this.dropdown) {
+            Select3.prototype.search.apply(this);
         }
     },
 
@@ -2945,7 +3050,7 @@ $.extend(MultipleSelect3.prototype, {
      */
     _createToken: function() {
 
-        var term = this._$input.val();
+        var term = this.$searchInput.val();
 
         if (term && this.options.createTokenItem) {
             var item = this.options.createTokenItem(term);
@@ -3004,17 +3109,7 @@ $.extend(MultipleSelect3.prototype, {
      */
     _keyHeld: function(event) {
 
-        this._originalValue = this._$input.val();
-
-        if (event.keyCode === Select3.Keys.DOWN_ARROW) {
-            if (this.dropdown) {
-                this.dropdown.highlightNext();
-            }
-        } else if (event.keyCode === Select3.Keys.UP_ARROW) {
-            if (this.dropdown) {
-                this.dropdown.highlightPrevious();
-            }
-        }
+        this._originalValue = this.$searchInput.val();
     },
 
     /**
@@ -3022,37 +3117,17 @@ $.extend(MultipleSelect3.prototype, {
      */
     _keyReleased: function(event) {
 
-        var dropdown = this.dropdown, inputHadText = !!this._originalValue;
+        var inputHadText = !!this._originalValue;
 
-        if (event.keyCode === Select3.Keys.ENTER && !event.ctrlKey) {
-            if (dropdown) {
-                dropdown.clickHighlight();
-            } else if (this.options.showDropdown !== false) {
-                this.open();
-            } else if (this.options.createTokenItem) {
+        if (event.keyCode === KEY_ENTER && !event.ctrlKey) {
+            if (this.options.createTokenItem) {
                 this._createToken();
             }
-        } else if (event.keyCode === Select3.Keys.BACKSPACE && !inputHadText) {
+        } else if (event.keyCode === KEY_BACKSPACE && !inputHadText) {
             this._backspacePressed();
-        } else if (event.keyCode === Select3.Keys.DELETE && !inputHadText) {
+        } else if (event.keyCode === KEY_DELETE && !inputHadText) {
             this._deletePressed();
-        } else if (event.keyCode === Select3.Keys.ESCAPE) {
-            this.close();
-        } else if (event.keyCode === Select3.Keys.DOWN_ARROW ||
-                   event.keyCode === Select3.Keys.UP_ARROW) {
-            // handled in _keyHeld() because the response feels faster and it works with repeated
-            // events if the user holds the key for a longer period
-            // still, we issue an _open() call here in case the dropdown was not yet open...
-            this._open();
-        } else {
-            this._open();
-
-            this._search();
         }
-
-        this._updateInputWidth();
-
-        return false;
     },
 
     /**
@@ -3072,7 +3147,7 @@ $.extend(MultipleSelect3.prototype, {
 
         event = event || {};
 
-        var $input = this._$input;
+        var $input = this.$searchInput;
         if (event.added) {
             $input.before(this.template('multipleSelectedItem', $.extend({
                 highlighted: (event.added.id === this._highlightedItemId)
@@ -3135,31 +3210,9 @@ $.extend(MultipleSelect3.prototype, {
     /**
      * @private
      */
-    _search: function() {
-
-        var term = this._$input.val();
-
-        if (this.options.tokenizer) {
-            term = this.options.tokenizer(term, this._data, this.add.bind(this), this.options);
-
-            if ($.type(term) === 'string') {
-                this._$input.val(term);
-            } else {
-                term = '';
-            }
-        }
-
-        if (this.dropdown) {
-            this.search(term);
-        }
-    },
-
-    /**
-     * @private
-     */
     _updateInputWidth: function() {
 
-        var $input = this._$input, $widthDetector = this.$('.select3-width-detector');
+        var $input = this.$searchInput, $widthDetector = this.$('.select3-width-detector');
         $widthDetector.text($input.val() || !this._data.length && this.options.placeholder || '');
         $input.width($widthDetector.width() + 20);
 
@@ -3172,7 +3225,7 @@ Select3.InputTypes.Multiple = MultipleSelect3;
 
 module.exports = MultipleSelect3;
 
-},{"./select3-base":4,"jquery":"jquery"}],10:[function(_dereq_,module,exports){
+},{"./select3-base":4,"jquery":"jquery"}],11:[function(_dereq_,module,exports){
 'use strict';
 
 var $ = window.jQuery || window.Zepto;
@@ -3212,14 +3265,6 @@ $.extend(SingleSelect3.prototype, {
         'click': '_clicked',
         'click .select3-single-selected-item-remove': '_itemRemoveClicked',
         'select3-selected': '_resultSelected'
-    },
-
-    /**
-     * Applies focus to the input.
-     */
-    focus: function() {
-
-        // TODO
     },
 
     /**
@@ -3305,12 +3350,8 @@ $.extend(SingleSelect3.prototype, {
 
         if (this.dropdown) {
             this.close();
-        } else {
-            this.focus();
-
-            if (this.options.showDropdown !== false) {
-                this.open({ showSearchInput: this.options.showSearchInputInDropdown !== false });
-            }
+        } else if (this.options.showDropdown !== false) {
+            this.open({ showSearchInput: this.options.showSearchInputInDropdown !== false });
         }
 
         return false;
@@ -3359,7 +3400,7 @@ Select3.InputTypes.Single = SingleSelect3;
 
 module.exports = SingleSelect3;
 
-},{"./select3-base":4,"jquery":"jquery"}],11:[function(_dereq_,module,exports){
+},{"./select3-base":4,"jquery":"jquery"}],12:[function(_dereq_,module,exports){
 'use strict';
 
 var escape = _dereq_('./escape');
@@ -3604,7 +3645,7 @@ Select3.Templates = {
 
 };
 
-},{"./escape":2,"./select3-base":4,"./select3-locale":8}],12:[function(_dereq_,module,exports){
+},{"./escape":2,"./select3-base":4,"./select3-locale":9}],13:[function(_dereq_,module,exports){
 'use strict';
 
 var $ = window.jQuery || window.Zepto;
@@ -3680,5 +3721,5 @@ Select3Multiple.prototype.setOptions = function(options) {
     setOptions.call(this, options);
 };
 
-},{"./select3-base":4,"./select3-multiple":9,"jquery":"jquery"}]},{},[1])(1)
+},{"./select3-base":4,"./select3-multiple":10,"jquery":"jquery"}]},{},[1])(1)
 });

@@ -96,6 +96,13 @@ function Select3(options) {
     this.$el = $(options.element).on('select3-close', this._closed.bind(this));
 
     /**
+     * jQuery container for the search input.
+     *
+     * May be null as long as there is no visible search input. It is set by initSearchInput().
+     */
+    this.$searchInput = null;
+
+    /**
      * Reference to the currently open dropdown.
      */
     this.dropdown = null;
@@ -132,6 +139,13 @@ function Select3(options) {
      * Results from a search query.
      */
     this.results = [];
+
+    /**
+     * Array of search input listeners.
+     *
+     * Custom listeners can be specified in the options object.
+     */
+    this.searchInputListeners = Select3.SearchInputListeners;
 
     /**
      * Mapping of templates.
@@ -276,6 +290,16 @@ $.extend(Select3.prototype, {
     },
 
     /**
+     * Applies focus to the input.
+     */
+    focus: function() {
+
+        if (this.$searchInput) {
+            this.$searchInput.focus();
+        }
+    },
+
+    /**
      * Returns the correct item for a given ID.
      *
      * @param id The ID to get the item for.
@@ -292,6 +316,27 @@ $.extend(Select3.prototype, {
         } else {
             return { id: id, text: '' + id };
         }
+    },
+
+    /**
+     * Initializes the search input element.
+     *
+     * Sets the $searchInput property, invokes all search input listeners and attaches the default
+     * action of searching when something is typed.
+     */
+    initSearchInput: function($input) {
+
+        this.$searchInput = $input;
+
+        this.searchInputListeners.forEach(function(listener) {
+            listener(this, $input);
+        }.bind(this));
+
+        $input.on('keyup', function(event) {
+            if (!event.isDefaultPrevented()) {
+                this.search();
+            }
+        }.bind(this));
     },
 
     /**
@@ -355,20 +400,24 @@ $.extend(Select3.prototype, {
     },
 
     /**
-     * Searches for results based on a search term entered by the user.
+     * Searches for results based on the term entered in the search input.
      *
      * If an items array has been passed with the options to the Select3 instance, a local search
      * will be performed among those items. Otherwise, the query function specified in the options
      * will be used to perform the search. If neither is defined, nothing happens.
-     *
-     * @param term The search term the user is searching for.
      */
-    search: function(term) {
+    search: function() {
+
+        if (!this.$searchInput) {
+            return;
+        }
 
         var self = this;
         function setResults(results, resultOptions) {
             self._setResults(results, $.extend({ term: term }, resultOptions));
         }
+
+        var term = this.$searchInput.val();
 
         if (self.items) {
             term = Select3.transformText(term);
@@ -454,6 +503,8 @@ $.extend(Select3.prototype, {
      *                        term - The search term the user is searching for. Unlike with the
      *                               matcher function, the term has not been processed using
      *                               Select3.transformText().
+     *                searchInputListeners - Array of search input listeners. By default, the global
+     *                                       array Select3.SearchInputListeners is used.
      *                showDropdown - Set to false if you don't want to use any dropdown (you can
      *                               still open it programmatically using open()).
      *                templates - Object with instance-specific templates to override the global
@@ -472,7 +523,8 @@ $.extend(Select3.prototype, {
             matcher: 'function',
             placeholder: 'string',
             positionDropdown: 'function',
-            query: 'function'
+            query: 'function',
+            searchInputListeners: 'array'
         }, options.allowedTypes);
 
         $.each(options, function(key, value) {
@@ -488,6 +540,10 @@ $.extend(Select3.prototype, {
 
             case 'matcher':
                 this.matcher = value;
+                break;
+
+            case 'searchInputListeners':
+                this.searchInputListeners = value;
                 break;
 
             case 'templates':
@@ -714,6 +770,8 @@ $.extend(Select3.prototype, {
 
 /**
  * Dropdown class to use for displaying dropdowns.
+ *
+ * The default implementation of a dropdown is defined in the select3-dropdown module.
  */
 Select3.Dropdown = null;
 
@@ -723,18 +781,17 @@ Select3.Dropdown = null;
 Select3.InputTypes = {};
 
 /**
- * Mapping of keys.
+ * Array of search input listeners.
+ *
+ * Listeners are invoked when initSearchInput() is called (typically right after the search input is
+ * created). Every listener receives two arguments:
+ *
+ * select3 - The Select3 instance.
+ * $input - jQuery container with the search input.
+ *
+ * An example of a search input listener is the select3-keyboard module.
  */
-Select3.Keys = {
-    BACKSPACE: 8,
-    DELETE: 46,
-    DOWN_ARROW: 40,
-    ENTER: 13,
-    ESCAPE: 27,
-    LEFT_ARROW: 37,
-    RIGHT_ARROW: 39,
-    UP_ARROW: 38
-};
+Select3.SearchInputListeners = [];
 
 /**
  * Mapping with templates to use for rendering select boxes and dropdowns. See select3-templates.js

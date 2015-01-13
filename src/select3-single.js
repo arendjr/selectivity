@@ -40,14 +40,6 @@ $.extend(SingleSelect3.prototype, {
     },
 
     /**
-     * Applies focus to the input.
-     */
-    focus: function() {
-
-        // TODO
-    },
-
-    /**
      * Returns the correct data for a given value.
      *
      * @param value The value to get the data for. Should be an ID.
@@ -130,12 +122,8 @@ $.extend(SingleSelect3.prototype, {
 
         if (this.dropdown) {
             this.close();
-        } else {
-            this.focus();
-
-            if (this.options.showDropdown !== false) {
-                this.open({ showSearchInput: this.options.showSearchInputInDropdown !== false });
-            }
+        } else if (this.options.showDropdown !== false) {
+            this.open({ showSearchInput: this.options.showSearchInputInDropdown !== false });
         }
 
         return false;

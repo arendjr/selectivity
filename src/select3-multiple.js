@@ -4,6 +4,10 @@ var $ = require('jquery');
 
 var Select3 = require('./select3-base');
 
+var KEY_BACKSPACE = 8;
+var KEY_DELETE = 46;
+var KEY_ENTER = 13;
+
 /**
  * MultipleSelect3 Constructor.
  *
@@ -16,9 +20,9 @@ function MultipleSelect3(options) {
 
     this.$el.html(this.template('multipleSelectInput'));
 
-    this._$input = this.$('.select3-multiple-input:not(.select3-width-detector)');
-
     this._highlightedItemId = null;
+
+    this.initSearchInput(this.$('.select3-multiple-input:not(.select3-width-detector)'));
 
     this._rerenderSelection();
 }
@@ -68,7 +72,7 @@ $.extend(MultipleSelect3.prototype, {
             }
         }
 
-        this._$input.val('');
+        this.$searchInput.val('');
     },
 
     /**
@@ -98,14 +102,6 @@ $.extend(MultipleSelect3.prototype, {
         return results.filter(function(item) {
             return !Select3.findById(this._data, item.id);
         }, this);
-    },
-
-    /**
-     * Applies focus to the input.
-     */
-    focus: function() {
-
-        this._$input.focus();
     },
 
     /**
@@ -164,6 +160,28 @@ $.extend(MultipleSelect3.prototype, {
 
         if (id === this._highlightedItemId) {
             this._highlightedItemId = null;
+        }
+    },
+
+    /**
+     * @inherit
+     */
+    search: function() {
+
+        var term = this.$searchInput.val();
+
+        if (this.options.tokenizer) {
+            term = this.options.tokenizer(term, this._data, this.add.bind(this), this.options);
+
+            if ($.type(term) === 'string') {
+                this.$searchInput.val(term);
+            } else {
+                term = '';
+            }
+        }
+
+        if (this.dropdown) {
+            Select3.prototype.search.apply(this);
         }
     },
 
@@ -292,7 +310,7 @@ $.extend(MultipleSelect3.prototype, {
      */
     _createToken: function() {
 
-        var term = this._$input.val();
+        var term = this.$searchInput.val();
 
         if (term && this.options.createTokenItem) {
             var item = this.options.createTokenItem(term);
@@ -351,17 +369,7 @@ $.extend(MultipleSelect3.prototype, {
      */
     _keyHeld: function(event) {
 
-        this._originalValue = this._$input.val();
-
-        if (event.keyCode === Select3.Keys.DOWN_ARROW) {
-            if (this.dropdown) {
-                this.dropdown.highlightNext();
-            }
-        } else if (event.keyCode === Select3.Keys.UP_ARROW) {
-            if (this.dropdown) {
-                this.dropdown.highlightPrevious();
-            }
-        }
+        this._originalValue = this.$searchInput.val();
     },
 
     /**
@@ -369,37 +377,17 @@ $.extend(MultipleSelect3.prototype, {
      */
     _keyReleased: function(event) {
 
-        var dropdown = this.dropdown, inputHadText = !!this._originalValue;
+        var inputHadText = !!this._originalValue;
 
-        if (event.keyCode === Select3.Keys.ENTER && !event.ctrlKey) {
-            if (dropdown) {
-                dropdown.clickHighlight();
-            } else if (this.options.showDropdown !== false) {
-                this.open();
-            } else if (this.options.createTokenItem) {
+        if (event.keyCode === KEY_ENTER && !event.ctrlKey) {
+            if (this.options.createTokenItem) {
                 this._createToken();
             }
-        } else if (event.keyCode === Select3.Keys.BACKSPACE && !inputHadText) {
+        } else if (event.keyCode === KEY_BACKSPACE && !inputHadText) {
             this._backspacePressed();
-        } else if (event.keyCode === Select3.Keys.DELETE && !inputHadText) {
+        } else if (event.keyCode === KEY_DELETE && !inputHadText) {
             this._deletePressed();
-        } else if (event.keyCode === Select3.Keys.ESCAPE) {
-            this.close();
-        } else if (event.keyCode === Select3.Keys.DOWN_ARROW ||
-                   event.keyCode === Select3.Keys.UP_ARROW) {
-            // handled in _keyHeld() because the response feels faster and it works with repeated
-            // events if the user holds the key for a longer period
-            // still, we issue an _open() call here in case the dropdown was not yet open...
-            this._open();
-        } else {
-            this._open();
-
-            this._search();
         }
-
-        this._updateInputWidth();
-
-        return false;
     },
 
     /**
@@ -419,7 +407,7 @@ $.extend(MultipleSelect3.prototype, {
 
         event = event || {};
 
-        var $input = this._$input;
+        var $input = this.$searchInput;
         if (event.added) {
             $input.before(this.template('multipleSelectedItem', $.extend({
                 highlighted: (event.added.id === this._highlightedItemId)
@@ -482,31 +470,9 @@ $.extend(MultipleSelect3.prototype, {
     /**
      * @private
      */
-    _search: function() {
-
-        var term = this._$input.val();
-
-        if (this.options.tokenizer) {
-            term = this.options.tokenizer(term, this._data, this.add.bind(this), this.options);
-
-            if ($.type(term) === 'string') {
-                this._$input.val(term);
-            } else {
-                term = '';
-            }
-        }
-
-        if (this.dropdown) {
-            this.search(term);
-        }
-    },
-
-    /**
-     * @private
-     */
     _updateInputWidth: function() {
 
-        var $input = this._$input, $widthDetector = this.$('.select3-width-detector');
+        var $input = this.$searchInput, $widthDetector = this.$('.select3-width-detector');
         $widthDetector.text($input.val() || !this._data.length && this.options.placeholder || '');
         $input.width($widthDetector.width() + 20);
 
