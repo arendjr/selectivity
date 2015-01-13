@@ -26,7 +26,7 @@
     border-radius: 2px;
     cursor: text;
     max-height: 10em;
-    min-height: 28px;
+    min-height: calc(2em + 4px);
     padding: 5px;
 }
 
@@ -35,7 +35,7 @@ input[type="text"].select3-multiple-input {
     background-color: transparent;
     border: none;
     float: left;
-    height: 28px;
+    height: calc(2em + 4px);
     max-width: 100%;
     outline: 0;
     padding: 0;
@@ -61,7 +61,7 @@ input[type="text"].select3-multiple-input:focus {
     color: #fff;
     cursor: default;
     float: left;
-    line-height: 24px;
+    line-height: 2em;
     margin: 2px;
     padding-left: 5px;
     position: relative;
@@ -88,7 +88,7 @@ input[type="text"].select3-multiple-input:focus {
 .select3-single-select {
     border-radius: 2px;
     cursor: pointer;
-    min-height: 24px;
+    min-height: 2em;
     padding: 5px;
     position: relative;
 }
@@ -102,7 +102,7 @@ input[type="text"].select3-multiple-input:focus {
     position: absolute;
     right: 15px;
     text-overflow: ellipsis;
-    top: 10px;
+    top: 0.8em;
     white-space: nowrap;
 }
 
@@ -122,7 +122,7 @@ input[type="text"].select3-multiple-input:focus {
 .select3-caret {
     position: absolute;
     right: 5px;
-    top: 8px;
+    top: 0.7em;
 }
 
 /**
@@ -150,7 +150,7 @@ input[type="text"].select3-multiple-input:focus {
 }
 
 .select3-results-container {
-    max-height: 350px;
+    max-height: 28em;
     overflow: auto;
 }
 
