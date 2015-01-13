@@ -367,7 +367,7 @@ $.extend(MultipleSelect3.prototype, {
     /**
      * @private
      */
-    _keyHeld: function(event) {
+    _keyHeld: function() {
 
         this._originalValue = this.$searchInput.val();
     },

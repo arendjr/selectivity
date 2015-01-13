@@ -1,7 +1,5 @@
 'use strict';
 
-var $ = require('jquery');
-
 var Select3 = require('./select3-base');
 
 var KEY_DOWN_ARROW = 40;
@@ -15,6 +13,7 @@ var KEY_UP_ARROW = 38;
 function listener(select3, $input) {
 
     function keyHeld(event) {
+
         var dropdown = select3.dropdown;
         if (dropdown) {
             if (event.keyCode === KEY_DOWN_ARROW) {
@@ -26,6 +25,13 @@ function listener(select3, $input) {
     }
 
     function keyReleased(event) {
+
+        function open() {
+            if (select3.options.showDropdown !== false) {
+                select3.open();
+            }
+        }
+
         var dropdown = select3.dropdown;
         if (event.keyCode === KEY_ENTER && !event.ctrlKey) {
             if (dropdown) {
@@ -48,12 +54,6 @@ function listener(select3, $input) {
             event.preventDefault();
         } else {
             open();
-        }
-    }
-
-    function open() {
-        if (select3.options.showDropdown !== false) {
-            select3.open();
         }
     }
 
