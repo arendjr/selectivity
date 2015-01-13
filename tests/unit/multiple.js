@@ -28,6 +28,23 @@ exports.testChangeEvent = DomUtil.createDomTest(
     }
 );
 
+exports.testClickAfterSearch = DomUtil.createDomTest(
+    ['multiple', 'dropdown', 'templates'],
+    function(test, $input, $) {
+        $input.select3({
+            items: ['Amsterdam', 'Antwerp', 'Athens'],
+            multiple: true
+        });
+
+        $input.find('.select3-multiple-input').val('amster')
+                                              .trigger('keyup');
+        $('.select3-result-item[data-item-id="Amsterdam"]').click();
+
+        test.deepEqual($input.select3('value'), ['Amsterdam']);
+        test.equal($input.find('.select3-multiple-input').val(), '');
+    }
+);
+
 exports.testInitialData = DomUtil.createDomTest(
     ['multiple', 'templates'],
     function(test, $input) {

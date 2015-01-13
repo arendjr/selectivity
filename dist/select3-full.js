@@ -2720,6 +2720,8 @@ $.extend(MultipleSelect3.prototype, {
                 this.triggerChange({ added: item });
             }
         }
+
+        this._$input.val('');
     },
 
     /**
@@ -2950,8 +2952,6 @@ $.extend(MultipleSelect3.prototype, {
             if (item) {
                 this.add(item);
             }
-
-            this._$input.val('');
         }
     },
 
@@ -3027,7 +3027,6 @@ $.extend(MultipleSelect3.prototype, {
         if (event.keyCode === Select3.Keys.ENTER && !event.ctrlKey) {
             if (dropdown) {
                 dropdown.clickHighlight();
-                this._$input.val('');
             } else if (this.options.showDropdown !== false) {
                 this.open();
             } else if (this.options.createTokenItem) {
