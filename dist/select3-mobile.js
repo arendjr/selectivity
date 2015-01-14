@@ -2093,7 +2093,7 @@ function Select3Fullscreen(options) {
     if (options.showSearchInput) {
         select3.initSearchInput(this.$('.select3-search-input'));
     } else if (select3.$searchInput) {
-        this._$searchInputParent = select3.$searchInput;
+        this._$searchInputParent = select3.$searchInput.parent();
         this._$searchInputParent.children().appendTo(this.$('.select3-search-input-container'));
     }
 
@@ -2148,6 +2148,7 @@ $.extend(Select3Fullscreen.prototype, {
      * Follows the same format as Backbone: http://backbonejs.org/#View-delegateEvents
      */
     events: {
+        'click .select3-fullscreen-close': 'close',
         'click .select3-load-more': '_loadMoreClicked',
         'click .select3-result-item': '_resultClicked'
     },
@@ -2159,8 +2160,7 @@ $.extend(Select3Fullscreen.prototype, {
 
         var select3 = this.select3;
 
-        var positionDropdown = select3.options.positionDropdown || function($el, $selectEl) {
-            var offset = $selectEl.offset();
+        var positionDropdown = select3.options.positionDropdown || function($el) {
             $el.css({ left: 0, top: 0 }).height(screen.height).width(screen.width);
         };
 

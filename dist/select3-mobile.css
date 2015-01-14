@@ -22,14 +22,13 @@
   position: absolute;
   z-index: 9999;
 }
-.select3-fullscreen-header {
-  padding: 7px;
-}
 .select3-fullscreen-close {
   background: #eee;
   border-radius: 4px;
-  font-size: 0.7em;
-  padding: 4px;
+  display: inline-block;
+  font-size: 0.9em;
+  margin: 7px;
+  padding: 5px;
 }
 .select3-search-input-container {
   background: #eee;
@@ -74,6 +73,7 @@
   cursor: text;
   max-height: 10em;
   min-height: calc(2em + 4px);
+  overflow: auto;
   padding: 5px;
 }
 .select3-multiple-input,
