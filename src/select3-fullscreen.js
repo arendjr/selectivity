@@ -108,7 +108,7 @@ $.extend(Select3Fullscreen.prototype, {
 
         var select3 = this.select3;
 
-        var positionDropdown = select3.options.positionDropdown || function($el, $selectEl) {
+        var positionDropdown = select3.options.positionDropdown || function($el) {
             $el.css({ left: 0, top: 0 }).height(screen.height).width(screen.width);
         };
 
