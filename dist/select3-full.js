@@ -2295,7 +2295,8 @@ $.extend(Select3Dropdown.prototype, {
         var $resultsContainer = this.$('.select3-results-container');
         $resultsContainer.html(
             results.length ? this._renderItems(results)
-                           : select3.template('noResults', { term: options.term })
+                           : options.hasMore ? ''
+                                             : select3.template('noResults', { term: options.term })
         );
 
         if (options.hasMore) {
@@ -2654,8 +2655,6 @@ module.exports = EmailSelect3;
 },{"./select3-base":4,"./select3-multiple":10,"jquery":"jquery"}],8:[function(_dereq_,module,exports){
 'use strict';
 
-var $ = window.jQuery || window.Zepto;
-
 var Select3 = _dereq_('./select3-base');
 
 var KEY_DOWN_ARROW = 40;
@@ -2669,6 +2668,7 @@ var KEY_UP_ARROW = 38;
 function listener(select3, $input) {
 
     function keyHeld(event) {
+
         var dropdown = select3.dropdown;
         if (dropdown) {
             if (event.keyCode === KEY_DOWN_ARROW) {
@@ -2680,6 +2680,13 @@ function listener(select3, $input) {
     }
 
     function keyReleased(event) {
+
+        function open() {
+            if (select3.options.showDropdown !== false) {
+                select3.open();
+            }
+        }
+
         var dropdown = select3.dropdown;
         if (event.keyCode === KEY_ENTER && !event.ctrlKey) {
             if (dropdown) {
@@ -2705,18 +2712,12 @@ function listener(select3, $input) {
         }
     }
 
-    function open() {
-        if (select3.options.showDropdown !== false) {
-            select3.open();
-        }
-    }
-
     $input.on('keydown', keyHeld).on('keyup', keyReleased);
 }
 
 Select3.SearchInputListeners.push(listener);
 
-},{"./select3-base":4,"jquery":"jquery"}],9:[function(_dereq_,module,exports){
+},{"./select3-base":4}],9:[function(_dereq_,module,exports){
 'use strict';
 
 var escape = _dereq_('./escape');
@@ -3107,7 +3108,7 @@ $.extend(MultipleSelect3.prototype, {
     /**
      * @private
      */
-    _keyHeld: function(event) {
+    _keyHeld: function() {
 
         this._originalValue = this.$searchInput.val();
     },

@@ -332,7 +332,8 @@ $.extend(Select3Dropdown.prototype, {
         var $resultsContainer = this.$('.select3-results-container');
         $resultsContainer.html(
             results.length ? this._renderItems(results)
-                           : select3.template('noResults', { term: options.term })
+                           : options.hasMore ? ''
+                                             : select3.template('noResults', { term: options.term })
         );
 
         if (options.hasMore) {

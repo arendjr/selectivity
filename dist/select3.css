@@ -27,6 +27,7 @@
     cursor: text;
     max-height: 10em;
     min-height: calc(2em + 4px);
+    overflow: auto;
     padding: 5px;
 }
 
