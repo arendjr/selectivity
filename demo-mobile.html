@@ -1,17 +1,21 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <title>Select3 Demo Use Cases</title>
+        <title>Select3 Demo Use Cases (Mobile)</title>
         <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
-        <link href="dist/select3-desktop.css" rel="stylesheet">
+        <link href="dist/select3-mobile.css" rel="stylesheet">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
         <style>
             body, input {
                 font-family: Helvetica, sans-serif;
                 font-size: 12px;
             }
+            h1 {
+                font-size: 17px;
+            }
         </style>
-        <script src="vendor/jquery.js"></script>
-        <script src="dist/select3-desktop.js"></script>
+        <script src="vendor/zepto.js"></script>
+        <script src="dist/select3-mobile.js"></script>
         <script>
             $(document).ready(function() {
                 var cities = [
@@ -281,21 +285,19 @@
 
                 $('#single-input').select3({
                     allowClear: true,
-                    placeholder: 'No city selected',
-                    query: queryFunction,
-                    searchInputPlaceholder: 'Type to search a city'
+                    placeholder: 'Tap to search a city',
+                    query: queryFunction
                 });
 
                 $('#single-input-with-labels').select3({
                     allowClear: true,
                     items: citiesByCountry,
-                    placeholder: 'No city selected',
-                    searchInputPlaceholder: 'Type to search a city'
+                    placeholder: 'Tap to search a city'
                 });
 
                 $('#multiple-input').select3({
                     multiple: true,
-                    placeholder: 'Type to search cities',
+                    placeholder: 'Tap to search cities',
                     query: queryFunction
                 });
 

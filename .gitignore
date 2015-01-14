@@ -1,5 +1,6 @@
-dist/select3-custom.js
+dist/select3-custom.*
 src/select3-custom.js
+styles/select3-custom.css
 
 node_modules
 

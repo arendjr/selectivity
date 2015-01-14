@@ -1,0 +1,62 @@
+@import "select3-base.less";
+
+/**
+ * Dropdown
+ */
+
+.select3-fullscreen {
+    background: #fff;
+    position: absolute;
+    z-index: 9999;
+}
+
+.select3-fullscreen-close {
+    background: #eee;
+    border-radius: 4px;
+    display: inline-block;
+    font-size: 0.9em;
+    margin: 7px;
+    padding: 5px;
+}
+
+.select3-search-input-container {
+    background: #eee;
+}
+
+.select3-search-input {
+    background: transparent;
+    border: 0;
+    outline: 0;
+    width: 100%;
+}
+
+.select3-results-container {
+    overflow: auto;
+}
+
+.select3-load-more,
+.select3-result-item {
+    cursor: pointer;
+    padding: 7px;
+}
+
+.select3-result-children .select3-result-item {
+    padding-left: 17px;
+}
+
+.select3-load-more.highlight,
+.select3-result-item.highlight {
+    background: #4484c7;
+    color: white;
+}
+
+.select3-result-label {
+    font-weight: bold;
+}
+
+.select3-loading,
+.select3-search-input-container,
+.select3-result-label,
+.select3-no-results {
+    padding: 7px;
+}

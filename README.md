@@ -162,7 +162,7 @@ Then you can generate new distributable files from the sources, using:
 If you want to create your own Select3 library that contains just the modules you need, you can use
 the following command:
 
-    $ gulp custom --modules=<comma-separated-module-list>
+    $ gulp --modules=<comma-separated-module-list>
 
 The following modules are available:
 
@@ -185,7 +185,7 @@ explicitly specify that you want to include the base module, as it will be pulle
 
 Example:
 
-    $ gulp custom --modules=multiple,dropdown
+    $ gulp --modules=multiple,dropdown
 
 This will create a custom build with support for selecting multiple values and a dropdown. The build
 will be saved in `dist/select3-custom.js`. The dropdown will not feature a backdrop, there will be
@@ -204,11 +204,13 @@ UglifyJS. The resulting build will be saved in `dist/select3-custom.min.js`.
 
 ### Development server
 
-While developing, you can start a development server like this (note this will overwrite some
-distributable files with development versions which you are not supposed to check in, so either make
-a new build, or revert the changes in the dist/ directory before committing):
+While developing, you can start a development server like this (note you will still need to specify
+the modules like mentioned above):
 
-    $ gulp dev
+    $ gulp dev --modules=multiple,dropdown
+
+You may want to pass the `--source-map` parameter to generate a source map for debugging. The file
+`demo-custom.html` is set up to work with custom builds, which you can also use for development.
 
 Unit Tests
 ----------

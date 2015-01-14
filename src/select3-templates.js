@@ -53,6 +53,43 @@ Select3.Templates = {
     },
 
     /**
+     * Renders the fullscreen result selection.
+     *
+     * The template is expected to have at least one element with the class
+     * 'select3-results-container', which is where all results will be added to.
+     *
+     * @param options Options object containing the following property:
+     *                dropdownCssClass - Optional CSS class to add to the top-level element.
+     *                searchInputPlaceholder - Optional placeholder text to display in the search
+     *                                         input in the dropdown.
+     *                showSearchInput - Boolean whether a search input should be shown. If true,
+     *                                  an input element with the 'select3-search-input' is
+     *                                  expected.
+     */
+    fullscreen: function(options) {
+        var extraClass = (options.dropdownCssClass ? ' ' + options.dropdownCssClass : ''),
+            searchInput = '';
+        if (options.showSearchInput) {
+            var placeholder = options.searchInputPlaceholder;
+            searchInput = (
+                '<input class="select3-search-input"' +
+                        (placeholder ? ' placeholder="' + escape(placeholder) + '"' : '') + '>'
+            );
+        }
+        return (
+            '<div class="select3-fullscreen' + extraClass + '">' +
+                '<div class="select3-fullscreen-header">' +
+                    '<a class="select3-fullscreen-close">' + Select3.Locale.close + '</a>' +
+                '</div>' +
+                '<div class="select3-search-input-container">' +
+                    searchInput +
+                '</div>' +
+                '<div class="select3-results-container"></div>' +
+            '</div>'
+        );
+    },
+
+    /**
      * Renders a loading indicator in the dropdown.
      */
     loading: function() {

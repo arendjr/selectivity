@@ -10,8 +10,13 @@ module.exports = {
      *           test - The nodeunit test instance.
      *           $input - jQuery container for the '#select3-input' element defined in
      *                    resources/testcase.html.
+     * @param options Optional options object. May contain the following property:
+     *                async - Set to true to indicate the test function is asynchronous and calls
+     *                        done() itself.
      */
-    createDomTest: function(modules, fn) {
+    createDomTest: function(modules, fn, options) {
+
+        options = options || {};
 
         return function(test) {
             require('jsdom').env('tests/resources/testcase.html', function(errors, window) {
@@ -68,7 +73,9 @@ module.exports = {
                     fn(test, window.$('#select3-input'), $);
                 });
 
-                test.done();
+                if (!options.async) {
+                    test.done();
+                }
             });
         }
     }

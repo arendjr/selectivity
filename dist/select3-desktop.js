@@ -1,19 +1,6 @@
 !function(e){if("object"==typeof exports&&"undefined"!=typeof module)module.exports=e();else if("function"==typeof define&&define.amd)define([],e);else{var f;"undefined"!=typeof window?f=window:"undefined"!=typeof global?f=global:"undefined"!=typeof self&&(f=self),f.Select3=e()}}(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(_dereq_,module,exports){
-'use strict';
-
-_dereq_('./select3-backdrop');
-_dereq_('./select3-diacritics');
-_dereq_('./select3-dropdown');
-_dereq_('./select3-email');
-_dereq_('./select3-keyboard');
-_dereq_('./select3-multiple');
-_dereq_('./select3-single');
-_dereq_('./select3-templates');
-_dereq_('./select3-tokenizer');
-
-module.exports = _dereq_('./select3-base');
-
-},{"./select3-backdrop":3,"./select3-base":4,"./select3-diacritics":5,"./select3-dropdown":6,"./select3-email":7,"./select3-keyboard":8,"./select3-multiple":10,"./select3-single":11,"./select3-templates":12,"./select3-tokenizer":13}],2:[function(_dereq_,module,exports){
+_dereq_(4);_dereq_(5);_dereq_(6);_dereq_(8);_dereq_(9);_dereq_(10);_dereq_(11);module.exports=_dereq_(3);
+},{}],2:[function(_dereq_,module,exports){
 'use strict';
 
 /**
@@ -67,62 +54,6 @@ function escape(string) {
 module.exports = escape;
 
 },{}],3:[function(_dereq_,module,exports){
-'use strict';
-
-var $ = window.jQuery || window.Zepto;
-
-var Select3Dropdown = _dereq_('./select3-dropdown');
-
-var BACKDROP_Z_INDEX = 9998;
-var FOREGROUND_Z_INDEX = 9999;
-
-/**
- * Methods.
- */
-$.extend(Select3Dropdown.prototype, {
-
-    /**
-     * @inherit
-     */
-    addToDom: function() {
-
-        var $select3El = this.select3.$el;
-        $select3El.css({ zIndex: FOREGROUND_Z_INDEX, position: 'relative' });
-        this.$el.appendTo($select3El[0].ownerDocument.body).css('zIndex', FOREGROUND_Z_INDEX);
-    },
-
-    /**
-     * @inherit
-     */
-    removeCloseHandler: function() {
-
-        this._$backdrop.remove();
-        this._$backdrop = null;
-    },
-
-    /**
-     * @inherit
-     */
-    setupCloseHandler: function() {
-
-        var $backdrop = $('<div>').addClass('.select3-backdrop').css({
-            background: 'transparent',
-            bottom: 0,
-            left: 0,
-            position: 'fixed',
-            right: 0,
-            top: 0,
-            zIndex: BACKDROP_Z_INDEX
-        }).on('click', this.close.bind(this));
-
-        $('body').append($backdrop);
-
-        this._$backdrop = $backdrop;
-    }
-
-});
-
-},{"./select3-dropdown":6,"jquery":"jquery"}],4:[function(_dereq_,module,exports){
 'use strict';
 
 var $ = window.jQuery || window.Zepto;
@@ -1096,7 +1027,7 @@ $.fn.select3 = Select3;
 
 module.exports = Select3;
 
-},{"jquery":"jquery"}],5:[function(_dereq_,module,exports){
+},{}],4:[function(_dereq_,module,exports){
 'use strict';
 
 var DIACRITICS = {
@@ -1941,7 +1872,7 @@ var DIACRITICS = {
     '\u03C2': '\u03C3'
 };
 
-var Select3 = _dereq_('./select3-base');
+var Select3 = _dereq_(3);
 var previousTransform = Select3.transformText;
 
 /**
@@ -1960,546 +1891,13 @@ Select3.transformText = function(string) {
     return previousTransform(result);
 };
 
-},{"./select3-base":4}],6:[function(_dereq_,module,exports){
+},{}],5:[function(_dereq_,module,exports){
 'use strict';
 
 var $ = window.jQuery || window.Zepto;
 
-var Select3 = _dereq_('./select3-base');
-
-/**
- * Returns the index of the first element in the jQuery container $elements that matches the given
- * selector, or -1 if no elements match the selector.
- */
-function findElementIndex($elements, selector) {
-
-    for (var i = 0, length = $elements.length; i < length; i++) {
-        if ($elements.eq(i).is(selector)) {
-            return i;
-        }
-    }
-    return -1;
-}
-
-/**
- * Select3 Dropdown Constructor.
- *
- * @param options Options object. Should have the following properties:
- *                select3 - Select3 instance to show the dropdown for.
- *                showSearchInput - Boolean whether a search input should be shown.
- */
-function Select3Dropdown(options) {
-
-    var select3 = options.select3;
-
-    this.$el = $(select3.template('dropdown', {
-        dropdownCssClass: select3.options.dropdownCssClass,
-        searchInputPlaceholder: select3.options.searchInputPlaceholder,
-        showSearchInput: options.showSearchInput
-    }));
-
-    /**
-     * Boolean indicating whether more results are available than currently displayed in the
-     * dropdown.
-     */
-    this.hasMore = false;
-
-    /**
-     * The currently highlighted result item.
-     */
-    this.highlightedResult = null;
-
-    /**
-     * Boolean whether the load more link is currently highlighted.
-     */
-    this.loadMoreHighlighted = false;
-
-    /**
-     * The results displayed in the dropdown.
-     */
-    this.results = [];
-
-    /**
-     * Select3 instance.
-     */
-    this.select3 = select3;
-
-    this._closeProxy = this.close.bind(this);
-    if (select3.options.closeOnSelect !== false) {
-        select3.$el.on('select3-selecting', this._closeProxy);
-    }
-
-    this.addToDom();
-    this.position();
-    this.setupCloseHandler();
-
-    this._suppressMouseWheel();
-
-    if (options.showSearchInput) {
-        select3.initSearchInput(this.$('.select3-search-input'));
-        select3.focus();
-    }
-
-    this._delegateEvents();
-
-    this.showLoading();
-
-    select3.$el.trigger('select3-open');
-}
-
-/**
- * Methods.
- */
-$.extend(Select3Dropdown.prototype, {
-
-    /**
-     * Convenience shortcut for this.$el.find(selector).
-     */
-    $: function(selector) {
-
-        return this.$el.find(selector);
-    },
-
-    /**
-     * Adds the dropdown to the DOM.
-     */
-    addToDom: function() {
-
-        this.$el.appendTo(this.select3.$el[0].ownerDocument.body);
-    },
-
-    /**
-     * Closes the dropdown.
-     */
-    close: function() {
-
-        this.$el.remove();
-
-        this.removeCloseHandler();
-
-        this.select3.$el.off('select3-selecting', this._closeProxy)
-                        .trigger('select3-close');
-    },
-
-    /**
-     * Events map.
-     *
-     * Follows the same format as Backbone: http://backbonejs.org/#View-delegateEvents
-     */
-    events: {
-        'click .select3-load-more': '_loadMoreClicked',
-        'click .select3-result-item': '_resultClicked',
-        'mouseenter .select3-load-more': 'highlightLoadMore',
-        'mouseenter .select3-result-item': '_resultHovered'
-    },
-
-    /**
-     * Highlights a result item.
-     *
-     * @param item The item to highlight.
-     */
-    highlight: function(item) {
-
-        if (this.loadMoreHighlighted) {
-            this.$('.select3-load-more').removeClass('highlight');
-        }
-
-        this.$('.select3-result-item').removeClass('highlight')
-            .filter('[data-item-id=' + Select3.quoteCssAttr(item.id) + ']').addClass('highlight');
-
-        this.highlightedResult = item;
-        this.loadMoreHighlighted = false;
-
-        this.select3.triggerEvent('select3-highlight', { item: item, value: item.id });
-    },
-
-    /**
-     * Highlights the load more link.
-     *
-     * @param item The item to highlight.
-     */
-    highlightLoadMore: function() {
-
-        this.$('.select3-result-item').removeClass('highlight');
-
-        this.$('.select3-load-more').addClass('highlight');
-
-        this.highlightedResult = null;
-        this.loadMoreHighlighted = true;
-    },
-
-    /**
-     * Highlights the next result item.
-     */
-    highlightNext: function() {
-
-        var results = this.results;
-        if (results.length) {
-            var $results = this.$('.select3-result-item');
-            var index = 0;
-            var highlightedResult = this.highlightedResult;
-            if (highlightedResult) {
-                var quotedId = Select3.quoteCssAttr(highlightedResult.id);
-                index = findElementIndex($results, '[data-item-id=' + quotedId + ']') + 1;
-                if (index >= $results.length) {
-                    if (this.hasMore) {
-                        this.highlightLoadMore();
-                        this._scrollToHighlight({ alignToTop: false });
-                        return;
-                    } else {
-                        index = 0;
-                    }
-                }
-            }
-
-            var result = Select3.findNestedById(results, this.select3._getItemId($results[index]));
-            if (result) {
-                this.highlight(result);
-                this._scrollToHighlight({ alignToTop: false });
-            }
-        }
-    },
-
-    /**
-     * Highlights the previous result item.
-     */
-    highlightPrevious: function() {
-
-        var results = this.results;
-        if (results.length) {
-            var $results = this.$('.select3-result-item');
-            var index = $results.length - 1;
-            var highlightedResult = this.highlightedResult;
-            if (highlightedResult) {
-                var quotedId = Select3.quoteCssAttr(highlightedResult.id);
-                index = findElementIndex($results, '[data-item-id=' + quotedId + ']') - 1;
-                if (index < 0) {
-                    if (this.hasMore) {
-                        this.highlightLoadMore();
-                        this._scrollToHighlight({ alignToTop: true });
-                        return;
-                    } else {
-                        index = $results.length - 1;
-                    }
-                }
-            }
-
-            var result = Select3.findNestedById(results, this.select3._getItemId($results[index]));
-            if (result) {
-                this.highlight(result);
-                this._scrollToHighlight({ alignToTop: true });
-            }
-        }
-    },
-
-    /**
-     * Positions the dropdown inside the DOM.
-     */
-    position: function() {
-
-        var select3 = this.select3;
-
-        var positionDropdown = select3.options.positionDropdown || function($el, $selectEl) {
-            var offset = $selectEl.offset();
-            $el.css({ left: offset.left + 'px', top: offset.top + $selectEl.height() + 'px' })
-               .width($selectEl.width());
-        };
-
-        positionDropdown(this.$el, select3.$el);
-    },
-
-    /**
-     * Removes the event handler to close the dropdown.
-     */
-    removeCloseHandler: function() {
-
-        $('body').off('click', this._closeProxy);
-    },
-
-    /**
-     * Selects the highlighted item.
-     */
-    selectHighlight: function() {
-
-        if (this.highlightedResult) {
-            this._selectItem(this.highlightedResult.id);
-        } else if (this.loadMoreHighlighted) {
-            this._loadMoreClicked();
-        }
-    },
-
-    /**
-     * Sets up an event handler that will close the dropdown when the Select3 control loses focus.
-     */
-    setupCloseHandler: function() {
-
-        $('body').on('click', this._closeProxy);
-    },
-
-    /**
-     * Shows a loading indicator in the dropdown.
-     */
-    showLoading: function() {
-
-        var select3 = this.select3;
-        this.$('.select3-results-container').html(select3.template('loading'));
-
-        this.hasMore = false;
-        this.results = [];
-
-        this.highlightedResult = null;
-        this.loadMoreHighlighted = false;
-    },
-
-    /**
-     * Shows more search results as a result of pagination.
-     *
-     * @param results Array of result items.
-     * @param options Options object. May contain the following properties:
-     *                hasMore - Boolean whether more results can be fetched using the query()
-     *                          function.
-     */
-    showMoreResults: function(results, options) {
-
-        options = options || {};
-
-        var $loadMore = this.$('.select3-load-more');
-        $loadMore.before(this._renderItems(results));
-
-        if (!options.hasMore) {
-            $loadMore.remove();
-        }
-
-        this.hasMore = options.hasMore;
-        this.results = this.results.concat(results);
-
-        if (this.loadMoreHighlighted) {
-            this._highlightFirstItem(results);
-        }        
-    },
-
-    /**
-     * Shows the results from a search query.
-     *
-     * @param results Array of result items.
-     * @param options Options object. May contain the following properties:
-     *                hasMore - Boolean whether more results can be fetched using the query()
-     *                          function.
-     *                term - The search term for which the results are displayed.
-     */
-    showResults: function(results, options) {
-
-        options = options || {};
-
-        var select3 = this.select3;
-        var $resultsContainer = this.$('.select3-results-container');
-        $resultsContainer.html(
-            results.length ? this._renderItems(results)
-                           : select3.template('noResults', { term: options.term })
-        );
-
-        if (options.hasMore) {
-            $resultsContainer.append(select3.template('loadMore'));
-        }
-
-        this.hasMore = options.hasMore;
-        this.results = results;
-
-        this._highlightFirstItem(results);
-    },
-
-    /**
-     * @private
-     */
-    _delegateEvents: function() {
-
-        $.each(this.events, function(event, listener) {
-            var index = event.indexOf(' ');
-            var selector = event.slice(index + 1);
-            event = event.slice(0, index);
-
-            if ($.type(listener) === 'string') {
-                listener = this[listener];
-            }
-
-            listener = listener.bind(this);
-
-            this.$el.on(event, selector, listener);
-        }.bind(this));
-    },
-
-    /**
-     * @private
-     */
-    _highlightFirstItem: function(results) {
-
-        function findFirstItem(results) {
-            for (var i = 0, length = results.length; i < length; i++) {
-                var result = results[i];
-                if (result.id) {
-                    return result;
-                } else if (result.children) {
-                    var item = findFirstItem(result.children);
-                    if (item) {
-                        return item;
-                    }
-                }
-            }
-        }
-
-        var firstItem = findFirstItem(results);
-        if (firstItem) {
-            this.highlight(firstItem);
-        } else {
-            this.highlightedResult = null;
-            this.loadMoreHighlighted = false;
-        }
-    },
-
-    /**
-     * @private
-     */
-    _loadMoreClicked: function() {
-
-        this.select3.loadMore();
-
-        this.select3.focus();
-    },
-
-    /**
-     * @private
-     */
-    _renderItems: function(items) {
-
-        var select3 = this.select3;
-        return items.map(function(item) {
-            var result = select3.template(item.id ? 'resultItem' : 'resultLabel', item);
-            if (item.children) {
-                result += select3.template('resultChildren', {
-                    childrenHtml: this._renderItems(item.children)
-                });
-            }
-            return result;
-        }.bind(this)).join('');
-    },
-
-    /**
-     * @private
-     */
-    _resultClicked: function(event) {
-
-        this._selectItem(this.select3._getItemId(event));
-
-        return false;
-    },
-
-    /**
-     * @private
-     */
-    _resultHovered: function(event) {
-
-        var id = this.select3._getItemId(event);
-        var item = Select3.findNestedById(this.results, id);
-        if (item) {
-            this.highlight(item);
-        }
-    },
-
-    /**
-     * @private
-     */
-    _scrollToHighlight: function(options) {
-
-        var el;
-        if (this.highlightedResult) {
-            var quotedId = Select3.quoteCssAttr(this.highlightedResult.id);
-            el = this.$('.select3-result-item[data-item-id=' + quotedId + ']')[0];
-        } else if (this.loadMoreHighlighted) {
-            el = this.$('.select3-load-more')[0];
-        } else {
-            return; // no highlight to scroll to
-        }
-
-        var rect = el.getBoundingClientRect(),
-            containerRect = this.$('.select3-results-container')[0].getBoundingClientRect();
-
-        if (rect.top < containerRect.top || rect.bottom > containerRect.bottom) {
-            el.scrollIntoView(options.alignToTop);
-        }
-    },
-
-    /**
-     * @private
-     */
-    _selectItem: function(id) {
-
-        var select3 = this.select3;
-        var item = Select3.findNestedById(select3.results, id);
-        if (item) {
-            var options = { id: id, item: item };
-            if (select3.triggerEvent('select3-selecting', options)) {
-                select3.triggerEvent('select3-selected', options);
-            }
-        }
-    },
-
-    /**
-     * @private
-     */
-    _suppressMouseWheel: function() {
-
-        var suppressMouseWheelSelector = this.select3.options.suppressMouseWheelSelector;
-        if (suppressMouseWheelSelector === null) {
-            return;
-        }
-
-        var selector = suppressMouseWheelSelector || '.select3-results-container';
-        this.$el.on('DOMMouseScroll mousewheel', selector, function(event) {
-
-            // Thanks to Troy Alford:
-            // http://stackoverflow.com/questions/5802467/prevent-scrolling-of-parent-element
-
-            var $el = $(this),
-                scrollTop = this.scrollTop,
-                scrollHeight = this.scrollHeight,
-                height = $el.height(),
-                originalEvent = event.originalEvent,
-                delta = (event.type === 'DOMMouseScroll' ? originalEvent.detail * -40
-                                                         : originalEvent.wheelDelta),
-                up = delta > 0;
-
-            function prevent() {
-                event.stopPropagation();
-                event.preventDefault();
-                event.returnValue = false;
-                return false;
-            }
-
-            if (!up && -delta > scrollHeight - height - scrollTop) {
-                // Scrolling down, but this will take us past the bottom.
-                $el.scrollTop(scrollHeight);
-                return prevent();
-            } else if (up && delta > scrollTop) {
-                // Scrolling up, but this will take us past the top.
-                $el.scrollTop(0);
-                return prevent();
-            }
-        });
-    }
-
-});
-
-Select3.Dropdown = Select3Dropdown;
-
-module.exports = Select3Dropdown;
-
-},{"./select3-base":4,"jquery":"jquery"}],7:[function(_dereq_,module,exports){
-'use strict';
-
-var $ = window.jQuery || window.Zepto;
-
-var Select3 = _dereq_('./select3-base');
-var MultipleSelect3 = _dereq_('./select3-multiple');
+var Select3 = _dereq_(3);
+var MultipleSelect3 = _dereq_(8);
 
 function isValidEmail(email) {
 
@@ -2651,76 +2049,270 @@ Select3.InputTypes.Email = EmailSelect3;
 
 module.exports = EmailSelect3;
 
-},{"./select3-base":4,"./select3-multiple":10,"jquery":"jquery"}],8:[function(_dereq_,module,exports){
+},{}],6:[function(_dereq_,module,exports){
 'use strict';
 
 var $ = window.jQuery || window.Zepto;
 
-var Select3 = _dereq_('./select3-base');
-
-var KEY_DOWN_ARROW = 40;
-var KEY_ENTER = 13;
-var KEY_ESCAPE = 27;
-var KEY_UP_ARROW = 38;
+var Select3 = _dereq_(3);
 
 /**
- * Search input listener providing keyboard support for navigating the dropdown.
+ * Select3 Fullscreen Constructor.
+ *
+ * @param options Options object. Should have the following properties:
+ *                select3 - Select3 instance to show the dropdown for.
  */
-function listener(select3, $input) {
+function Select3Fullscreen(options) {
 
-    function keyHeld(event) {
-        var dropdown = select3.dropdown;
-        if (dropdown) {
-            if (event.keyCode === KEY_DOWN_ARROW) {
-                dropdown.highlightNext();
-            } else if (event.keyCode === KEY_UP_ARROW) {
-                dropdown.highlightPrevious();
-            }
-        }
+    var select3 = options.select3;
+
+    this.$el = $(select3.template('fullscreen', {
+        dropdownCssClass: select3.options.dropdownCssClass,
+        searchInputPlaceholder: select3.options.searchInputPlaceholder,
+        showSearchInput: options.showSearchInput
+    }));
+
+    /**
+     * Boolean indicating whether more results are available than currently displayed.
+     */
+    this.hasMore = false;
+
+    /**
+     * The results displayed in the dropdown.
+     */
+    this.results = [];
+
+    /**
+     * Select3 instance.
+     */
+    this.select3 = select3;
+
+    this.addToDom();
+    this.position();
+
+    if (options.showSearchInput) {
+        select3.initSearchInput(this.$('.select3-search-input'));
+    } else if (select3.$searchInput) {
+        this._$searchInputParent = select3.$searchInput;
+        this._$searchInputParent.children().appendTo(this.$('.select3-search-input-container'));
     }
 
-    function keyReleased(event) {
-        var dropdown = select3.dropdown;
-        if (event.keyCode === KEY_ENTER && !event.ctrlKey) {
-            if (dropdown) {
-                dropdown.selectHighlight();
-            } else if (select3.options.showDropdown !== false) {
-                open();
-            }
+    select3.focus();
 
-            event.preventDefault();
-        } else if (event.keyCode === KEY_ESCAPE) {
-            select3.close();
+    this._delegateEvents();
 
-            event.preventDefault();
-        } else if (event.keyCode === KEY_DOWN_ARROW || event.keyCode === KEY_UP_ARROW) {
-            // handled in keyHeld() because the response feels faster and it works with repeated
-            // events if the user holds the key for a longer period
-            // still, we issue an open() call here in case the dropdown was not yet open...
-            open();
+    this.showLoading();
 
-            event.preventDefault();
-        } else {
-            open();
-        }
-    }
-
-    function open() {
-        if (select3.options.showDropdown !== false) {
-            select3.open();
-        }
-    }
-
-    $input.on('keydown', keyHeld).on('keyup', keyReleased);
+    select3.$el.trigger('select3-open');
 }
 
-Select3.SearchInputListeners.push(listener);
+/**
+ * Methods.
+ */
+$.extend(Select3Fullscreen.prototype, {
 
-},{"./select3-base":4,"jquery":"jquery"}],9:[function(_dereq_,module,exports){
+    /**
+     * Convenience shortcut for this.$el.find(selector).
+     */
+    $: function(selector) {
+
+        return this.$el.find(selector);
+    },
+
+    /**
+     * Adds the fullscreen selection to the DOM.
+     */
+    addToDom: function() {
+
+        this.$el.appendTo(this.select3.$el[0].ownerDocument.body);
+    },
+
+    /**
+     * Closes the dropdown.
+     */
+    close: function() {
+
+        if (this._$searchInputParent) {
+            this.$('.select3-search-input-container').children().appendTo(this._$searchInputParent);
+            this._$searchInputParent = null;
+        }
+
+        this.$el.remove();
+
+        this.select3.$el.trigger('select3-close');
+    },
+
+    /**
+     * Events map.
+     *
+     * Follows the same format as Backbone: http://backbonejs.org/#View-delegateEvents
+     */
+    events: {
+        'click .select3-load-more': '_loadMoreClicked',
+        'click .select3-result-item': '_resultClicked'
+    },
+
+    /**
+     * Positions the dropdown inside the DOM.
+     */
+    position: function() {
+
+        var select3 = this.select3;
+
+        var positionDropdown = select3.options.positionDropdown || function($el, $selectEl) {
+            var offset = $selectEl.offset();
+            $el.css({ left: 0, top: 0 }).height(screen.height).width(screen.width);
+        };
+
+        positionDropdown(this.$el, select3.$el);
+    },
+
+    /**
+     * Shows a loading indicator in the dropdown.
+     */
+    showLoading: function() {
+
+        var select3 = this.select3;
+        this.$('.select3-results-container').html(select3.template('loading'));
+
+        this.hasMore = false;
+        this.results = [];
+    },
+
+    /**
+     * Shows more search results as a result of pagination.
+     *
+     * @param results Array of result items.
+     * @param options Options object. May contain the following properties:
+     *                hasMore - Boolean whether more results can be fetched using the query()
+     *                          function.
+     */
+    showMoreResults: function(results, options) {
+
+        options = options || {};
+
+        var $loadMore = this.$('.select3-load-more');
+        $loadMore.before(this._renderItems(results));
+
+        if (!options.hasMore) {
+            $loadMore.remove();
+        }
+
+        this.hasMore = options.hasMore;
+        this.results = this.results.concat(results);
+    },
+
+    /**
+     * Shows the results from a search query.
+     *
+     * @param results Array of result items.
+     * @param options Options object. May contain the following properties:
+     *                hasMore - Boolean whether more results can be fetched using the query()
+     *                          function.
+     *                term - The search term for which the results are displayed.
+     */
+    showResults: function(results, options) {
+
+        options = options || {};
+
+        var select3 = this.select3;
+        var $resultsContainer = this.$('.select3-results-container');
+        $resultsContainer.html(
+            results.length ? this._renderItems(results)
+                           : select3.template('noResults', { term: options.term })
+        );
+
+        if (options.hasMore) {
+            $resultsContainer.append(select3.template('loadMore'));
+        }
+
+        this.hasMore = options.hasMore;
+        this.results = results;
+    },
+
+    /**
+     * @private
+     */
+    _delegateEvents: function() {
+
+        $.each(this.events, function(event, listener) {
+            var index = event.indexOf(' ');
+            var selector = event.slice(index + 1);
+            event = event.slice(0, index);
+
+            if ($.type(listener) === 'string') {
+                listener = this[listener];
+            }
+
+            listener = listener.bind(this);
+
+            this.$el.on(event, selector, listener);
+        }.bind(this));
+    },
+
+    /**
+     * @private
+     */
+    _loadMoreClicked: function() {
+
+        this.select3.loadMore();
+
+        this.select3.focus();
+    },
+
+    /**
+     * @private
+     */
+    _renderItems: function(items) {
+
+        var select3 = this.select3;
+        return items.map(function(item) {
+            var result = select3.template(item.id ? 'resultItem' : 'resultLabel', item);
+            if (item.children) {
+                result += select3.template('resultChildren', {
+                    childrenHtml: this._renderItems(item.children)
+                });
+            }
+            return result;
+        }.bind(this)).join('');
+    },
+
+    /**
+     * @private
+     */
+    _resultClicked: function(event) {
+
+        this._selectItem(this.select3._getItemId(event));
+
+        return false;
+    },
+
+    /**
+     * @private
+     */
+    _selectItem: function(id) {
+
+        var select3 = this.select3;
+        var item = Select3.findNestedById(select3.results, id);
+        if (item) {
+            var options = { id: id, item: item };
+            if (select3.triggerEvent('select3-selecting', options)) {
+                select3.triggerEvent('select3-selected', options);
+            }
+        }
+    }
+
+});
+
+Select3.Dropdown = Select3Fullscreen;
+
+module.exports = Select3Fullscreen;
+
+},{}],7:[function(_dereq_,module,exports){
 'use strict';
 
-var escape = _dereq_('./escape');
-var Select3 = _dereq_('./select3-base');
+var escape = _dereq_(2);
+var Select3 = _dereq_(3);
 
 /**
  * Localizable elements of the Select3 Templates.
@@ -2730,6 +2322,7 @@ var Select3 = _dereq_('./select3-base');
  */
 Select3.Locale = {
 
+    close: 'Close',
     loading: 'Loading...',
     loadMore: 'Load more...',
     noResults: 'No results found',
@@ -2737,12 +2330,12 @@ Select3.Locale = {
 
 };
 
-},{"./escape":2,"./select3-base":4}],10:[function(_dereq_,module,exports){
+},{}],8:[function(_dereq_,module,exports){
 'use strict';
 
 var $ = window.jQuery || window.Zepto;
 
-var Select3 = _dereq_('./select3-base');
+var Select3 = _dereq_(3);
 
 var KEY_BACKSPACE = 8;
 var KEY_DELETE = 46;
@@ -3107,7 +2700,7 @@ $.extend(MultipleSelect3.prototype, {
     /**
      * @private
      */
-    _keyHeld: function(event) {
+    _keyHeld: function() {
 
         this._originalValue = this.$searchInput.val();
     },
@@ -3225,12 +2818,12 @@ Select3.InputTypes.Multiple = MultipleSelect3;
 
 module.exports = MultipleSelect3;
 
-},{"./select3-base":4,"jquery":"jquery"}],11:[function(_dereq_,module,exports){
+},{}],9:[function(_dereq_,module,exports){
 'use strict';
 
 var $ = window.jQuery || window.Zepto;
 
-var Select3 = _dereq_('./select3-base');
+var Select3 = _dereq_(3);
 
 /**
  * SingleSelect3 Constructor.
@@ -3400,14 +2993,14 @@ Select3.InputTypes.Single = SingleSelect3;
 
 module.exports = SingleSelect3;
 
-},{"./select3-base":4,"jquery":"jquery"}],12:[function(_dereq_,module,exports){
+},{}],10:[function(_dereq_,module,exports){
 'use strict';
 
-var escape = _dereq_('./escape');
+var escape = _dereq_(2);
 
-var Select3 = _dereq_('./select3-base');
+var Select3 = _dereq_(3);
 
-_dereq_('./select3-locale');
+_dereq_(7);
 
 /**
  * Default set of templates to use with Select3.
@@ -3450,6 +3043,43 @@ Select3.Templates = {
         return (
             '<div class="select3-dropdown' + extraClass + '">' +
                 searchInput +
+                '<div class="select3-results-container"></div>' +
+            '</div>'
+        );
+    },
+
+    /**
+     * Renders the fullscreen result selection.
+     *
+     * The template is expected to have at least one element with the class
+     * 'select3-results-container', which is where all results will be added to.
+     *
+     * @param options Options object containing the following property:
+     *                dropdownCssClass - Optional CSS class to add to the top-level element.
+     *                searchInputPlaceholder - Optional placeholder text to display in the search
+     *                                         input in the dropdown.
+     *                showSearchInput - Boolean whether a search input should be shown. If true,
+     *                                  an input element with the 'select3-search-input' is
+     *                                  expected.
+     */
+    fullscreen: function(options) {
+        var extraClass = (options.dropdownCssClass ? ' ' + options.dropdownCssClass : ''),
+            searchInput = '';
+        if (options.showSearchInput) {
+            var placeholder = options.searchInputPlaceholder;
+            searchInput = (
+                '<input class="select3-search-input"' +
+                        (placeholder ? ' placeholder="' + escape(placeholder) + '"' : '') + '>'
+            );
+        }
+        return (
+            '<div class="select3-fullscreen' + extraClass + '">' +
+                '<div class="select3-fullscreen-header">' +
+                    '<a class="select3-fullscreen-close">' + Select3.Locale.close + '</a>' +
+                '</div>' +
+                '<div class="select3-search-input-container">' +
+                    searchInput +
+                '</div>' +
                 '<div class="select3-results-container"></div>' +
             '</div>'
         );
@@ -3645,13 +3275,13 @@ Select3.Templates = {
 
 };
 
-},{"./escape":2,"./select3-base":4,"./select3-locale":9}],13:[function(_dereq_,module,exports){
+},{}],11:[function(_dereq_,module,exports){
 'use strict';
 
 var $ = window.jQuery || window.Zepto;
 
-var Select3 = _dereq_('./select3-base');
-var Select3Multiple = _dereq_('./select3-multiple');
+var Select3 = _dereq_(3);
+var Select3Multiple = _dereq_(8);
 
 var setOptions = Select3Multiple.prototype.setOptions;
 
@@ -3721,5 +3351,5 @@ Select3Multiple.prototype.setOptions = function(options) {
     setOptions.call(this, options);
 };
 
-},{"./select3-base":4,"./select3-multiple":10,"jquery":"jquery"}]},{},[1])(1)
+},{}]},{},[1])(1)
 });

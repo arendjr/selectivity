@@ -1,0 +1,64 @@
+@import "select3-base.less";
+
+/**
+ * Multi-selection input.
+ */
+
+.select3-multiple-input-container {
+    background: #eee;
+    border-radius: 2px;
+    cursor: text;
+    max-height: 10em;
+    min-height: calc(2em + 4px);
+    padding: 5px;
+}
+
+.select3-multiple-input,
+input[type="text"].select3-multiple-input {
+    background-color: transparent;
+    border: none;
+    float: left;
+    height: calc(2em + 4px);
+    max-width: 100%;
+    outline: 0;
+    padding: 0;
+
+    &:focus {
+        background-color: transparent;
+        box-shadow: none;
+        outline: none;
+    }
+}
+
+.select3-multiple-input.select3-width-detector {
+    left: 0;
+    position: absolute;
+    top: -10000px;
+    white-space: pre;
+}
+
+.select3-multiple-selected-item {
+    background: #4484c7;
+    border-radius: 3px;
+    color: #fff;
+    cursor: default;
+    float: left;
+    line-height: 2em;
+    margin: 2px;
+    padding-left: 5px;
+    position: relative;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    -webkit-user-select: none;
+    user-select: none;
+    white-space: nowrap;
+
+    &.highlighted {
+        background-color: #ccc;
+    }
+}
+
+.select3-multiple-selected-item-remove {
+    cursor: pointer;
+    padding: 5px;
+}

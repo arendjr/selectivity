@@ -5,5 +5,6 @@ var gulp = require('gulp');
 
 module.exports = function() {
     gulp.watch(['*.html', 'dist/*.css'], reload);
-    gulp.watch('src/**/*.js', ['browserify-full', reload]);
+    gulp.watch('src/**/*.js', ['browserify', reload]);
+    gulp.watch('styles/**/*.less', ['less', reload]);
 };

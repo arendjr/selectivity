@@ -1,17 +1,15 @@
 'use strict';
 
 var gulp = require('./gulp')([
-    'browserify-custom',
-    'browserify-full',
+    'browserify',
     'browser-sync',
     'jshint',
+    'less',
     'qt-creator',
     'unit-tests',
     'watch'
 ]);
 
-gulp.task('custom', ['browserify-custom']);
+gulp.task('default', ['browserify', 'less']);
 
-gulp.task('default', ['browserify-full']);
-
-gulp.task('dev', ['browserify-full', 'browser-sync', 'watch']);
+gulp.task('dev', ['browserify', 'less', 'browser-sync', 'watch']);

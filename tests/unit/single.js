@@ -2,6 +2,30 @@
 
 var DomUtil = require('../dom-util');
 
+exports.testDontOpenAfterClear = DomUtil.createDomTest(
+    ['single', 'dropdown', 'templates'],
+    function(test, $input, $) {
+        $input.select3({
+            allowClear: true,
+            data: { id: 1, text: 'Amsterdam' },
+            items: [
+                { id: 1, text: 'Amsterdam' },
+                { id: 2, text: 'Antwerp' },
+                { id: 3, text: 'Athens' }
+            ]
+        });
+
+        test.equal($input.select3('value'), 1);
+
+        $input.find('.select3-single-selected-item-remove').click();
+
+        test.equal($input.select3('data'), null);
+        test.equal($input.select3('value'), null);
+
+        test.equal($('.select3-dropdown').length, 0);
+    }
+);
+
 exports.testInitialData = DomUtil.createDomTest(
     ['single', 'templates'],
     function(test, $input) {

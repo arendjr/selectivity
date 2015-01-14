@@ -6,9 +6,11 @@
     "url": "git://github.com/arendjr/select3.git"
   },
   "scripts": {
-    "build-min": "gulp --minify --no-source-map",
-    "build-source": "gulp --derequire --no-source-map",
-    "build": "npm run build-source && npm run build-min"
+    "build-desktop-min": "gulp --bundle-name=desktop --minify --modules=backdrop,diacritics,dropdown,email,keyboard,multiple,single,templates,tokenizer",
+    "build-desktop-source": "gulp --bundle-name=desktop --derequire --modules=backdrop,diacritics,dropdown,email,keyboard,multiple,single,templates,tokenizer",
+    "build-mobile-min": "gulp --bundle-name=mobile --minify --modules=diacritics,email,fullscreen,multiple,single,templates,tokenizer",
+    "build-mobile-source": "gulp --bundle-name=mobile --derequire --modules=diacritics,email,fullscreen,multiple,single,templates,tokenizer",
+    "build": "npm run build-desktop-source && npm run build-desktop-min && npm run build-mobile-source && npm run build-mobile-min"
   },
   "devDependencies": {
     "browser-sync": "^1.8.2",
@@ -16,9 +18,12 @@
     "bundle-collapser": "^1.1.0",
     "glob": "^4.3.2",
     "gulp": "^3.8.10",
+    "gulp-concat": "^2.4.3",
+    "gulp-csso": "^0.2.9",
     "gulp-derequire": "^2.0.0",
     "gulp-if": "^1.2.5",
     "gulp-jshint": "^1.9.0",
+    "gulp-less": "^2.0.1",
     "gulp-nodeunit": "0.0.5",
     "gulp-replace": "^0.5.0",
     "gulp-uglify": "^1.0.2",
