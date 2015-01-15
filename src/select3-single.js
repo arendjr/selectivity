@@ -35,7 +35,6 @@ $.extend(SingleSelect3.prototype, {
     events: {
         'change': '_rerenderSelection',
         'click': '_clicked',
-        'click .select3-single-selected-item-remove': '_itemRemoveClicked',
         'select3-selected': '_resultSelected'
     },
 
@@ -151,6 +150,9 @@ $.extend(SingleSelect3.prototype, {
                     showRemove: this.options.allowClear
                 }, this._data))
             );
+
+            $container.find('.select3-single-selected-item-remove')
+                      .on('click', this._itemRemoveClicked.bind(this));
         } else {
             $container.html(
                 this.template('singleSelectPlaceholder', { placeholder: this.options.placeholder })
@@ -164,6 +166,8 @@ $.extend(SingleSelect3.prototype, {
     _resultSelected: function(event) {
 
         this.data(event.item);
+
+        this.close();
     }
 
 });
