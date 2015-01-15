@@ -6,7 +6,11 @@
 
 .select3-fullscreen {
     background: #fff;
-    position: absolute;
+    bottom: 0;
+    left: 0;
+    position: fixed;
+    right: 0;
+    top: 0;
     z-index: 9999;
 }
 
@@ -21,6 +25,10 @@
 
 .select3-search-input-container {
     background: #eee;
+
+    .select3-multiple-input-container {
+        padding: 0;
+    }
 }
 
 .select3-search-input {
@@ -31,13 +39,22 @@
 }
 
 .select3-results-container {
+    bottom: 0;
+    left: 0;
     overflow: auto;
+    position: fixed;
+    right: 0;
 }
 
 .select3-load-more,
 .select3-result-item {
     cursor: pointer;
     padding: 7px;
+}
+
+.select3-result-item.selected {
+    background: #7fabd9;
+    color: #fff;
 }
 
 .select3-result-children .select3-result-item {

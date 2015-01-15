@@ -319,6 +319,45 @@ $.extend(Select3.prototype, {
     },
 
     /**
+     * Returns the item ID related to an element or event target.
+     *
+     * IDs can be either numbers or strings, but attribute values are always strings, so we will
+     * have to find out whether the item ID ought to be a number or string ourselves. $.fn.data() is
+     * a bit overzealous for our case, because it returns a number whenever the attribute value can
+     * be parsed as a number. However, it is possible an item had an ID which is a string but which
+     * is parseable as number, in which case we verify if the ID as number is actually found among
+     * the data or results. If it isn't, we assume it was supposed to be a string after all.
+     *
+     * @param elementOrEvent A DOM Element, jQuery container or Event object for which to retrieve
+     *                       the associated item ID.
+     *
+     * @return The ID as number or string.
+     */
+    getItemId: function(elementOrEvent) {
+
+        var $element;
+        if (elementOrEvent.target) {
+            $element = $(elementOrEvent.target).closest('[data-item-id]');
+        } else if (elementOrEvent.length) {
+            $element = elementOrEvent;
+        } else {
+            $element = $(elementOrEvent);
+        }
+
+        var id = $element.data('item-id');
+        if ($.type(id) === 'string') {
+            return id;
+        } else {
+            if (Select3.findById(this._data || [], id) ||
+                Select3.findNestedById(this.results, id)) {
+                return id;
+            } else {
+                return '' + id;
+            }
+        }
+    },
+
+    /**
      * Initializes the search input element.
      *
      * Sets the $searchInput property, invokes all search input listeners and attaches the default
@@ -350,10 +389,15 @@ $.extend(Select3.prototype, {
         this.options.query({
             callback: function(response) {
                 if (response && response.results) {
-                    this._addResults(
-                        Select3.processItems(response.results),
-                        { hasMore: !!response.more }
-                    );
+                    var results = Select3.processItems(response.results);
+                    this.results = this.results.concat(results);
+
+                    if (this.dropdown) {
+                        this.dropdown.showMoreResults(
+                            this.filterResults(results),
+                            { hasMore: !!response.more }
+                        );
+                    }
                 } else {
                     throw new Error('callback must be passed a response object');
                 }
@@ -405,19 +449,37 @@ $.extend(Select3.prototype, {
      * If an items array has been passed with the options to the Select3 instance, a local search
      * will be performed among those items. Otherwise, the query function specified in the options
      * will be used to perform the search. If neither is defined, nothing happens.
+     *
+     * @param term Optional term to search for. If none is given, the term is taken from the
+     *             $searchInput.
      */
-    search: function() {
+    search: function(term) {
 
-        if (!this.$searchInput) {
+        term = (term === undefined ? this.$searchInput.val() : term);
+        if (term === undefined) {
             return;
         }
 
         var self = this;
         function setResults(results, resultOptions) {
-            self._setResults(results, $.extend({ term: term }, resultOptions));
+            self.triggerEvent('select3-search-results', {
+                results: results,
+                options: resultOptions
+            });
+
+            self.results = results;
+
+            if (self.dropdown) {
+                self.dropdown.showResults(
+                    self.filterResults(results),
+                    $.extend({ term: term }, resultOptions)
+                );
+            }
         }
 
-        var term = this.$searchInput.val();
+        if (!this.triggerEvent('select3-searching', { term: term })) {
+            return;
+        }
 
         if (self.items) {
             term = Select3.transformText(term);
@@ -701,69 +763,9 @@ $.extend(Select3.prototype, {
     /**
      * @private
      */
-    _addResults: function(results, options) {
-
-        this.results = this.results.concat(results);
-
-        if (this.dropdown) {
-            this.dropdown.showMoreResults(this.filterResults(results), options || {});
-        }
-    },
-
-    /**
-     * @private
-     */
     _closed: function() {
 
         this.dropdown = null;
-    },
-
-    /**
-     * @private
-     */
-    _getItemId: function(elementOrEvent) {
-
-        // returns the item ID related to an element or event target.
-        // IDs can be either numbers or strings, but attribute values are always strings, so we
-        // will have to find out whether the item ID ought to be a number or string ourselves.
-        // $.fn.data() is a bit overzealous for our case, because it returns a number whenever the
-        // attribute value can be parsed as a number. however, it is possible an item had an ID
-        // which is a string but which is parseable as number, in which case we verify if the ID
-        // as number is actually found among the data or results. if it isn't, we assume it was
-        // supposed to be a string after all...
-
-        var $element;
-        if (elementOrEvent.target) {
-            $element = $(elementOrEvent.target).closest('[data-item-id]');
-        } else if (elementOrEvent.length) {
-            $element = elementOrEvent;
-        } else {
-            $element = $(elementOrEvent);
-        }
-
-        var id = $element.data('item-id');
-        if ($.type(id) === 'string') {
-            return id;
-        } else {
-            if (Select3.findById(this._data || [], id) ||
-                Select3.findNestedById(this.results, id)) {
-                return id;
-            } else {
-                return '' + id;
-            }
-        }
-    },
-
-    /**
-     * @private
-     */
-    _setResults: function(results, options) {
-
-        this.results = results;
-
-        if (this.dropdown) {
-            this.dropdown.showResults(this.filterResults(results), options || {});
-        }
     }
 
 });

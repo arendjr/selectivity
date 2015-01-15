@@ -98,9 +98,13 @@ $.extend(MultipleSelect3.prototype, {
      */
     filterResults: function(results) {
 
-        return results.filter(function(item) {
-            return !Select3.findById(this._data, item.id);
-        }, this);
+        if (this.options.filterSelectedItems) {
+            return results.filter(function(item) {
+                return !Select3.findById(this._data, item.id);
+            }, this);
+        } else {
+            return results;
+        }
     },
 
     /**
@@ -179,9 +183,7 @@ $.extend(MultipleSelect3.prototype, {
             }
         }
 
-        if (this.dropdown) {
-            Select3.prototype.search.apply(this);
-        }
+        Select3.prototype.search.apply(this);
     },
 
     /**
@@ -209,6 +211,10 @@ $.extend(MultipleSelect3.prototype, {
      *                                  The default is a function that returns an item where the id
      *                                  and text both match the token for any non-empty string and
      *                                  which returns null otherwise.
+     *                filterSelectedOptions - Set to true to filter already selected items from the
+     *                                        results dropdown. The default is false, in which case
+     *                                        selected results remain, but may have a CSS class to
+     *                                        indicate they're already selected.
      *                tokenizer - Function for tokenizing search terms. Will receive the following
      *                            parameters:
      *                            input - The input string to tokenize.
@@ -231,6 +237,7 @@ $.extend(MultipleSelect3.prototype, {
 
         options.allowedTypes = options.allowedTypes || {};
         options.allowedTypes[backspaceHighlightsBeforeDelete] = 'boolean';
+        options.allowedTypes.filterSelectedOptions = 'boolean';
 
         Select3.prototype.setOptions.call(this, options);
     },
@@ -348,7 +355,7 @@ $.extend(MultipleSelect3.prototype, {
      */
     _itemClicked: function(event) {
 
-        this._highlightItem(this._getItemId(event));
+        this._highlightItem(this.getItemId(event));
     },
 
     /**
@@ -356,7 +363,7 @@ $.extend(MultipleSelect3.prototype, {
      */
     _itemRemoveClicked: function(event) {
 
-        this.remove(this._getItemId(event));
+        this.remove(this.getItemId(event));
 
         this._updateInputWidth();
 

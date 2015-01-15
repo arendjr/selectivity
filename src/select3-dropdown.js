@@ -189,7 +189,7 @@ $.extend(Select3Dropdown.prototype, {
                 }
             }
 
-            var result = Select3.findNestedById(results, this.select3._getItemId($results[index]));
+            var result = Select3.findNestedById(results, this.select3.getItemId($results[index]));
             if (result) {
                 this.highlight(result);
                 this._scrollToHighlight({ alignToTop: false });
@@ -221,7 +221,7 @@ $.extend(Select3Dropdown.prototype, {
                 }
             }
 
-            var result = Select3.findNestedById(results, this.select3._getItemId($results[index]));
+            var result = Select3.findNestedById(results, this.select3.getItemId($results[index]));
             if (result) {
                 this.highlight(result);
                 this._scrollToHighlight({ alignToTop: true });
@@ -411,7 +411,10 @@ $.extend(Select3Dropdown.prototype, {
 
         var select3 = this.select3;
         return items.map(function(item) {
-            var result = select3.template(item.id ? 'resultItem' : 'resultLabel', item);
+            var result = select3.template(item.id ? 'resultItem' : 'resultLabel', $.extend(item, {
+                selected: ($.type(select3._value) === 'array' ? select3._value.indexOf(item.id) > -1
+                                                              : select3._value === item.id)
+            }));
             if (item.children) {
                 result += select3.template('resultChildren', {
                     childrenHtml: this._renderItems(item.children)
@@ -426,7 +429,7 @@ $.extend(Select3Dropdown.prototype, {
      */
     _resultClicked: function(event) {
 
-        this._selectItem(this.select3._getItemId(event));
+        this._selectItem(this.select3.getItemId(event));
 
         return false;
     },
@@ -436,7 +439,7 @@ $.extend(Select3Dropdown.prototype, {
      */
     _resultHovered: function(event) {
 
-        var id = this.select3._getItemId(event);
+        var id = this.select3.getItemId(event);
         var item = Select3.findNestedById(this.results, id);
         if (item) {
             this.highlight(item);

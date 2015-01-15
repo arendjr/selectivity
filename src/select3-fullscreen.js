@@ -26,12 +26,18 @@ function Select3Fullscreen(options) {
     this.hasMore = false;
 
     /**
+     * Original Select3 instance.
+     */
+    this.originalSelect3 = select3;
+
+    /**
      * The results displayed in the dropdown.
      */
     this.results = [];
 
     /**
-     * Select3 instance.
+     * Select3 instance. May differ from the original Select3 instance when a new instance is
+     * created to populate the '.select3-search-input-container' element.
      */
     this.select3 = select3;
 
@@ -40,14 +46,31 @@ function Select3Fullscreen(options) {
 
     if (options.showSearchInput) {
         select3.initSearchInput(this.$('.select3-search-input'));
-    } else if (select3.$searchInput) {
-        this._$searchInputParent = select3.$searchInput.parent();
-        this._$searchInputParent.children().appendTo(this.$('.select3-search-input-container'));
+    } else {
+        var $searchInputContainer = this.$('.select3-search-input-container');
+        $searchInputContainer.select3($.extend({}, select3.options, {
+            placeholder: select3.options.searchInputPlaceholder,
+            showDropdown: false,
+            value: select3.value()
+        })).on('change', function(event) {
+            select3.value(event.value);
+
+            this._rerenderResults(event);
+        }.bind(this));
+
+        this.select3 = $searchInputContainer[0].select3;
+
+        $searchInputContainer.on('select3-searching', function(event) {
+            select3.search(event.term);
+            event.preventDefault();
+        });
     }
 
-    select3.focus();
+    this.select3.focus();
 
     this._delegateEvents();
+
+    this._positionResults();
 
     this.showLoading();
 
@@ -72,7 +95,12 @@ $.extend(Select3Fullscreen.prototype, {
      */
     addToDom: function() {
 
-        this.$el.appendTo(this.select3.$el[0].ownerDocument.body);
+        var body = this.select3.$el[0].ownerDocument.body;
+
+        this._bodyOverflow = $(body).css('overflow');
+        $(body).css('overflow', 'hidden');
+
+        this.$el.appendTo(body);
     },
 
     /**
@@ -80,14 +108,11 @@ $.extend(Select3Fullscreen.prototype, {
      */
     close: function() {
 
-        if (this._$searchInputParent) {
-            this.$('.select3-search-input-container').children().appendTo(this._$searchInputParent);
-            this._$searchInputParent = null;
-        }
-
         this.$el.remove();
 
-        this.select3.$el.trigger('select3-close');
+        $(this.select3.$el[0].ownerDocument.body).css('overflow', this._bodyOverflow);
+
+        this.originalSelect3.$el.trigger('select3-close');
     },
 
     /**
@@ -108,10 +133,7 @@ $.extend(Select3Fullscreen.prototype, {
 
         var select3 = this.select3;
 
-        var positionDropdown = select3.options.positionDropdown || function($el) {
-            $el.css({ left: 0, top: 0 }).height(screen.height).width(screen.width);
-        };
-
+        var positionDropdown = select3.options.positionDropdown || function() {};
         positionDropdown(this.$el, select3.$el);
     },
 
@@ -167,7 +189,8 @@ $.extend(Select3Fullscreen.prototype, {
         var $resultsContainer = this.$('.select3-results-container');
         $resultsContainer.html(
             results.length ? this._renderItems(results)
-                           : select3.template('noResults', { term: options.term })
+                           : options.hasMore ? ''
+                                             : select3.template('noResults', { term: options.term })
         );
 
         if (options.hasMore) {
@@ -203,9 +226,19 @@ $.extend(Select3Fullscreen.prototype, {
      */
     _loadMoreClicked: function() {
 
-        this.select3.loadMore();
+        this.originalSelect3.loadMore();
 
         this.select3.focus();
+    },
+
+    /**
+     * @private
+     */
+    _positionResults: function() {
+
+        var headerHeight = this.$('.select3-fullscreen-header').height();
+        var searchInputHeight = this.$('.select3-search-input-container').height();
+        this.$('.select3-results-container').css('top', headerHeight + searchInputHeight + 'px');
     },
 
     /**
@@ -215,7 +248,10 @@ $.extend(Select3Fullscreen.prototype, {
 
         var select3 = this.select3;
         return items.map(function(item) {
-            var result = select3.template(item.id ? 'resultItem' : 'resultLabel', item);
+            var result = select3.template(item.id ? 'resultItem' : 'resultLabel', $.extend(item, {
+                selected: ($.type(select3._value) === 'array' ? select3._value.indexOf(item.id) > -1
+                                                              : select3._value === item.id)
+            }));
             if (item.children) {
                 result += select3.template('resultChildren', {
                     childrenHtml: this._renderItems(item.children)
@@ -228,9 +264,30 @@ $.extend(Select3Fullscreen.prototype, {
     /**
      * @private
      */
+    _rerenderResults: function(event) {
+
+        var item = event.added || event.removed;
+
+        if (item) {
+            var quotedId = Select3.quoteCssAttr(item.id);
+            var $resultItem = this.$('.select3-result-item[data-item-id=' + quotedId + ']');
+
+            if (event.added) {
+                $resultItem.addClass('selected');
+            } else {
+                $resultItem.removeClass('selected');
+            }
+        }
+
+        this._positionResults();
+    },
+
+    /**
+     * @private
+     */
     _resultClicked: function(event) {
 
-        this._selectItem(this.select3._getItemId(event));
+        this._selectItem(this.select3.getItemId(event));
 
         return false;
     },
@@ -241,7 +298,7 @@ $.extend(Select3Fullscreen.prototype, {
     _selectItem: function(id) {
 
         var select3 = this.select3;
-        var item = Select3.findNestedById(select3.results, id);
+        var item = Select3.findNestedById(this.results, id);
         if (item) {
             var options = { id: id, item: item };
             if (select3.triggerEvent('select3-selecting', options)) {

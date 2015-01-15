@@ -194,11 +194,14 @@ Select3.Templates = {
      *
      * @param options Options object containing the following properties:
      *                id - Identifier for the item.
+     *                selected - Boolean whether the result item is already selected.
      *                text - Text label which the user sees.
      */
     resultItem: function(options) {
+        var extraClass = (options.selected ? ' selected' : '');
         return (
-            '<div class="select3-result-item" data-item-id="' + escape(options.id) + '">' +
+            '<div class="select3-result-item' + extraClass + '"' +
+                ' data-item-id="' + escape(options.id) + '">' +
                 escape(options.text) +
             '</div>'
         );
