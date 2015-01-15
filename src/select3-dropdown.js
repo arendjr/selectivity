@@ -411,10 +411,10 @@ $.extend(Select3Dropdown.prototype, {
 
         var select3 = this.select3;
         return items.map(function(item) {
-            var result = select3.template(item.id ? 'resultItem' : 'resultLabel', $.extend(item, {
+            var result = select3.template(item.id ? 'resultItem' : 'resultLabel', $.extend({
                 selected: ($.type(select3._value) === 'array' ? select3._value.indexOf(item.id) > -1
                                                               : select3._value === item.id)
-            }));
+            }, item));
             if (item.children) {
                 result += select3.template('resultChildren', {
                     childrenHtml: this._renderItems(item.children)
