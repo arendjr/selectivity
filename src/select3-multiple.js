@@ -84,7 +84,6 @@ $.extend(MultipleSelect3.prototype, {
         'change': '_rerenderSelection',
         'change .select3-multiple-input': function() { return false; },
         'click': '_clicked',
-        'click .select3-multiple-selected-item-remove': '_itemRemoveClicked',
         'click .select3-multiple-selected-item': '_itemClicked',
         'keydown .select3-multiple-input': '_keyHeld',
         'keyup .select3-multiple-input': '_keyReleased',
@@ -400,6 +399,18 @@ $.extend(MultipleSelect3.prototype, {
         }
     },
 
+    _renderSelectedItem: function(item) {
+
+        this.$searchInput.before(this.template('multipleSelectedItem', $.extend({
+            highlighted: (item.id === this._highlightedItemId)
+        }, item)));
+
+        var quotedId = Select3.quoteCssAttr(item.id);
+        this.$('.select3-multiple-selected-item[data-item-id=' + quotedId + ']')
+            .find('.select3-multiple-selected-item-remove')
+            .on('click', this._itemRemoveClicked.bind(this));
+    },
+
     /**
      * @private
      */
@@ -407,11 +418,8 @@ $.extend(MultipleSelect3.prototype, {
 
         event = event || {};
 
-        var $input = this.$searchInput;
         if (event.added) {
-            $input.before(this.template('multipleSelectedItem', $.extend({
-                highlighted: (event.added.id === this._highlightedItemId)
-            }, event.added)));
+            this._renderSelectedItem(event.added);
 
             this._scrollToBottom();
         } else if (event.removed) {
@@ -420,11 +428,7 @@ $.extend(MultipleSelect3.prototype, {
         } else {
             this.$('.select3-multiple-selected-item').remove();
 
-            this._data.forEach(function(item) {
-                $input.before(this.template('multipleSelectedItem', $.extend({
-                    highlighted: (item.id === this._highlightedItemId)
-                }, item)));
-            }, this);
+            this._data.forEach(this._renderSelectedItem, this);
 
             this._updateInputWidth();
         }
@@ -443,7 +447,7 @@ $.extend(MultipleSelect3.prototype, {
 
         this.positionDropdown();
 
-        $input.attr('placeholder', this._data.length ? '' : this.options.placeholder);
+        this.$searchInput.attr('placeholder', this._data.length ? '' : this.options.placeholder);
     },
 
     /**
