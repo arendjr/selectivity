@@ -46,7 +46,9 @@ function select3(methodName, options) {
             }
         } else {
             if ($.type(methodName) === 'string') {
-                throw new Error('Cannot call method on element without Select3 instance');
+                if (methodName !== 'destroy') {
+                    throw new Error('Cannot call method on element without Select3 instance');
+                }
             } else {
                 options = $.extend({}, methodName, { element: this });
 
