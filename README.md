@@ -54,52 +54,7 @@ In addition, the default templates assume that you have included
 API
 ---
 
-Call `$(selector).select3(options)` to initialize a Select3 instance on the element specified by the
-given selector. The following options are supported:
-
-Option          | Type                      | Description
---------------- | ------------------------- | -----------
-allowClear      | `Boolean`                 | Set to `true` to allow the selection to be cleared. This option only applies to single-value inputs.
-backspaceHighlightsBeforeDelete | `Boolean` | If set to `true`, when the user enters a backspace while there is no text in the search field but there are selected items, the last selected item will be highlighted and when a second backspace is entered the item is deleted. If `false`, the item gets deleted on the first backspace. The default value is true on devices that have touch input and false on devices that don't.
-closeOnSelect   | `Boolean`                 | Set to `false` to keep the dropdown open after the user has selected an item. This is useful if you want to allow the user to quickly select multiple items. The default value is `true`.
-createTokenItem | `Function`                | Function to create a new item from a user's search term. This is used to turn the term into an item when dropdowns are disabled and the user presses Enter. It is also used by the default tokenizer to create items for individual tokens. The function receives a `token` parameter which is the search term (or part of a search term) to create an item for and must return an item object with `id` and `text` properties or `null` if no token can be created from the term. The default is a function that returns an item where the id and text both match the term for any non-empty string and which returns `null` otherwise. This option only applies to multiple-value inputs.
-data            | `Object` or `Array`       | Initial selection data to set. This should be an object with `id` and `text` properties in the case of input type 'Single', or an array of such objects otherwise. This option is mutually exclusive with `value`.
-dropdown        | `Function`                | Custom dropdown implementation to use for this instance
-dropdownCssClass | `String`                 | Optional CSS class to add to the top-level dropdown element.
-initSelection   | `Function`                | Function to map values by ID to selection data. This function receives two arguments, `value` and `callback`. The value is the current value of the selection, which is an ID or an array of IDs depending on the input type. The callback should be invoked with an object or array of objects, respectively, containing `id` and `text` properties.
-inputType       | `String` or `Function`    | The input type to use. Default input types include 'Multiple', 'Single' and 'Email', but you can add custom input types to the `Select3.InputTypes` map or just specify one here as a function. The default value is 'Single', unless `multiple` is `true` in which case it is 'Multiple'.
-items           | `Array`                   | Array of items from which to select. Should be an array of objects with `id` and `text` properties. As convenience, you may also pass an array of strings, in which case the same string is used for both the ID and the text. If items are given, all items are expected to be available locally and all selection operations operate on this local array only. If `null`, items are not available locally, and the `query` option should be provided to fetch remote data.
-matcher         | `Function`                | Function to determine whether text matches a given search term. Note this function is only used if you have specified an array of items. Receives two arguments: `item` and `term`. The item is the item that should match the search term. The term is the search term, which for performance reasons has always been already processed using `Select3.transformText()`. The method should return the item if it matches, and `null` otherwise. If the item has a `children` array, the matcher is expected to filter those itself (be sure to only return the filtered array of children in the returned item and not to modify the children of the `item` argument).
-placeholder     | `String`                  | Placeholder text to display when the element has no focus and selected items.
-positionDropdown | `Function`               | Function to position the dropdown. Receives `$dropdownEl` (the element to be positioned) and `$selectEl` (the element of the Select3 instance) as arguments. The default implementation positions the dropdown element under the Select3's element and gives it the same width as well.
-query           | `Function`                | Function to use for querying items. Receives a single object as argument with the `callback`, `offset` and `term` properties. The callback should be invoked when the results are available. It should be passed a single object with `results` and `more` properties. The first is an array with result items and the latter is an optional boolean that may be set to `true` indicate more results are available through pagination. Offset is a property is only used for pagination and indicates how many results should be skipped when returning more results. The term is the search term the user is searching for. Unlike with the matcher function, the term has not been processed using `Select3.transformText()`. This option is ignored if the `items` option is used.
-searchInputPlaceholder | `String`           | Placeholder text to display in the search input in the dropdown.
-showDropdown    | `Boolean`                 | Set to `false` if you don't want to use any dropdown (you can still open still open it programmatically using `open()`).
-showSearchInputInDropdown | `Boolean`       | Set to `false` to remove the search input used in dropdowns. This option only applies to single-value inputs, as multiple-value inputs don't have the search input in the dropdown to begin with. The default is `true`.
-suppressMouseWheelSelector | `String` or `null` | The Select3 Dropdown by default suppresses mousewheel events so that any scrolling in the dropdown doesn't affect the scroll position of the page. Through this option you can select which selector should be monited for scroll events to suppress. Set it to `null` to disable suppressing of mousewheel events altogether. The default value is `".select3-results-container"`.
-templates       | `Object`                  | Object with instance-specific templates to override the global templates assigned to `Select3.Templates`.
-tokenizer       | `Function`                | Function for tokenizing search terms. Will receive the `input` (the input string to tokenize), `selection` (the current selection data), `createToken` (callback to create a token from the search terms, should be passed an item object with `id` and `text` properties) and `options` (the options set on the Select3 instance) arguments. Any string returned by the tokenizer function is treated as the remainder of untokenized input. This option only applies to multiple-value inputs.
-tokenSeparators | `Array`                   | Array of string separators which are used to separate the search term into tokens. If specified and the tokenizer property is not set, the tokenizer property will be set to a function which splits the search term into tokens separated by any of the given separators. The tokens will be converted into selectable items using the `createTokenItem` function. The default tokenizer also filters out already selected items. This option only applies to multiple-value inputs.
-value           | `ID` or `Array`           | Initial value to set. This should be an ID (string or number) in the case of input type 'Single', or array of IDs otherwise. This property is mutually exclusive with `data`.
-
-For documentation about all the available methods once Select3 has been instantiated, I refer to the
-inline documentation in the source files for now.
-
-Events
-------
-
-All of these events are emitted on the element to which the Select3 instance is attached and can be
-listened to using jQuery's `on()` method.
-
-Event                 | Description
---------------------- | -----------
-`"change"`            | Emitted when the selection has been changed. Additional properties on the event object: `added`, `removed` and `value`.
-`"select3-closed"`    | Emitted when the dropdown is closed.
-`"select3-highlight"` | Emitted when an item in the dropdown is highlighted. Additional properties on the event object: `item` and `value`.
-`"select3-open"`      | Emitted when the dropdown is opened.
-`"select3-opening"`   | Emitted when the dropdown is about to be opened. You can call `preventDefault()` on the event object to cancel the opening of the dropdown.
-`"select3-selected"`  | Emitted when an item has been selected. Additional properties on the event object: `id` and `item`.
-`"select3-selecting"` | Emitted when an item is about to be selected. You can call `preventDefault()` on on the event object to prevent the item from being selected. Additional properties on the event object: `id` and `item`.
+See the Select3 homepage: https://arendjr.github.io/select3/
 
 Migrating from Select2
 ----------------------
