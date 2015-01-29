@@ -19,6 +19,7 @@ function listener(select3, options) {
         }
 
         select3.$el = replaceSelectElement($el, options);
+        select3.$el.select3 = select3;
     }
 }
 
