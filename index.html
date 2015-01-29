@@ -110,178 +110,449 @@ jQuery builds without Sizzle.</li>
 <h1>
 <a id="api" class="anchor" href="#api" aria-hidden="true"><span class="octicon octicon-link"></span></a>API</h1>
 
-<p>Call <code>$(selector).select3(options)</code> to initialize a Select3 instance on the element specified by the
-given selector. The following options are supported:</p>
+<p>Call <code>$(selector).select3(options)</code> to initialize a Select3 instance on the element
+    specified by the given selector. The element should a <code>&lt;div&gt;</code> element which
+    will be used as container to render the Select3 control in. If the element is a
+    <code>&lt;select&gt;</code> element instead, this element will be used for initializing some of
+    the options below after which it is replaced with a <code>&lt;div&gt;</code> element to contain
+    the Select3 control.</p>
+
+<p>The following options are supported:</p>
 
 <table>
-<thead>
-<tr>
-<th>Option</th>
-<th>Type</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>allowClear</td>
-<td><code>Boolean</code></td>
-<td>Set to <code>true</code> to allow the selection to be cleared. This option only applies to single-value inputs.</td>
-</tr>
-<tr>
-<td>backspace<wbr>Highlights<wbr>BeforeDelete</td>
-<td><code>Boolean</code></td>
-<td>If set to <code>true</code>, when the user enters a backspace while there is no text in the search field but there are selected items, the last selected item will be highlighted and when a second backspace is entered the item is deleted. If <code>false</code>, the item gets deleted on the first backspace. The default value is true on devices that have touch input and false on devices that don't.</td>
-</tr>
-<tr>
-<td>closeOnSelect</td>
-<td><code>Boolean</code></td>
-<td>Set to <code>false</code> to keep the dropdown open after the user has selected an item. This is useful if you want to allow the user to quickly select multiple items. The default value is <code>true</code>.</td>
-</tr>
-<tr>
-<td>createTokenItem</td>
-<td><code>Function</code></td>
-<td>Function to create a new item from a user's search term. This is used to turn the term into an item when dropdowns are disabled and the user presses Enter. It is also used by the default tokenizer to create items for individual tokens. The function receives a <code>token</code> parameter which is the search term (or part of a search term) to create an item for and must return an item object with <code>id</code> and <code>text</code> properties or <code>null</code> if no token can be created from the term. The default is a function that returns an item where the id and text both match the term for any non-empty string and which returns <code>null</code> otherwise. This option only applies to multiple-value inputs.</td>
-</tr>
-<tr>
-<td>data</td>
-<td>
-<code>Object</code> or <code>Array</code>
-</td>
-<td>Initial selection data to set. This should be an object with <code>id</code> and <code>text</code> properties in the case of input type 'Single', or an array of such objects otherwise. This option is mutually exclusive with <code>value</code>.</td>
-</tr>
-<tr>
-<td>dropdown</td>
-<td><code>Function</code></td>
-<td>Custom dropdown implementation to use for this instance.</td>
-</tr>
-<tr>
-<td>dropdownCssClass</td>
-<td><code>String</code></td>
-<td>Optional CSS class to add to the top-level dropdown element.</td>
-</tr>
-<tr>
-<td>value</td>
-<td>
-<code>ID</code> or <code>Array</code>
-</td>
-<td>Initial value to set. This should be an ID (string or number) in the case of input type 'Single', or array of IDs otherwise. This property is mutually exclusive with <code>data</code>.</td>
-</tr>
-<tr>
-<td>initSelection</td>
-<td><code>Function</code></td>
-<td>Function to map values by ID to selection data. This function receives two arguments, <code>value</code> and <code>callback</code>. The value is the current value of the selection, which is an ID or an array of IDs depending on the input type. The callback should be invoked with an object or array of objects, respectively, containing <code>id</code> and <code>text</code> properties.</td>
-</tr>
-<tr>
-<td>inputType</td>
-<td>
-<code>String</code> or <code>Function</code>
-</td>
-<td>The input type to use. Default input types include 'Multiple', 'Single' and 'Email', but you can add custom input types to the <code>Select3.InputTypes</code> map or just specify one here as a function. The default value is 'Single', unless <code>multiple</code> is <code>true</code> in which case it is 'Multiple'.</td>
-</tr>
-<tr>
-<td>items</td>
-<td><code>Array</code></td>
-<td>Array of items from which to select. Should be an array of objects with <code>id</code> and <code>text</code> properties. As convenience, you may also pass an array of strings, in which case the same string is used for both the ID and the text. If items are given, all items are expected to be available locally and all selection operations operate on this local array only. If <code>null</code>, items are not available locally, and the <code>query</code> option should be provided to fetch remote data.</td>
-</tr>
-<tr>
-<td>matcher</td>
-<td><code>Function</code></td>
-<td>Function to determine whether text matches a given search term. Note this function is only used if you have specified an array of items. Receives two arguments: <code>term</code> and <code>text</code>. The term is the search term, which for performance reasons has always been already processed using <code>Select3.transformText()</code>. The text is the text that should match the search term.</td>
-</tr>
-<tr>
-<td>placeholder</td>
-<td><code>String</code></td>
-<td>Placeholder text to display when the element has no focus and selected items.</td>
-</tr>
-<tr>
-<td>positionDropdown</td>
-<td><code>Function</code></td>
-<td>Function to position the dropdown. Receives <code>$dropdownEl</code> (the element to be positioned) and <code>$selectEl</code> (the element of the Select3 instance) as arguments. The default implementation positions the dropdown element under the Select3's element and gives it the same width as well.</td>
-</tr>
-<tr>
-<td>query</td>
-<td><code>Function</code></td>
-<td>Function to use for querying items. Receives a single object as argument with the <code>callback</code>, <code>offset</code> and <code>term</code> properties. The callback should be invoked when the results are available. It should be passed a single object with <code>results</code> and <code>more</code> properties. The first is an array with result items and the latter is an optional boolean that may be set to <code>true</code> indicate more results are available through pagination. Offset is a property is only used for pagination and indicates how many results should be skipped when returning more results. The term is the search term the user is searching for. Unlike with the matcher function, the term has not been processed using <code>Select3.transformText()</code>. This option is ignored if the <code>items</code> option is used.</td>
-</tr>
-<tr>
-<td>showDropdown</td>
-<td><code>Boolean</code></td>
-<td>Set to false if you don't want to use any dropdown (you can still open still open it programmatically using <code>open()</code>).</td>
-</tr>
-<tr>
-<td>show<wbr>SearchInput<wbr>InDropdown</td>
-<td><code>Boolean</code></td>
-<td>Set to <code>false</code> to remove the search input used in dropdowns. This option only applies to single-value inputs, as multiple-value inputs don't have the search input in the dropdown to begin with. The default is <code>true</code>.</td>
-</tr>
-<tr>
-<td>suppressMouseWheelSelector</td>
-<td><code>String</code> or <code>null</code></td>
-<td>The Select3 Dropdown by default suppresses mousewheel events so that any scrolling in the dropdown doesn't affect the scroll position of the page. Through this option you can select which selector should be monited for scroll events to suppress. Set it to <code>null</code> to disable suppressing of mousewheel events altogether. The default value is <code>".select3-results-container"</code>.</td>
-</tr>
-<tr>
-<td>templates</td>
-<td><code>Object</code></td>
-<td>Object with instance-specific templates to override the global templates assigned to <code>Select3.Templates</code>.</td>
-</tr>
-<tr>
-<td>tokenizer</td>
-<td><code>Function</code></td>
-<td>Function for tokenizing search terms. Will receive the <code>input</code> (the input string to tokenize), <code>selection</code> (the current selection data), <code>createToken</code> (callback to create a token from the search terms, should be passed an item object with <code>id</code> and <code>text</code> properties) and <code>options</code> (the options set on the Select3 instance) arguments. Any string returned by the tokenizer function is treated as the remainder of untokenized input. This option only applies to multiple-value inputs.</td>
-</tr>
-<tr>
-<td>tokenSeparators</td>
-<td><code>Array</code></td>
-<td>Array of string separators which are used to separate the search term into tokens. If specified and the tokenizer property is not set, the tokenizer property will be set to a function which splits the search term into tokens separated by any of the given separators. The tokens will be converted into selectable items using the <code>createTokenItem</code> function. The default tokenizer also filters out already selected items. This option only applies to multiple-value inputs.</td>
-</tr>
-</tbody>
+    <thead>
+        <tr>
+            <th>Option</th>
+            <th>Type</th>
+            <th>Description</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>allowClear</td>
+            <td><code>Boolean</code></td>
+            <td>Set to <code>true</code> to allow the selection to be cleared. This option only
+                applies to single-value inputs.<br>
+                <br>
+                If you have used a &lt;select&gt; element to initialize the Select3 instance, this
+                option defaults to <code>true</code> unless the element has a <code>required</code>
+                attribute.</td>
+        </tr>
+        <tr>
+            <td>backspace<wbr>Highlights<wbr>BeforeDelete</td>
+            <td><code>Boolean</code></td>
+            <td>If set to <code>true</code>, when the user enters a backspace while there is no text
+                in the search field but there are selected items, the last selected item will be
+                highlighted and when a second backspace is entered the item is deleted. If
+                <code>false</code>, the item gets deleted on the first backspace. The default value
+                is true on devices that have touch input and false on devices that don't.</td>
+        </tr>
+        <tr>
+            <td>closeOnSelect</td>
+            <td><code>Boolean</code></td>
+            <td>Set to <code>false</code> to keep the dropdown open after the user has selected an
+                item. This is useful if you want to allow the user to quickly select multiple items.
+                The default value is <code>true</code>.</td>
+        </tr>
+        <tr>
+            <td>createTokenItem</td>
+            <td><code>Function</code></td>
+            <td>Function to create a new item from a user's search term. This is used to turn the
+                term into an item when dropdowns are disabled and the user presses Enter. It is also
+                used by the default tokenizer to create items for individual tokens. The function
+                receives a <code>token</code> parameter which is the search term (or part of a
+                search term) to create an item for and must return an item object with
+                <code>id</code> and <code>text</code> properties or <code>null</code> if no token
+                can be created from the term. The default is a function that returns an item where
+                the ID and text both match the term for any non-empty string and which returns
+                <code>null</code> otherwise. This option only applies to multiple-value inputs.</td>
+        </tr>
+        <tr>
+            <td>data</td>
+            <td><code>Object</code> or <code>Array</code></td>
+            <td>Initial selection data to set. This should be an object with <code>id</code> and
+                <code>text</code> properties in the case of input type 'Single', or an array of such
+                objects otherwise. This option is mutually exclusive with <code>value</code>.</td>
+        </tr>
+        <tr>
+            <td>dropdown</td>
+            <td><code>Function</code></td>
+            <td>Custom dropdown implementation to use for this instance.</td>
+        </tr>
+        <tr>
+            <td>dropdownCssClass</td>
+            <td><code>String</code></td>
+            <td>Optional CSS class to add to the top-level dropdown element.</td>
+        </tr>
+        <tr>
+            <td>initSelection</td>
+            <td><code>Function</code></td>
+            <td>Function to map values by ID to selection data. This function receives two
+                arguments, <code>value</code> and <code>callback</code>. The value is the current
+                value of the selection, which is an ID or an array of IDs, depending on the input
+                type. The callback should be invoked with an object or array of objects,
+                respectively, containing <code>id</code> and <code>text</code> properties.</td>
+        </tr>
+        <tr>
+            <td>inputType</td>
+            <td><code>String</code> or <code>Function</code></td>
+            <td>The input type to use. Default input types include 'Multiple', 'Single' and 'Email',
+                but you can add custom input types to the <code>Select3.InputTypes</code> map or
+                just specify one here as a function. The default value is 'Single', unless
+                <code>multiple</code> is <code>true</code> in which case it is 'Multiple'.</td>
+        </tr>
+        <tr>
+            <td>items</td>
+            <td><code>Array</code></td>
+            <td>Array of items from which to select. Should be an array of objects with
+                <code>id</code> and <code>text</code> properties. As convenience, you may also pass
+                an array of strings, in which case the same string is used for both the ID and the
+                text. Items may be nested by adding a <code>children</code> property to any item,
+                whose value should be another array of items. Items that have children may omit
+                having an ID.<br>
+                <br>
+                If <code>items</code> are specified, all items are expected to be available locally
+                nd all selection operations operate on this local array only. If omitted, items are
+                not available locally, and the <code>query</code> option should be provided to fetch
+                data. If you have used a &lt;select&gt; element to initialize the Select3 instance,
+                its &lt;option&gt; and <code>&lt;optgroup&gt;</code> elements are used to initialize
+                the items array.</td>
+        </tr>
+        <tr>
+            <td>matcher</td>
+            <td><code>Function</code></td>
+            <td>Function to determine whether text matches a given search term. Note this function
+                is only used if you have specified an array of items. Receives two arguments:
+                <code>term</code> and <code>text</code>. The term is the search term, which for
+                performance reasons has always been already processed using
+                <code>Select3.transformText()</code>. The text is the text that should match the
+                search term.</td>
+        </tr>
+        <tr>
+            <td>multiple</td>
+            <td><code>boolean</code></td>
+            <td>May be set to <code>true</code> as short-hand for specifying
+                <code>inputType: 'Multiple'</code>.<br>
+                <br>
+                If you have used a &lt;select&gt; element to initialize the Select3 instance, this
+                option is set to <code>true</code> when the element has a <code>multiple</code>
+                attribute.</td>
+        </tr>
+        <tr>
+            <td>placeholder</td>
+            <td><code>String</code></td>
+            <td>Placeholder text to display when the element has no focus and selected items.<br>
+                <br>
+                If you have used a &lt;select&gt; element to initialize the Select3 instance, this
+                option may be set through the <code>data-placeholder</code> attribute.</td>
+        </tr>
+        <tr>
+            <td>positionDropdown</td>
+            <td><code>Function</code></td>
+            <td>Function to position the dropdown. Receives <code>$dropdownEl</code> (the element to
+                be positioned) and <code>$selectEl</code> (the element of the Select3 instance) as
+                arguments. The default implementation positions the dropdown element under the
+                Select3's element and gives it the same width as well.</td>
+        </tr>
+        <tr>
+            <td>query</td>
+            <td><code>Function</code></td>
+            <td>Function to use for querying items. Receives a single object as argument with the
+                <code>callback</code>, <code>offset</code> and <code>term</code> properties. The
+                callback should be invoked when the results are available. It should be passed a
+                single object with <code>results</code> and <code>more</code> properties. The first
+                is an array with result items and the latter is an optional boolean that may be set
+                to <code>true</code> indicate more results are available through pagination. Offset
+                is a property is only used for pagination and indicates how many results should be
+                skipped when returning more results. The term is the search term the user is
+                searching for. Unlike with the matcher function, the term has not been processed
+                using <code>Select3.transformText()</code>. This option is ignored if the
+                <code>items</code> option is used.</td>
+        </tr>
+        <tr>
+            <td>showDropdown</td>
+            <td><code>Boolean</code></td>
+            <td>Set to false if you don't want to use any dropdown (you can still open still open it
+                programmatically using <code>open()</code>).</td>
+        </tr>
+        <tr>
+            <td>show<wbr>SearchInput<wbr>InDropdown</td>
+            <td><code>Boolean</code></td>
+            <td>Set to <code>false</code> to remove the search input used in dropdowns. This option
+                only applies to single-value inputs, as multiple-value inputs don't have the search
+                input in the dropdown to begin with. The default is <code>true</code>.</td>
+        </tr>
+        <tr>
+            <td>suppressMouse<wbr>WheelSelector</td>
+            <td><code>String</code> or <code>null</code></td>
+            <td>The Select3 Dropdown by default suppresses mousewheel events so that any scrolling
+                in the dropdown doesn't affect the scroll position of the page. Through this option
+                you can select which selector should be monited for scroll events to suppress. Set
+                it to <code>null</code> to disable suppressing of mousewheel events altogether. The
+                default value is <code>".select3-results-container"</code>.</td>
+        </tr>
+        <tr>
+            <td>templates</td>
+            <td><code>Object</code></td>
+            <td>Object with instance-specific templates to override the global templates assigned to
+                <code>Select3.Templates</code>.</td>
+        </tr>
+        <tr>
+            <td>tokenizer</td>
+            <td><code>Function</code></td>
+            <td>Function for tokenizing search terms. Will receive the <code>input</code> (the input
+                string to tokenize), <code>selection</code> (the current selection data),
+                <code>createToken</code> (callback to create a token from the search terms, should
+                be passed an item object with <code>id</code> and <code>text</code> properties) and
+                <code>options</code> (the options set on the Select3 instance) arguments. Any string
+                returned by the tokenizer function is treated as the remainder of untokenized input.
+                This option only applies to multiple-value inputs.</td>
+        </tr>
+        <tr>
+            <td>tokenSeparators</td>
+            <td><code>Array</code></td>
+            <td>Array of string separators which are used to separate the search term into tokens.
+                If specified and the tokenizer property is not set, the tokenizer property will be
+                set to a function which splits the search term into tokens separated by any of the
+                given separators. The tokens will be converted into selectable items using the
+                <code>createTokenItem</code> function. The default tokenizer also filters out
+                already selected items. This option only applies to multiple-value inputs.</td>
+        </tr>
+        <tr>
+            <td>value</td>
+            <td><code>ID</code> or <code>Array</code></td>
+            <td>Initial value to set. This should be an ID (string or number) in the case of input
+                type 'Single', or array of IDs otherwise. This property is mutually exclusive with
+                <code>data</code>.</td>
+        </tr>
+    </tbody>
 </table>
 
-<p>For documentation about all the available methods once Select3 has been instantiated, I refer to the
-inline documentation in the source files for now.</p>
+<h1>
+<a id="methods" class="anchor" href="#methods" aria-hidden="true"><span class="octicon octicon-link"></span></a>Methods</h1>
+
+<h2><code>add</code> <i>(multiple-value inputs only)</i></h2>
+
+<p>Adds an item to the selection.</p>
+
+<table>
+    <thead>
+        <tr>
+            <th>Argument</th>
+            <th>Type</th>
+            <th>Description</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>item</td>
+            <td><code>ID</code> or <code>Object</code></td>
+            <td>The item to add, either as ID or object with <code>id</code> and <code>text</code>
+                properties.</td>
+        </tr>
+    </tbody>
+</table>
+
+<h2><code>close</code></h2>
+
+<p>Closes the dropdown.</p>
+
+<h2><code>data</code></h2>
+
+<p>Sets or gets the data of the selection. If no argument is given, the current data is returned.
+    Otherwise, the data is set to the argument given.</p>
+
+<p>When new data is set, the appropriate <code>change</code> event is automatically
+    generated, unless <code>triggerChange</code> is set to <code>false</code>.</p>
+
+<table>
+    <thead>
+        <tr>
+            <th>Argument</th>
+            <th>Type</th>
+            <th>Description</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>data</td>
+            <td><code>Object</code> or <code>Array</code></td>
+            <td>The new data to set, either as object with <code>id</code> and <code>text</code>
+                properties (for single-value inputs) or as array of such objects (for multiple-value
+                inputs).</td>
+        </tr>
+        <tr>
+            <td>options</td>
+            <td><code>Object</code></td>
+            <td>Optional options object. May contain the following property:
+                <dl>
+                    <dt><b>triggerChange</b></dt>
+                    <dd>Set to <code>false</code> to suppress the <code>change</code> event.</dd>
+                </dl>
+            </td>
+        </tr>
+    </tbody>
+</table>
+
+<h2><code>focus</code></h2>
+
+<p>Focuses the search input.</p>
+
+<h2><code>open</code></h2>
+
+<p>Opens the dropdown.</p>
+
+<h2><code>remove</code> <i>(multiple-value inputs only)</i></h2>
+
+<p>Removes an item from the selection.</p>
+
+<table>
+    <thead>
+        <tr>
+            <th>Argument</th>
+            <th>Type</th>
+            <th>Description</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>item</td>
+            <td><code>ID</code> or <code>Object</code></td>
+            <td>The item to remove, either as ID or object with <code>id</code> and
+                <code>text</code> properties.</td>
+        </tr>
+    </tbody>
+</table>
+
+<h2><code>value</code> / <code>val</code></h2>
+
+<p>Sets or gets the value of the selection. If no argument is given, the current value is returned.
+    Otherwise, the value is set to the argument given.</p>
+
+<p><b>Note:</b> When setting the value of the selection, the full data (including the
+    <code>text</code> properties) is updated as well. In order to detect the right text for the
+    ID(s), Select3 will inspect the <code>items</code> array to look up the corresponding item(s).
+    If no items have been provided, it is assumed the text should be equal to the ID. If this is
+    not what you want, you may want to pass the <code>initSelection</code> option to the Select3
+    instance to override this process.</p>
+
+<p>When a new value is set, the appropriate <code>change</code> event is automatically
+    generated, unless <code>triggerChange</code> is set to <code>false</code>.</p>
+
+<table>
+    <thead>
+        <tr>
+            <th>Argument</th>
+            <th>Type</th>
+            <th>Description</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>value</td>
+            <td><code>ID</code> or <code>Array</code></td>
+            <td>The new value to set, either as single ID (for single-value inputs) or an array of
+                IDs (for multiple-value inputs).</td>
+        </tr>
+        <tr>
+            <td>options</td>
+            <td><code>Object</code></td>
+            <td>Optional options object. May contain the following property:
+                <dl>
+                    <dt><b>triggerChange</b></dt>
+                    <dd>Set to <code>false</code> to suppress the <code>change</code> event.</dd>
+                </dl>
+            </td>
+        </tr>
+    </tbody>
+</table>
 
 <h1>
 <a id="events" class="anchor" href="#events" aria-hidden="true"><span class="octicon octicon-link"></span></a>Events</h1>
 
-<p>All of these events are emitted on the element to which the Select3 instance is attached and can be
-listened to using jQuery's <code>on()</code> method.</p>
+<p>All of these events are emitted on the element to which the Select3 instance is attached and can
+    be listened to using jQuery's <code>on()</code> method.</p>
+
+<p><b>Note:</b> If you have used a <code>&lt;select&gt;</code> element for initializing the Select3
+    instance, you should realize it is replaced by a <code>&lt;div&gt;</code> element after the
+    initialization. Any events will be triggered on the latter.</p>
 
 <table>
-<thead>
-<tr>
-<th>Event</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>"change"</code></td>
-<td>Emitted when the selection has been changed. Additional properties on the event object: <code>added</code>, <code>removed</code> and <code>val</code>.</td>
-</tr>
-<tr>
-<td><code>"select3-closed"</code></td>
-<td>Emitted when the dropdown is closed.</td>
-</tr>
-<tr>
-<td><code>"select3-highlight"</code></td>
-<td>Emitted when an item in the dropdown is highlighted. Additional properties on the event object: <code>item</code> and <code>val</code>.</td>
-</tr>
-<tr>
-<td><code>"select3-open"</code></td>
-<td>Emitted when the dropdown is opened.</td>
-</tr>
-<tr>
-<td><code>"select3-opening"</code></td>
-<td>Emitted when the dropdown is about to be opened. You can call <code>preventDefault()</code> on the event object to cancel the opening of the dropdown.</td>
-</tr>
-<tr>
-<td><code>"select3-selected"</code></td>
-<td>Emitted when an item has been selected. Additional properties on the event object: <code>id</code> and <code>item</code>.</td>
-</tr>
-<tr>
-<td><code>"select3-selecting"</code></td>
-<td>Emitted when an item is about to be selected. You can call <code>preventDefault()</code> on on the event object to prevent the item from being selected. Additional properties on the event object: <code>id</code> and <code>item</code>.</td>
-</tr>
-</tbody>
+    <thead>
+        <tr>
+            <th>Event</th>
+            <th>Description</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><code>"change"</code></td>
+            <td>Emitted when the selection has been changed. The event object will contain the
+                following properties:
+                <dl>
+                    <dt><b>added</b></dt>
+                    <dd>If an item has been added to the selection of a multiple-value input, this
+                        property contains that item.</dd>
+                    <dt><b>removed</b></dt>
+                    <dd>If an item has been removed from the selection of a multiple-value input,
+                        this property contains that item.</dd>
+                    <dt><b>value</b></dt>
+                    <dd>The new value of the input. Either an ID or an array of IDs.</dd>
+                </dl>
+            </td>
+        </tr>
+        <tr>
+            <td><code>"select3-closed"</code></td>
+            <td>Emitted when the dropdown is closed.</td>
+        </tr>
+        <tr>
+            <td><code>"select3-highlight"</code></td>
+            <td>Emitted when an item in the dropdown is highlighted. The event object will contain
+                the following properties:
+                <dl>
+                    <dt><b>id</b></dt>
+                    <dd>The ID of the item being highlighted.</dd>
+                    <dt><b>item</b></dt>
+                    <dd>The item being highlighted.</dd>
+                </dl>
+            </td>
+        </tr>
+        <tr>
+            <td><code>"select3-open"</code></td>
+            <td>Emitted when the dropdown is opened.</td>
+        </tr>
+        <tr>
+            <td><code>"select3-opening"</code></td>
+            <td>Emitted when the dropdown is about to be opened. You can call
+                <code>preventDefault()</code> on the event object to cancel the opening of the
+                dropdown.</td>
+        </tr>
+        <tr>
+            <td><code>"select3-selected"</code></td>
+            <td>Emitted when an item has been selected. The event object will contain the following
+                properties:
+                <dl>
+                    <dt><b>id</b></dt>
+                    <dd>The ID of the item being selected.</dd>
+                    <dt><b>item</b></dt>
+                    <dd>The item being selected.</dd>
+                </dl>
+            </td>
+        </tr>
+        <tr>
+            <td><code>"select3-selecting"</code></td>
+            <td>Emitted when an item is about to be selected. You can call
+                <code>preventDefault()</code> on on the event object to prevent the item from being
+                selected. The event object will contain the following properties:
+                <dl>
+                    <dt><b>id</b></dt>
+                    <dd>The ID of the item being selected.</dd>
+                    <dt><b>item</b></dt>
+                    <dd>The item being selected.</dd>
+                </dl>
+            </td>
+        </tr>
+    </tbody>
 </table>
 
 <h1>
