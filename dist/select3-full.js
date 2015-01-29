@@ -2145,7 +2145,7 @@ $.extend(Select3Dropdown.prototype, {
         this.highlightedResult = item;
         this.loadMoreHighlighted = false;
 
-        this.select3.triggerEvent('select3-highlight', { item: item, value: item.id });
+        this.select3.triggerEvent('select3-highlight', { item: item, id: item.id });
     },
 
     /**
@@ -3779,6 +3779,7 @@ function listener(select3, options) {
         }
 
         select3.$el = replaceSelectElement($el, options);
+        select3.$el.select3 = select3;
     }
 }
 
@@ -3804,7 +3805,7 @@ function replaceSelectElement($el, options) {
 
     options.items = $el.children('option,optgroup').map(mapOptions).get();
 
-    options.placeholder = options.placeholder || $el.data('data-placeholder') || '';
+    options.placeholder = options.placeholder || $el.data('placeholder') || '';
 
     var $div = $('<div>');
     $div.attr({
