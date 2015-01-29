@@ -10,10 +10,11 @@ _dereq_('./select3-multiple');
 _dereq_('./select3-single');
 _dereq_('./select3-templates');
 _dereq_('./select3-tokenizer');
+_dereq_('./select3-traditional');
 
 module.exports = _dereq_('./select3-base');
 
-},{"./select3-backdrop":3,"./select3-base":4,"./select3-diacritics":5,"./select3-dropdown":6,"./select3-email":7,"./select3-keyboard":8,"./select3-multiple":10,"./select3-single":11,"./select3-templates":12,"./select3-tokenizer":13}],2:[function(_dereq_,module,exports){
+},{"./select3-backdrop":3,"./select3-base":4,"./select3-diacritics":5,"./select3-dropdown":6,"./select3-email":7,"./select3-keyboard":8,"./select3-multiple":10,"./select3-single":11,"./select3-templates":12,"./select3-tokenizer":13,"./select3-traditional":14}],2:[function(_dereq_,module,exports){
 'use strict';
 
 /**
@@ -96,8 +97,10 @@ $.extend(Select3Dropdown.prototype, {
      */
     removeCloseHandler: function() {
 
-        this._$backdrop.remove();
-        this._$backdrop = null;
+        if (this._$backdrop) {
+            this._$backdrop.remove();
+            this._$backdrop = null;
+        }
     },
 
     /**
@@ -177,6 +180,13 @@ function select3(methodName, options) {
             } else {
                 options = $.extend({}, methodName, { element: this });
 
+                // this is a one-time hack to facilitate the select3-traditional module, because
+                // the module is not able to hook this early into creation of the instance
+                var $this = $(this);
+                if ($this.is('select') && $this.prop('multiple')) {
+                    options.multiple = true;
+                }
+
                 var InputTypes = Select3.InputTypes;
                 var InputType = (options.inputType || (options.multiple ? 'Multiple' : 'Single'));
                 if ($.type(InputType) !== 'function') {
@@ -220,7 +230,7 @@ function Select3(options) {
     /**
      * jQuery container for the element to which this instance is attached.
      */
-    this.$el = $(options.element).on('select3-close', this._closed.bind(this));
+    this.$el = $(options.element);
 
     /**
      * jQuery container for the search input.
@@ -295,6 +305,8 @@ function Select3(options) {
     }
 
     this._events = [];
+
+    this.$el.on('select3-close', this._closed.bind(this));
 
     this.delegateEvents();
 }
@@ -613,7 +625,7 @@ $.extend(Select3.prototype, {
      *                          in the returned item and not to modify the children of the item
      *                          argument).
      *                placeholder - Placeholder text to display when the element has no focus and
-     *                              selected items.
+     *                              no selected items.
      *                positionDropdown - Function to position the dropdown. Receives two arguments:
      *                                   $dropdownEl - The element to be positioned.
      *                                   $selectEl - The element of the Select3 instance, that you
@@ -645,6 +657,10 @@ $.extend(Select3.prototype, {
     setOptions: function(options) {
 
         options = options || {};
+
+        Select3.OptionListeners.forEach(function(listener) {
+            listener(this, options);
+        }.bind(this));
 
         this.options = options;
 
@@ -913,10 +929,22 @@ Select3.Dropdown = null;
 Select3.InputTypes = {};
 
 /**
+ * Array of option listeners.
+ *
+ * Option listeners are invoked when setOptions() is called. Every listener receives two arguments:
+ *
+ * select3 - The Select3 instance.
+ * options - The options that are about to be set. The listener may modify this options object.
+ *
+ * An example of an option listener is the select3-traditional module.
+ */
+Select3.OptionListeners = [];
+
+/**
  * Array of search input listeners.
  *
- * Listeners are invoked when initSearchInput() is called (typically right after the search input is
- * created). Every listener receives two arguments:
+ * Search input listeners are invoked when initSearchInput() is called (typically right after the
+ * search input is created). Every listener receives two arguments:
  *
  * select3 - The Select3 instance.
  * $input - jQuery container with the search input.
@@ -3729,5 +3757,67 @@ Select3Multiple.prototype.setOptions = function(options) {
     setOptions.call(this, options);
 };
 
-},{"./select3-base":4,"./select3-multiple":10,"jquery":"jquery"}]},{},[1])(1)
+},{"./select3-base":4,"./select3-multiple":10,"jquery":"jquery"}],14:[function(_dereq_,module,exports){
+'use strict';
+
+var $ = window.jQuery || window.Zepto;
+
+var Select3 = _dereq_('./select3-base');
+
+/**
+ * Option listener providing support for converting traditional <select> boxes into Select3
+ * instances.
+ */
+function listener(select3, options) {
+
+    var $el = select3.$el;
+    if ($el.is('select')) {
+        if ($el.attr('autofocus')) {
+            setTimeout(function() {
+                select3.focus();
+            }, 1);
+        }
+
+        select3.$el = replaceSelectElement($el, options);
+    }
+}
+
+function replaceSelectElement($el, options) {
+
+    var mapOptions = function() {
+        var $this = $(this);
+        if ($this.is('option')) {
+            return {
+                id: $this.attr('value') || $this.text(),
+                text: $this.attr('label') || $this.text()
+            };
+        } else {
+            return {
+                text: $this.attr('label'),
+                children: $this.children('option,optgroup').map(mapOptions).get()
+            };
+        }
+    };
+
+    options.allowClear = options.hasOwnProperty('allowClear') ? options.allowClear
+                                                              : !$el.prop('required');
+
+    options.items = $el.children('option,optgroup').map(mapOptions).get();
+
+    options.placeholder = options.placeholder || $el.data('data-placeholder') || '';
+
+    var $div = $('<div>');
+    $div.attr({
+        'class': $el.attr('class'),
+        'id': $el.attr('id'),
+        'name': $el.attr('name'),
+        'style': $el.attr('style')
+    });
+    $el.replaceWith($div);
+    return $div;
+}
+
+Select3.OptionListeners.push(listener);
+
+},{"./select3-base":4,"jquery":"jquery"}]},{},[1])(1)
 });

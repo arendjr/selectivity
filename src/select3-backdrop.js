@@ -27,8 +27,10 @@ $.extend(Select3Dropdown.prototype, {
      */
     removeCloseHandler: function() {
 
-        this._$backdrop.remove();
-        this._$backdrop = null;
+        if (this._$backdrop) {
+            this._$backdrop.remove();
+            this._$backdrop = null;
+        }
     },
 
     /**

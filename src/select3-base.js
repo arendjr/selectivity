@@ -52,6 +52,13 @@ function select3(methodName, options) {
             } else {
                 options = $.extend({}, methodName, { element: this });
 
+                // this is a one-time hack to facilitate the select3-traditional module, because
+                // the module is not able to hook this early into creation of the instance
+                var $this = $(this);
+                if ($this.is('select') && $this.prop('multiple')) {
+                    options.multiple = true;
+                }
+
                 var InputTypes = Select3.InputTypes;
                 var InputType = (options.inputType || (options.multiple ? 'Multiple' : 'Single'));
                 if ($.type(InputType) !== 'function') {
@@ -95,7 +102,7 @@ function Select3(options) {
     /**
      * jQuery container for the element to which this instance is attached.
      */
-    this.$el = $(options.element).on('select3-close', this._closed.bind(this));
+    this.$el = $(options.element);
 
     /**
      * jQuery container for the search input.
@@ -170,6 +177,8 @@ function Select3(options) {
     }
 
     this._events = [];
+
+    this.$el.on('select3-close', this._closed.bind(this));
 
     this.delegateEvents();
 }
@@ -488,7 +497,7 @@ $.extend(Select3.prototype, {
      *                          in the returned item and not to modify the children of the item
      *                          argument).
      *                placeholder - Placeholder text to display when the element has no focus and
-     *                              selected items.
+     *                              no selected items.
      *                positionDropdown - Function to position the dropdown. Receives two arguments:
      *                                   $dropdownEl - The element to be positioned.
      *                                   $selectEl - The element of the Select3 instance, that you
@@ -520,6 +529,10 @@ $.extend(Select3.prototype, {
     setOptions: function(options) {
 
         options = options || {};
+
+        Select3.OptionListeners.forEach(function(listener) {
+            listener(this, options);
+        }.bind(this));
 
         this.options = options;
 
@@ -788,10 +801,22 @@ Select3.Dropdown = null;
 Select3.InputTypes = {};
 
 /**
+ * Array of option listeners.
+ *
+ * Option listeners are invoked when setOptions() is called. Every listener receives two arguments:
+ *
+ * select3 - The Select3 instance.
+ * options - The options that are about to be set. The listener may modify this options object.
+ *
+ * An example of an option listener is the select3-traditional module.
+ */
+Select3.OptionListeners = [];
+
+/**
  * Array of search input listeners.
  *
- * Listeners are invoked when initSearchInput() is called (typically right after the search input is
- * created). Every listener receives two arguments:
+ * Search input listeners are invoked when initSearchInput() is called (typically right after the
+ * search input is created). Every listener receives two arguments:
  *
  * select3 - The Select3 instance.
  * $input - jQuery container with the search input.

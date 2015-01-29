@@ -14,244 +14,23 @@
         <script src="dist/select3-full.js"></script>
         <script>
             $(document).ready(function() {
-                var cities = [
-                    'Amsterdam',
-                    'Antwerp',
-                    'Athens',
-                    'Barcelona',
-                    'Berlin',
-                    'Birmingham',
-                    'Bradford',
-                    'Bremen',
-                    'Brussels',
-                    'Bucharest',
-                    'Budapest',
-                    'Cologne',
-                    'Copenhagen',
-                    'Dortmund',
-                    'Dresden',
-                    'Dublin',
-                    'Düsseldorf',
-                    'Essen',
-                    'Frankfurt',
-                    'Genoa',
-                    'Glasgow',
-                    'Gothenburg',
-                    'Hamburg',
-                    'Hannover',
-                    'Helsinki',
-                    'Leeds',
-                    'Leipzig',
-                    'Lisbon',
-                    'Łódź',
-                    'London',
-                    'Kraków',
-                    'Madrid',
-                    'Málaga',
-                    'Manchester',
-                    'Marseille',
-                    'Milan',
-                    'Munich',
-                    'Naples',
-                    'Palermo',
-                    'Paris',
-                    'Poznań',
-                    'Prague',
-                    'Riga',
-                    'Rome',
-                    'Rotterdam',
-                    'Seville',
-                    'Sheffield',
-                    'Sofia',
-                    'Stockholm',
-                    'Stuttgart',
-                    'The Hague',
-                    'Turin',
-                    'Valencia',
-                    'Vienna',
-                    'Vilnius',
-                    'Warsaw',
-                    'Wrocław',
-                    'Zagreb',
-                    'Zaragoza'
-                ];
+                // ['Amsterdam', 'Antwerp', ...]
+                var cities = $('#single-select-box').find('option').map(function() {
+                    return this.textContent;
+                }).get();
 
-                var citiesByCountry = [
-                    {
-                        text: 'Austria',
-                        children: [
-                            { id: 54, text: 'Vienna' }
-                        ]
-                    },
-                    {
-                        text: 'Belgium',
-                        children: [
-                            { id: 2, text: 'Antwerp' },
-                            { id: 9, text: 'Brussels' }
-                        ]
-                    },
-                    {
-                        text: 'Bulgaria',
-                        children: [
-                            { id: 48, text: 'Sofia' }
-                        ]
-                    },
-                    {
-                        text: 'Croatia',
-                        children: [
-                            { id: 58, text: 'Zagreb' }
-                        ]
-                    },
-                    {
-                        text: 'Czech Republic',
-                        children: [
-                            { id: 42, text: 'Prague' }
-                        ]
-                    },
-                    {
-                        text: 'Denmark',
-                        children: [
-                            { id: 13, text: 'Copenhagen' }
-                        ]
-                    },
-                    {
-                        text: 'England',
-                        children: [
-                            { id: 6, text: 'Birmingham' },
-                            { id: 7, text: 'Bradford' },
-                            { id: 26, text: 'Leeds' },
-                            { id: 30, text: 'London' },
-                            { id: 34, text: 'Manchester' },
-                            { id: 47, text: 'Sheffield' }
-                        ]
-                    },
-                    {
-                        text: 'Finland',
-                        children: [
-                            { id: 25, text: 'Helsinki' }
-                        ]
-                    },
-                    {
-                        text: 'France',
-                        children: [
-                            { id: 35, text: 'Marseille' },
-                            { id: 40, text: 'Paris' }
-                        ]
-                    },
-                    {
-                        text: 'Germany',
-                        children: [
-                            { id: 5, text: 'Berlin' },
-                            { id: 8, text: 'Bremen' },
-                            { id: 12, text: 'Cologne' },
-                            { id: 14, text: 'Dortmund' },
-                            { id: 15, text: 'Dresden' },
-                            { id: 17, text: 'Düsseldorf' },
-                            { id: 18, text: 'Essen' },
-                            { id: 19, text: 'Frankfurt' },
-                            { id: 23, text: 'Hamburg' },
-                            { id: 24, text: 'Hannover' },
-                            { id: 27, text: 'Leipzig' },
-                            { id: 37, text: 'Munich' },
-                            { id: 50, text: 'Stuttgart' }
-                        ]
-                    },
-                    {
-                        text: 'Greece',
-                        children: [
-                            { id: 3, text: 'Athens' }
-                        ]
-                    },
-                    {
-                        text: 'Hungary',
-                        children: [
-                            { id: 11, text: 'Budapest' }
-                        ]
-                    },
-                    {
-                        text: 'Ireland',
-                        children: [
-                            { id: 16, text: 'Dublin' }
-                        ]
-                    },
-                    {
-                        text: 'Italy',
-                        children: [
-                            { id: 20, text: 'Genoa' },
-                            { id: 36, text: 'Milan' },
-                            { id: 38, text: 'Naples' },
-                            { id: 39, text: 'Palermo' },
-                            { id: 44, text: 'Rome' },
-                            { id: 52, text: 'Turin' }
-                        ]
-                    },
-                    {
-                        text: 'Latvia',
-                        children: [
-                            { id: 43, text: 'Riga' }
-                        ]
-                    },
-                    {
-                        text: 'Lithuania',
-                        children: [
-                            { id: 55, text: 'Vilnius' }
-                        ]
-                    },
-                    {
-                        text: 'Netherlands',
-                        children: [
-                            { id: 1, text: 'Amsterdam' },
-                            { id: 45, text: 'Rotterdam' },
-                            { id: 51, text: 'The Hague' }
-                        ]
-                    },
-                    {
-                        text: 'Poland',
-                        children: [
-                            { id: 29, text: 'Łódź' },
-                            { id: 31, text: 'Kraków' },
-                            { id: 41, text: 'Poznań' },
-                            { id: 56, text: 'Warsaw' },
-                            { id: 57, text: 'Wrocław' }
-                        ]
-                    },
-                    {
-                        text: 'Portugal',
-                        children: [
-                            { id: 28, text: 'Lisbon' }
-                        ]
-                    },
-                    {
-                        text: 'Romania',
-                        children: [
-                            { id: 10, text: 'Bucharest' }
-                        ]
-                    },
-                    {
-                        text: 'Scotland',
-                        children: [
-                            { id: 21, text: 'Glasgow' }
-                        ]
-                    },
-                    {
-                        text: 'Spain',
-                        children: [
-                            { id: 4, text: 'Barcelona' },
-                            { id: 32, text: 'Madrid' },
-                            { id: 33, text: 'Málaga' },
-                            { id: 46, text: 'Seville' },
-                            { id: 53, text: 'Valencia' },
-                            { id: 59, text: 'Zaragoza' }
-                        ]
-                    },
-                    {
-                        text: 'Sweden',
-                        children: [
-                            { id: 22, text: 'Gothenburg' },
-                            { id: 49, text: 'Stockholm' }
-                        ]
-                    }
-                ];
+                // [ { text: 'Austria', children: [ { id: 54, text: 'Vienna' } ] }, ... ]
+                var citiesByCountry = $('#multiple-select-box').find('optgroup').map(function() {
+                    return {
+                        text: this.getAttribute('label'),
+                        children: $(this).find('option').map(function() {
+                            return {
+                                id: parseInt(this.getAttribute('value'), 10),
+                                text: this.textContent
+                            };
+                        }).get()
+                    };
+                }).get();
 
                 var transformText = $.fn.select3.transformText;
 
@@ -317,6 +96,10 @@
                     inputType: 'Email',
                     placeholder: 'Type or paste email addresses'
                 });
+
+                $('#single-select-box').select3();
+
+                $('#multiple-select-box').select3();
             });
         </script>
     </head>
@@ -333,5 +116,175 @@
         <p><span id="tags-input" class="select3-input"></span></p>
         <h1>Enter one or more email addresses</h1>
         <p><span id="emails-input" class="select3-input"></span></p>
+        <h1>Select a single city (initialized from a traditional &lt;select&gt; box)</h1>
+        <select id="single-select-box" class="select3-input">
+            <option>Amsterdam</option>
+            <option>Antwerp</option>
+            <option>Athens</option>
+            <option>Barcelona</option>
+            <option>Berlin</option>
+            <option>Birmingham</option>
+            <option>Bradford</option>
+            <option>Bremen</option>
+            <option>Brussels</option>
+            <option>Bucharest</option>
+            <option>Budapest</option>
+            <option>Cologne</option>
+            <option>Copenhagen</option>
+            <option>Dortmund</option>
+            <option>Dresden</option>
+            <option>Dublin</option>
+            <option>Düsseldorf</option>
+            <option>Essen</option>
+            <option>Frankfurt</option>
+            <option>Genoa</option>
+            <option>Glasgow</option>
+            <option>Gothenburg</option>
+            <option>Hamburg</option>
+            <option>Hannover</option>
+            <option>Helsinki</option>
+            <option>Leeds</option>
+            <option>Leipzig</option>
+            <option>Lisbon</option>
+            <option>Łódź</option>
+            <option>London</option>
+            <option>Kraków</option>
+            <option>Madrid</option>
+            <option>Málaga</option>
+            <option>Manchester</option>
+            <option>Marseille</option>
+            <option>Milan</option>
+            <option>Munich</option>
+            <option>Naples</option>
+            <option>Palermo</option>
+            <option>Paris</option>
+            <option>Poznań</option>
+            <option>Prague</option>
+            <option>Riga</option>
+            <option>Rome</option>
+            <option>Rotterdam</option>
+            <option>Seville</option>
+            <option>Sheffield</option>
+            <option>Sofia</option>
+            <option>Stockholm</option>
+            <option>Stuttgart</option>
+            <option>The Hague</option>
+            <option>Turin</option>
+            <option>Valencia</option>
+            <option>Vienna</option>
+            <option>Vilnius</option>
+            <option>Warsaw</option>
+            <option>Wrocław</option>
+            <option>Zagreb</option>
+            <option>Zaragoza</option>
+        </select>
+        <h1>Select multiple cities by country (initialized from a traditional &lt;select&gt; box)</h1>
+        <select id="multiple-select-box" class="select3-input" multiple>
+            <optgroup label="Austria">
+                <option value="54">Vienna</option>
+            </optgroup>
+            <optgroup label="Belgium">
+                <option value="2">Antwerp</option>
+                <option value="9">Brussels</option>
+            </optgroup>
+            <optgroup label="Bulgaria">
+                <option value="48">Sofia</option>
+            </optgroup>
+            <optgroup label="Croatia">
+                <option value="58">Zagreb</option>
+            </optgroup>
+            <optgroup label="Czech Republic">
+                <option value="42">Prague</option>
+            </optgroup>
+            <optgroup label="Denmark">
+                <option value="13">Copenhagen</option>
+            </optgroup>
+            <optgroup label="England">
+                <option value="6">Birmingham</option>
+                <option value="7">Bradford</option>
+                <option value="26">Leeds</option>
+                <option value="30">London</option>
+                <option value="34">Manchester</option>
+                <option value="47">Sheffield</option>
+            </optgroup>
+            <optgroup label="Finland">
+                <option value="25">Helsinki</option>
+            </optgroup>
+            <optgroup label="France">
+                <option value="35">Marseille</option>
+                <option value="40">Paris</option>
+            </optgroup>
+            <optgroup label="Germany">
+                <option value="5">Berlin</option>
+                <option value="8">Bremen</option>
+                <option value="12">Cologne</option>
+                <option value="14">Dortmund</option>
+                <option value="15">Dresden</option>
+                <option value="17">Düsseldorf</option>
+                <option value="18">Essen</option>
+                <option value="19">Frankfurt</option>
+                <option value="23">Hamburg</option>
+                <option value="24">Hannover</option>
+                <option value="27">Leipzig</option>
+                <option value="37">Munich</option>
+                <option value="50">Stuttgart</option>
+            </optgroup>
+            <optgroup label="Greece">
+                <option value="3">Athens</option>
+            </optgroup>
+            <optgroup label="Hungary">
+                <option value="11">Budapest</option>
+            </optgroup>
+            <optgroup label="Ireland">
+                <option value="16">Dublin</option>
+            </optgroup>
+            <optgroup label="Italy">
+                <option value="20">Genoa</option>
+                <option value="36">Milan</option>
+                <option value="38">Naples</option>
+                <option value="39">Palermo</option>
+                <option value="44">Rome</option>
+                <option value="52">Turin</option>
+            </optgroup>
+            <optgroup label="Latvia">
+                <option value="43">Riga</option>
+            </optgroup>
+            <optgroup label="Lithuania">
+                <option value="55">Vilnius</option>
+            </optgroup>
+            <optgroup label="Netherlands">
+                <option value="1">Amsterdam</option>
+                <option value="45">Rotterdam</option>
+                <option value="51">The Hague</option>
+            </optgroup>
+            <optgroup label="Poland">
+                <option value="29">Łódź</option>
+                <option value="31">Kraków</option>
+                <option value="41">Poznań</option>
+                <option value="56">Warsaw</option>
+                <option value="57">Wrocław</option>
+            </optgroup>
+            <optgroup label="Portugal">
+                <option value="28">Lisbon</option>
+            </optgroup>
+            <optgroup label="Romania">
+                <option value="10">Bucharest</option>
+            </optgroup>
+            <optgroup label="Scotland">
+                <option value="21">Glasgow</option>
+            </optgroup>
+            <optgroup label="Spain">
+                <option value="4">Barcelona</option>
+                <option value="32">Madrid</option>
+                <option value="33">Málaga</option>
+                <option value="46">Seville</option>
+                <option value="53">Valencia</option>
+                <option value="59">Zaragoza</option>
+            </optgroup>
+            <optgroup label="Sweden">
+                <option value="22">Gothenburg</option>
+                <option value="49">Stockholm</option>
+            </optgroup>
+        </select>
     </body>
 </html>

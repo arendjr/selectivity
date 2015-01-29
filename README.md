@@ -128,11 +128,6 @@ The following is an (incomplete) list of features which Select3 currently lacks:
 
 ### Notable differences
 
- * With Select2, you can take a &lt;select&gt; or &lt;input&gt; element in the DOM and initialize
-   your Select2 instance based on that. Instead, to position a Select3 instance in the DOM you
-   attach it to an empty &lt;div&gt; element and all options you want pass to Select3 are specified
-   through the constructor method. An additional module is planned for Select3 that will simulate
-   the Select2 approach, but this is not a high priority right now.
  * Select2 has explicit support for tags through the `tags` option. With Select3, tagging is also
    supported, but works through the regular `items` option.
 
@@ -179,6 +174,7 @@ Module         | Description
 **single**     | Implements the 'Single' input type. If you only want to use Select3 with multiple values, you can leave this out.
 **templates**  | Default templates to use with Select3. If you provide your own templates, you may want to skip this.
 **tokenizer**  | Default tokenizer implementation. This module adds support for the `tokenSeparators` option which is used by the default tokenizer. Support for tokenizers themselves is already included in the "multiple" module, so you can omit this module if you don't want to use any tokenizers or want to specify your own tokenizer.
+**traditional**| This module allows you to convert an HTML5 &lt;select&gt; form element into a Select3 instance. The items will be initialized from the &lt;option&gt; and &lt;optgroup&gt; elements.
 
 Note that the build system automatically resolves dependencies between modules, so you never need to
 explicitly specify that you want to include the base module, as it will be pulled in by others.
@@ -225,8 +221,6 @@ Select3 is in an early stage of development. The following items are on the shor
  * Implement automatic pagination.
  * Add module that will easily perform AJAX requests instead of doing this through the query()
    function.
- * Add module that can transform an existing &lt;select&gt; input in the DOM into a Select3
-   instance.
 
 Contributing
 ------------
