@@ -147,7 +147,7 @@ $.extend(Select3Dropdown.prototype, {
         this.highlightedResult = item;
         this.loadMoreHighlighted = false;
 
-        this.select3.triggerEvent('select3-highlight', { item: item, value: item.id });
+        this.select3.triggerEvent('select3-highlight', { item: item, id: item.id });
     },
 
     /**
