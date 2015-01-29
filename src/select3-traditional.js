@@ -44,7 +44,7 @@ function replaceSelectElement($el, options) {
 
     options.items = $el.children('option,optgroup').map(mapOptions).get();
 
-    options.placeholder = options.placeholder || $el.data('data-placeholder') || '';
+    options.placeholder = options.placeholder || $el.data('placeholder') || '';
 
     var $div = $('<div>');
     $div.attr({
