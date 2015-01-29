@@ -134,9 +134,9 @@ jQuery builds without Sizzle.</li>
             <td>Set to <code>true</code> to allow the selection to be cleared. This option only
                 applies to single-value inputs.<br>
                 <br>
-                If you have used a &lt;select&gt; element to initialize the Select3 instance, this
-                option defaults to <code>true</code> unless the element has a <code>required</code>
-                attribute.</td>
+                If you have used a <code>&lt;select&gt;</code> element to initialize the Select3
+                instance, this option defaults to <code>true</code> unless the element has a
+                <code>required</code> attribute.</td>
         </tr>
         <tr>
             <td>backspace<wbr>Highlights<wbr>BeforeDelete</td>
@@ -214,9 +214,9 @@ jQuery builds without Sizzle.</li>
                 If <code>items</code> are specified, all items are expected to be available locally
                 nd all selection operations operate on this local array only. If omitted, items are
                 not available locally, and the <code>query</code> option should be provided to fetch
-                data. If you have used a &lt;select&gt; element to initialize the Select3 instance,
-                its &lt;option&gt; and <code>&lt;optgroup&gt;</code> elements are used to initialize
-                the items array.</td>
+                data. If you have used a <code>&lt;select&gt;</code> element to initialize the
+                Select3 instance, its <code>&lt;option&gt;</code> and <code>&lt;optgroup&gt;</code>
+                elements are used to initialize the items array.</td>
         </tr>
         <tr>
             <td>matcher</td>
@@ -234,9 +234,9 @@ jQuery builds without Sizzle.</li>
             <td>May be set to <code>true</code> as short-hand for specifying
                 <code>inputType: 'Multiple'</code>.<br>
                 <br>
-                If you have used a &lt;select&gt; element to initialize the Select3 instance, this
-                option is set to <code>true</code> when the element has a <code>multiple</code>
-                attribute.</td>
+                If you have used a <code>&lt;select&gt;</code> element to initialize the Select3
+                instance, this option is set to <code>true</code> when the element has a
+                <code>multiple</code> attribute.</td>
         </tr>
         <tr>
             <td>placeholder</td>
@@ -331,7 +331,12 @@ jQuery builds without Sizzle.</li>
 <h1>
 <a id="methods" class="anchor" href="#methods" aria-hidden="true"><span class="octicon octicon-link"></span></a>Methods</h1>
 
-<h2><code>add</code> <i>(multiple-value inputs only)</i></h2>
+<p>Methods are invoked by passing the name of the method, followed by any arguments to the
+    <code>select3()</code> function. Example:<p>
+
+<p><code>$(selector).select3('data', { id: 1, text: 'Amsterdam' })</code></p>
+
+<h2>add <small>(multiple-value inputs only)</small></h2>
 
 <p>Adds an item to the selection.</p>
 
@@ -353,11 +358,11 @@ jQuery builds without Sizzle.</li>
     </tbody>
 </table>
 
-<h2><code>close</code></h2>
+<h2>close</h2>
 
 <p>Closes the dropdown.</p>
 
-<h2><code>data</code></h2>
+<h2>data</h2>
 
 <p>Sets or gets the data of the selection. If no argument is given, the current data is returned.
     Otherwise, the data is set to the argument given.</p>
@@ -394,15 +399,15 @@ jQuery builds without Sizzle.</li>
     </tbody>
 </table>
 
-<h2><code>focus</code></h2>
+<h2>focus</h2>
 
 <p>Focuses the search input.</p>
 
-<h2><code>open</code></h2>
+<h2>open</h2>
 
 <p>Opens the dropdown.</p>
 
-<h2><code>remove</code> <i>(multiple-value inputs only)</i></h2>
+<h2>remove <small>(multiple-value inputs only)</small></h2>
 
 <p>Removes an item from the selection.</p>
 
@@ -424,7 +429,7 @@ jQuery builds without Sizzle.</li>
     </tbody>
 </table>
 
-<h2><code>value</code> / <code>val</code></h2>
+<h2>value / val</h2>
 
 <p>Sets or gets the value of the selection. If no argument is given, the current value is returned.
     Otherwise, the value is set to the argument given.</p>
