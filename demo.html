@@ -286,6 +286,13 @@
                     searchInputPlaceholder: 'Type to search a city'
                 });
 
+                $('#single-input-without-search').select3({
+                    allowClear: true,
+                    items: cities,
+                    placeholder: 'No city selected',
+                    showSearchInputInDropdown: false
+                });
+
                 $('#single-input-with-labels').select3({
                     allowClear: true,
                     items: citiesByCountry,
@@ -316,6 +323,8 @@
     <body>
         <h1>Select a single city</h1>
         <p><span id="single-input" class="select3-input"></span></p>
+        <h1>Select a single city without a search field</h1>
+        <p><span id="single-input-without-search" class="select3-input"></span></p>
         <h1>Select a single city by country</h1>
         <p><span id="single-input-with-labels" class="select3-input"></span></p>
         <h1>Select multiple cities</h1>

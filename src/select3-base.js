@@ -407,19 +407,24 @@ $.extend(Select3.prototype, {
      * If an items array has been passed with the options to the Select3 instance, a local search
      * will be performed among those items. Otherwise, the query function specified in the options
      * will be used to perform the search. If neither is defined, nothing happens.
+     *
+     * @param term Optional term to search for. If ommitted, the value of the search input element
+     *             is used as term.
      */
-    search: function() {
-
-        if (!this.$searchInput) {
-            return;
-        }
+    search: function(term) {
 
         var self = this;
         function setResults(results, resultOptions) {
             self._setResults(results, $.extend({ term: term }, resultOptions));
         }
 
-        var term = this.$searchInput.val();
+        if ($.type(term) === 'undefined') {
+            if (!this.$searchInput) {
+                return;
+            }
+
+            term = this.$searchInput.val();
+        }
 
         if (self.items) {
             term = Select3.transformText(term);

@@ -119,6 +119,33 @@ exports.testNoData = DomUtil.createDomTest(
     }
 );
 
+exports.testNoSearchInput = DomUtil.createDomTest(
+    ['single', 'dropdown', 'templates'],
+    function(test, $input, $) {
+        $input.select3({
+            items: [
+                { id: 1, text: 'Amsterdam' },
+                { id: 2, text: 'Antwerp' },
+                { id: 3, text: 'Athens' }
+            ],
+            showSearchInputInDropdown: false
+        });
+
+        test.equal($input.select3('val'), null);
+
+        $input.select3('open');
+
+        var $dropdown = $('.select3-dropdown');
+        test.equal($dropdown.length, 1);
+        test.equal($dropdown.find('.select3-result-item').length, 3);
+        test.equal($dropdown.find('.select3-result-item').eq(0).text(), 'Amsterdam');
+
+        $dropdown.find('.select3-result-item').eq(0).click();
+
+        test.equal($input.select3('val'), 1);
+    }
+);
+
 exports.testSelectNestedItemByKeyboard = DomUtil.createDomTest(
     ['single', 'dropdown', 'keyboard', 'templates'],
     function(test, $input, $) {
