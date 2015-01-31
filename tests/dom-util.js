@@ -6,15 +6,24 @@ module.exports = {
      * Wrapper to easily create unit tests that test Select3 within a DOM environment.
      *
      * @param modules Array of Select3 modules to test, e.g. ['base', 'single'].
+     * @param options Optional options object. May contain the following property:
+     *                indexResource - Filename of the index resource (default: 'testcase.html').
      * @param fn The actual test function. Receives two arguments:
      *           test - The nodeunit test instance.
      *           $input - jQuery container for the '#select3-input' element defined in
      *                    resources/testcase.html.
      */
-    createDomTest: function(modules, fn) {
+    createDomTest: function(modules, options, fn) {
+
+        if (options instanceof Function) {
+            fn = options;
+            options = {};
+        }
+
+        var indexResource = options.indexResource || 'testcase.html';
 
         return function(test) {
-            require('jsdom').env('tests/resources/testcase.html', function(errors, window) {
+            require('jsdom').env('tests/resources/' + indexResource, function(errors, window) {
                 test.strictEqual(errors, null);
 
                 test.doesNotThrow(function() {
@@ -35,7 +44,8 @@ module.exports = {
                         'multiple': ['base'],
                         'single': ['base'],
                         'templates': ['base', 'locale'],
-                        'tokenizer': ['base', 'multiple']
+                        'tokenizer': ['base', 'multiple'],
+                        'traditional': ['base']
                     };
 
                     var orderedModules = [];

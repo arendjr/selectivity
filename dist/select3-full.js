@@ -3779,17 +3779,28 @@ function listener(select3, options) {
         }
 
         select3.$el = replaceSelectElement($el, options);
-        select3.$el.select3 = select3;
+        select3.$el[0].select3 = select3;
     }
 }
 
 function replaceSelectElement($el, options) {
 
+    var value = (options.multiple ? [] : null);
+
     var mapOptions = function() {
         var $this = $(this);
         if ($this.is('option')) {
+            var id = $this.attr('value') || $this.text();
+            if ($this.prop('selected')) {
+                if (options.multiple) {
+                    value.push(id);
+                } else {
+                    value = id;
+                }
+            }
+
             return {
-                id: $this.attr('value') || $this.text(),
+                id: id,
                 text: $this.attr('label') || $this.text()
             };
         } else {
@@ -3806,6 +3817,8 @@ function replaceSelectElement($el, options) {
     options.items = $el.children('option,optgroup').map(mapOptions).get();
 
     options.placeholder = options.placeholder || $el.data('placeholder') || '';
+
+    options.value = value;
 
     var $div = $('<div>');
     $div.attr({
