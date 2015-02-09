@@ -36,15 +36,33 @@
                     };
                 }).get();
 
+                // [{ id: 'Amsterdam', timezone: '+01:00' }, ...]
+                var citiesWithTimezone = $('#multiple-select-box').find('option').map(function() {
+                    return {
+                        id: this.textContent,
+                        timezone: this.getAttribute('data-timezone')
+                    };
+                }).get();
+
                 var transformText = $.fn.select3.transformText;
 
                 // example query function that returns at most 10 cities matching the given text
                 function queryFunction(query) {
+                    var select3 = query.select3;
                     var term = query.term;
                     var offset = query.offset || 0;
-                    var results = cities.filter(function(city) {
-                        return transformText(city).indexOf(transformText(term)) > -1;
-                    });
+                    var results;
+                    if (select3.$el.attr('id') === 'single-input-with-submenus') {
+                        var timezone = select3.dropdown.highlightedResult.id;
+                        results = citiesWithTimezone.filter(function(city) {
+                            return transformText(city.id).indexOf(transformText(term)) > -1 &&
+                                   city.timezone === timezone;
+                        }).map(function(city) { return city.id });
+                    } else {
+                        results = cities.filter(function(city) {
+                            return transformText(city).indexOf(transformText(term)) > -1;
+                        });
+                    }
                     results.sort(function(a, b) {
                         a = transformText(a);
                         b = transformText(b);
@@ -84,10 +102,11 @@
                 });
 
                 var submenu = {
-                    query: queryFunction
+                    query: queryFunction,
+                    showSearchInput: true
                 };
 
-                $('#single-input-with-subdropdowns').select3({
+                $('#single-input-with-submenus').select3({
                     allowClear: true,
                     items: [
                         { text: 'Western European Time Zone', id: '+00:00', submenu: submenu },
@@ -143,7 +162,7 @@
         <h2>Select a single city by country</h2>
         <p><span id="single-input-with-labels" class="select3-input"></span></p>
         <h2>Select a single city by timezone</h2>
-        <p><span id="single-input-with-subdropdowns" class="select3-input"></span></p>
+        <p><span id="single-input-with-submenus" class="select3-input"></span></p>
         <h2>Select multiple cities</h2>
         <p><span id="multiple-input" class="select3-input"></span></p>
         <h2>Select one or more tags</h2>
