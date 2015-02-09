@@ -158,11 +158,14 @@ Select3.Templates = {
      * @param options Options object containing the following properties:
      *                id - Identifier for the item.
      *                text - Text label which the user sees.
+     *                submenu - Truthy if the result item has a menu with subresults.
      */
     resultItem: function(options) {
         return (
             '<div class="select3-result-item" data-item-id="' + escape(options.id) + '">' +
                 escape(options.text) +
+                (options.submenu ? '<i class="select3-submenu-icon fa fa-chevron-right"></i>'
+                                 : '') +
             '</div>'
         );
     },
