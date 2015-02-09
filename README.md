@@ -116,20 +116,21 @@ the following command:
 
 The following modules are available:
 
-Module         | Description
----------------|------------
-**backdrop**   | This module provides the backdrop feature which is used by the dropdown. The backdrop is used to guarantee that when the dropdown is open and the user clicks outside the Select3 area, the dropdown will close. If you omit this module, a simpler implementation is used which will still attempt to close the dropdown when the user clicks outside the area, but which may fail when the user clicks on some element that has a custom click handler which prevents the event from bubbling.
-**base**       | The Select3 base module which is pulled in automatically into every build.
-**diacritics** | Diacritics support. This will make sure that `"Łódź"` will match when the user searches for `"Lodz"`, for example. However, if you always query a server when searching for results, you may want to solve matching of diacritics server-side, in which case this module can be ommitted.
-**dropdown**   | Module that implements the dropdown. You will most likely want to include this, unless you only want to use Select3 without any dropdown or you provide a completely custom implementation instead.
-**email**      | Implements the 'Email' input type. This is a special case of the 'Multiple' input type with no dropdown and a specialized tokenizer for recognizing email addresses (including pasted content from address books).
-**keyboard**   | Provides keyboard support for navigating through the dropdown. If you don't use a dropdown, or are only targeting mobile, you may want to leave this module out.
-**locale**     | Localizable content pulled in by the default templates. You may or may not decide to use these with your own templates.
-**multiple**   | Implements the 'Multiple' input type. If you only want to use Select3 with single values, you can leave this out.
-**single**     | Implements the 'Single' input type. If you only want to use Select3 with multiple values, you can leave this out.
-**templates**  | Default templates to use with Select3. If you provide your own templates, you may want to skip this.
-**tokenizer**  | Default tokenizer implementation. This module adds support for the `tokenSeparators` option which is used by the default tokenizer. Support for tokenizers themselves is already included in the "multiple" module, so you can omit this module if you don't want to use any tokenizers or want to specify your own tokenizer.
-**traditional**| This module allows you to convert an HTML5 &lt;select&gt; form element into a Select3 instance. The items will be initialized from the &lt;option&gt; and &lt;optgroup&gt; elements.
+Module          | Description
+----------------|------------
+**backdrop**    | This module provides the backdrop feature which is used by the dropdown. The backdrop is used to guarantee that when the dropdown is open and the user clicks outside the Select3 area, the dropdown will close. If you omit this module, a simpler implementation is used which will still attempt to close the dropdown when the user clicks outside the area, but which may fail when the user clicks on some element that has a custom click handler which prevents the event from bubbling.
+**base**        | The Select3 base module which is pulled in automatically into every build.
+**diacritics**  | Diacritics support. This will make sure that `"Łódź"` will match when the user searches for `"Lodz"`, for example. However, if you always query a server when searching for results, you may want to solve matching of diacritics server-side, in which case this module can be ommitted.
+**dropdown**    | Module that implements the dropdown. You will most likely want to include this, unless you only want to use Select3 without any dropdown or you provide a completely custom implementation instead.
+**email**       | Implements the 'Email' input type. This is a special case of the 'Multiple' input type with no dropdown and a specialized tokenizer for recognizing email addresses (including pasted content from address books).
+**keyboard**    | Provides keyboard support for navigating through the dropdown. If you don't use a dropdown, or are only targeting mobile, you may want to leave this module out.
+**locale**      | Localizable content pulled in by the default templates. You may or may not decide to use these with your own templates.
+**multiple**    | Implements the 'Multiple' input type. If you only want to use Select3 with single values, you can leave this out.
+**single**      | Implements the 'Single' input type. If you only want to use Select3 with multiple values, you can leave this out.
+**submenu**     | Extends the default dropdown so that multiple levels of submenus can be created.
+**templates**   | Default templates to use with Select3. If you provide your own templates, you may want to skip this.
+**tokenizer**   | Default tokenizer implementation. This module adds support for the `tokenSeparators` option which is used by the default tokenizer. Support for tokenizers themselves is already included in the "multiple" module, so you can omit this module if you don't want to use any tokenizers or want to specify your own tokenizer.
+**traditional** | This module allows you to convert an HTML5 &lt;select&gt; form element into a Select3 instance. The items will be initialized from the &lt;option&gt; and &lt;optgroup&gt; elements.
 
 Note that the build system automatically resolves dependencies between modules, so you never need to
 explicitly specify that you want to include the base module, as it will be pulled in by others.
