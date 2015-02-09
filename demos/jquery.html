@@ -36,15 +36,33 @@
                     };
                 }).get();
 
+                // [{ id: 'Amsterdam', timezone: '+01:00' }, ...]
+                var citiesWithTimezone = $('#multiple-select-box').find('option').map(function() {
+                    return {
+                        id: this.textContent,
+                        timezone: this.getAttribute('data-timezone')
+                    };
+                }).get();
+
                 var transformText = $.fn.select3.transformText;
 
                 // example query function that returns at most 10 cities matching the given text
                 function queryFunction(query) {
+                    var select3 = query.select3;
                     var term = query.term;
                     var offset = query.offset || 0;
-                    var results = cities.filter(function(city) {
-                        return transformText(city).indexOf(transformText(term)) > -1;
-                    });
+                    var results;
+                    if (select3.$el.attr('id') === 'single-input-with-submenus') {
+                        var timezone = select3.dropdown.highlightedResult.id;
+                        results = citiesWithTimezone.filter(function(city) {
+                            return transformText(city.id).indexOf(transformText(term)) > -1 &&
+                                   city.timezone === timezone;
+                        }).map(function(city) { return city.id });
+                    } else {
+                        results = cities.filter(function(city) {
+                            return transformText(city).indexOf(transformText(term)) > -1;
+                        });
+                    }
                     results.sort(function(a, b) {
                         a = transformText(a);
                         b = transformText(b);
@@ -81,6 +99,22 @@
                     items: citiesByCountry,
                     placeholder: 'No city selected',
                     searchInputPlaceholder: 'Type to search a city'
+                });
+
+                var submenu = {
+                    query: queryFunction,
+                    showSearchInput: true
+                };
+
+                $('#single-input-with-submenus').select3({
+                    allowClear: true,
+                    items: [
+                        { text: 'Western European Time Zone', id: '+00:00', submenu: submenu },
+                        { text: 'Central European Time Zone', id: '+01:00', submenu: submenu },
+                        { text: 'Eastern European Time Zone', id: '+02:00', submenu: submenu }
+                    ],
+                    placeholder: 'No city selected',
+                    showSearchInputInDropdown: false
                 });
 
                 $('#multiple-input').select3({
@@ -127,6 +161,8 @@
         <p><span id="single-input-without-search" class="select3-input"></span></p>
         <h2>Select a single city by country</h2>
         <p><span id="single-input-with-labels" class="select3-input"></span></p>
+        <h2>Select a single city by timezone</h2>
+        <p><span id="single-input-with-submenus" class="select3-input"></span></p>
         <h2>Select multiple cities</h2>
         <p><span id="multiple-input" class="select3-input"></span></p>
         <h2>Select one or more tags</h2>
@@ -198,109 +234,109 @@
         <h2>Select multiple cities by country (initialized from a traditional &lt;select&gt; box)</h2>
         <select id="multiple-select-box" class="select3-input" data-placeholder="Type to search cities" multiple>
             <optgroup label="Austria">
-                <option value="54">Vienna</option>
+                <option value="54" data-timezone="+01:00">Vienna</option>
             </optgroup>
             <optgroup label="Belgium">
-                <option value="2">Antwerp</option>
-                <option value="9">Brussels</option>
+                <option value="2" data-timezone="+01:00">Antwerp</option>
+                <option value="9" data-timezone="+01:00">Brussels</option>
             </optgroup>
             <optgroup label="Bulgaria">
-                <option value="48">Sofia</option>
+                <option value="48" data-timezone="+02:00">Sofia</option>
             </optgroup>
             <optgroup label="Croatia">
-                <option value="58">Zagreb</option>
+                <option value="58" data-timezone="+01:00">Zagreb</option>
             </optgroup>
             <optgroup label="Czech Republic">
-                <option value="42">Prague</option>
+                <option value="42" data-timezone="+01:00">Prague</option>
             </optgroup>
             <optgroup label="Denmark">
-                <option value="13">Copenhagen</option>
+                <option value="13" data-timezone="+01:00">Copenhagen</option>
             </optgroup>
             <optgroup label="England">
-                <option value="6">Birmingham</option>
-                <option value="7">Bradford</option>
-                <option value="26">Leeds</option>
-                <option value="30">London</option>
-                <option value="34">Manchester</option>
-                <option value="47">Sheffield</option>
+                <option value="6" data-timezone="+00:00">Birmingham</option>
+                <option value="7" data-timezone="+00:00">Bradford</option>
+                <option value="26" data-timezone="+00:00">Leeds</option>
+                <option value="30" data-timezone="+00:00">London</option>
+                <option value="34" data-timezone="+00:00">Manchester</option>
+                <option value="47" data-timezone="+00:00">Sheffield</option>
             </optgroup>
             <optgroup label="Finland">
-                <option value="25">Helsinki</option>
+                <option value="25" data-timezone="+02:00">Helsinki</option>
             </optgroup>
             <optgroup label="France">
-                <option value="35">Marseille</option>
-                <option value="40">Paris</option>
+                <option value="35" data-timezone="+01:00">Marseille</option>
+                <option value="40" data-timezone="+01:00">Paris</option>
             </optgroup>
             <optgroup label="Germany">
-                <option value="5">Berlin</option>
-                <option value="8">Bremen</option>
-                <option value="12">Cologne</option>
-                <option value="14">Dortmund</option>
-                <option value="15">Dresden</option>
-                <option value="17">Düsseldorf</option>
-                <option value="18">Essen</option>
-                <option value="19">Frankfurt</option>
-                <option value="23">Hamburg</option>
-                <option value="24">Hannover</option>
-                <option value="27">Leipzig</option>
-                <option value="37">Munich</option>
-                <option value="50">Stuttgart</option>
+                <option value="5" data-timezone="+01:00">Berlin</option>
+                <option value="8" data-timezone="+01:00">Bremen</option>
+                <option value="12" data-timezone="+01:00">Cologne</option>
+                <option value="14" data-timezone="+01:00">Dortmund</option>
+                <option value="15" data-timezone="+01:00">Dresden</option>
+                <option value="17" data-timezone="+01:00">Düsseldorf</option>
+                <option value="18" data-timezone="+01:00">Essen</option>
+                <option value="19" data-timezone="+01:00">Frankfurt</option>
+                <option value="23" data-timezone="+01:00">Hamburg</option>
+                <option value="24" data-timezone="+01:00">Hannover</option>
+                <option value="27" data-timezone="+01:00">Leipzig</option>
+                <option value="37" data-timezone="+01:00">Munich</option>
+                <option value="50" data-timezone="+01:00">Stuttgart</option>
             </optgroup>
             <optgroup label="Greece">
-                <option value="3">Athens</option>
+                <option value="3" data-timezone="+02:00">Athens</option>
             </optgroup>
             <optgroup label="Hungary">
-                <option value="11">Budapest</option>
+                <option value="11" data-timezone="+01:00">Budapest</option>
             </optgroup>
             <optgroup label="Ireland">
-                <option value="16">Dublin</option>
+                <option value="16" data-timezone="+00:00">Dublin</option>
             </optgroup>
             <optgroup label="Italy">
-                <option value="20">Genoa</option>
-                <option value="36">Milan</option>
-                <option value="38">Naples</option>
-                <option value="39">Palermo</option>
-                <option value="44">Rome</option>
-                <option value="52">Turin</option>
+                <option value="20" data-timezone="+01:00">Genoa</option>
+                <option value="36" data-timezone="+01:00">Milan</option>
+                <option value="38" data-timezone="+01:00">Naples</option>
+                <option value="39" data-timezone="+01:00">Palermo</option>
+                <option value="44" data-timezone="+01:00">Rome</option>
+                <option value="52" data-timezone="+01:00">Turin</option>
             </optgroup>
             <optgroup label="Latvia">
-                <option value="43">Riga</option>
+                <option value="43" data-timezone="+02:00">Riga</option>
             </optgroup>
             <optgroup label="Lithuania">
-                <option value="55">Vilnius</option>
+                <option value="55" data-timezone="+02:00">Vilnius</option>
             </optgroup>
             <optgroup label="Netherlands">
-                <option value="1">Amsterdam</option>
-                <option value="45">Rotterdam</option>
-                <option value="51">The Hague</option>
+                <option value="1" data-timezone="+01:00">Amsterdam</option>
+                <option value="45" data-timezone="+01:00">Rotterdam</option>
+                <option value="51" data-timezone="+01:00">The Hague</option>
             </optgroup>
             <optgroup label="Poland">
-                <option value="29">Łódź</option>
-                <option value="31">Kraków</option>
-                <option value="41">Poznań</option>
-                <option value="56">Warsaw</option>
-                <option value="57">Wrocław</option>
+                <option value="29" data-timezone="+01:00">Łódź</option>
+                <option value="31" data-timezone="+01:00">Kraków</option>
+                <option value="41" data-timezone="+01:00">Poznań</option>
+                <option value="56" data-timezone="+01:00">Warsaw</option>
+                <option value="57" data-timezone="+01:00">Wrocław</option>
             </optgroup>
             <optgroup label="Portugal">
-                <option value="28">Lisbon</option>
+                <option value="28" data-timezone="+00:00">Lisbon</option>
             </optgroup>
             <optgroup label="Romania">
-                <option value="10">Bucharest</option>
+                <option value="10" data-timezone="+02:00">Bucharest</option>
             </optgroup>
             <optgroup label="Scotland">
-                <option value="21">Glasgow</option>
+                <option value="21" data-timezone="+00:00">Glasgow</option>
             </optgroup>
             <optgroup label="Spain">
-                <option value="4">Barcelona</option>
-                <option value="32">Madrid</option>
-                <option value="33">Málaga</option>
-                <option value="46">Seville</option>
-                <option value="53">Valencia</option>
-                <option value="59">Zaragoza</option>
+                <option value="4" data-timezone="+00:00">Barcelona</option>
+                <option value="32" data-timezone="+00:00">Madrid</option>
+                <option value="33" data-timezone="+00:00">Málaga</option>
+                <option value="46" data-timezone="+00:00">Seville</option>
+                <option value="53" data-timezone="+00:00">Valencia</option>
+                <option value="59" data-timezone="+00:00">Zaragoza</option>
             </optgroup>
             <optgroup label="Sweden">
-                <option value="22">Gothenburg</option>
-                <option value="49">Stockholm</option>
+                <option value="22" data-timezone="+01:00">Gothenburg</option>
+                <option value="49" data-timezone="+01:00">Stockholm</option>
             </optgroup>
         </select>
         <script>

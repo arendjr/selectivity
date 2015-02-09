@@ -145,6 +145,11 @@ function Select3(options) {
     this.matcher = Select3.matcher;
 
     /**
+     * Options passed to the Select3 instance or set through setOptions().
+     */
+    this.options = {};
+
+    /**
      * Results from a search query.
      */
     this.results = [];
@@ -370,6 +375,7 @@ $.extend(Select3.prototype, {
                 }
             }.bind(this),
             offset: this.results.length,
+            select3: this,
             term: this.term,
         });
     },
@@ -390,6 +396,7 @@ $.extend(Select3.prototype, {
                 var Dropdown = this.options.dropdown || Select3.Dropdown;
                 if (Dropdown) {
                     this.dropdown = new Dropdown({
+                        position: this.options.positionDropdown,
                         select3: this,
                         showSearchInput: options.showSearchInput
                     });
@@ -456,6 +463,7 @@ $.extend(Select3.prototype, {
                     }
                 },
                 offset: 0,
+                select3: self,
                 term: term,
             });
         }
@@ -516,6 +524,7 @@ $.extend(Select3.prototype, {
      *                                             items is the same as for passing local items.
      *                        offset - This property is only used for pagination and indicates how
      *                                 many results should be skipped when returning more results.
+     *                        select3 - The Select3 instance the query function is used on.
      *                        term - The search term the user is searching for. Unlike with the
      *                               matcher function, the term has not been processed using
      *                               Select3.transformText().
@@ -534,28 +543,28 @@ $.extend(Select3.prototype, {
             listener(this, options);
         }.bind(this));
 
-        this.options = options;
+        $.extend(this.options, options);
 
         var allowedTypes = $.extend({
             closeOnSelect: 'boolean',
-            dropdown: 'function',
-            initSelection: 'function',
-            matcher: 'function',
+            dropdown: 'function|null',
+            initSelection: 'function|null',
+            matcher: 'function|null',
             placeholder: 'string',
-            positionDropdown: 'function',
-            query: 'function',
+            positionDropdown: 'function|null',
+            query: 'function|null',
             searchInputListeners: 'array'
         }, options.allowedTypes);
 
         $.each(options, function(key, value) {
             var type = allowedTypes[key];
-            if (type && $.type(value) !== type) {
+            if (type && !type.split('|').some(function(type) { return $.type(value) === type; })) {
                 throw new Error(key + ' must be of type ' + type);
             }
 
             switch (key) {
             case 'items':
-                this.items = Select3.processItems(value);
+                this.items = (value === null ? value : Select3.processItems(value));
                 break;
 
             case 'matcher':

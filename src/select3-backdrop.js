@@ -27,7 +27,7 @@ $.extend(Select3Dropdown.prototype, {
      */
     removeCloseHandler: function() {
 
-        if (this._$backdrop) {
+        if (this._$backdrop && !this.parentMenu) {
             this._$backdrop.remove();
             this._$backdrop = null;
         }
@@ -38,17 +38,24 @@ $.extend(Select3Dropdown.prototype, {
      */
     setupCloseHandler: function() {
 
-        var $backdrop = $('<div>').addClass('.select3-backdrop').css({
-            background: 'transparent',
-            bottom: 0,
-            left: 0,
-            position: 'fixed',
-            right: 0,
-            top: 0,
-            zIndex: BACKDROP_Z_INDEX
-        }).on('click', this.close.bind(this));
+        var $backdrop;
+        if (this.parentMenu) {
+            $backdrop = this.parentMenu._$backdrop;
+        } else {
+            $backdrop = $('<div>').addClass('.select3-backdrop').css({
+                background: 'transparent',
+                bottom: 0,
+                left: 0,
+                position: 'fixed',
+                right: 0,
+                top: 0,
+                zIndex: BACKDROP_Z_INDEX
+            });
 
-        $('body').append($backdrop);
+            $('body').append($backdrop);
+        }
+
+        $backdrop.on('click', this.close.bind(this));
 
         this._$backdrop = $backdrop;
     }
