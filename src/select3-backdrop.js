@@ -50,7 +50,7 @@ $.extend(Select3Dropdown.prototype, {
                 right: 0,
                 top: 0,
                 zIndex: BACKDROP_Z_INDEX
-            })
+            });
 
             $('body').append($backdrop);
         }
