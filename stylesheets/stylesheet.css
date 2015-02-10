@@ -345,6 +345,10 @@ Full-Width Styles
   background: #4484c7;
 }
 
+.nowrap {
+  white-space: nowrap;
+}
+
 
 /*******************************************************************************
 Examples
@@ -434,6 +438,10 @@ Small Device Styles
   .example-code {
     float: none;
     width: 90%;
+  }
+
+  .nowrap {
+    white-space: normal;
   }
 
 }
