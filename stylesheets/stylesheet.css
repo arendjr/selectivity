@@ -371,6 +371,11 @@ Examples
     color: #080;
 }
 
+.api-example {
+    width: 80%;
+    white-space: pre;
+}
+
 
 /*******************************************************************************
 Small Device Styles
