@@ -363,12 +363,12 @@ Examples
 }
 
 .comment {
-    color: #ccc;
+    color: #999;
     font-style: italic;
 }
 
 .string {
-    color: #0f0;
+    color: #080;
 }
 
 

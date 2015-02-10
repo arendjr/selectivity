@@ -162,6 +162,11 @@ input[type="text"].select3-multiple-input:focus {
     padding: 7px;
 }
 
+.select3-submenu-icon {
+    position: absolute;
+    right: 4px;
+}
+
 .select3-result-children .select3-result-item {
     padding-left: 17px;
 }
