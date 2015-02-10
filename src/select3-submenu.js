@@ -198,7 +198,7 @@ $.extend(Select3Submenu.prototype, {
             if (Dropdown) {
                 this.submenu = new Dropdown({
                     parentMenu: this,
-                    position: function($el) {
+                    position: item.submenu.positionDropdown || function($el) {
                         var offset = $item.offset();
                         var width = $dropdownEl.width();
                         $el.css({

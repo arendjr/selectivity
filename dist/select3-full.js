@@ -121,7 +121,7 @@ $.extend(Select3Dropdown.prototype, {
                 right: 0,
                 top: 0,
                 zIndex: BACKDROP_Z_INDEX
-            })
+            });
 
             $('body').append($backdrop);
         }
@@ -3676,7 +3676,7 @@ $.extend(Select3Submenu.prototype, {
             if (Dropdown) {
                 this.submenu = new Dropdown({
                     parentMenu: this,
-                    position: function($el, $selectEl) {
+                    position: item.submenu.positionDropdown || function($el) {
                         var offset = $item.offset();
                         var width = $dropdownEl.width();
                         $el.css({
