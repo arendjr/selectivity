@@ -362,6 +362,15 @@ Examples
     width: 50%;
 }
 
+.comment {
+    color: #ccc;
+    font-style: italic;
+}
+
+.string {
+    color: #0f0;
+}
+
 
 /*******************************************************************************
 Small Device Styles

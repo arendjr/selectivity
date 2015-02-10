@@ -5,14 +5,17 @@ _dereq_('./select3-backdrop');
 _dereq_('./select3-diacritics');
 _dereq_('./select3-dropdown');
 _dereq_('./select3-email');
+_dereq_('./select3-keyboard');
 _dereq_('./select3-multiple');
 _dereq_('./select3-single');
+_dereq_('./select3-submenu');
 _dereq_('./select3-templates');
 _dereq_('./select3-tokenizer');
+_dereq_('./select3-traditional');
 
 module.exports = _dereq_('./select3-base');
 
-},{"./select3-backdrop":3,"./select3-base":4,"./select3-diacritics":5,"./select3-dropdown":6,"./select3-email":7,"./select3-multiple":9,"./select3-single":10,"./select3-templates":11,"./select3-tokenizer":12}],2:[function(_dereq_,module,exports){
+},{"./select3-backdrop":3,"./select3-base":4,"./select3-diacritics":5,"./select3-dropdown":6,"./select3-email":7,"./select3-keyboard":8,"./select3-multiple":10,"./select3-single":11,"./select3-submenu":12,"./select3-templates":13,"./select3-tokenizer":14,"./select3-traditional":15}],2:[function(_dereq_,module,exports){
 'use strict';
 
 /**
@@ -95,8 +98,10 @@ $.extend(Select3Dropdown.prototype, {
      */
     removeCloseHandler: function() {
 
-        this._$backdrop.remove();
-        this._$backdrop = null;
+        if (this._$backdrop && !this.parentMenu) {
+            this._$backdrop.remove();
+            this._$backdrop = null;
+        }
     },
 
     /**
@@ -104,17 +109,24 @@ $.extend(Select3Dropdown.prototype, {
      */
     setupCloseHandler: function() {
 
-        var $backdrop = $('<div>').addClass('.select3-backdrop').css({
-            background: 'transparent',
-            bottom: 0,
-            left: 0,
-            position: 'fixed',
-            right: 0,
-            top: 0,
-            zIndex: BACKDROP_Z_INDEX
-        }).on('click', this.close.bind(this));
+        var $backdrop;
+        if (this.parentMenu) {
+            $backdrop = this.parentMenu._$backdrop;
+        } else {
+            $backdrop = $('<div>').addClass('.select3-backdrop').css({
+                background: 'transparent',
+                bottom: 0,
+                left: 0,
+                position: 'fixed',
+                right: 0,
+                top: 0,
+                zIndex: BACKDROP_Z_INDEX
+            });
 
-        $('body').append($backdrop);
+            $('body').append($backdrop);
+        }
+
+        $backdrop.on('click', this.close.bind(this));
 
         this._$backdrop = $backdrop;
     }
@@ -170,9 +182,18 @@ function select3(methodName, options) {
             }
         } else {
             if ($.type(methodName) === 'string') {
-                throw new Error('Cannot call method on element without Select3 instance');
+                if (methodName !== 'destroy') {
+                    throw new Error('Cannot call method on element without Select3 instance');
+                }
             } else {
                 options = $.extend({}, methodName, { element: this });
+
+                // this is a one-time hack to facilitate the select3-traditional module, because
+                // the module is not able to hook this early into creation of the instance
+                var $this = $(this);
+                if ($this.is('select') && $this.prop('multiple')) {
+                    options.multiple = true;
+                }
 
                 var InputTypes = Select3.InputTypes;
                 var InputType = (options.inputType || (options.multiple ? 'Multiple' : 'Single'));
@@ -217,7 +238,14 @@ function Select3(options) {
     /**
      * jQuery container for the element to which this instance is attached.
      */
-    this.$el = $(options.element).on('select3-close', this._closed.bind(this));
+    this.$el = $(options.element);
+
+    /**
+     * jQuery container for the search input.
+     *
+     * May be null as long as there is no visible search input. It is set by initSearchInput().
+     */
+    this.$searchInput = null;
 
     /**
      * Reference to the currently open dropdown.
@@ -253,9 +281,21 @@ function Select3(options) {
     this.matcher = Select3.matcher;
 
     /**
+     * Options passed to the Select3 instance or set through setOptions().
+     */
+    this.options = {};
+
+    /**
      * Results from a search query.
      */
     this.results = [];
+
+    /**
+     * Array of search input listeners.
+     *
+     * Custom listeners can be specified in the options object.
+     */
+    this.searchInputListeners = Select3.SearchInputListeners;
 
     /**
      * Mapping of templates.
@@ -278,6 +318,8 @@ function Select3(options) {
     }
 
     this._events = [];
+
+    this.$el.on('select3-close', this._closed.bind(this));
 
     this.delegateEvents();
 }
@@ -400,6 +442,16 @@ $.extend(Select3.prototype, {
     },
 
     /**
+     * Applies focus to the input.
+     */
+    focus: function() {
+
+        if (this.$searchInput) {
+            this.$searchInput.focus();
+        }
+    },
+
+    /**
      * Returns the correct item for a given ID.
      *
      * @param id The ID to get the item for.
@@ -416,6 +468,27 @@ $.extend(Select3.prototype, {
         } else {
             return { id: id, text: '' + id };
         }
+    },
+
+    /**
+     * Initializes the search input element.
+     *
+     * Sets the $searchInput property, invokes all search input listeners and attaches the default
+     * action of searching when something is typed.
+     */
+    initSearchInput: function($input) {
+
+        this.$searchInput = $input;
+
+        this.searchInputListeners.forEach(function(listener) {
+            listener(this, $input);
+        }.bind(this));
+
+        $input.on('keyup', function(event) {
+            if (!event.isDefaultPrevented()) {
+                this.search();
+            }
+        }.bind(this));
     },
 
     /**
@@ -438,6 +511,7 @@ $.extend(Select3.prototype, {
                 }
             }.bind(this),
             offset: this.results.length,
+            select3: this,
             term: this.term,
         });
     },
@@ -454,13 +528,11 @@ $.extend(Select3.prototype, {
         options = options || {};
 
         if (!this.dropdown) {
-            var event = $.Event('select3-opening');
-            this.$el.trigger(event);
-
-            if (!event.isDefaultPrevented()) {
+            if (this.triggerEvent('select3-opening')) {
                 var Dropdown = this.options.dropdown || Select3.Dropdown;
                 if (Dropdown) {
                     this.dropdown = new Dropdown({
+                        position: this.options.positionDropdown,
                         select3: this,
                         showSearchInput: options.showSearchInput
                     });
@@ -482,19 +554,28 @@ $.extend(Select3.prototype, {
     },
 
     /**
-     * Searches for results based on a search term entered by the user.
+     * Searches for results based on the term entered in the search input.
      *
      * If an items array has been passed with the options to the Select3 instance, a local search
      * will be performed among those items. Otherwise, the query function specified in the options
      * will be used to perform the search. If neither is defined, nothing happens.
      *
-     * @param term The search term the user is searching for.
+     * @param term Optional term to search for. If ommitted, the value of the search input element
+     *             is used as term.
      */
     search: function(term) {
 
         var self = this;
         function setResults(results, resultOptions) {
             self._setResults(results, $.extend({ term: term }, resultOptions));
+        }
+
+        if ($.type(term) === 'undefined') {
+            if (!this.$searchInput) {
+                return;
+            }
+
+            term = this.$searchInput.val();
         }
 
         if (self.items) {
@@ -518,6 +599,7 @@ $.extend(Select3.prototype, {
                     }
                 },
                 offset: 0,
+                select3: self,
                 term: term,
             });
         }
@@ -559,7 +641,7 @@ $.extend(Select3.prototype, {
      *                          in the returned item and not to modify the children of the item
      *                          argument).
      *                placeholder - Placeholder text to display when the element has no focus and
-     *                              selected items.
+     *                              no selected items.
      *                positionDropdown - Function to position the dropdown. Receives two arguments:
      *                                   $dropdownEl - The element to be positioned.
      *                                   $selectEl - The element of the Select3 instance, that you
@@ -578,9 +660,12 @@ $.extend(Select3.prototype, {
      *                                             items is the same as for passing local items.
      *                        offset - This property is only used for pagination and indicates how
      *                                 many results should be skipped when returning more results.
+     *                        select3 - The Select3 instance the query function is used on.
      *                        term - The search term the user is searching for. Unlike with the
      *                               matcher function, the term has not been processed using
      *                               Select3.transformText().
+     *                searchInputListeners - Array of search input listeners. By default, the global
+     *                                       array Select3.SearchInputListeners is used.
      *                showDropdown - Set to false if you don't want to use any dropdown (you can
      *                               still open it programmatically using open()).
      *                templates - Object with instance-specific templates to override the global
@@ -590,35 +675,44 @@ $.extend(Select3.prototype, {
 
         options = options || {};
 
-        this.options = options;
+        Select3.OptionListeners.forEach(function(listener) {
+            listener(this, options);
+        }.bind(this));
+
+        $.extend(this.options, options);
 
         var allowedTypes = $.extend({
             closeOnSelect: 'boolean',
-            dropdown: 'function',
-            initSelection: 'function',
-            matcher: 'function',
+            dropdown: 'function|null',
+            initSelection: 'function|null',
+            matcher: 'function|null',
             placeholder: 'string',
-            positionDropdown: 'function',
-            query: 'function'
+            positionDropdown: 'function|null',
+            query: 'function|null',
+            searchInputListeners: 'array'
         }, options.allowedTypes);
 
         $.each(options, function(key, value) {
             var type = allowedTypes[key];
-            if (type && $.type(value) !== type) {
+            if (type && !type.split('|').some(function(type) { return $.type(value) === type; })) {
                 throw new Error(key + ' must be of type ' + type);
             }
 
             switch (key) {
             case 'items':
-                this.items = Select3.processItems(value);
+                this.items = (value === null ? value : Select3.processItems(value));
                 break;
 
             case 'matcher':
                 this.matcher = value;
                 break;
 
+            case 'searchInputListeners':
+                this.searchInputListeners = value;
+                break;
+
             case 'templates':
-                this.templates = $.extend({}, this.templates, value);
+                $.extend(this.templates, value);
                 break;
             }
         }.bind(this));
@@ -665,10 +759,15 @@ $.extend(Select3.prototype, {
      * Triggers an event on the instance's element.
      *
      * @param Optional event data to be added to the event object.
+     *
+     * @return Whether the default action of the event may be executed, ie. returns false if
+     *         preventDefault() has been called.
      */
     triggerEvent: function(eventName, data) {
 
-        this.$el.trigger($.Event(eventName, data || {}));
+        var event = $.Event(eventName, data || {});
+        this.$el.trigger(event);
+        return !event.isDefaultPrevented();
     },
 
     /**
@@ -836,6 +935,8 @@ $.extend(Select3.prototype, {
 
 /**
  * Dropdown class to use for displaying dropdowns.
+ *
+ * The default implementation of a dropdown is defined in the select3-dropdown module.
  */
 Select3.Dropdown = null;
 
@@ -845,18 +946,29 @@ Select3.Dropdown = null;
 Select3.InputTypes = {};
 
 /**
- * Mapping of keys.
+ * Array of option listeners.
+ *
+ * Option listeners are invoked when setOptions() is called. Every listener receives two arguments:
+ *
+ * select3 - The Select3 instance.
+ * options - The options that are about to be set. The listener may modify this options object.
+ *
+ * An example of an option listener is the select3-traditional module.
  */
-Select3.Keys = {
-    BACKSPACE: 8,
-    DELETE: 46,
-    DOWN_ARROW: 40,
-    ENTER: 13,
-    ESCAPE: 27,
-    LEFT_ARROW: 37,
-    RIGHT_ARROW: 39,
-    UP_ARROW: 38
-};
+Select3.OptionListeners = [];
+
+/**
+ * Array of search input listeners.
+ *
+ * Search input listeners are invoked when initSearchInput() is called (typically right after the
+ * search input is created). Every listener receives two arguments:
+ *
+ * select3 - The Select3 instance.
+ * $input - jQuery container with the search input.
+ *
+ * An example of a search input listener is the select3-keyboard module.
+ */
+Select3.SearchInputListeners = [];
 
 /**
  * Mapping with templates to use for rendering select boxes and dropdowns. See select3-templates.js
@@ -1955,6 +2067,11 @@ function Select3Dropdown(options) {
     this.loadMoreHighlighted = false;
 
     /**
+     * Options passed to the dropdown constructor.
+     */
+    this.options = options;
+
+    /**
      * The results displayed in the dropdown.
      */
     this.results = [];
@@ -1976,16 +2093,15 @@ function Select3Dropdown(options) {
     this._suppressMouseWheel();
 
     if (options.showSearchInput) {
-        var $input = this.$('.select3-search-input');
-        $input.focus();
-        this._$input = $input;
+        select3.initSearchInput(this.$('.select3-search-input'));
+        select3.focus();
     }
 
     this._delegateEvents();
 
     this.showLoading();
 
-    select3.$el.trigger('select3-open');
+    this.triggerOpen();
 }
 
 /**
@@ -2010,18 +2126,6 @@ $.extend(Select3Dropdown.prototype, {
     },
 
     /**
-     * Emulates a click on the highlighted item.
-     */
-    clickHighlight: function() {
-
-        if (this.highlightedResult) {
-            this._selectItem(this.highlightedResult.id);
-        } else if (this.loadMoreHighlighted) {
-            this._loadMoreClicked();
-        }
-    },
-
-    /**
      * Closes the dropdown.
      */
     close: function() {
@@ -2030,8 +2134,9 @@ $.extend(Select3Dropdown.prototype, {
 
         this.removeCloseHandler();
 
-        this.select3.$el.off('select3-selecting', this._closeProxy)
-                        .trigger('select3-close');
+        this.select3.$el.off('select3-selecting', this._closeProxy);
+
+        this.triggerClose();
     },
 
     /**
@@ -2042,8 +2147,6 @@ $.extend(Select3Dropdown.prototype, {
     events: {
         'click .select3-load-more': '_loadMoreClicked',
         'click .select3-result-item': '_resultClicked',
-        'keydown .select3-search-input': '_keyHeld',
-        'keyup .select3-search-input': '_keyReleased',
         'mouseenter .select3-load-more': 'highlightLoadMore',
         'mouseenter .select3-result-item': '_resultHovered'
     },
@@ -2065,7 +2168,7 @@ $.extend(Select3Dropdown.prototype, {
         this.highlightedResult = item;
         this.loadMoreHighlighted = false;
 
-        this.select3.triggerEvent('select3-highlight', { item: item, value: item.id });
+        this.select3.triggerEvent('select3-highlight', { item: item, id: item.id });
     },
 
     /**
@@ -2152,15 +2255,13 @@ $.extend(Select3Dropdown.prototype, {
      */
     position: function() {
 
-        var select3 = this.select3;
-
-        var positionDropdown = select3.options.positionDropdown || function($el, $selectEl) {
+        var positionDropdown = this.options.position || function($el, $selectEl) {
             var offset = $selectEl.offset();
             $el.css({ left: offset.left + 'px', top: offset.top + $selectEl.height() + 'px' })
                .width($selectEl.width());
         };
 
-        positionDropdown(this.$el, select3.$el);
+        positionDropdown(this.$el, this.select3.$el);
     },
 
     /**
@@ -2169,6 +2270,35 @@ $.extend(Select3Dropdown.prototype, {
     removeCloseHandler: function() {
 
         $('body').off('click', this._closeProxy);
+    },
+
+    /**
+     * Selects the highlighted item.
+     */
+    selectHighlight: function() {
+
+        if (this.highlightedResult) {
+            this.selectItem(this.highlightedResult.id);
+        } else if (this.loadMoreHighlighted) {
+            this._loadMoreClicked();
+        }
+    },
+
+    /**
+     * Selects the item with the given ID.
+     *
+     * @param id ID of the item to select.
+     */
+    selectItem: function(id) {
+
+        var select3 = this.select3;
+        var item = Select3.findNestedById(select3.results, id);
+        if (item) {
+            var options = { id: id, item: item };
+            if (select3.triggerEvent('select3-selecting', options)) {
+                select3.triggerEvent('select3-selected', options);
+            }
+        }
     },
 
     /**
@@ -2238,7 +2368,8 @@ $.extend(Select3Dropdown.prototype, {
         var $resultsContainer = this.$('.select3-results-container');
         $resultsContainer.html(
             results.length ? this._renderItems(results)
-                           : select3.template('noResults', { term: options.term })
+                           : options.hasMore ? ''
+                                             : select3.template('noResults', { term: options.term })
         );
 
         if (options.hasMore) {
@@ -2249,6 +2380,22 @@ $.extend(Select3Dropdown.prototype, {
         this.results = results;
 
         this._highlightFirstItem(results);
+    },
+
+    /**
+     * Triggers the 'select3-close' event.
+     */
+    triggerClose: function() {
+
+        this.select3.$el.trigger('select3-close');
+    },
+
+    /**
+     * Triggers the 'select3-open' event.
+     */
+    triggerOpen: function() {
+
+        this.select3.$el.trigger('select3-open');
     },
 
     /**
@@ -2302,39 +2449,6 @@ $.extend(Select3Dropdown.prototype, {
     /**
      * @private
      */
-    _keyHeld: function(event) {
-
-        if (event.keyCode === Select3.Keys.DOWN_ARROW) {
-            this.highlightNext();
-        } else if (event.keyCode === Select3.Keys.UP_ARROW) {
-            this.highlightPrevious();
-        }
-    },
-
-    /**
-     * @private
-     */
-    _keyReleased: function(event) {
-
-        if (event.keyCode === Select3.Keys.ENTER && !event.ctrlKey) {
-            this.clickHighlight();
-            this._$input.val('');
-        } else if (event.keyCode === Select3.Keys.ESCAPE) {
-            this.close();
-        } else if (event.keyCode === Select3.Keys.DOWN_ARROW ||
-                   event.keyCode === Select3.Keys.UP_ARROW) {
-            // handled in _keyHeld() because the response feels faster and it works with repeated
-            // events if the user holds the key for a longer period
-        } else {
-            this.select3.search(this._$input.val());
-        }
-
-        return false;
-    },
-
-    /**
-     * @private
-     */
     _loadMoreClicked: function() {
 
         this.select3.loadMore();
@@ -2364,7 +2478,7 @@ $.extend(Select3Dropdown.prototype, {
      */
     _resultClicked: function(event) {
 
-        this._selectItem(this.select3._getItemId(event));
+        this.selectItem(this.select3._getItemId(event));
 
         return false;
     },
@@ -2401,25 +2515,6 @@ $.extend(Select3Dropdown.prototype, {
 
         if (rect.top < containerRect.top || rect.bottom > containerRect.bottom) {
             el.scrollIntoView(options.alignToTop);
-        }
-    },
-
-    /**
-     * @private
-     */
-    _selectItem: function(id) {
-
-        var select3 = this.select3;
-        var item = Select3.findNestedById(select3.results, id);
-        if (item) {
-            var options = { id: id, item: item };
-            var event = $.Event('select3-selecting', options);
-            select3.$el.trigger(event);
-
-            if (!event.isDefaultPrevented()) {
-                event = $.Event('select3-selected', options);
-                select3.$el.trigger(event);
-            }
         }
     },
 
@@ -2631,7 +2726,72 @@ Select3.InputTypes.Email = EmailSelect3;
 
 module.exports = EmailSelect3;
 
-},{"./select3-base":4,"./select3-multiple":9,"jquery":"jquery"}],8:[function(_dereq_,module,exports){
+},{"./select3-base":4,"./select3-multiple":10,"jquery":"jquery"}],8:[function(_dereq_,module,exports){
+'use strict';
+
+var Select3 = _dereq_('./select3-base');
+
+var KEY_DOWN_ARROW = 40;
+var KEY_ENTER = 13;
+var KEY_ESCAPE = 27;
+var KEY_UP_ARROW = 38;
+
+/**
+ * Search input listener providing keyboard support for navigating the dropdown.
+ */
+function listener(select3, $input) {
+
+    function keyHeld(event) {
+
+        var dropdown = select3.dropdown;
+        if (dropdown) {
+            if (event.keyCode === KEY_DOWN_ARROW) {
+                dropdown.highlightNext();
+            } else if (event.keyCode === KEY_UP_ARROW) {
+                dropdown.highlightPrevious();
+            }
+        }
+    }
+
+    function keyReleased(event) {
+
+        function open() {
+            if (select3.options.showDropdown !== false) {
+                select3.open();
+            }
+        }
+
+        var dropdown = select3.dropdown;
+        if (event.keyCode === KEY_ENTER && !event.ctrlKey) {
+            if (dropdown) {
+                dropdown.selectHighlight();
+            } else if (select3.options.showDropdown !== false) {
+                open();
+            }
+
+            event.preventDefault();
+        } else if (event.keyCode === KEY_ESCAPE) {
+            select3.close();
+
+            event.preventDefault();
+        } else if (event.keyCode === KEY_DOWN_ARROW || event.keyCode === KEY_UP_ARROW) {
+            // handled in keyHeld() because the response feels faster and it works with repeated
+            // events if the user holds the key for a longer period
+            // still, we issue an open() call here in case the dropdown was not yet open...
+            open();
+
+            event.preventDefault();
+        } else {
+            open();
+        }
+    }
+
+    $input.on('keydown', keyHeld).on('keyup', keyReleased);
+}
+
+Select3.SearchInputListeners.push(listener);
+
+},{"./select3-base":4}],9:[function(_dereq_,module,exports){
 'use strict';
 
 var escape = _dereq_('./escape');
@@ -2652,12 +2812,16 @@ Select3.Locale = {
 
 };
 
-},{"./escape":2,"./select3-base":4}],9:[function(_dereq_,module,exports){
+},{"./escape":2,"./select3-base":4}],10:[function(_dereq_,module,exports){
 'use strict';
 
 var $ = window.jQuery || window.Zepto;
 
 var Select3 = _dereq_('./select3-base');
+
+var KEY_BACKSPACE = 8;
+var KEY_DELETE = 46;
+var KEY_ENTER = 13;
 
 /**
  * MultipleSelect3 Constructor.
@@ -2671,9 +2835,9 @@ function MultipleSelect3(options) {
 
     this.$el.html(this.template('multipleSelectInput'));
 
-    this._$input = this.$('.select3-multiple-input:not(.select3-width-detector)');
-
     this._highlightedItemId = null;
+
+    this.initSearchInput(this.$('.select3-multiple-input:not(.select3-width-detector)'));
 
     this._rerenderSelection();
 }
@@ -2722,6 +2886,8 @@ $.extend(MultipleSelect3.prototype, {
                 this.triggerChange({ added: item });
             }
         }
+
+        this.$searchInput.val('');
     },
 
     /**
@@ -2751,14 +2917,6 @@ $.extend(MultipleSelect3.prototype, {
         return results.filter(function(item) {
             return !Select3.findById(this._data, item.id);
         }, this);
-    },
-
-    /**
-     * Applies focus to the input.
-     */
-    focus: function() {
-
-        this._$input.focus();
     },
 
     /**
@@ -2817,6 +2975,28 @@ $.extend(MultipleSelect3.prototype, {
 
         if (id === this._highlightedItemId) {
             this._highlightedItemId = null;
+        }
+    },
+
+    /**
+     * @inherit
+     */
+    search: function() {
+
+        var term = this.$searchInput.val();
+
+        if (this.options.tokenizer) {
+            term = this.options.tokenizer(term, this._data, this.add.bind(this), this.options);
+
+            if ($.type(term) === 'string') {
+                this.$searchInput.val(term);
+            } else {
+                term = '';
+            }
+        }
+
+        if (this.dropdown) {
+            Select3.prototype.search.apply(this);
         }
     },
 
@@ -2945,15 +3125,13 @@ $.extend(MultipleSelect3.prototype, {
      */
     _createToken: function() {
 
-        var term = this._$input.val();
+        var term = this.$searchInput.val();
 
         if (term && this.options.createTokenItem) {
             var item = this.options.createTokenItem(term);
             if (item) {
                 this.add(item);
             }
-
-            this._$input.val('');
         }
     },
 
@@ -3004,19 +3182,9 @@ $.extend(MultipleSelect3.prototype, {
     /**
      * @private
      */
-    _keyHeld: function(event) {
+    _keyHeld: function() {
 
-        this._originalValue = this._$input.val();
-
-        if (event.keyCode === Select3.Keys.DOWN_ARROW) {
-            if (this.dropdown) {
-                this.dropdown.highlightNext();
-            }
-        } else if (event.keyCode === Select3.Keys.UP_ARROW) {
-            if (this.dropdown) {
-                this.dropdown.highlightPrevious();
-            }
-        }
+        this._originalValue = this.$searchInput.val();
     },
 
     /**
@@ -3024,38 +3192,17 @@ $.extend(MultipleSelect3.prototype, {
      */
     _keyReleased: function(event) {
 
-        var dropdown = this.dropdown, inputHadText = !!this._originalValue;
+        var inputHadText = !!this._originalValue;
 
-        if (event.keyCode === Select3.Keys.ENTER && !event.ctrlKey) {
-            if (dropdown) {
-                dropdown.clickHighlight();
-                this._$input.val('');
-            } else if (this.options.showDropdown !== false) {
-                this.open();
-            } else if (this.options.createTokenItem) {
+        if (event.keyCode === KEY_ENTER && !event.ctrlKey) {
+            if (this.options.createTokenItem) {
                 this._createToken();
             }
-        } else if (event.keyCode === Select3.Keys.BACKSPACE && !inputHadText) {
+        } else if (event.keyCode === KEY_BACKSPACE && !inputHadText) {
             this._backspacePressed();
-        } else if (event.keyCode === Select3.Keys.DELETE && !inputHadText) {
+        } else if (event.keyCode === KEY_DELETE && !inputHadText) {
             this._deletePressed();
-        } else if (event.keyCode === Select3.Keys.ESCAPE) {
-            this.close();
-        } else if (event.keyCode === Select3.Keys.DOWN_ARROW ||
-                   event.keyCode === Select3.Keys.UP_ARROW) {
-            // handled in _keyHeld() because the response feels faster and it works with repeated
-            // events if the user holds the key for a longer period
-            // still, we issue an _open() call here in case the dropdown was not yet open...
-            this._open();
-        } else {
-            this._open();
-
-            this._search();
         }
-
-        this._updateInputWidth();
-
-        return false;
     },
 
     /**
@@ -3075,7 +3222,7 @@ $.extend(MultipleSelect3.prototype, {
 
         event = event || {};
 
-        var $input = this._$input;
+        var $input = this.$searchInput;
         if (event.added) {
             $input.before(this.template('multipleSelectedItem', $.extend({
                 highlighted: (event.added.id === this._highlightedItemId)
@@ -3138,31 +3285,9 @@ $.extend(MultipleSelect3.prototype, {
     /**
      * @private
      */
-    _search: function() {
-
-        var term = this._$input.val();
-
-        if (this.options.tokenizer) {
-            term = this.options.tokenizer(term, this._data, this.add.bind(this), this.options);
-
-            if ($.type(term) === 'string') {
-                this._$input.val(term);
-            } else {
-                term = '';
-            }
-        }
-
-        if (this.dropdown) {
-            this.search(term);
-        }
-    },
-
-    /**
-     * @private
-     */
     _updateInputWidth: function() {
 
-        var $input = this._$input, $widthDetector = this.$('.select3-width-detector');
+        var $input = this.$searchInput, $widthDetector = this.$('.select3-width-detector');
         $widthDetector.text($input.val() || !this._data.length && this.options.placeholder || '');
         $input.width($widthDetector.width() + 20);
 
@@ -3175,7 +3300,7 @@ Select3.InputTypes.Multiple = MultipleSelect3;
 
 module.exports = MultipleSelect3;
 
-},{"./select3-base":4,"jquery":"jquery"}],10:[function(_dereq_,module,exports){
+},{"./select3-base":4,"jquery":"jquery"}],11:[function(_dereq_,module,exports){
 'use strict';
 
 var $ = window.jQuery || window.Zepto;
@@ -3215,14 +3340,6 @@ $.extend(SingleSelect3.prototype, {
         'click': '_clicked',
         'click .select3-single-selected-item-remove': '_itemRemoveClicked',
         'select3-selected': '_resultSelected'
-    },
-
-    /**
-     * Applies focus to the input.
-     */
-    focus: function() {
-
-        // TODO
     },
 
     /**
@@ -3308,12 +3425,8 @@ $.extend(SingleSelect3.prototype, {
 
         if (this.dropdown) {
             this.close();
-        } else {
-            this.focus();
-
-            if (this.options.showDropdown !== false) {
-                this.open({ showSearchInput: this.options.showSearchInputInDropdown !== false });
-            }
+        } else if (this.options.showDropdown !== false) {
+            this.open({ showSearchInput: this.options.showSearchInputInDropdown !== false });
         }
 
         return false;
@@ -3362,7 +3475,240 @@ Select3.InputTypes.Single = SingleSelect3;
 
 module.exports = SingleSelect3;
 
-},{"./select3-base":4,"jquery":"jquery"}],11:[function(_dereq_,module,exports){
+},{"./select3-base":4,"jquery":"jquery"}],12:[function(_dereq_,module,exports){
+'use strict';
+
+var $ = window.jQuery || window.Zepto;
+
+var Select3 = _dereq_('./select3-base');
+var Select3Dropdown = _dereq_('./select3-dropdown');
+
+/**
+ * Extended dropdown that supports submenus.
+ */
+function Select3Submenu(options) {
+
+    /**
+     * Optional parent dropdown menu from which this dropdown was opened.
+     */
+    this.parentMenu = options.parentMenu;
+
+    Select3Dropdown.call(this, options);
+
+    this._closeSubmenuTimeout = 0;
+}
+
+Select3Submenu.prototype = Object.create(Select3Dropdown.prototype);
+Select3Submenu.prototype.constructor = Select3Submenu;
+
+$.extend(Select3Submenu.prototype, {
+
+    /**
+     * @inherit
+     */
+    close: function() {
+
+        if (this.options.restoreOptions) {
+            this.select3.setOptions(this.options.restoreOptions);
+        }
+
+        if (this.submenu) {
+            this.submenu.close();
+        }
+
+        Select3Dropdown.prototype.close.call(this);
+
+        if (this.parentMenu) {
+            this.parentMenu.submenu = null;
+            this.parentMenu = null;
+        }
+    },
+
+    /**
+     * @inherit
+     */
+    highlight: function(item) {
+
+        if (this.submenu) {
+            if (!this.highlightedResult || this.highlightedResult.id !== item.id) {
+                if (this._closeSubmenuTimeout) {
+                    clearTimeout(this._closeSubmenuTimeout);
+                }
+                this._closeSubmenuTimeout = setTimeout(
+                    this._closeSubmenuAndHighlight.bind(this, item), 100
+                );
+                return;
+            }
+        } else {
+            if (this.parentMenu && this.parentMenu._closeSubmenuTimeout) {
+                clearTimeout(this.parentMenu._closeSubmenuTimeout);
+                this.parentMenu._closeSubmenuTimeout = 0;
+            }
+        }
+
+        this._doHighlight(item);
+    },
+
+    /**
+     * @inherit
+     */
+    highlightNext: function() {
+
+        if (this.submenu) {
+            this.submenu.highlightNext();
+        } else {
+            Select3Dropdown.prototype.highlightNext.call(this);
+        }
+    },
+
+    /**
+     * @inherit
+     */
+    highlightPrevious: function() {
+
+        if (this.submenu) {
+            this.submenu.highlightPrevious();
+        } else {
+            Select3Dropdown.prototype.highlightPrevious.call(this);
+        }
+    },
+
+    /**
+     * @inherit
+     */
+    selectHighlight: function() {
+
+        if (this.submenu) {
+            this.submenu.selectHighlight();
+        } else {
+            Select3Dropdown.prototype.selectHighlight.call(this);
+        }
+    },
+
+    /**
+     * @inherit
+     */
+    selectItem: function(id) {
+
+        var select3 = this.select3;
+        var item = Select3.findNestedById(select3.results, id);
+        if (item && !item.submenu) {
+            var options = { id: id, item: item };
+            if (select3.triggerEvent('select3-selecting', options)) {
+                select3.triggerEvent('select3-selected', options);
+            }
+        }
+    },
+
+    /**
+     * @inherit
+     */
+    showMoreResults: function(results, options) {
+
+        if (this.submenu) {
+            this.submenu.showMoreResults(results, options);
+        } else {
+            Select3Dropdown.prototype.showMoreResults.call(this, results, options);
+        }
+    },
+
+    /**
+     * @inherit
+     */
+    showResults: function(results, options) {
+
+        if (this.submenu) {
+            this.submenu.showResults(results, options);
+        } else {
+            Select3Dropdown.prototype.showResults.call(this, results, options);
+        }
+    },
+
+    /**
+     * @inherit
+     */
+    triggerClose: function() {
+
+        if (this.parentMenu) {
+            this.select3.$el.trigger('select3-close-submenu');
+        } else {
+            Select3Dropdown.prototype.triggerClose.call(this);
+        }
+    },
+
+    /**
+     * @inherit
+     */
+    triggerOpen: function() {
+
+        if (this.parentMenu) {
+            this.select3.$el.trigger('select3-open-submenu');
+        } else {
+            Select3Dropdown.prototype.triggerOpen.call(this);
+        }
+    },
+
+    /**
+     * @private
+     */
+    _closeSubmenuAndHighlight: function(item) {
+
+        if (this.submenu) {
+            this.submenu.close();
+        }
+
+        this._doHighlight(item);
+    },
+
+    /**
+     * @private
+     */
+    _doHighlight: function(item) {
+
+        Select3Dropdown.prototype.highlight.call(this, item);
+
+        if (item.submenu && !this.submenu) {
+            var quotedId = Select3.quoteCssAttr(item.id);
+            var $item = this.$('.select3-result-item[data-item-id=' + quotedId + ']');
+            var $dropdownEl = this.$el;
+
+            var Dropdown = this.select3.options.dropdown || Select3.Dropdown;
+            if (Dropdown) {
+                this.submenu = new Dropdown({
+                    parentMenu: this,
+                    position: item.submenu.positionDropdown || function($el) {
+                        var offset = $item.offset();
+                        var width = $dropdownEl.width();
+                        $el.css({
+                            left: offset.left + width + 'px',
+                            top: offset.top + 'px'
+                        }).width(width);
+                    },
+                    restoreOptions: {
+                        items: this.select3.items,
+                        query: this.select3.options.query || null
+                    },
+                    select3: this.select3,
+                    showSearchInput: item.submenu.showSearchInput
+                });
+
+                this.select3.setOptions({
+                    items: item.submenu.items || null,
+                    query: item.submenu.query || null
+                });
+
+                this.select3.search('');
+            }
+        }
+    }
+
+});
+
+Select3.Dropdown = Select3Submenu;
+
+module.exports = Select3Submenu;
+
+},{"./select3-base":4,"./select3-dropdown":6,"jquery":"jquery"}],13:[function(_dereq_,module,exports){
 'use strict';
 
 var escape = _dereq_('./escape');
@@ -3523,11 +3869,14 @@ Select3.Templates = {
      * @param options Options object containing the following properties:
      *                id - Identifier for the item.
      *                text - Text label which the user sees.
+     *                submenu - Truthy if the result item has a menu with subresults.
      */
     resultItem: function(options) {
         return (
             '<div class="select3-result-item" data-item-id="' + escape(options.id) + '">' +
                 escape(options.text) +
+                (options.submenu ? '<i class="select3-submenu-icon fa fa-chevron-right"></i>'
+                                 : '') +
             '</div>'
         );
     },
@@ -3607,7 +3956,7 @@ Select3.Templates = {
 
 };
 
-},{"./escape":2,"./select3-base":4,"./select3-locale":8}],12:[function(_dereq_,module,exports){
+},{"./escape":2,"./select3-base":4,"./select3-locale":9}],14:[function(_dereq_,module,exports){
 'use strict';
 
 var $ = window.jQuery || window.Zepto;
@@ -3683,5 +4032,81 @@ Select3Multiple.prototype.setOptions = function(options) {
     setOptions.call(this, options);
 };
 
-},{"./select3-base":4,"./select3-multiple":9,"jquery":"jquery"}]},{},[1])(1)
+},{"./select3-base":4,"./select3-multiple":10,"jquery":"jquery"}],15:[function(_dereq_,module,exports){
+'use strict';
+
+var $ = window.jQuery || window.Zepto;
+
+var Select3 = _dereq_('./select3-base');
+
+/**
+ * Option listener providing support for converting traditional <select> boxes into Select3
+ * instances.
+ */
+function listener(select3, options) {
+
+    var $el = select3.$el;
+    if ($el.is('select')) {
+        if ($el.attr('autofocus')) {
+            setTimeout(function() {
+                select3.focus();
+            }, 1);
+        }
+
+        select3.$el = replaceSelectElement($el, options);
+        select3.$el[0].select3 = select3;
+    }
+}
+
+function replaceSelectElement($el, options) {
+
+    var value = (options.multiple ? [] : null);
+
+    var mapOptions = function() {
+        var $this = $(this);
+        if ($this.is('option')) {
+            var id = $this.attr('value') || $this.text();
+            if ($this.prop('selected')) {
+                if (options.multiple) {
+                    value.push(id);
+                } else {
+                    value = id;
+                }
+            }
+
+            return {
+                id: id,
+                text: $this.attr('label') || $this.text()
+            };
+        } else {
+            return {
+                text: $this.attr('label'),
+                children: $this.children('option,optgroup').map(mapOptions).get()
+            };
+        }
+    };
+
+    options.allowClear = options.hasOwnProperty('allowClear') ? options.allowClear
+                                                              : !$el.prop('required');
+
+    options.items = $el.children('option,optgroup').map(mapOptions).get();
+
+    options.placeholder = options.placeholder || $el.data('placeholder') || '';
+
+    options.value = value;
+
+    var $div = $('<div>');
+    $div.attr({
+        'class': $el.attr('class'),
+        'id': $el.attr('id'),
+        'name': $el.attr('name'),
+        'style': $el.attr('style')
+    });
+    $el.replaceWith($div);
+    return $div;
+}
+
+Select3.OptionListeners.push(listener);
+
+},{"./select3-base":4,"jquery":"jquery"}]},{},[1])(1)
 });
