@@ -180,8 +180,6 @@ pre {
 }
 
 code {
-  padding: 3px;
-  margin: 0 3px;
   box-shadow: 0 0 10px rgba(0,0,0,.1);
 }
 
@@ -372,8 +370,8 @@ Examples
 }
 
 .api-example {
-    width: 80%;
-    white-space: pre;
+    margin: 10px 0 15px 0;
+    padding: 0;
 }
 
 
