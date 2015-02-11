@@ -1,0 +1,60 @@
+@import "select3-base.less";
+
+/**
+ * Single-select input.
+ */
+
+.select3-single-select {
+    border-radius: 2px;
+    cursor: pointer;
+    min-height: 2em;
+    padding: 5px;
+    position: relative;
+}
+.select3-single-select:hover {
+    background: #eee;
+}
+
+.select3-single-result-container {
+    left: 5px;
+    overflow: hidden;
+    position: absolute;
+    right: 15px;
+    text-overflow: ellipsis;
+    top: 0.8em;
+    white-space: nowrap;
+}
+
+.select3-single-selected-item {
+    color: #000;
+}
+
+.select3-single-selected-item-remove {
+    float: right;
+    padding: 0 5px;
+}
+
+.select3-single-select-placeholder {
+    color: #999;
+}
+
+.select3-caret {
+    position: absolute;
+    right: 5px;
+    top: 0.7em;
+}
+
+@media only screen and (max-device-width: 480px) {
+    .select3-single-select {
+        background: #eee;
+        border-radius: 2px;
+    }
+
+    .select3-single-result-container {
+        right: 5px;
+    }
+
+    .select3-caret {
+        display: none;
+    }
+}

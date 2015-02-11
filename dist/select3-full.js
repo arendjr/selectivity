@@ -1,21 +1,6 @@
 !function(e){if("object"==typeof exports&&"undefined"!=typeof module)module.exports=e();else if("function"==typeof define&&define.amd)define([],e);else{var f;"undefined"!=typeof window?f=window:"undefined"!=typeof global?f=global:"undefined"!=typeof self&&(f=self),f.Select3=e()}}(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(_dereq_,module,exports){
-'use strict';
-
-_dereq_('./select3-backdrop');
-_dereq_('./select3-diacritics');
-_dereq_('./select3-dropdown');
-_dereq_('./select3-email');
-_dereq_('./select3-keyboard');
-_dereq_('./select3-multiple');
-_dereq_('./select3-single');
-_dereq_('./select3-submenu');
-_dereq_('./select3-templates');
-_dereq_('./select3-tokenizer');
-_dereq_('./select3-traditional');
-
-module.exports = _dereq_('./select3-base');
-
-},{"./select3-backdrop":3,"./select3-base":4,"./select3-diacritics":5,"./select3-dropdown":6,"./select3-email":7,"./select3-keyboard":8,"./select3-multiple":10,"./select3-single":11,"./select3-submenu":12,"./select3-templates":13,"./select3-tokenizer":14,"./select3-traditional":15}],2:[function(_dereq_,module,exports){
+_dereq_(3);_dereq_(5);_dereq_(6);_dereq_(7);_dereq_(8);_dereq_(9);_dereq_(10);_dereq_(11);_dereq_(12);_dereq_(13);_dereq_(14);_dereq_(15);module.exports=_dereq_(4);
+},{}],2:[function(_dereq_,module,exports){
 'use strict';
 
 /**
@@ -73,7 +58,7 @@ module.exports = escape;
 
 var $ = window.jQuery || window.Zepto;
 
-var Select3Dropdown = _dereq_('./select3-dropdown');
+var Select3Dropdown = _dereq_(6);
 
 var BACKDROP_Z_INDEX = 9998;
 var FOREGROUND_Z_INDEX = 9999;
@@ -133,7 +118,7 @@ $.extend(Select3Dropdown.prototype, {
 
 });
 
-},{"./select3-dropdown":6,"jquery":"jquery"}],4:[function(_dereq_,module,exports){
+},{}],4:[function(_dereq_,module,exports){
 'use strict';
 
 var $ = window.jQuery || window.Zepto;
@@ -1148,7 +1133,7 @@ $.fn.select3 = Select3;
 
 module.exports = Select3;
 
-},{"jquery":"jquery"}],5:[function(_dereq_,module,exports){
+},{}],5:[function(_dereq_,module,exports){
 'use strict';
 
 var DIACRITICS = {
@@ -1993,7 +1978,7 @@ var DIACRITICS = {
     '\u03C2': '\u03C3'
 };
 
-var Select3 = _dereq_('./select3-base');
+var Select3 = _dereq_(4);
 var previousTransform = Select3.transformText;
 
 /**
@@ -2012,12 +1997,12 @@ Select3.transformText = function(string) {
     return previousTransform(result);
 };
 
-},{"./select3-base":4}],6:[function(_dereq_,module,exports){
+},{}],6:[function(_dereq_,module,exports){
 'use strict';
 
 var $ = window.jQuery || window.Zepto;
 
-var Select3 = _dereq_('./select3-base');
+var Select3 = _dereq_(4);
 
 /**
  * Returns the index of the first element in the jQuery container $elements that matches the given
@@ -2568,13 +2553,13 @@ Select3.Dropdown = Select3Dropdown;
 
 module.exports = Select3Dropdown;
 
-},{"./select3-base":4,"jquery":"jquery"}],7:[function(_dereq_,module,exports){
+},{}],7:[function(_dereq_,module,exports){
 'use strict';
 
 var $ = window.jQuery || window.Zepto;
 
-var Select3 = _dereq_('./select3-base');
-var MultipleSelect3 = _dereq_('./select3-multiple');
+var Select3 = _dereq_(4);
+var MultipleSelect3 = _dereq_(10);
 
 function isValidEmail(email) {
 
@@ -2726,10 +2711,10 @@ Select3.InputTypes.Email = EmailSelect3;
 
 module.exports = EmailSelect3;
 
-},{"./select3-base":4,"./select3-multiple":10,"jquery":"jquery"}],8:[function(_dereq_,module,exports){
+},{}],8:[function(_dereq_,module,exports){
 'use strict';
 
-var Select3 = _dereq_('./select3-base');
+var Select3 = _dereq_(4);
 
 var KEY_DOWN_ARROW = 40;
 var KEY_ENTER = 13;
@@ -2791,11 +2776,11 @@ function listener(select3, $input) {
 
 Select3.SearchInputListeners.push(listener);
 
-},{"./select3-base":4}],9:[function(_dereq_,module,exports){
+},{}],9:[function(_dereq_,module,exports){
 'use strict';
 
-var escape = _dereq_('./escape');
-var Select3 = _dereq_('./select3-base');
+var escape = _dereq_(2);
+var Select3 = _dereq_(4);
 
 /**
  * Localizable elements of the Select3 Templates.
@@ -2812,12 +2797,12 @@ Select3.Locale = {
 
 };
 
-},{"./escape":2,"./select3-base":4}],10:[function(_dereq_,module,exports){
+},{}],10:[function(_dereq_,module,exports){
 'use strict';
 
 var $ = window.jQuery || window.Zepto;
 
-var Select3 = _dereq_('./select3-base');
+var Select3 = _dereq_(4);
 
 var KEY_BACKSPACE = 8;
 var KEY_DELETE = 46;
@@ -3300,12 +3285,12 @@ Select3.InputTypes.Multiple = MultipleSelect3;
 
 module.exports = MultipleSelect3;
 
-},{"./select3-base":4,"jquery":"jquery"}],11:[function(_dereq_,module,exports){
+},{}],11:[function(_dereq_,module,exports){
 'use strict';
 
 var $ = window.jQuery || window.Zepto;
 
-var Select3 = _dereq_('./select3-base');
+var Select3 = _dereq_(4);
 
 /**
  * SingleSelect3 Constructor.
@@ -3475,13 +3460,13 @@ Select3.InputTypes.Single = SingleSelect3;
 
 module.exports = SingleSelect3;
 
-},{"./select3-base":4,"jquery":"jquery"}],12:[function(_dereq_,module,exports){
+},{}],12:[function(_dereq_,module,exports){
 'use strict';
 
 var $ = window.jQuery || window.Zepto;
 
-var Select3 = _dereq_('./select3-base');
-var Select3Dropdown = _dereq_('./select3-dropdown');
+var Select3 = _dereq_(4);
+var Select3Dropdown = _dereq_(6);
 
 /**
  * Extended dropdown that supports submenus.
@@ -3708,14 +3693,14 @@ Select3.Dropdown = Select3Submenu;
 
 module.exports = Select3Submenu;
 
-},{"./select3-base":4,"./select3-dropdown":6,"jquery":"jquery"}],13:[function(_dereq_,module,exports){
+},{}],13:[function(_dereq_,module,exports){
 'use strict';
 
-var escape = _dereq_('./escape');
+var escape = _dereq_(2);
 
-var Select3 = _dereq_('./select3-base');
+var Select3 = _dereq_(4);
 
-_dereq_('./select3-locale');
+_dereq_(9);
 
 /**
  * Default set of templates to use with Select3.
@@ -3956,13 +3941,13 @@ Select3.Templates = {
 
 };
 
-},{"./escape":2,"./select3-base":4,"./select3-locale":9}],14:[function(_dereq_,module,exports){
+},{}],14:[function(_dereq_,module,exports){
 'use strict';
 
 var $ = window.jQuery || window.Zepto;
 
-var Select3 = _dereq_('./select3-base');
-var Select3Multiple = _dereq_('./select3-multiple');
+var Select3 = _dereq_(4);
+var Select3Multiple = _dereq_(10);
 
 var setOptions = Select3Multiple.prototype.setOptions;
 
@@ -4032,12 +4017,12 @@ Select3Multiple.prototype.setOptions = function(options) {
     setOptions.call(this, options);
 };
 
-},{"./select3-base":4,"./select3-multiple":10,"jquery":"jquery"}],15:[function(_dereq_,module,exports){
+},{}],15:[function(_dereq_,module,exports){
 'use strict';
 
 var $ = window.jQuery || window.Zepto;
 
-var Select3 = _dereq_('./select3-base');
+var Select3 = _dereq_(4);
 
 /**
  * Option listener providing support for converting traditional <select> boxes into Select3
@@ -4108,5 +4093,5 @@ function replaceSelectElement($el, options) {
 
 Select3.OptionListeners.push(listener);
 
-},{"./select3-base":4,"jquery":"jquery"}]},{},[1])(1)
+},{}]},{},[1])(1)
 });
