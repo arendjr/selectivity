@@ -30,8 +30,36 @@ Having said that, if you're a user of Select2 and don't recognize yourself in an
 I advise you to keep using Select2. It's feature-rich and actively supported, so don't fix what
 ain't broken ;)
 
-Usage
+Setup
 -----
+
+Select3 only relies on [jQuery](http://jquery.com/) or [Zepto.js](http://zeptojs.com/) being loaded
+on the page to work.
+
+In addition, the default templates assume that you have included
+[FontAwesome](http://fortawesome.github.io/Font-Awesome/) in your page to display the icons.
+
+Manual
+======
+
+Copy `select3-full.js` and `select3-full.css` from the `dist/` directory into your project. Then
+put the following in your HTML head:
+
+    <head>
+        ...
+        <link href="font-awesome.css" rel="stylesheet">
+        <link href="select3-full.css" rel="stylesheet">
+        ...
+        <script src="jquery.js"></script>
+        <script src="select3-full.js"></script>
+        ...
+    </head>
+
+Verify the paths are correct for your particular project. The important thing is that jQuery (or
+Zepto.js) should be loaded before including Select3.
+
+Using Component
+===============
 
 Include as a [component(1)](https://github.com/componentjs/component) dependency.
 
@@ -61,15 +89,6 @@ Browser Support
 Note that while Internet Explorer versions older than 10 are not supported, you might be able
 to get them to work, possibly with the use of some polyfills. Reports of success or patches
 to create a &quot;legacy&quot; build would be welcomed.
-
-Dependencies
-------------
-
-Select3 only relies on [jQuery](http://jquery.com/) or [Zepto.js](http://zeptojs.com/) being loaded
-on the page to work.
-
-In addition, the default templates assume that you have included
-[FontAwesome](http://fortawesome.github.io/Font-Awesome/) in your page to display the icons.
 
 API
 ---
