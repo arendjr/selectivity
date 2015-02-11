@@ -39,8 +39,7 @@ on the page to work.
 In addition, the default templates assume that you have included
 [FontAwesome](http://fortawesome.github.io/Font-Awesome/) in your page to display the icons.
 
-Manual
-======
+### Manual
 
 Copy `select3-full.js` and `select3-full.css` from the `dist/` directory into your project. Then
 put the following in your HTML head:
@@ -58,8 +57,7 @@ put the following in your HTML head:
 Verify the paths are correct for your particular project. The important thing is that jQuery (or
 Zepto.js) should be loaded before including Select3.
 
-Using Component
-===============
+### Using Component
 
 Include as a [component(1)](https://github.com/componentjs/component) dependency.
 
