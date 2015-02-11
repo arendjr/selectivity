@@ -30,6 +30,26 @@ Having said that, if you're a user of Select2 and don't recognize yourself in an
 I advise you to keep using Select2. It's feature-rich and actively supported, so don't fix what
 ain't broken ;)
 
+Usage
+-----
+
+Include as a [component(1)](https://github.com/componentjs/component) dependency.
+
+In your `component.json`:
+
+    {
+        "dependencies": {
+            ...
+            "arendjr/select3": "^0.0.1"
+            ...
+        }
+    }
+
+And in your code:
+
+    var $ = require('jquery');
+    require('select3');
+
 Browser Support
 ---------------
 
