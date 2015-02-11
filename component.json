@@ -8,7 +8,7 @@
         "dist/select3-full.js"
     ],
     "styles": [
-        "dist/select3.css"
+        "dist/select3-full.css"
     ],
     "license": "MIT"
 }
