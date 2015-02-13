@@ -233,4 +233,23 @@ $.extend(Select3Submenu.prototype, {
 
 Select3.Dropdown = Select3Submenu;
 
+Select3.findNestedById = function(array, id) {
+
+    for (var i = 0, length = array.length; i < length; i++) {
+        var item = array[i], result;
+        if (item.id === id) {
+            result = item;
+        } else if (item.children) {
+            result = Select3.findNestedById(item.children, id);
+        } else if (item.submenu && item.submenu.items) {
+            result = Select3.findNestedById(item.submenu.items, id);
+        }
+        if (result) {
+            return result;
+        }
+    }
+    return null;
+};
+
+
 module.exports = Select3Submenu;

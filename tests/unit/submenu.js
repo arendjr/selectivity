@@ -67,3 +67,15 @@ exports.testSelectItemInSubmenu = DomUtil.createDomTest(
         test.equal($input.select3('value'), '3-1');
     }
 );
+
+exports.testSetValue = DomUtil.createDomTest(
+    ['single', 'dropdown', 'submenu', 'templates'],
+    function(test, $input, $) {
+        $input.select3({ items: items });
+
+        $input.select3('value', '3-1');
+
+        test.deepEqual($input.select3('data'), { id: '3-1', text: 'Third Item' });
+        test.equal($input.select3('value'), '3-1');
+    }
+);
