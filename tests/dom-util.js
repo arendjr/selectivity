@@ -6,8 +6,10 @@ module.exports = {
      * Wrapper to easily create unit tests that test Select3 within a DOM environment.
      *
      * @param modules Array of Select3 modules to test, e.g. ['base', 'single'].
-     * @param options Optional options object. May contain the following property:
+     * @param options Optional options object. May contain the following properties:
      *                indexResource - Filename of the index resource (default: 'testcase.html').
+     *                async - Set to true to indicate the test function is asynchronous and calls
+     *                        done() itself.
      * @param fn The actual test function. Receives two arguments:
      *           test - The nodeunit test instance.
      *           $input - jQuery container for the '#select3-input' element defined in
@@ -43,6 +45,7 @@ module.exports = {
                         'locale': ['base'],
                         'multiple': ['base'],
                         'single': ['base'],
+                        'submenu': ['base', 'dropdown'],
                         'templates': ['base', 'locale'],
                         'tokenizer': ['base', 'multiple'],
                         'traditional': ['base']
@@ -78,7 +81,9 @@ module.exports = {
                     fn(test, window.$('#select3-input'), $);
                 });
 
-                test.done();
+                if (!options.async) {
+                    test.done();
+                }
             });
         }
     }

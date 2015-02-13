@@ -2884,7 +2884,6 @@ $.extend(MultipleSelect3.prototype, {
         'change': '_rerenderSelection',
         'change .select3-multiple-input': function() { return false; },
         'click': '_clicked',
-        'click .select3-multiple-selected-item-remove': '_itemRemoveClicked',
         'click .select3-multiple-selected-item': '_itemClicked',
         'keydown .select3-multiple-input': '_keyHeld',
         'keyup .select3-multiple-input': '_keyReleased',
@@ -3200,6 +3199,18 @@ $.extend(MultipleSelect3.prototype, {
         }
     },
 
+    _renderSelectedItem: function(item) {
+
+        this.$searchInput.before(this.template('multipleSelectedItem', $.extend({
+            highlighted: (item.id === this._highlightedItemId)
+        }, item)));
+
+        var quotedId = Select3.quoteCssAttr(item.id);
+        this.$('.select3-multiple-selected-item[data-item-id=' + quotedId + ']')
+            .find('.select3-multiple-selected-item-remove')
+            .on('click', this._itemRemoveClicked.bind(this));
+    },
+
     /**
      * @private
      */
@@ -3207,11 +3218,8 @@ $.extend(MultipleSelect3.prototype, {
 
         event = event || {};
 
-        var $input = this.$searchInput;
         if (event.added) {
-            $input.before(this.template('multipleSelectedItem', $.extend({
-                highlighted: (event.added.id === this._highlightedItemId)
-            }, event.added)));
+            this._renderSelectedItem(event.added);
 
             this._scrollToBottom();
         } else if (event.removed) {
@@ -3220,11 +3228,7 @@ $.extend(MultipleSelect3.prototype, {
         } else {
             this.$('.select3-multiple-selected-item').remove();
 
-            this._data.forEach(function(item) {
-                $input.before(this.template('multipleSelectedItem', $.extend({
-                    highlighted: (item.id === this._highlightedItemId)
-                }, item)));
-            }, this);
+            this._data.forEach(this._renderSelectedItem, this);
 
             this._updateInputWidth();
         }
@@ -3243,7 +3247,7 @@ $.extend(MultipleSelect3.prototype, {
 
         this.positionDropdown();
 
-        $input.attr('placeholder', this._data.length ? '' : this.options.placeholder);
+        this.$searchInput.attr('placeholder', this._data.length ? '' : this.options.placeholder);
     },
 
     /**
@@ -3323,7 +3327,6 @@ $.extend(SingleSelect3.prototype, {
     events: {
         'change': '_rerenderSelection',
         'click': '_clicked',
-        'click .select3-single-selected-item-remove': '_itemRemoveClicked',
         'select3-selected': '_resultSelected'
     },
 
@@ -3439,6 +3442,9 @@ $.extend(SingleSelect3.prototype, {
                     showRemove: this.options.allowClear
                 }, this._data))
             );
+
+            $container.find('.select3-single-selected-item-remove')
+                      .on('click', this._itemRemoveClicked.bind(this));
         } else {
             $container.html(
                 this.template('singleSelectPlaceholder', { placeholder: this.options.placeholder })
@@ -3452,6 +3458,8 @@ $.extend(SingleSelect3.prototype, {
     _resultSelected: function(event) {
 
         this.data(event.item);
+
+        this.close();
     }
 
 });
@@ -3495,6 +3503,9 @@ $.extend(Select3Submenu.prototype, {
 
         if (this.options.restoreOptions) {
             this.select3.setOptions(this.options.restoreOptions);
+        }
+        if (this.options.restoreResults) {
+            this.select3.results = this.options.restoreResults;
         }
 
         if (this.submenu) {
@@ -3653,12 +3664,13 @@ $.extend(Select3Submenu.prototype, {
         Select3Dropdown.prototype.highlight.call(this, item);
 
         if (item.submenu && !this.submenu) {
-            var quotedId = Select3.quoteCssAttr(item.id);
-            var $item = this.$('.select3-result-item[data-item-id=' + quotedId + ']');
-            var $dropdownEl = this.$el;
-
-            var Dropdown = this.select3.options.dropdown || Select3.Dropdown;
+            var select3 = this.select3;
+            var Dropdown = select3.options.dropdown || Select3.Dropdown;
             if (Dropdown) {
+                var quotedId = Select3.quoteCssAttr(item.id);
+                var $item = this.$('.select3-result-item[data-item-id=' + quotedId + ']');
+                var $dropdownEl = this.$el;
+
                 this.submenu = new Dropdown({
                     parentMenu: this,
                     position: item.submenu.positionDropdown || function($el) {
@@ -3670,19 +3682,20 @@ $.extend(Select3Submenu.prototype, {
                         }).width(width);
                     },
                     restoreOptions: {
-                        items: this.select3.items,
-                        query: this.select3.options.query || null
+                        items: select3.items,
+                        query: select3.options.query || null
                     },
-                    select3: this.select3,
+                    restoreResults: select3.results,
+                    select3: select3,
                     showSearchInput: item.submenu.showSearchInput
                 });
 
-                this.select3.setOptions({
+                select3.setOptions({
                     items: item.submenu.items || null,
                     query: item.submenu.query || null
                 });
 
-                this.select3.search('');
+                select3.search('');
             }
         }
     }

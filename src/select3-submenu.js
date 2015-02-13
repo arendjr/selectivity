@@ -33,6 +33,9 @@ $.extend(Select3Submenu.prototype, {
         if (this.options.restoreOptions) {
             this.select3.setOptions(this.options.restoreOptions);
         }
+        if (this.options.restoreResults) {
+            this.select3.results = this.options.restoreResults;
+        }
 
         if (this.submenu) {
             this.submenu.close();
@@ -190,12 +193,13 @@ $.extend(Select3Submenu.prototype, {
         Select3Dropdown.prototype.highlight.call(this, item);
 
         if (item.submenu && !this.submenu) {
-            var quotedId = Select3.quoteCssAttr(item.id);
-            var $item = this.$('.select3-result-item[data-item-id=' + quotedId + ']');
-            var $dropdownEl = this.$el;
-
-            var Dropdown = this.select3.options.dropdown || Select3.Dropdown;
+            var select3 = this.select3;
+            var Dropdown = select3.options.dropdown || Select3.Dropdown;
             if (Dropdown) {
+                var quotedId = Select3.quoteCssAttr(item.id);
+                var $item = this.$('.select3-result-item[data-item-id=' + quotedId + ']');
+                var $dropdownEl = this.$el;
+
                 this.submenu = new Dropdown({
                     parentMenu: this,
                     position: item.submenu.positionDropdown || function($el) {
@@ -207,19 +211,20 @@ $.extend(Select3Submenu.prototype, {
                         }).width(width);
                     },
                     restoreOptions: {
-                        items: this.select3.items,
-                        query: this.select3.options.query || null
+                        items: select3.items,
+                        query: select3.options.query || null
                     },
-                    select3: this.select3,
+                    restoreResults: select3.results,
+                    select3: select3,
                     showSearchInput: item.submenu.showSearchInput
                 });
 
-                this.select3.setOptions({
+                select3.setOptions({
                     items: item.submenu.items || null,
                     query: item.submenu.query || null
                 });
 
-                this.select3.search('');
+                select3.search('');
             }
         }
     }
