@@ -281,23 +281,58 @@ jQuery builds without Sizzle.</li>
         <tr>
             <td>query</td>
             <td><code>Function</code></td>
-            <td>Function to use for querying items. Receives a single object as argument with the
-                <code>callback</code>, <code>offset</code> and <code>term</code> properties. The
-                callback should be invoked when the results are available. It should be passed a
-                single object with <code>results</code> and <code>more</code> properties. The first
-                is an array with result items and the latter is an optional boolean that may be set
-                to <code>true</code> indicate more results are available through pagination. Offset
-                is a property is only used for pagination and indicates how many results should be
-                skipped when returning more results. The term is the search term the user is
-                searching for. Unlike with the matcher function, the term has not been processed
-                using <code>Select3.transformText()</code>. This option is ignored if the
-                <code>items</code> option is used.</td>
+            <td>Function to use for querying items. Receives a single object with the following
+                properties:
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Property</th>
+                            <th>Description</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>callback</td>
+                            <td>This is the function that should be invoked when the results are
+                                available. It should be passed a single object with
+                                <code>results</code> and <code>more</code> properties. The first is
+                                an array with result items in the same format as the
+                                <code>items</code> option and the latter is an optional boolean
+                                that may be set to <code>true</code> indicate more results are
+                                available through pagination.</td>
+                        </tr>
+                        <tr>
+                            <td>error</td>
+                            <td>Another function that may be called to indicate the query operation
+                                failed. You should pass it a message which will be displayed to the
+                                user. Optionally you can pass an options object as the second
+                                argument, which may have an <code>escape</code> property which, if
+                                set to <code>false</code>, indicates the message contains raw HTML
+                                and should not be escaped. Be aware this does make you responsible
+                                for properly escaping user input to avoid XSS attacks.</td>
+                        </tr>
+                        <tr>
+                            <td>offset</td>
+                            <td>An integer that indicates how many results should be skipped when
+                                returning more results. This is used to implement pagination.</td>
+                        </tr>
+                        <tr>
+                            <td>term</td>
+                            <td>The search term the user is searching for. Unlike with the
+                                <code>matcher</code> function, the term has not been processed
+                                using <code>Select3.transformText()</code>.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                This option is ignored if the <code>items</code> option is used.</td>
         </tr>
         <tr>
             <td>showDropdown</td>
             <td><code>Boolean</code></td>
-            <td>Set to false if you don't want to use any dropdown (you can still open still open it
-                programmatically using <code>open()</code>).</td>
+            <td>Set to <code>false</code> if you don't want to use any dropdown (you can still open
+                still open it programmatically using <code>open()</code>).</td>
         </tr>
         <tr>
             <td>show<wbr>SearchInput<wbr>InDropdown</td>
