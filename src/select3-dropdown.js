@@ -436,9 +436,13 @@ $.extend(Select3Dropdown.prototype, {
      */
     _loadMoreClicked: function() {
 
+        debugger;
+
         this.select3.loadMore();
 
         this.select3.focus();
+
+        return false;
     },
 
     /**
