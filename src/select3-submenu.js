@@ -128,18 +128,6 @@ $.extend(Select3Submenu.prototype, {
     /**
      * @inherit
      */
-    showMoreResults: function(results, options) {
-
-        if (this.submenu) {
-            this.submenu.showMoreResults(results, options);
-        } else {
-            Select3Dropdown.prototype.showMoreResults.call(this, results, options);
-        }
-    },
-
-    /**
-     * @inherit
-     */
     showResults: function(results, options) {
 
         if (this.submenu) {

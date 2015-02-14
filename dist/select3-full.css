@@ -42,10 +42,6 @@
   cursor: pointer;
   padding: 7px;
 }
-.select3-submenu-icon {
-  position: absolute;
-  right: 4px;
-}
 .select3-result-children .select3-result-item {
   padding-left: 17px;
 }
@@ -71,10 +67,10 @@
 .select3-result-children .select3-result-item:last-child {
   border-radius: 0;
 }
+.select3-error,
 .select3-loading,
 .select3-search-input-container,
-.select3-result-label,
-.select3-no-results {
+.select3-result-label {
   padding: 7px;
 }
 /**
@@ -181,4 +177,11 @@ input[type="text"].select3-multiple-input:focus {
   .select3-caret {
     display: none;
   }
+}
+/**
+ * Submenu
+ */
+.select3-submenu-icon {
+  position: absolute;
+  right: 4px;
 }

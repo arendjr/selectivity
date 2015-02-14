@@ -1,5 +1,5 @@
 !function(e){if("object"==typeof exports&&"undefined"!=typeof module)module.exports=e();else if("function"==typeof define&&define.amd)define([],e);else{var f;"undefined"!=typeof window?f=window:"undefined"!=typeof global?f=global:"undefined"!=typeof self&&(f=self),f.Select3=e()}}(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(_dereq_,module,exports){
-_dereq_(3);_dereq_(5);_dereq_(6);_dereq_(7);_dereq_(8);_dereq_(9);_dereq_(10);_dereq_(11);_dereq_(12);_dereq_(13);_dereq_(14);_dereq_(15);module.exports=_dereq_(4);
+_dereq_(3);_dereq_(4);_dereq_(6);_dereq_(7);_dereq_(8);_dereq_(9);_dereq_(10);_dereq_(11);_dereq_(12);_dereq_(13);_dereq_(14);_dereq_(15);_dereq_(16);module.exports=_dereq_(5);
 },{}],2:[function(_dereq_,module,exports){
 'use strict';
 
@@ -58,7 +58,83 @@ module.exports = escape;
 
 var $ = window.jQuery || window.Zepto;
 
-var Select3Dropdown = _dereq_(6);
+var Select3 = _dereq_(5);
+
+/**
+ * Option listener providing support for converting traditional <select> boxes into Select3
+ * instances.
+ */
+function listener(select3, options) {
+
+    var $el = select3.$el;
+    if ($el.is('select')) {
+        if ($el.attr('autofocus')) {
+            setTimeout(function() {
+                select3.focus();
+            }, 1);
+        }
+
+        select3.$el = replaceSelectElement($el, options);
+        select3.$el[0].select3 = select3;
+    }
+}
+
+function replaceSelectElement($el, options) {
+
+    var value = (options.multiple ? [] : null);
+
+    var mapOptions = function() {
+        var $this = $(this);
+        if ($this.is('option')) {
+            var id = $this.attr('value') || $this.text();
+            if ($this.prop('selected')) {
+                if (options.multiple) {
+                    value.push(id);
+                } else {
+                    value = id;
+                }
+            }
+
+            return {
+                id: id,
+                text: $this.attr('label') || $this.text()
+            };
+        } else {
+            return {
+                text: $this.attr('label'),
+                children: $this.children('option,optgroup').map(mapOptions).get()
+            };
+        }
+    };
+
+    options.allowClear = options.hasOwnProperty('allowClear') ? options.allowClear
+                                                              : !$el.prop('required');
+
+    options.items = $el.children('option,optgroup').map(mapOptions).get();
+
+    options.placeholder = options.placeholder || $el.data('placeholder') || '';
+
+    options.value = value;
+
+    var $div = $('<div>');
+    $div.attr({
+        'class': $el.attr('class'),
+        'id': $el.attr('id'),
+        'name': $el.attr('name'),
+        'style': $el.attr('style')
+    });
+    $el.replaceWith($div);
+    return $div;
+}
+
+Select3.OptionListeners.push(listener);
+
+},{}],4:[function(_dereq_,module,exports){
+'use strict';
+
+var $ = window.jQuery || window.Zepto;
+
+var Select3Dropdown = _dereq_(7);
 
 var BACKDROP_Z_INDEX = 9998;
 var FOREGROUND_Z_INDEX = 9999;
@@ -118,7 +194,7 @@ $.extend(Select3Dropdown.prototype, {
 
 });
 
-},{}],4:[function(_dereq_,module,exports){
+},{}],5:[function(_dereq_,module,exports){
 'use strict';
 
 var $ = window.jQuery || window.Zepto;
@@ -495,6 +571,7 @@ $.extend(Select3.prototype, {
                     throw new Error('callback must be passed a response object');
                 }
             }.bind(this),
+            error: this._addResults.bind(this, []),
             offset: this.results.length,
             select3: this,
             term: this.term,
@@ -583,6 +660,7 @@ $.extend(Select3.prototype, {
                         throw new Error('callback must be passed a response object');
                     }
                 },
+                error: self._showError.bind(self),
                 offset: 0,
                 select3: self,
                 term: term,
@@ -856,7 +934,10 @@ $.extend(Select3.prototype, {
         this.results = this.results.concat(results);
 
         if (this.dropdown) {
-            this.dropdown.showMoreResults(this.filterResults(results), options || {});
+            this.dropdown.showResults(
+                this.filterResults(results),
+                $.extend({ add: true }, options)
+            );
         }
     },
 
@@ -913,6 +994,18 @@ $.extend(Select3.prototype, {
 
         if (this.dropdown) {
             this.dropdown.showResults(this.filterResults(results), options || {});
+        }
+    },
+
+    /**
+     * @private
+     */
+    _showError: function(error, options) {
+
+        this.results = [];
+
+        if (this.dropdown) {
+            this.dropdown.showError(error, options);
         }
     }
 
@@ -1133,7 +1226,7 @@ $.fn.select3 = Select3;
 
 module.exports = Select3;
 
-},{}],5:[function(_dereq_,module,exports){
+},{}],6:[function(_dereq_,module,exports){
 'use strict';
 
 var DIACRITICS = {
@@ -1978,7 +2071,7 @@ var DIACRITICS = {
     '\u03C2': '\u03C3'
 };
 
-var Select3 = _dereq_(4);
+var Select3 = _dereq_(5);
 var previousTransform = Select3.transformText;
 
 /**
@@ -1997,12 +2090,12 @@ Select3.transformText = function(string) {
     return previousTransform(result);
 };
 
-},{}],6:[function(_dereq_,module,exports){
+},{}],7:[function(_dereq_,module,exports){
 'use strict';
 
 var $ = window.jQuery || window.Zepto;
 
-var Select3 = _dereq_(4);
+var Select3 = _dereq_(5);
 
 /**
  * Returns the index of the first element in the jQuery container $elements that matches the given
@@ -2295,12 +2388,22 @@ $.extend(Select3Dropdown.prototype, {
     },
 
     /**
-     * Shows a loading indicator in the dropdown.
+     * Shows an error message.
+     *
+     * @param message Error message to display.
+     * @param options Options object. May contain the following property:
+     *                escape - Set to false to disable HTML-escaping of the message. Useful if you
+     *                         want to set raw HTML as the message, but may open you up to XSS
+     *                         attacks if you're not careful with escaping user input.
      */
-    showLoading: function() {
+    showError: function(message, options) {
 
-        var select3 = this.select3;
-        this.$('.select3-results-container').html(select3.template('loading'));
+        options = options || {};
+
+        this.$('.select3-results-container').html(this.select3.template('error', {
+            escape: options.escape !== false,
+            message: message,
+        }));
 
         this.hasMore = false;
         this.results = [];
@@ -2310,30 +2413,17 @@ $.extend(Select3Dropdown.prototype, {
     },
 
     /**
-     * Shows more search results as a result of pagination.
-     *
-     * @param results Array of result items.
-     * @param options Options object. May contain the following properties:
-     *                hasMore - Boolean whether more results can be fetched using the query()
-     *                          function.
+     * Shows a loading indicator in the dropdown.
      */
-    showMoreResults: function(results, options) {
+    showLoading: function() {
 
-        options = options || {};
+        this.$('.select3-results-container').html(this.select3.template('loading'));
 
-        var $loadMore = this.$('.select3-load-more');
-        $loadMore.before(this._renderItems(results));
+        this.hasMore = false;
+        this.results = [];
 
-        if (!options.hasMore) {
-            $loadMore.remove();
-        }
-
-        this.hasMore = options.hasMore;
-        this.results = this.results.concat(results);
-
-        if (this.loadMoreHighlighted) {
-            this._highlightFirstItem(results);
-        }        
+        this.highlightedResult = null;
+        this.loadMoreHighlighted = false;
     },
 
     /**
@@ -2341,30 +2431,39 @@ $.extend(Select3Dropdown.prototype, {
      *
      * @param results Array of result items.
      * @param options Options object. May contain the following properties:
+     *                add - True if the results should be added to any already shown results.
      *                hasMore - Boolean whether more results can be fetched using the query()
      *                          function.
      *                term - The search term for which the results are displayed.
      */
     showResults: function(results, options) {
 
-        options = options || {};
-
-        var select3 = this.select3;
-        var $resultsContainer = this.$('.select3-results-container');
-        $resultsContainer.html(
-            results.length ? this._renderItems(results)
-                           : options.hasMore ? ''
-                                             : select3.template('noResults', { term: options.term })
-        );
-
+        var resultsHtml = this._renderItems(results);
         if (options.hasMore) {
-            $resultsContainer.append(select3.template('loadMore'));
+            resultsHtml += this.select3.template('loadMore');
+        } else {
+            if (!resultsHtml && !options.add) {
+                resultsHtml += this.select3.template('noResults', { term: options.term });
+            }
+        }
+
+        if (options.add) {
+            this.$('.select3-loading').replaceWith(resultsHtml);
+        } else {
+            this.$('.select3-results-container').html(resultsHtml);
         }
 
         this.hasMore = options.hasMore;
-        this.results = results;
 
-        this._highlightFirstItem(results);
+        if (options.add) {
+            this.results = this.results.concat(results);
+        } else {
+            this.results = results;
+        }
+
+        if (!options.add || this.loadMoreHighlighted) {
+            this._highlightFirstItem(results);
+        }
     },
 
     /**
@@ -2436,9 +2535,16 @@ $.extend(Select3Dropdown.prototype, {
      */
     _loadMoreClicked: function() {
 
+        this.$('.select3-load-more').replaceWith(this.select3.template('loading'));
+
+
+
+
         this.select3.loadMore();
 
         this.select3.focus();
+
+        return false;
     },
 
     /**
@@ -2553,13 +2659,13 @@ Select3.Dropdown = Select3Dropdown;
 
 module.exports = Select3Dropdown;
 
-},{}],7:[function(_dereq_,module,exports){
+},{}],8:[function(_dereq_,module,exports){
 'use strict';
 
 var $ = window.jQuery || window.Zepto;
 
-var Select3 = _dereq_(4);
-var MultipleSelect3 = _dereq_(10);
+var Select3 = _dereq_(5);
+var MultipleSelect3 = _dereq_(11);
 
 function isValidEmail(email) {
 
@@ -2711,10 +2817,10 @@ Select3.InputTypes.Email = EmailSelect3;
 
 module.exports = EmailSelect3;
 
-},{}],8:[function(_dereq_,module,exports){
+},{}],9:[function(_dereq_,module,exports){
 'use strict';
 
-var Select3 = _dereq_(4);
+var Select3 = _dereq_(5);
 
 var KEY_DOWN_ARROW = 40;
 var KEY_ENTER = 13;
@@ -2776,11 +2882,11 @@ function listener(select3, $input) {
 
 Select3.SearchInputListeners.push(listener);
 
-},{}],9:[function(_dereq_,module,exports){
+},{}],10:[function(_dereq_,module,exports){
 'use strict';
 
 var escape = _dereq_(2);
-var Select3 = _dereq_(4);
+var Select3 = _dereq_(5);
 
 /**
  * Localizable elements of the Select3 Templates.
@@ -2797,12 +2903,12 @@ Select3.Locale = {
 
 };
 
-},{}],10:[function(_dereq_,module,exports){
+},{}],11:[function(_dereq_,module,exports){
 'use strict';
 
 var $ = window.jQuery || window.Zepto;
 
-var Select3 = _dereq_(4);
+var Select3 = _dereq_(5);
 
 var KEY_BACKSPACE = 8;
 var KEY_DELETE = 46;
@@ -3289,12 +3395,12 @@ Select3.InputTypes.Multiple = MultipleSelect3;
 
 module.exports = MultipleSelect3;
 
-},{}],11:[function(_dereq_,module,exports){
+},{}],12:[function(_dereq_,module,exports){
 'use strict';
 
 var $ = window.jQuery || window.Zepto;
 
-var Select3 = _dereq_(4);
+var Select3 = _dereq_(5);
 
 /**
  * SingleSelect3 Constructor.
@@ -3468,13 +3574,13 @@ Select3.InputTypes.Single = SingleSelect3;
 
 module.exports = SingleSelect3;
 
-},{}],12:[function(_dereq_,module,exports){
+},{}],13:[function(_dereq_,module,exports){
 'use strict';
 
 var $ = window.jQuery || window.Zepto;
 
-var Select3 = _dereq_(4);
-var Select3Dropdown = _dereq_(6);
+var Select3 = _dereq_(5);
+var Select3Dropdown = _dereq_(7);
 
 /**
  * Extended dropdown that supports submenus.
@@ -3599,18 +3705,6 @@ $.extend(Select3Submenu.prototype, {
     /**
      * @inherit
      */
-    showMoreResults: function(results, options) {
-
-        if (this.submenu) {
-            this.submenu.showMoreResults(results, options);
-        } else {
-            Select3Dropdown.prototype.showMoreResults.call(this, results, options);
-        }
-    },
-
-    /**
-     * @inherit
-     */
     showResults: function(results, options) {
 
         if (this.submenu) {
@@ -3725,14 +3819,14 @@ Select3.findNestedById = function(array, id) {
 
 module.exports = Select3Submenu;
 
-},{}],13:[function(_dereq_,module,exports){
+},{}],14:[function(_dereq_,module,exports){
 'use strict';
 
 var escape = _dereq_(2);
 
-var Select3 = _dereq_(4);
+var Select3 = _dereq_(5);
 
-_dereq_(9);
+_dereq_(10);
 
 /**
  * Default set of templates to use with Select3.
@@ -3749,7 +3843,7 @@ Select3.Templates = {
      * The template is expected to have at least one element with the class
      * 'select3-results-container', which is where all results will be added to.
      *
-     * @param options Options object containing the following property:
+     * @param options Options object containing the following properties:
      *                dropdownCssClass - Optional CSS class to add to the top-level element.
      *                searchInputPlaceholder - Optional placeholder text to display in the search
      *                                         input in the dropdown.
@@ -3781,7 +3875,25 @@ Select3.Templates = {
     },
 
     /**
+     * Renders an error message in the dropdown.
+     *
+     * @param options Options object containing the following properties:
+     *                escape - Boolean whether the message should be HTML-escaped.
+     *                message - The message to display.
+     */
+    error: function(options) {
+        return (
+            '<div class="select3-error">' +
+                (options.escape ? escape(options.message) : options.message) +
+            '</div>'
+        );
+    },
+
+    /**
      * Renders a loading indicator in the dropdown.
+     *
+     * This template is expected to have an element with a 'select3-loading' class which may be
+     * replaced with actual results.
      */
     loading: function() {
         return '<div class="select3-loading">' + Select3.Locale.loading + '</div>';
@@ -3858,7 +3970,7 @@ Select3.Templates = {
     noResults: function(options) {
         var Locale = Select3.Locale;
         return (
-            '<div class="select3-no-results">' +
+            '<div class="select3-error">' +
                 (options.term ? Locale.noResultsForTerm(options.term) : Locale.noResults) +
             '</div>'
         );
@@ -3973,13 +4085,13 @@ Select3.Templates = {
 
 };
 
-},{}],14:[function(_dereq_,module,exports){
+},{}],15:[function(_dereq_,module,exports){
 'use strict';
 
 var $ = window.jQuery || window.Zepto;
 
-var Select3 = _dereq_(4);
-var Select3Multiple = _dereq_(10);
+var Select3 = _dereq_(5);
+var Select3Multiple = _dereq_(11);
 
 var setOptions = Select3Multiple.prototype.setOptions;
 
@@ -4049,81 +4161,7 @@ Select3Multiple.prototype.setOptions = function(options) {
     setOptions.call(this, options);
 };
 
-},{}],15:[function(_dereq_,module,exports){
-'use strict';
-
-var $ = window.jQuery || window.Zepto;
-
-var Select3 = _dereq_(4);
-
-/**
- * Option listener providing support for converting traditional <select> boxes into Select3
- * instances.
- */
-function listener(select3, options) {
-
-    var $el = select3.$el;
-    if ($el.is('select')) {
-        if ($el.attr('autofocus')) {
-            setTimeout(function() {
-                select3.focus();
-            }, 1);
-        }
-
-        select3.$el = replaceSelectElement($el, options);
-        select3.$el[0].select3 = select3;
-    }
-}
-
-function replaceSelectElement($el, options) {
-
-    var value = (options.multiple ? [] : null);
-
-    var mapOptions = function() {
-        var $this = $(this);
-        if ($this.is('option')) {
-            var id = $this.attr('value') || $this.text();
-            if ($this.prop('selected')) {
-                if (options.multiple) {
-                    value.push(id);
-                } else {
-                    value = id;
-                }
-            }
-
-            return {
-                id: id,
-                text: $this.attr('label') || $this.text()
-            };
-        } else {
-            return {
-                text: $this.attr('label'),
-                children: $this.children('option,optgroup').map(mapOptions).get()
-            };
-        }
-    };
-
-    options.allowClear = options.hasOwnProperty('allowClear') ? options.allowClear
-                                                              : !$el.prop('required');
-
-    options.items = $el.children('option,optgroup').map(mapOptions).get();
-
-    options.placeholder = options.placeholder || $el.data('placeholder') || '';
-
-    options.value = value;
-
-    var $div = $('<div>');
-    $div.attr({
-        'class': $el.attr('class'),
-        'id': $el.attr('id'),
-        'name': $el.attr('name'),
-        'style': $el.attr('style')
-    });
-    $el.replaceWith($div);
-    return $div;
-}
-
-Select3.OptionListeners.push(listener);
-
+},{}],16:[function(_dereq_,module,exports){
+module.exports=_dereq_(3)
 },{}]},{},[1])(1)
 });

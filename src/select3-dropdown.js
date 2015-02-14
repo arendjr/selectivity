@@ -295,12 +295,22 @@ $.extend(Select3Dropdown.prototype, {
     },
 
     /**
-     * Shows a loading indicator in the dropdown.
+     * Shows an error message.
+     *
+     * @param message Error message to display.
+     * @param options Options object. May contain the following property:
+     *                escape - Set to false to disable HTML-escaping of the message. Useful if you
+     *                         want to set raw HTML as the message, but may open you up to XSS
+     *                         attacks if you're not careful with escaping user input.
      */
-    showLoading: function() {
+    showError: function(message, options) {
 
-        var select3 = this.select3;
-        this.$('.select3-results-container').html(select3.template('loading'));
+        options = options || {};
+
+        this.$('.select3-results-container').html(this.select3.template('error', {
+            escape: options.escape !== false,
+            message: message,
+        }));
 
         this.hasMore = false;
         this.results = [];
@@ -310,30 +320,17 @@ $.extend(Select3Dropdown.prototype, {
     },
 
     /**
-     * Shows more search results as a result of pagination.
-     *
-     * @param results Array of result items.
-     * @param options Options object. May contain the following properties:
-     *                hasMore - Boolean whether more results can be fetched using the query()
-     *                          function.
+     * Shows a loading indicator in the dropdown.
      */
-    showMoreResults: function(results, options) {
+    showLoading: function() {
 
-        options = options || {};
+        this.$('.select3-results-container').html(this.select3.template('loading'));
 
-        var $loadMore = this.$('.select3-load-more');
-        $loadMore.before(this._renderItems(results));
+        this.hasMore = false;
+        this.results = [];
 
-        if (!options.hasMore) {
-            $loadMore.remove();
-        }
-
-        this.hasMore = options.hasMore;
-        this.results = this.results.concat(results);
-
-        if (this.loadMoreHighlighted) {
-            this._highlightFirstItem(results);
-        }        
+        this.highlightedResult = null;
+        this.loadMoreHighlighted = false;
     },
 
     /**
@@ -341,30 +338,39 @@ $.extend(Select3Dropdown.prototype, {
      *
      * @param results Array of result items.
      * @param options Options object. May contain the following properties:
+     *                add - True if the results should be added to any already shown results.
      *                hasMore - Boolean whether more results can be fetched using the query()
      *                          function.
      *                term - The search term for which the results are displayed.
      */
     showResults: function(results, options) {
 
-        options = options || {};
-
-        var select3 = this.select3;
-        var $resultsContainer = this.$('.select3-results-container');
-        $resultsContainer.html(
-            results.length ? this._renderItems(results)
-                           : options.hasMore ? ''
-                                             : select3.template('noResults', { term: options.term })
-        );
-
+        var resultsHtml = this._renderItems(results);
         if (options.hasMore) {
-            $resultsContainer.append(select3.template('loadMore'));
+            resultsHtml += this.select3.template('loadMore');
+        } else {
+            if (!resultsHtml && !options.add) {
+                resultsHtml += this.select3.template('noResults', { term: options.term });
+            }
+        }
+
+        if (options.add) {
+            this.$('.select3-loading').replaceWith(resultsHtml);
+        } else {
+            this.$('.select3-results-container').html(resultsHtml);
         }
 
         this.hasMore = options.hasMore;
-        this.results = results;
 
-        this._highlightFirstItem(results);
+        if (options.add) {
+            this.results = this.results.concat(results);
+        } else {
+            this.results = results;
+        }
+
+        if (!options.add || this.loadMoreHighlighted) {
+            this._highlightFirstItem(results);
+        }
     },
 
     /**
@@ -436,7 +442,10 @@ $.extend(Select3Dropdown.prototype, {
      */
     _loadMoreClicked: function() {
 
-        debugger;
+        this.$('.select3-load-more').replaceWith(this.select3.template('loading'));
+
+
+
 
         this.select3.loadMore();
 

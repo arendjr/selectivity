@@ -21,7 +21,7 @@ Select3.Templates = {
      * The template is expected to have at least one element with the class
      * 'select3-results-container', which is where all results will be added to.
      *
-     * @param options Options object containing the following property:
+     * @param options Options object containing the following properties:
      *                dropdownCssClass - Optional CSS class to add to the top-level element.
      *                searchInputPlaceholder - Optional placeholder text to display in the search
      *                                         input in the dropdown.
@@ -53,7 +53,25 @@ Select3.Templates = {
     },
 
     /**
+     * Renders an error message in the dropdown.
+     *
+     * @param options Options object containing the following properties:
+     *                escape - Boolean whether the message should be HTML-escaped.
+     *                message - The message to display.
+     */
+    error: function(options) {
+        return (
+            '<div class="select3-error">' +
+                (options.escape ? escape(options.message) : options.message) +
+            '</div>'
+        );
+    },
+
+    /**
      * Renders a loading indicator in the dropdown.
+     *
+     * This template is expected to have an element with a 'select3-loading' class which may be
+     * replaced with actual results.
      */
     loading: function() {
         return '<div class="select3-loading">' + Select3.Locale.loading + '</div>';
@@ -130,7 +148,7 @@ Select3.Templates = {
     noResults: function(options) {
         var Locale = Select3.Locale;
         return (
-            '<div class="select3-no-results">' +
+            '<div class="select3-error">' +
                 (options.term ? Locale.noResultsForTerm(options.term) : Locale.noResults) +
             '</div>'
         );

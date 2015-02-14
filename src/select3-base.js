@@ -374,6 +374,7 @@ $.extend(Select3.prototype, {
                     throw new Error('callback must be passed a response object');
                 }
             }.bind(this),
+            error: this._addResults.bind(this, []),
             offset: this.results.length,
             select3: this,
             term: this.term,
@@ -462,6 +463,7 @@ $.extend(Select3.prototype, {
                         throw new Error('callback must be passed a response object');
                     }
                 },
+                error: self._showError.bind(self),
                 offset: 0,
                 select3: self,
                 term: term,
@@ -735,7 +737,10 @@ $.extend(Select3.prototype, {
         this.results = this.results.concat(results);
 
         if (this.dropdown) {
-            this.dropdown.showMoreResults(this.filterResults(results), options || {});
+            this.dropdown.showResults(
+                this.filterResults(results),
+                $.extend({ add: true }, options)
+            );
         }
     },
 
@@ -792,6 +797,18 @@ $.extend(Select3.prototype, {
 
         if (this.dropdown) {
             this.dropdown.showResults(this.filterResults(results), options || {});
+        }
+    },
+
+    /**
+     * @private
+     */
+    _showError: function(error, options) {
+
+        this.results = [];
+
+        if (this.dropdown) {
+            this.dropdown.showError(error, options);
         }
     }
 
