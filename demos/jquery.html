@@ -74,10 +74,12 @@
                             return (startB ? 1 : (a > b ? 1 : -1));
                         }
                     });
-                    setTimeout(query.callback({
-                        more: results.length > offset + 10,
-                        results: results.slice(offset, offset + 10)
-                    }), 500);
+                    setTimeout(function() {
+                        query.callback({
+                            more: results.length > offset + 10,
+                            results: results.slice(offset, offset + 10)
+                        });
+                    }, 500);
                 }
 
                 $('#single-input').select3({
