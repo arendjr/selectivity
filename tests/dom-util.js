@@ -36,6 +36,7 @@ module.exports = {
 
                     // I wish this could be solved without hard-coding the dependenies here...
                     var dependencies = {
+                        'async': ['base'],
                         'backdrop': ['dropdown'],
                         'base': [],
                         'diacritics': ['base'],
