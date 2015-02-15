@@ -22,14 +22,14 @@ function listener(select3, options) {
                 if (queryNum === latestQueryNum) {
                     callback.apply(null, arguments);
                 }
-            }
+            };
             queryOptions.error = function() {
                 if (queryNum === latestQueryNum) {
                     error.apply(null, arguments);
                 }
-            }
+            };
             query(queryOptions);
-        }
+        };
     }
 }
 
