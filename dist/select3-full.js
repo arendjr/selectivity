@@ -64,7 +64,7 @@ var latestQueryNum = 0;
  * Option listener that will discard any callbacks from the query function if another query has
  * been called afterwards. This prevents responses from remote sources arriving out-of-order.
  */
-function listener(select3, options) {
+Select3.OptionListeners.push(function(select3, options) {
 
     var query = options.query;
     if (query) {
@@ -87,9 +87,7 @@ function listener(select3, options) {
             query(queryOptions);
         };
     }
-}
-
-Select3.OptionListeners.push(listener);
+});
 
 },{}],4:[function(_dereq_,module,exports){
 'use strict';
@@ -4121,25 +4119,6 @@ var $ = window.jQuery || window.Zepto;
 
 var Select3 = _dereq_(5);
 
-/**
- * Option listener providing support for converting traditional <select> boxes into Select3
- * instances.
- */
-function listener(select3, options) {
-
-    var $el = select3.$el;
-    if ($el.is('select')) {
-        if ($el.attr('autofocus')) {
-            setTimeout(function() {
-                select3.focus();
-            }, 1);
-        }
-
-        select3.$el = replaceSelectElement($el, options);
-        select3.$el[0].select3 = select3;
-    }
-}
-
 function replaceSelectElement($el, options) {
 
     var value = (options.multiple ? [] : null);
@@ -4168,8 +4147,7 @@ function replaceSelectElement($el, options) {
         }
     };
 
-    options.allowClear = options.hasOwnProperty('allowClear') ? options.allowClear
-                                                              : !$el.prop('required');
+    options.allowClear = ('allowClear' in options ? options.allowClear : !$el.prop('required'));
 
     options.items = $el.children('option,optgroup').map(mapOptions).get();
 
@@ -4177,8 +4155,7 @@ function replaceSelectElement($el, options) {
 
     options.value = value;
 
-    var $div = $('<div>');
-    $div.attr({
+    var $div = $('<div>').attr({
         'class': $el.attr('class'),
         'id': $el.attr('id'),
         'name': $el.attr('name'),
@@ -4188,7 +4165,24 @@ function replaceSelectElement($el, options) {
     return $div;
 }
 
-Select3.OptionListeners.push(listener);
+/**
+ * Option listener providing support for converting traditional <select> boxes into Select3
+ * instances.
+ */
+Select3.OptionListeners.push(function(select3, options) {
+
+    var $el = select3.$el;
+    if ($el.is('select')) {
+        if ($el.attr('autofocus')) {
+            setTimeout(function() {
+                select3.focus();
+            }, 1);
+        }
+
+        select3.$el = replaceSelectElement($el, options);
+        select3.$el[0].select3 = select3;
+    }
+});
 
 },{}]},{},[1])(1)
 });

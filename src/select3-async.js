@@ -8,7 +8,7 @@ var latestQueryNum = 0;
  * Option listener that will discard any callbacks from the query function if another query has
  * been called afterwards. This prevents responses from remote sources arriving out-of-order.
  */
-function listener(select3, options) {
+Select3.OptionListeners.push(function(select3, options) {
 
     var query = options.query;
     if (query) {
@@ -31,6 +31,4 @@ function listener(select3, options) {
             query(queryOptions);
         };
     }
-}
-
-Select3.OptionListeners.push(listener);
+});

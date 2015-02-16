@@ -4,25 +4,6 @@ var $ = require('jquery');
 
 var Select3 = require('./select3-base');
 
-/**
- * Option listener providing support for converting traditional <select> boxes into Select3
- * instances.
- */
-function listener(select3, options) {
-
-    var $el = select3.$el;
-    if ($el.is('select')) {
-        if ($el.attr('autofocus')) {
-            setTimeout(function() {
-                select3.focus();
-            }, 1);
-        }
-
-        select3.$el = replaceSelectElement($el, options);
-        select3.$el[0].select3 = select3;
-    }
-}
-
 function replaceSelectElement($el, options) {
 
     var value = (options.multiple ? [] : null);
@@ -51,8 +32,7 @@ function replaceSelectElement($el, options) {
         }
     };
 
-    options.allowClear = options.hasOwnProperty('allowClear') ? options.allowClear
-                                                              : !$el.prop('required');
+    options.allowClear = ('allowClear' in options ? options.allowClear : !$el.prop('required'));
 
     options.items = $el.children('option,optgroup').map(mapOptions).get();
 
@@ -60,8 +40,7 @@ function replaceSelectElement($el, options) {
 
     options.value = value;
 
-    var $div = $('<div>');
-    $div.attr({
+    var $div = $('<div>').attr({
         'class': $el.attr('class'),
         'id': $el.attr('id'),
         'name': $el.attr('name'),
@@ -71,4 +50,21 @@ function replaceSelectElement($el, options) {
     return $div;
 }
 
-Select3.OptionListeners.push(listener);
+/**
+ * Option listener providing support for converting traditional <select> boxes into Select3
+ * instances.
+ */
+Select3.OptionListeners.push(function(select3, options) {
+
+    var $el = select3.$el;
+    if ($el.is('select')) {
+        if ($el.attr('autofocus')) {
+            setTimeout(function() {
+                select3.focus();
+            }, 1);
+        }
+
+        select3.$el = replaceSelectElement($el, options);
+        select3.$el[0].select3 = select3;
+    }
+});
