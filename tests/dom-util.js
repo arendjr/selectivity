@@ -48,7 +48,7 @@ module.exports = {
                         'single': ['base'],
                         'submenu': ['base', 'dropdown'],
                         'templates': ['base', 'locale'],
-                        'tokenizer': ['base', 'multiple'],
+                        'tokenizer': ['base'],
                         'traditional': ['base']
                     };
 

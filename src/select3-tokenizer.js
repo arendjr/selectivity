@@ -3,9 +3,6 @@
 var $ = require('jquery');
 
 var Select3 = require('./select3-base');
-var Select3Multiple = require('./select3-multiple');
-
-var setOptions = Select3Multiple.prototype.setOptions;
 
 function defaultTokenizer(input, selection, createToken, options) {
 
@@ -45,8 +42,8 @@ function defaultTokenizer(input, selection, createToken, options) {
 }
 
 /**
- * Extends Select3Multiple.setOptions() with a default tokenizer which is used when the
- * tokenSeparators option is specified.
+ * Option listener that provides a default tokenizer which is used when the tokenSeparators option
+ * is specified.
  *
  * @param options Options object. In addition to the options supported in the multi-input
  *                implementation, this may contain the following property:
@@ -58,17 +55,11 @@ function defaultTokenizer(input, selection, createToken, options) {
  *                                  using the 'createTokenItem' function. The default tokenizer also
  *                                  filters out already selected items.
  */
-Select3Multiple.prototype.setOptions = function(options) {
-
-    options = options || {};
+Select3.OptionListeners.push(function(select3, options) {
 
     if (options.tokenSeparators) {
-        if ($.type(options.tokenSeparators) === 'array') {
-            options.tokenizer = options.tokenizer || defaultTokenizer;
-        } else {
-            throw new Error('tokenSeparators must be an array');
-        }
-    }
+        options.allowedTypes = $.extend({ tokenSeparators: 'array' }, options.allowedTypes);
 
-    setOptions.call(this, options);
-};
+        options.tokenizer = options.tokenizer || defaultTokenizer;
+    }
+});

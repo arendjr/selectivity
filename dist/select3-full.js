@@ -78,14 +78,14 @@ function listener(select3, options) {
                 if (queryNum === latestQueryNum) {
                     callback.apply(null, arguments);
                 }
-            }
+            };
             queryOptions.error = function() {
                 if (queryNum === latestQueryNum) {
                     error.apply(null, arguments);
                 }
-            }
+            };
             query(queryOptions);
-        }
+        };
     }
 }
 
@@ -4053,9 +4053,6 @@ Select3.Templates = {
 var $ = window.jQuery || window.Zepto;
 
 var Select3 = _dereq_(5);
-var Select3Multiple = _dereq_(11);
-
-var setOptions = Select3Multiple.prototype.setOptions;
 
 function defaultTokenizer(input, selection, createToken, options) {
 
@@ -4095,8 +4092,8 @@ function defaultTokenizer(input, selection, createToken, options) {
 }
 
 /**
- * Extends Select3Multiple.setOptions() with a default tokenizer which is used when the
- * tokenSeparators option is specified.
+ * Option listener that provides a default tokenizer which is used when the tokenSeparators option
+ * is specified.
  *
  * @param options Options object. In addition to the options supported in the multi-input
  *                implementation, this may contain the following property:
@@ -4108,20 +4105,14 @@ function defaultTokenizer(input, selection, createToken, options) {
  *                                  using the 'createTokenItem' function. The default tokenizer also
  *                                  filters out already selected items.
  */
-Select3Multiple.prototype.setOptions = function(options) {
-
-    options = options || {};
+Select3.OptionListeners.push(function(select3, options) {
 
     if (options.tokenSeparators) {
-        if ($.type(options.tokenSeparators) === 'array') {
-            options.tokenizer = options.tokenizer || defaultTokenizer;
-        } else {
-            throw new Error('tokenSeparators must be an array');
-        }
-    }
+        options.allowedTypes = $.extend({ tokenSeparators: 'array' }, options.allowedTypes);
 
-    setOptions.call(this, options);
-};
+        options.tokenizer = options.tokenizer || defaultTokenizer;
+    }
+});
 
 },{}],16:[function(_dereq_,module,exports){
 'use strict';
