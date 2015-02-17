@@ -27,13 +27,10 @@ function MultipleSelect3(options) {
     this._rerenderSelection();
 }
 
-MultipleSelect3.prototype = Object.create(Select3.prototype);
-MultipleSelect3.prototype.constructor = MultipleSelect3;
-
 /**
  * Methods.
  */
-$.extend(MultipleSelect3.prototype, {
+var callSuper = Select3.inherits(MultipleSelect3, {
 
     /**
      * Adds an item to the selection, if it's not selected yet.
@@ -178,7 +175,7 @@ $.extend(MultipleSelect3.prototype, {
         }
 
         if (this.dropdown) {
-            Select3.prototype.search.apply(this);
+            callSuper(this, 'search');
         }
     },
 
@@ -230,7 +227,7 @@ $.extend(MultipleSelect3.prototype, {
         options.allowedTypes = options.allowedTypes || {};
         options.allowedTypes[backspaceHighlightsBeforeDelete] = 'boolean';
 
-        Select3.prototype.setOptions.call(this, options);
+        callSuper(this, 'setOptions', options);
     },
 
     /**
@@ -521,6 +518,4 @@ $.extend(MultipleSelect3.prototype, {
 
 });
 
-Select3.InputTypes.Multiple = MultipleSelect3;
-
-module.exports = MultipleSelect3;
+module.exports = Select3.InputTypes.Multiple = MultipleSelect3;

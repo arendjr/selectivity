@@ -123,20 +123,17 @@ function EmailSelect3(options) {
     MultipleSelect3.call(this, options);
 }
 
-EmailSelect3.prototype = Object.create(MultipleSelect3.prototype);
-EmailSelect3.prototype.constructor = EmailSelect3;
-
 /**
  * Methods.
  */
-$.extend(EmailSelect3.prototype, {
+var callSuper = Select3.inherits(EmailSelect3, MultipleSelect3, {
 
     /**
      * @inherit
      */
     initSearchInput: function($input) {
 
-        MultipleSelect3.prototype.initSearchInput.call(this, $input);
+        callSuper(this, 'initSearchInput', $input);
 
         $input.on('blur', function() {
             var term = $input.val();
@@ -160,11 +157,9 @@ $.extend(EmailSelect3.prototype, {
             tokenizer: emailTokenizer
         }, options);
 
-        MultipleSelect3.prototype.setOptions.call(this, options);
+        callSuper(this, 'setOptions', options);
     }
 
 });
 
-Select3.InputTypes.Email = EmailSelect3;
-
-module.exports = EmailSelect3;
+module.exports = Select3.InputTypes.Email = EmailSelect3;

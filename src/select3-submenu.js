@@ -20,10 +20,7 @@ function Select3Submenu(options) {
     this._closeSubmenuTimeout = 0;
 }
 
-Select3Submenu.prototype = Object.create(Select3Dropdown.prototype);
-Select3Submenu.prototype.constructor = Select3Submenu;
-
-$.extend(Select3Submenu.prototype, {
+var callSuper = Select3.inherits(Select3Submenu, Select3Dropdown, {
 
     /**
      * @inherit
@@ -41,7 +38,7 @@ $.extend(Select3Submenu.prototype, {
             this.submenu.close();
         }
 
-        Select3Dropdown.prototype.close.call(this);
+        callSuper(this, 'close');
 
         if (this.parentMenu) {
             this.parentMenu.submenu = null;
@@ -82,7 +79,7 @@ $.extend(Select3Submenu.prototype, {
         if (this.submenu) {
             this.submenu.highlightNext();
         } else {
-            Select3Dropdown.prototype.highlightNext.call(this);
+            callSuper(this, 'highlightNext');
         }
     },
 
@@ -94,7 +91,7 @@ $.extend(Select3Submenu.prototype, {
         if (this.submenu) {
             this.submenu.highlightPrevious();
         } else {
-            Select3Dropdown.prototype.highlightPrevious.call(this);
+            callSuper(this, 'highlightPrevious');
         }
     },
 
@@ -106,7 +103,7 @@ $.extend(Select3Submenu.prototype, {
         if (this.submenu) {
             this.submenu.selectHighlight();
         } else {
-            Select3Dropdown.prototype.selectHighlight.call(this);
+            callSuper(this, 'selectHighlight');
         }
     },
 
@@ -133,7 +130,7 @@ $.extend(Select3Submenu.prototype, {
         if (this.submenu) {
             this.submenu.showResults(results, options);
         } else {
-            Select3Dropdown.prototype.showResults.call(this, results, options);
+            callSuper(this, 'showResults', results, options);
         }
     },
 
@@ -145,7 +142,7 @@ $.extend(Select3Submenu.prototype, {
         if (this.parentMenu) {
             this.select3.$el.trigger('select3-close-submenu');
         } else {
-            Select3Dropdown.prototype.triggerClose.call(this);
+            callSuper(this, 'triggerClose');
         }
     },
 
@@ -157,7 +154,7 @@ $.extend(Select3Submenu.prototype, {
         if (this.parentMenu) {
             this.select3.$el.trigger('select3-open-submenu');
         } else {
-            Select3Dropdown.prototype.triggerOpen.call(this);
+            callSuper(this, 'triggerOpen');
         }
     },
 
@@ -178,7 +175,7 @@ $.extend(Select3Submenu.prototype, {
      */
     _doHighlight: function(item) {
 
-        Select3Dropdown.prototype.highlight.call(this, item);
+        callSuper(this, 'highlight', item);
 
         if (item.submenu && !this.submenu) {
             var select3 = this.select3;
@@ -238,6 +235,5 @@ Select3.findNestedById = function(array, id) {
     }
     return null;
 };
-
 
 module.exports = Select3Submenu;

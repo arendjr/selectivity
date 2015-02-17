@@ -19,13 +19,10 @@ function SingleSelect3(options) {
     this._rerenderSelection();
 }
 
-SingleSelect3.prototype = Object.create(Select3.prototype);
-SingleSelect3.prototype.constructor = SingleSelect3;
-
 /**
  * Methods.
  */
-$.extend(SingleSelect3.prototype, {
+var callSuper = Select3.inherits(SingleSelect3, {
 
     /**
      * Events map.
@@ -82,7 +79,7 @@ $.extend(SingleSelect3.prototype, {
             showSearchInputInDropdown: 'boolean'
         });
 
-        Select3.prototype.setOptions.call(this, options);
+        callSuper(this, 'setOptions', options);
     },
 
     /**

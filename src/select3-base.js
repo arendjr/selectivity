@@ -929,6 +929,36 @@ Select3.findNestedById = function(array, id) {
 };
 
 /**
+ * Utility method for inheriting another class.
+ *
+ * @param SubClass Constructor function of the subclass.
+ * @param SuperClass Optional constructor function of the superclass. If omitted, Select3 is used
+ *                   as superclass.
+ * @param prototype Object with methods you want to add to the subclass prototype.
+ *
+ * @return A utility function for calling the methods of the superclass. This function receives two
+ *         arguments: The this object on which you want to execute the method and the name of the
+ *         method. Any arguments past those are passed to the superclass method.
+ */
+Select3.inherits = function(SubClass, SuperClass, prototype) {
+
+    if (arguments.length === 2) {
+        prototype = SuperClass;
+        SuperClass = Select3;
+    }
+
+    SubClass.prototype = $.extend(
+        Object.create(SuperClass.prototype),
+        { constructor: SubClass },
+        prototype
+    );
+
+    return function(self, methodName) {
+        SuperClass.prototype[methodName].apply(self, Array.prototype.slice.call(arguments, 2));
+    };
+};
+
+/**
  * Checks whether a value can be used as a valid ID for selection items. Only numbers and strings
  * are accepted to be used as IDs.
  *
