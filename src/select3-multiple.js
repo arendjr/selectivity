@@ -387,6 +387,8 @@ $.extend(MultipleSelect3.prototype, {
         } else if (event.keyCode === KEY_DELETE && !inputHadText) {
             this._deletePressed();
         }
+
+        this._updateInputWidth();
     },
 
     /**
