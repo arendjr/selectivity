@@ -112,7 +112,8 @@ Select3.Templates = {
                                           'autocapitalize="off" class="select3-multiple-input">' +
                                    '<span class="select3-multiple-input select3-width-detector">' +
                                    '</span>'
-                                 : '') +
+                                 : '<div class="select3-multiple-input select3-placeholder">' +
+                                   '</div>') +
                 '<div class="clearfix"></div>' +
             '</div>'
         );
@@ -226,15 +227,14 @@ Select3.Templates = {
     /**
      * Renders the placeholder for single-select input boxes.
      *
-     * The template is expected to have a top-level element with the class
-     * 'select3-single-input-placeholder'.
+     * The template is expected to have a top-level element with the class 'select3-placeholder'.
      *
      * @param options Options object containing the following property:
      *                placeholder - The placeholder text.
      */
     singleSelectPlaceholder: function(options) {
         return (
-            '<div class="select3-single-select-placeholder">' +
+            '<div class="select3-placeholder">' +
                 escape(options.placeholder) +
             '</div>'
         );

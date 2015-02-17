@@ -14,6 +14,9 @@
   display: inline-block;
   width: 250px;
 }
+.select3-placeholder {
+  color: #999;
+}
 /**
  * Dropdown
  */
@@ -83,6 +86,10 @@
   max-height: 10em;
   min-height: calc(2em + 4px);
   padding: 5px;
+}
+.select3-multiple-input-container .select3-placeholder {
+  height: calc(2em + 4px);
+  line-height: calc(2em + 4px);
 }
 .select3-multiple-input,
 input[type="text"].select3-multiple-input {
@@ -157,9 +164,6 @@ input[type="text"].select3-multiple-input:focus {
 .select3-single-selected-item-remove {
   float: right;
   padding: 0 5px;
-}
-.select3-single-select-placeholder {
-  color: #999;
 }
 .select3-caret {
   position: absolute;
