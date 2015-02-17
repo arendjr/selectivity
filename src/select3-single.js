@@ -119,13 +119,15 @@ $.extend(SingleSelect3.prototype, {
      */
     _clicked: function() {
 
-        if (this.dropdown) {
-            this.close();
-        } else if (this.options.showDropdown !== false) {
-            this.open({ showSearchInput: this.options.showSearchInputInDropdown !== false });
-        }
+        if (this.enabled) {
+            if (this.dropdown) {
+                this.close();
+            } else if (this.options.showDropdown !== false) {
+                this.open({ showSearchInput: this.options.showSearchInputInDropdown !== false });
+            }
 
-        return false;
+            return false;
+        }
     },
 
     /**
@@ -147,7 +149,7 @@ $.extend(SingleSelect3.prototype, {
         if (this._data) {
             $container.html(
                 this.template('singleSelectedItem', $.extend({
-                    showRemove: this.options.allowClear
+                    removable: this.options.allowClear && !this.options.readOnly
                 }, this._data))
             );
 

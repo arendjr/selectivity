@@ -18,7 +18,7 @@ function MultipleSelect3(options) {
 
     Select3.call(this, options);
 
-    this.$el.html(this.template('multipleSelectInput'));
+    this.$el.html(this.template('multipleSelectInput', { enabled: this.enabled }));
 
     this._highlightedItemId = null;
 
@@ -297,11 +297,13 @@ $.extend(MultipleSelect3.prototype, {
      */
     _clicked: function() {
 
-        this.focus();
+        if (this.enabled) {
+            this.focus();
 
-        this._open();
+            this._open();
 
-        return false;
+            return false;
+        }
     },
 
     /**
@@ -348,7 +350,9 @@ $.extend(MultipleSelect3.prototype, {
      */
     _itemClicked: function(event) {
 
-        this._highlightItem(this._getItemId(event));
+        if (this.enabled) {
+            this._highlightItem(this._getItemId(event));
+        }
     },
 
     /**
@@ -404,7 +408,8 @@ $.extend(MultipleSelect3.prototype, {
     _renderSelectedItem: function(item) {
 
         this.$searchInput.before(this.template('multipleSelectedItem', $.extend({
-            highlighted: (item.id === this._highlightedItemId)
+            highlighted: (item.id === this._highlightedItemId),
+            removable: !this.options.readOnly
         }, item)));
 
         var quotedId = Select3.quoteCssAttr(item.id);
@@ -449,7 +454,7 @@ $.extend(MultipleSelect3.prototype, {
 
         this.positionDropdown();
 
-        this.$searchInput.attr('placeholder', this._data.length ? '' : this.options.placeholder);
+        this._updatePlaceholder();
     },
 
     /**
@@ -478,11 +483,28 @@ $.extend(MultipleSelect3.prototype, {
      */
     _updateInputWidth: function() {
 
-        var $input = this.$searchInput, $widthDetector = this.$('.select3-width-detector');
-        $widthDetector.text($input.val() || !this._data.length && this.options.placeholder || '');
-        $input.width($widthDetector.width() + 20);
+        if (this.enabled) {
+            var $input = this.$searchInput, $widthDetector = this.$('.select3-width-detector');
+            $widthDetector.text($input.val() ||
+                                !this._data.length && this.options.placeholder ||
+                                '');
+            $input.width($widthDetector.width() + 20);
 
-        this.positionDropdown();
+            this.positionDropdown();
+        }
+    },
+
+    /**
+     * @private
+     */
+    _updatePlaceholder: function() {
+
+        var placeholder = this._data.length ? '' : this.options.placeholder;
+        if (this.enabled) {
+            this.$searchInput.attr('placeholder', placeholder);
+        } else {
+            this.$('.select3-placeholder').text(placeholder);
+        }
     }
 
 });

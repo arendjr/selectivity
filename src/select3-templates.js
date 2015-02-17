@@ -101,15 +101,22 @@ Select3.Templates = {
      *                            width detector also has the 'select2-multiple-input' class on
      *                            purpose to be able to detect the width of text entered in the
      *                            input element.
+     *
+     * @param options Options object containing the following property:
+     *                enabled - Boolean whether the input is enabled.
      */
-    multipleSelectInput: (
-        '<div class="select3-multiple-input-container">' +
-            '<input type="text" autocomplete="off" autocorrect="off" autocapitalize="off" ' +
-                   'class="select3-multiple-input">' +
-            '<span class="select3-multiple-input select3-width-detector"></span>' +
-            '<div class="clearfix"></div>' +
-        '</div>'
-    ),
+    multipleSelectInput: function(options) {
+        return (
+            '<div class="select3-multiple-input-container">' +
+                (options.enabled ? '<input type="text" autocomplete="off" autocorrect="off" ' +
+                                          'autocapitalize="off" class="select3-multiple-input">' +
+                                   '<span class="select3-multiple-input select3-width-detector">' +
+                                   '</span>'
+                                 : '') +
+                '<div class="clearfix"></div>' +
+            '</div>'
+        );
+    },
 
     /**
      * Renders a selected item in multi-selection input boxes.
@@ -124,6 +131,7 @@ Select3.Templates = {
      * @param options Options object containing the following properties:
      *                highlighted - Boolean whether this item is currently highlighted.
      *                id - Identifier for the item.
+     *                removable - Boolean whether a remove icon should be displayed.
      *                text - Text label which the user sees.
      */
     multipleSelectedItem: function(options) {
@@ -132,9 +140,10 @@ Select3.Templates = {
             '<span class="select3-multiple-selected-item' + extraClass + '" ' +
                   'data-item-id="' + escape(options.id) + '">' +
                 escape(options.text) +
-                '<a class="select3-multiple-selected-item-remove">' +
-                    '<i class="fa fa-remove"></i>' +
-                '</a>' +
+                (options.removable ? '<a class="select3-multiple-selected-item-remove">' +
+                                         '<i class="fa fa-remove"></i>' +
+                                     '</a>'
+                                   : '') +
             '</span>'
         );
     },
@@ -240,22 +249,17 @@ Select3.Templates = {
      *
      * @param options Options object containing the following properties:
      *                id - Identifier for the item.
-     *                showRemove - Boolean whether a remove icon should be displayed.
+     *                removable - Boolean whether a remove icon should be displayed.
      *                text - Text label which the user sees.
      */
     singleSelectedItem: function(options) {
-        var removeIcon = '';
-        if (options.showRemove) {
-            removeIcon = (
-                '<a class="select3-single-selected-item-remove">' +
-                    '<i class="fa fa-remove"></i>' +
-                '</a>'
-            );
-        }
         return (
             '<span class="select3-single-selected-item" ' +
                   'data-item-id="' + escape(options.id) + '">' +
-                removeIcon +
+                (options.removable ? '<a class="select3-single-selected-item-remove">' +
+                                         '<i class="fa fa-remove"></i>' +
+                                     '</a>'
+                                   : '') +
                 escape(options.text) +
             '</span>'
         );

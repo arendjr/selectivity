@@ -274,6 +274,13 @@ function Select3(options) {
     this.dropdown = null;
 
     /**
+     * Whether the input is enabled.
+     *
+     * This is false when the option readOnly is false or the option removeOnly is false.
+     */
+    this.enabled = true;
+
+    /**
      * Boolean whether the browser has touch input.
      */
     this.hasTouch = (typeof window !== 'undefined' && 'ontouchstart' in window);
@@ -687,6 +694,9 @@ $.extend(Select3.prototype, {
      *                        term - The search term the user is searching for. Unlike with the
      *                               matcher function, the term has not been processed using
      *                               Select3.transformText().
+     *                readOnly - If true, disables any modification of the input.
+     *                removeOnly - If true, disables any modification of the input except removing
+     *                             of selected items.
      *                searchInputListeners - Array of search input listeners. By default, the global
      *                                       array Select3.SearchInputListeners is used.
      *                showDropdown - Set to false if you don't want to use any dropdown (you can
@@ -712,6 +722,8 @@ $.extend(Select3.prototype, {
             placeholder: 'string',
             positionDropdown: 'function|null',
             query: 'function|null',
+            readOnly: 'boolean',
+            removeOnly: 'boolean',
             searchInputListeners: 'array'
         }, options.allowedTypes);
 
@@ -739,6 +751,8 @@ $.extend(Select3.prototype, {
                 break;
             }
         }.bind(this));
+
+        this.enabled = (!this.options.readOnly && !this.options.removeOnly);
     },
 
     /**
@@ -2707,8 +2721,7 @@ function emailTokenizer(input, selection, createToken) {
                 return { term: input.slice(0, i), input: input.slice(i + 1) };
             case ' ':
             case '\t':
-                var word = lastWord(input, i);
-                if (isValidEmail(word)) {
+                if (isValidEmail(lastWord(input, i))) {
                     return { term: input.slice(0, i), input: input.slice(i + 1) };
                 }
                 break;
@@ -2753,6 +2766,21 @@ EmailSelect3.prototype.constructor = EmailSelect3;
  * Methods.
  */
 $.extend(EmailSelect3.prototype, {
+
+    /**
+     * @inherit
+     */
+    initSearchInput: function($input) {
+
+        MultipleSelect3.prototype.initSearchInput.call(this, $input);
+
+        $input.on('blur', function() {
+            var term = $input.val();
+            if (isValidEmail(lastWord(term))) {
+                this.add(createEmailItem(term));
+            }
+        }.bind(this));
+    },
 
     /**
      * @inherit
@@ -2884,7 +2912,7 @@ function MultipleSelect3(options) {
 
     Select3.call(this, options);
 
-    this.$el.html(this.template('multipleSelectInput'));
+    this.$el.html(this.template('multipleSelectInput', { enabled: this.enabled }));
 
     this._highlightedItemId = null;
 
@@ -3163,11 +3191,13 @@ $.extend(MultipleSelect3.prototype, {
      */
     _clicked: function() {
 
-        this.focus();
+        if (this.enabled) {
+            this.focus();
 
-        this._open();
+            this._open();
 
-        return false;
+            return false;
+        }
     },
 
     /**
@@ -3214,7 +3244,9 @@ $.extend(MultipleSelect3.prototype, {
      */
     _itemClicked: function(event) {
 
-        this._highlightItem(this._getItemId(event));
+        if (this.enabled) {
+            this._highlightItem(this._getItemId(event));
+        }
     },
 
     /**
@@ -3253,6 +3285,8 @@ $.extend(MultipleSelect3.prototype, {
         } else if (event.keyCode === KEY_DELETE && !inputHadText) {
             this._deletePressed();
         }
+
+        this._updateInputWidth();
     },
 
     /**
@@ -3268,7 +3302,8 @@ $.extend(MultipleSelect3.prototype, {
     _renderSelectedItem: function(item) {
 
         this.$searchInput.before(this.template('multipleSelectedItem', $.extend({
-            highlighted: (item.id === this._highlightedItemId)
+            highlighted: (item.id === this._highlightedItemId),
+            removable: !this.options.readOnly
         }, item)));
 
         var quotedId = Select3.quoteCssAttr(item.id);
@@ -3313,7 +3348,7 @@ $.extend(MultipleSelect3.prototype, {
 
         this.positionDropdown();
 
-        this.$searchInput.attr('placeholder', this._data.length ? '' : this.options.placeholder);
+        this._updatePlaceholder();
     },
 
     /**
@@ -3342,11 +3377,28 @@ $.extend(MultipleSelect3.prototype, {
      */
     _updateInputWidth: function() {
 
-        var $input = this.$searchInput, $widthDetector = this.$('.select3-width-detector');
-        $widthDetector.text($input.val() || !this._data.length && this.options.placeholder || '');
-        $input.width($widthDetector.width() + 20);
+        if (this.enabled) {
+            var $input = this.$searchInput, $widthDetector = this.$('.select3-width-detector');
+            $widthDetector.text($input.val() ||
+                                !this._data.length && this.options.placeholder ||
+                                '');
+            $input.width($widthDetector.width() + 20);
 
-        this.positionDropdown();
+            this.positionDropdown();
+        }
+    },
+
+    /**
+     * @private
+     */
+    _updatePlaceholder: function() {
+
+        var placeholder = this._data.length ? '' : this.options.placeholder;
+        if (this.enabled) {
+            this.$searchInput.attr('placeholder', placeholder);
+        } else {
+            this.$('.select3-placeholder').text(placeholder);
+        }
     }
 
 });
@@ -3477,13 +3529,15 @@ $.extend(SingleSelect3.prototype, {
      */
     _clicked: function() {
 
-        if (this.dropdown) {
-            this.close();
-        } else if (this.options.showDropdown !== false) {
-            this.open({ showSearchInput: this.options.showSearchInputInDropdown !== false });
-        }
+        if (this.enabled) {
+            if (this.dropdown) {
+                this.close();
+            } else if (this.options.showDropdown !== false) {
+                this.open({ showSearchInput: this.options.showSearchInputInDropdown !== false });
+            }
 
-        return false;
+            return false;
+        }
     },
 
     /**
@@ -3505,7 +3559,7 @@ $.extend(SingleSelect3.prototype, {
         if (this._data) {
             $container.html(
                 this.template('singleSelectedItem', $.extend({
-                    showRemove: this.options.allowClear
+                    removable: this.options.allowClear && !this.options.readOnly
                 }, this._data))
             );
 
@@ -3883,15 +3937,22 @@ Select3.Templates = {
      *                            width detector also has the 'select2-multiple-input' class on
      *                            purpose to be able to detect the width of text entered in the
      *                            input element.
+     *
+     * @param options Options object containing the following property:
+     *                enabled - Boolean whether the input is enabled.
      */
-    multipleSelectInput: (
-        '<div class="select3-multiple-input-container">' +
-            '<input type="text" autocomplete="off" autocorrect="off" autocapitalize="off" ' +
-                   'class="select3-multiple-input">' +
-            '<span class="select3-multiple-input select3-width-detector"></span>' +
-            '<div class="clearfix"></div>' +
-        '</div>'
-    ),
+    multipleSelectInput: function(options) {
+        return (
+            '<div class="select3-multiple-input-container">' +
+                (options.enabled ? '<input type="text" autocomplete="off" autocorrect="off" ' +
+                                          'autocapitalize="off" class="select3-multiple-input">' +
+                                   '<span class="select3-multiple-input select3-width-detector">' +
+                                   '</span>'
+                                 : '') +
+                '<div class="clearfix"></div>' +
+            '</div>'
+        );
+    },
 
     /**
      * Renders a selected item in multi-selection input boxes.
@@ -3906,6 +3967,7 @@ Select3.Templates = {
      * @param options Options object containing the following properties:
      *                highlighted - Boolean whether this item is currently highlighted.
      *                id - Identifier for the item.
+     *                removable - Boolean whether a remove icon should be displayed.
      *                text - Text label which the user sees.
      */
     multipleSelectedItem: function(options) {
@@ -3914,9 +3976,10 @@ Select3.Templates = {
             '<span class="select3-multiple-selected-item' + extraClass + '" ' +
                   'data-item-id="' + escape(options.id) + '">' +
                 escape(options.text) +
-                '<a class="select3-multiple-selected-item-remove">' +
-                    '<i class="fa fa-remove"></i>' +
-                '</a>' +
+                (options.removable ? '<a class="select3-multiple-selected-item-remove">' +
+                                         '<i class="fa fa-remove"></i>' +
+                                     '</a>'
+                                   : '') +
             '</span>'
         );
     },
@@ -4022,22 +4085,17 @@ Select3.Templates = {
      *
      * @param options Options object containing the following properties:
      *                id - Identifier for the item.
-     *                showRemove - Boolean whether a remove icon should be displayed.
+     *                removable - Boolean whether a remove icon should be displayed.
      *                text - Text label which the user sees.
      */
     singleSelectedItem: function(options) {
-        var removeIcon = '';
-        if (options.showRemove) {
-            removeIcon = (
-                '<a class="select3-single-selected-item-remove">' +
-                    '<i class="fa fa-remove"></i>' +
-                '</a>'
-            );
-        }
         return (
             '<span class="select3-single-selected-item" ' +
                   'data-item-id="' + escape(options.id) + '">' +
-                removeIcon +
+                (options.removable ? '<a class="select3-single-selected-item-remove">' +
+                                         '<i class="fa fa-remove"></i>' +
+                                     '</a>'
+                                   : '') +
                 escape(options.text) +
             '</span>'
         );

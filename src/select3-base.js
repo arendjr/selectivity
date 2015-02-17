@@ -117,6 +117,13 @@ function Select3(options) {
     this.dropdown = null;
 
     /**
+     * Whether the input is enabled.
+     *
+     * This is false when the option readOnly is false or the option removeOnly is false.
+     */
+    this.enabled = true;
+
+    /**
      * Boolean whether the browser has touch input.
      */
     this.hasTouch = (typeof window !== 'undefined' && 'ontouchstart' in window);
@@ -530,6 +537,9 @@ $.extend(Select3.prototype, {
      *                        term - The search term the user is searching for. Unlike with the
      *                               matcher function, the term has not been processed using
      *                               Select3.transformText().
+     *                readOnly - If true, disables any modification of the input.
+     *                removeOnly - If true, disables any modification of the input except removing
+     *                             of selected items.
      *                searchInputListeners - Array of search input listeners. By default, the global
      *                                       array Select3.SearchInputListeners is used.
      *                showDropdown - Set to false if you don't want to use any dropdown (you can
@@ -555,6 +565,8 @@ $.extend(Select3.prototype, {
             placeholder: 'string',
             positionDropdown: 'function|null',
             query: 'function|null',
+            readOnly: 'boolean',
+            removeOnly: 'boolean',
             searchInputListeners: 'array'
         }, options.allowedTypes);
 
@@ -582,6 +594,8 @@ $.extend(Select3.prototype, {
                 break;
             }
         }.bind(this));
+
+        this.enabled = (!this.options.readOnly && !this.options.removeOnly);
     },
 
     /**
