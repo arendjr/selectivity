@@ -3610,8 +3610,6 @@ module.exports = Select3.InputTypes.Single = SingleSelect3;
 },{}],13:[function(_dereq_,module,exports){
 'use strict';
 
-var $ = window.jQuery || window.Zepto;
-
 var Select3 = _dereq_(5);
 var Select3Dropdown = _dereq_(7);
 

@@ -1,7 +1,5 @@
 'use strict';
 
-var $ = require('jquery');
-
 var Select3 = require('./select3-base');
 var Select3Dropdown = require('./select3-dropdown');
 
