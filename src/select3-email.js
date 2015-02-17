@@ -85,8 +85,7 @@ function emailTokenizer(input, selection, createToken) {
                 return { term: input.slice(0, i), input: input.slice(i + 1) };
             case ' ':
             case '\t':
-                var word = lastWord(input, i);
-                if (isValidEmail(word)) {
+                if (isValidEmail(lastWord(input, i))) {
                     return { term: input.slice(0, i), input: input.slice(i + 1) };
                 }
                 break;
@@ -131,6 +130,21 @@ EmailSelect3.prototype.constructor = EmailSelect3;
  * Methods.
  */
 $.extend(EmailSelect3.prototype, {
+
+    /**
+     * @inherit
+     */
+    initSearchInput: function($input) {
+
+        MultipleSelect3.prototype.initSearchInput.call(this, $input);
+
+        $input.on('blur', function() {
+            var term = $input.val();
+            if (isValidEmail(lastWord(term))) {
+                this.add(createEmailItem(term));
+            }
+        }.bind(this));
+    },
 
     /**
      * @inherit
