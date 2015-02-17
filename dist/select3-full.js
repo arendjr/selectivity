@@ -2981,9 +2981,7 @@ $.extend(MultipleSelect3.prototype, {
         'click .select3-multiple-selected-item': '_itemClicked',
         'keydown .select3-multiple-input': '_keyHeld',
         'keyup .select3-multiple-input': '_keyReleased',
-        'paste .select3-multiple-input': function() {
-            setTimeout(this.search.bind(this), 10);
-        },
+        'paste .select3-multiple-input': '_onPaste',
         'select3-selected': '_resultSelected'
     },
 
@@ -3287,6 +3285,20 @@ $.extend(MultipleSelect3.prototype, {
         }
 
         this._updateInputWidth();
+    },
+
+    /**
+     * @private
+     */
+    _onPaste: function() {
+
+        setTimeout(function() {
+            this.search();
+
+            if (this.options.createTokenItem) {
+                this._createToken();
+            }
+        }.bind(this), 10);
     },
 
     /**
