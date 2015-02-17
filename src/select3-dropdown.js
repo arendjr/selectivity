@@ -562,6 +562,4 @@ $.extend(Select3Dropdown.prototype, {
 
 });
 
-Select3.Dropdown = Select3Dropdown;
-
-module.exports = Select3Dropdown;
+module.exports = Select3.Dropdown = Select3Dropdown;

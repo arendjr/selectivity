@@ -195,7 +195,7 @@ function select3(methodName, options) {
             }
 
             if ($.type(instance[methodName]) === 'function') {
-                if ($.type(result) === 'undefined') {
+                if (result === undefined) {
                     result = instance[methodName].call(instance, options);
                 }
             } else {
@@ -394,7 +394,7 @@ $.extend(Select3.prototype, {
 
         options = options || {};
 
-        if ($.type(newData) === 'undefined') {
+        if (newData === undefined) {
             return this._data;
         } else {
             newData = this.validateData(newData);
@@ -599,12 +599,12 @@ $.extend(Select3.prototype, {
             self._setResults(results, $.extend({ term: term }, resultOptions));
         }
 
-        if ($.type(term) === 'undefined') {
-            if (!this.$searchInput) {
+        if (term === undefined) {
+            if (!self.$searchInput) {
                 return;
             }
 
-            term = this.$searchInput.val();
+            term = self.$searchInput.val();
         }
 
         if (self.items) {
@@ -873,7 +873,7 @@ $.extend(Select3.prototype, {
 
         options = options || {};
 
-        if ($.type(newValue) === 'undefined') {
+        if (newValue === undefined) {
             return this._value;
         } else {
             newValue = this.validateValue(newValue);
@@ -1086,6 +1086,36 @@ Select3.findNestedById = function(array, id) {
 };
 
 /**
+ * Utility method for inheriting another class.
+ *
+ * @param SubClass Constructor function of the subclass.
+ * @param SuperClass Optional constructor function of the superclass. If omitted, Select3 is used
+ *                   as superclass.
+ * @param prototype Object with methods you want to add to the subclass prototype.
+ *
+ * @return A utility function for calling the methods of the superclass. This function receives two
+ *         arguments: The this object on which you want to execute the method and the name of the
+ *         method. Any arguments past those are passed to the superclass method.
+ */
+Select3.inherits = function(SubClass, SuperClass, prototype) {
+
+    if (arguments.length === 2) {
+        prototype = SuperClass;
+        SuperClass = Select3;
+    }
+
+    SubClass.prototype = $.extend(
+        Object.create(SuperClass.prototype),
+        { constructor: SubClass },
+        prototype
+    );
+
+    return function(self, methodName) {
+        SuperClass.prototype[methodName].apply(self, Array.prototype.slice.call(arguments, 2));
+    };
+};
+
+/**
  * Checks whether a value can be used as a valid ID for selection items. Only numbers and strings
  * are accepted to be used as IDs.
  *
@@ -1196,9 +1226,7 @@ Select3.transformText = function(string) {
     return string.toLowerCase();
 };
 
-$.fn.select3 = Select3;
-
-module.exports = Select3;
+module.exports = $.fn.select3 = Select3;
 
 },{}],6:[function(_dereq_,module,exports){
 'use strict';
@@ -2629,9 +2657,7 @@ $.extend(Select3Dropdown.prototype, {
 
 });
 
-Select3.Dropdown = Select3Dropdown;
-
-module.exports = Select3Dropdown;
+module.exports = Select3.Dropdown = Select3Dropdown;
 
 },{}],8:[function(_dereq_,module,exports){
 'use strict';
@@ -2759,20 +2785,17 @@ function EmailSelect3(options) {
     MultipleSelect3.call(this, options);
 }
 
-EmailSelect3.prototype = Object.create(MultipleSelect3.prototype);
-EmailSelect3.prototype.constructor = EmailSelect3;
-
 /**
  * Methods.
  */
-$.extend(EmailSelect3.prototype, {
+var callSuper = Select3.inherits(EmailSelect3, MultipleSelect3, {
 
     /**
      * @inherit
      */
     initSearchInput: function($input) {
 
-        MultipleSelect3.prototype.initSearchInput.call(this, $input);
+        callSuper(this, 'initSearchInput', $input);
 
         $input.on('blur', function() {
             var term = $input.val();
@@ -2796,14 +2819,12 @@ $.extend(EmailSelect3.prototype, {
             tokenizer: emailTokenizer
         }, options);
 
-        MultipleSelect3.prototype.setOptions.call(this, options);
+        callSuper(this, 'setOptions', options);
     }
 
 });
 
-Select3.InputTypes.Email = EmailSelect3;
-
-module.exports = EmailSelect3;
+module.exports = Select3.InputTypes.Email = EmailSelect3;
 
 },{}],9:[function(_dereq_,module,exports){
 'use strict';
@@ -2921,13 +2942,10 @@ function MultipleSelect3(options) {
     this._rerenderSelection();
 }
 
-MultipleSelect3.prototype = Object.create(Select3.prototype);
-MultipleSelect3.prototype.constructor = MultipleSelect3;
-
 /**
  * Methods.
  */
-$.extend(MultipleSelect3.prototype, {
+var callSuper = Select3.inherits(MultipleSelect3, {
 
     /**
      * Adds an item to the selection, if it's not selected yet.
@@ -2936,31 +2954,26 @@ $.extend(MultipleSelect3.prototype, {
      */
     add: function(item) {
 
-        if (Select3.isValidId(item)) {
-            if (this._value.indexOf(item) === -1) {
-                this._value.push(item);
+        var itemIsId = Select3.isValidId(item);
+        var id = (itemIsId ? item : this.validateItem(item) && item.id);
 
-                if (this.options.initSelection) {
-                    this.options.initSelection([item], function(data) {
-                        if (this._value.lastIndexOf(item) > -1) {
-                            item = this.validateItem(data[0]);
-                            this._data.push(item);
+        if (this._value.indexOf(id) === -1) {
+            this._value.push(id);
 
-                            this.triggerChange({ added: item });
-                        }
-                    }.bind(this));
-                } else {
-                    item = this.getItemForId(item);
-                    this._data.push(item);
+            if (itemIsId && this.options.initSelection) {
+                this.options.initSelection([id], function(data) {
+                    if (this._value.indexOf(id) > -1) {
+                        item = this.validateItem(data[0]);
+                        this._data.push(item);
 
-                    this.triggerChange({ added: item });
+                        this.triggerChange({ added: item });
+                    }
+                }.bind(this));
+            } else {
+                if (itemIsId) {
+                    item = this.getItemForId(id);
                 }
-            }
-        } else {
-            item = this.validateItem(item);
-            if (this._value.indexOf(item.id) === -1) {
                 this._data.push(item);
-                this._value.push(item.id);
 
                 this.triggerChange({ added: item });
             }
@@ -3072,7 +3085,7 @@ $.extend(MultipleSelect3.prototype, {
         }
 
         if (this.dropdown) {
-            Select3.prototype.search.apply(this);
+            callSuper(this, 'search');
         }
     },
 
@@ -3124,7 +3137,7 @@ $.extend(MultipleSelect3.prototype, {
         options.allowedTypes = options.allowedTypes || {};
         options.allowedTypes[backspaceHighlightsBeforeDelete] = 'boolean';
 
-        Select3.prototype.setOptions.call(this, options);
+        callSuper(this, 'setOptions', options);
     },
 
     /**
@@ -3204,9 +3217,10 @@ $.extend(MultipleSelect3.prototype, {
     _createToken: function() {
 
         var term = this.$searchInput.val();
+        var createTokenItem = this.options.createTokenItem;
 
-        if (term && this.options.createTokenItem) {
-            var item = this.options.createTokenItem(term);
+        if (term && createTokenItem) {
+            var item = createTokenItem(term);
             if (item) {
                 this.add(item);
             }
@@ -3415,9 +3429,7 @@ $.extend(MultipleSelect3.prototype, {
 
 });
 
-Select3.InputTypes.Multiple = MultipleSelect3;
-
-module.exports = MultipleSelect3;
+module.exports = Select3.InputTypes.Multiple = MultipleSelect3;
 
 },{}],12:[function(_dereq_,module,exports){
 'use strict';
@@ -3441,13 +3453,10 @@ function SingleSelect3(options) {
     this._rerenderSelection();
 }
 
-SingleSelect3.prototype = Object.create(Select3.prototype);
-SingleSelect3.prototype.constructor = SingleSelect3;
-
 /**
  * Methods.
  */
-$.extend(SingleSelect3.prototype, {
+var callSuper = Select3.inherits(SingleSelect3, {
 
     /**
      * Events map.
@@ -3504,7 +3513,7 @@ $.extend(SingleSelect3.prototype, {
             showSearchInputInDropdown: 'boolean'
         });
 
-        Select3.prototype.setOptions.call(this, options);
+        callSuper(this, 'setOptions', options);
     },
 
     /**
@@ -3596,9 +3605,7 @@ $.extend(SingleSelect3.prototype, {
 
 });
 
-Select3.InputTypes.Single = SingleSelect3;
-
-module.exports = SingleSelect3;
+module.exports = Select3.InputTypes.Single = SingleSelect3;
 
 },{}],13:[function(_dereq_,module,exports){
 'use strict';
@@ -3623,10 +3630,7 @@ function Select3Submenu(options) {
     this._closeSubmenuTimeout = 0;
 }
 
-Select3Submenu.prototype = Object.create(Select3Dropdown.prototype);
-Select3Submenu.prototype.constructor = Select3Submenu;
-
-$.extend(Select3Submenu.prototype, {
+var callSuper = Select3.inherits(Select3Submenu, Select3Dropdown, {
 
     /**
      * @inherit
@@ -3644,7 +3648,7 @@ $.extend(Select3Submenu.prototype, {
             this.submenu.close();
         }
 
-        Select3Dropdown.prototype.close.call(this);
+        callSuper(this, 'close');
 
         if (this.parentMenu) {
             this.parentMenu.submenu = null;
@@ -3685,7 +3689,7 @@ $.extend(Select3Submenu.prototype, {
         if (this.submenu) {
             this.submenu.highlightNext();
         } else {
-            Select3Dropdown.prototype.highlightNext.call(this);
+            callSuper(this, 'highlightNext');
         }
     },
 
@@ -3697,7 +3701,7 @@ $.extend(Select3Submenu.prototype, {
         if (this.submenu) {
             this.submenu.highlightPrevious();
         } else {
-            Select3Dropdown.prototype.highlightPrevious.call(this);
+            callSuper(this, 'highlightPrevious');
         }
     },
 
@@ -3709,7 +3713,7 @@ $.extend(Select3Submenu.prototype, {
         if (this.submenu) {
             this.submenu.selectHighlight();
         } else {
-            Select3Dropdown.prototype.selectHighlight.call(this);
+            callSuper(this, 'selectHighlight');
         }
     },
 
@@ -3736,7 +3740,7 @@ $.extend(Select3Submenu.prototype, {
         if (this.submenu) {
             this.submenu.showResults(results, options);
         } else {
-            Select3Dropdown.prototype.showResults.call(this, results, options);
+            callSuper(this, 'showResults', results, options);
         }
     },
 
@@ -3748,7 +3752,7 @@ $.extend(Select3Submenu.prototype, {
         if (this.parentMenu) {
             this.select3.$el.trigger('select3-close-submenu');
         } else {
-            Select3Dropdown.prototype.triggerClose.call(this);
+            callSuper(this, 'triggerClose');
         }
     },
 
@@ -3760,7 +3764,7 @@ $.extend(Select3Submenu.prototype, {
         if (this.parentMenu) {
             this.select3.$el.trigger('select3-open-submenu');
         } else {
-            Select3Dropdown.prototype.triggerOpen.call(this);
+            callSuper(this, 'triggerOpen');
         }
     },
 
@@ -3781,7 +3785,7 @@ $.extend(Select3Submenu.prototype, {
      */
     _doHighlight: function(item) {
 
-        Select3Dropdown.prototype.highlight.call(this, item);
+        callSuper(this, 'highlight', item);
 
         if (item.submenu && !this.submenu) {
             var select3 = this.select3;
@@ -3841,7 +3845,6 @@ Select3.findNestedById = function(array, id) {
     }
     return null;
 };
-
 
 module.exports = Select3Submenu;
 

@@ -38,7 +38,7 @@ function select3(methodName, options) {
             }
 
             if ($.type(instance[methodName]) === 'function') {
-                if ($.type(result) === 'undefined') {
+                if (result === undefined) {
                     result = instance[methodName].call(instance, options);
                 }
             } else {
@@ -237,7 +237,7 @@ $.extend(Select3.prototype, {
 
         options = options || {};
 
-        if ($.type(newData) === 'undefined') {
+        if (newData === undefined) {
             return this._data;
         } else {
             newData = this.validateData(newData);
@@ -442,12 +442,12 @@ $.extend(Select3.prototype, {
             self._setResults(results, $.extend({ term: term }, resultOptions));
         }
 
-        if ($.type(term) === 'undefined') {
-            if (!this.$searchInput) {
+        if (term === undefined) {
+            if (!self.$searchInput) {
                 return;
             }
 
-            term = this.$searchInput.val();
+            term = self.$searchInput.val();
         }
 
         if (self.items) {
@@ -716,7 +716,7 @@ $.extend(Select3.prototype, {
 
         options = options || {};
 
-        if ($.type(newValue) === 'undefined') {
+        if (newValue === undefined) {
             return this._value;
         } else {
             newValue = this.validateValue(newValue);
@@ -1069,6 +1069,4 @@ Select3.transformText = function(string) {
     return string.toLowerCase();
 };
 
-$.fn.select3 = Select3;
-
-module.exports = Select3;
+module.exports = $.fn.select3 = Select3;

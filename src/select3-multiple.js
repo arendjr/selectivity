@@ -39,31 +39,26 @@ var callSuper = Select3.inherits(MultipleSelect3, {
      */
     add: function(item) {
 
-        if (Select3.isValidId(item)) {
-            if (this._value.indexOf(item) === -1) {
-                this._value.push(item);
+        var itemIsId = Select3.isValidId(item);
+        var id = (itemIsId ? item : this.validateItem(item) && item.id);
 
-                if (this.options.initSelection) {
-                    this.options.initSelection([item], function(data) {
-                        if (this._value.lastIndexOf(item) > -1) {
-                            item = this.validateItem(data[0]);
-                            this._data.push(item);
+        if (this._value.indexOf(id) === -1) {
+            this._value.push(id);
 
-                            this.triggerChange({ added: item });
-                        }
-                    }.bind(this));
-                } else {
-                    item = this.getItemForId(item);
-                    this._data.push(item);
+            if (itemIsId && this.options.initSelection) {
+                this.options.initSelection([id], function(data) {
+                    if (this._value.indexOf(id) > -1) {
+                        item = this.validateItem(data[0]);
+                        this._data.push(item);
 
-                    this.triggerChange({ added: item });
+                        this.triggerChange({ added: item });
+                    }
+                }.bind(this));
+            } else {
+                if (itemIsId) {
+                    item = this.getItemForId(id);
                 }
-            }
-        } else {
-            item = this.validateItem(item);
-            if (this._value.indexOf(item.id) === -1) {
                 this._data.push(item);
-                this._value.push(item.id);
 
                 this.triggerChange({ added: item });
             }
@@ -307,9 +302,10 @@ var callSuper = Select3.inherits(MultipleSelect3, {
     _createToken: function() {
 
         var term = this.$searchInput.val();
+        var createTokenItem = this.options.createTokenItem;
 
-        if (term && this.options.createTokenItem) {
-            var item = this.options.createTokenItem(term);
+        if (term && createTokenItem) {
+            var item = createTokenItem(term);
             if (item) {
                 this.add(item);
             }

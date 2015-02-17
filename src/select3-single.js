@@ -171,6 +171,4 @@ var callSuper = Select3.inherits(SingleSelect3, {
 
 });
 
-Select3.InputTypes.Single = SingleSelect3;
-
-module.exports = SingleSelect3;
+module.exports = Select3.InputTypes.Single = SingleSelect3;
