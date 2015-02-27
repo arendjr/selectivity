@@ -169,7 +169,8 @@ jQuery builds without Sizzle.</li>
                 in the search field but there are selected items, the last selected item will be
                 highlighted and when a second backspace is entered the item is deleted. If
                 <code>false</code>, the item gets deleted on the first backspace. The default value
-                is true on devices that have touch input and false on devices that don't.</td>
+                is <code>true</code> on devices that have touch input and <code>false</code> on
+                devices that don't.</td>
         </tr>
         <tr>
             <td>closeOnSelect</td>
@@ -189,7 +190,9 @@ jQuery builds without Sizzle.</li>
                 <code>id</code> and <code>text</code> properties or <code>null</code> if no token
                 can be created from the term. The default is a function that returns an item where
                 the ID and text both match the term for any non-empty string and which returns
-                <code>null</code> otherwise. This option only applies to multiple-value inputs.</td>
+                <code>null</code> otherwise.<br>
+                <br>
+                This option only applies to multiple-value inputs.</td>
         </tr>
         <tr>
             <td>data</td>
@@ -206,7 +209,7 @@ jQuery builds without Sizzle.</li>
         <tr>
             <td>dropdownCssClass</td>
             <td><code>String</code></td>
-            <td>Optional CSS class to add to the top-level dropdown element.</td>
+            <td>Optional CSS class to add to the dropdown's top-level element.</td>
         </tr>
         <tr>
             <td>initSelection</td>
@@ -214,8 +217,9 @@ jQuery builds without Sizzle.</li>
             <td>Function to map values by ID to selection data. This function receives two
                 arguments, <code>value</code> and <code>callback</code>. The value is the current
                 value of the selection, which is an ID or an array of IDs, depending on the input
-                type. The callback should be invoked with an object or array of objects,
-                respectively, containing <code>id</code> and <code>text</code> properties.</td>
+                type. The callback should be invoked with an object containing <code>id</code> and
+                <code>text</code> properties, or an array of such objects (again, depending on the
+                input type).</td>
         </tr>
         <tr>
             <td>inputType</td>
@@ -236,9 +240,11 @@ jQuery builds without Sizzle.</li>
                 having an ID.<br>
                 <br>
                 If <code>items</code> are specified, all items are expected to be available locally
-                nd all selection operations operate on this local array only. If omitted, items are
+                and all selection operations operate on this local array only. If omitted, items are
                 not available locally, and the <code>query</code> option should be provided to fetch
-                data. If you have used a <code>&lt;select&gt;</code> element to initialize the
+                data.<br>
+                <br>
+                If you have used a <code>&lt;select&gt;</code> element to initialize the
                 Select3 instance, its <code>&lt;option&gt;</code> and <code>&lt;optgroup&gt;</code>
                 elements are used to initialize the items array.</td>
         </tr>
@@ -250,7 +256,10 @@ jQuery builds without Sizzle.</li>
                 <code>term</code> and <code>text</code>. The term is the search term, which for
                 performance reasons has always been already processed using
                 <code>Select3.transformText()</code>. The text is the text that should match the
-                search term.</td>
+                search term.<br>
+                <br>
+                The function should return <code>true</code> if the text matches the term, and
+                <code>false</code> otherwise.</td>
         </tr>
         <tr>
             <td>multiple</td>
@@ -267,8 +276,9 @@ jQuery builds without Sizzle.</li>
             <td><code>String</code></td>
             <td>Placeholder text to display when the element has no focus and selected items.<br>
                 <br>
-                If you have used a &lt;select&gt; element to initialize the Select3 instance, this
-                option may be set through the <code>data-placeholder</code> attribute.</td>
+                If you have used a <code>&lt;select&gt;</code> element to initialize the Select3
+                instance, this option may be set through the <code>data-placeholder</code>
+                attribute.</td>
         </tr>
         <tr>
             <td>positionDropdown</td>
@@ -276,7 +286,7 @@ jQuery builds without Sizzle.</li>
             <td>Function to position the dropdown. Receives <code>$dropdownEl</code> (the element to
                 be positioned) and <code>$selectEl</code> (the element of the Select3 instance) as
                 arguments. The default implementation positions the dropdown element under the
-                Select3's element and gives it the same width as well.</td>
+                Select3 instance's element and gives it the same width as well.</td>
         </tr>
         <tr>
             <td>query</td>
@@ -343,7 +353,7 @@ jQuery builds without Sizzle.</li>
             <td>showDropdown</td>
             <td><code>Boolean</code></td>
             <td>Set to <code>false</code> if you don't want to use any dropdown (you can still open
-                still open it programmatically using <code>open()</code>).</td>
+                it programmatically using <code>open()</code>).</td>
         </tr>
         <tr>
             <td>show<wbr>SearchInput<wbr>InDropdown</td>
@@ -401,7 +411,7 @@ jQuery builds without Sizzle.</li>
 <h1>
 <a id="methods" class="anchor" href="#methods" aria-hidden="true"></a>Methods</h1>
 
-<p>Methods are invoked by passing the name of the method, followed by any arguments to the
+<p>Methods are invoked by passing the name of the method, followed by any arguments, to the
     <code>select3()</code> function. Example:<p>
 
 <p><code>$(selector).select3(<span class="string">'data'</span>, { id: 1, text: <span class="string">'Amsterdam'</span> })</code></p>
@@ -683,7 +693,7 @@ $(selector).select3(<span class="string">'value'</span>, [1, 2])</code></pre>
       </footer>
     </div>
 
-    
+
 
     <script src="javascripts/jquery.js"></script>
     <script src="javascripts/select3-full.js"></script>
