@@ -9,10 +9,6 @@
  * Available under MIT license <https://lodash.com/license>
  */
 
-var undefined;
-
-/*------------------------------------------------------------------------*/
-
 /**
  * Gets the number of milliseconds that have elapsed since the Unix epoch
  *  (1 January 1970 00:00:00 UTC).
@@ -28,8 +24,6 @@ var undefined;
  * // => logs the number of milliseconds it took for the deferred function to be invoked
  */
 var now = Date.now;
-
-/*------------------------------------------------------------------------*/
 
 /**
  * Creates a function that delays invoking `func` until after `wait` milliseconds
@@ -53,7 +47,6 @@ function debounce(func, wait) {
     var args,
         result,
         stamp,
-        thisArg,
         timeoutId,
         trailingCall,
         lastCalled = 0;
@@ -67,9 +60,9 @@ function debounce(func, wait) {
             timeoutId = trailingCall = undefined;
             if (isCalled) {
                 lastCalled = now();
-                result = func.apply(thisArg, args);
+                result = func.apply(null, args);
                 if (!timeoutId) {
-                    args = thisArg = null;
+                    args = null;
                 }
             }
         } else {
@@ -80,7 +73,6 @@ function debounce(func, wait) {
     function debounced() {
         args = arguments;
         stamp = now();
-        thisArg = this;
         trailingCall = true;
 
         if (!timeoutId) {

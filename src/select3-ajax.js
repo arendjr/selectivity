@@ -17,7 +17,7 @@ Select3.OptionListeners.unshift(function(select3, options) {
     if (ajax && ajax.url) {
         var formatError = ajax.formatError || Select3.Locale.ajaxError;
         var params = ajax.params;
-        var processItem = ajax.processItem || function(item) { return item };
+        var processItem = ajax.processItem || function(item) { return item; };
         var quietMillis = ajax.quietMillis || 0;
         var resultsCb = ajax.results || function(data) { return { results: data, more: false }; };
         var transport = ajax.transport || $.ajax;
