@@ -11,6 +11,7 @@ var Select3 = require('./select3-base');
  */
 Select3.Locale = {
 
+    ajaxError: function(term) { return 'Failed to fetch results for <b>' + escape(term) + '</b>'; },
     loading: 'Loading...',
     loadMore: 'Load more...',
     noResults: 'No results found',
