@@ -23,7 +23,7 @@ function SingleSelect3(options) {
             var offset = $selectEl.offset();
             var elHeight = $el.height(),
                 selectHeight = $selectEl.height(),
-                windowHeight = $(window).height();
+                windowHeight = (typeof window !== 'undefined' ? $(window).height() : 9999);
 
             var top = offset.top + selectHeight;
             if (top + elHeight > windowHeight) {

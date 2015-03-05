@@ -31,7 +31,7 @@ function MultipleSelect3(options) {
             var offset = $selectEl.offset();
             var elHeight = $el.height(),
                 selectHeight = $selectEl.height(),
-                windowHeight = $(window).height();
+                windowHeight = (typeof window !== 'undefined' ? $(window).height() : 9999);
 
             var position = { bottom: null, left: offset.left + 'px', top: null };
             var top = offset.top;

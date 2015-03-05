@@ -45,7 +45,7 @@ function query() {
                 more: results.length > options.offset + limit
             });
         }, timeout);
-    }
+    };
 }
 
 exports.testAsync = DomUtil.createDomTest(
