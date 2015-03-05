@@ -25,6 +25,25 @@ function MultipleSelect3(options) {
     this.initSearchInput(this.$('.select3-multiple-input:not(.select3-width-detector)'));
 
     this._rerenderSelection();
+
+    if (!options.positionDropdown) {
+        this.options.positionDropdown = function($el, $selectEl) {
+            var offset = $selectEl.offset();
+            var elHeight = $el.height(),
+                selectHeight = $selectEl.height(),
+                windowHeight = $(window).height();
+
+            var position = { bottom: null, left: offset.left + 'px', top: null };
+            var top = offset.top;
+            if (top + selectHeight + elHeight > windowHeight) {
+                position.bottom = (windowHeight - top) + 'px';
+            } else {
+                position.top = top + selectHeight + 'px';
+            }
+
+            $el.css(position).width($selectEl.width());
+        };
+    }
 }
 
 /**

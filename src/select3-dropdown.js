@@ -249,13 +249,10 @@ $.extend(Select3Dropdown.prototype, {
      */
     position: function() {
 
-        var positionDropdown = this.options.position || function($el, $selectEl) {
-            var offset = $selectEl.offset();
-            $el.css({ left: offset.left + 'px', top: offset.top + $selectEl.height() + 'px' })
-               .width($selectEl.width());
-        };
-
-        positionDropdown(this.$el, this.select3.$el);
+        var position = this.options.position;
+        if (position) {
+            position(this.$el, this.select3.$el);
+        }
 
         this._scrolled();
     },
@@ -349,6 +346,8 @@ $.extend(Select3Dropdown.prototype, {
 
         this.highlightedResult = null;
         this.loadMoreHighlighted = false;
+
+        this.position();
     },
 
     /**
@@ -363,6 +362,8 @@ $.extend(Select3Dropdown.prototype, {
 
         this.highlightedResult = null;
         this.loadMoreHighlighted = false;
+
+        this.position();
     },
 
     /**
@@ -401,6 +402,8 @@ $.extend(Select3Dropdown.prototype, {
         if (!options.add || this.loadMoreHighlighted) {
             this._highlightFirstItem(results);
         }
+
+        this.position();
     },
 
     /**
