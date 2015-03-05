@@ -16,6 +16,7 @@ Select3.OptionListeners.unshift(function(select3, options) {
     var ajax = options.ajax;
     if (ajax && ajax.url) {
         var formatError = ajax.formatError || Select3.Locale.ajaxError;
+        var minimumInputLength = ajax.minimumInputLength || 0;
         var params = ajax.params;
         var processItem = ajax.processItem || function(item) { return item; };
         var quietMillis = ajax.quietMillis || 0;
@@ -29,25 +30,33 @@ Select3.OptionListeners.unshift(function(select3, options) {
         options.query = function(queryOptions) {
             var offset = queryOptions.offset;
             var term = queryOptions.term;
-            var url = (ajax.url instanceof Function ? ajax.url() : ajax.url);
-            if (params) {
-                url += (url.indexOf('?') > -1 ? '&' : '?') + $.param(params(term, offset));
-            }
+            if (term.length < minimumInputLength) {
+                queryOptions.error(
+                    Select3.Locale.needMoreCharacters(minimumInputLength - term.length)
+                );
+            } else {
+                select3.dropdown.showLoading();
 
-            transport($.extend({}, ajax, {
-                url: url,
-                success: function(data) {
-                    var results = resultsCb(data, offset);
-                    results.results = results.results.map(processItem);
-                    queryOptions.callback(results);
-                },
-                error: function(jqXHR, textStatus, errorThrown) {
-                    queryOptions.error(
-                        formatError(term, jqXHR, textStatus, errorThrown),
-                        { escape: false }
-                    );
+                var url = (ajax.url instanceof Function ? ajax.url() : ajax.url);
+                if (params) {
+                    url += (url.indexOf('?') > -1 ? '&' : '?') + $.param(params(term, offset));
                 }
-            }));
+
+                transport($.extend({}, ajax, {
+                    url: url,
+                    success: function(data) {
+                        var results = resultsCb(data, offset);
+                        results.results = results.results.map(processItem);
+                        queryOptions.callback(results);
+                    },
+                    error: function(jqXHR, textStatus, errorThrown) {
+                        queryOptions.error(
+                            formatError(term, jqXHR, textStatus, errorThrown),
+                            { escape: false }
+                        );
+                    }
+                }));
+            }
         };
     }
 });

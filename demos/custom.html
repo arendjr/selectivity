@@ -157,6 +157,7 @@
                     ajax: {
                         url: 'https://api.github.com/search/repositories',
                         dataType: 'json',
+                        minimumInputLength: 3,
                         quietMillis: 250,
                         params: function(term, offset) {
                             // GitHub uses 1-based pages with 30 results, by default
@@ -178,7 +179,6 @@
                             };
                         }
                     },
-                    minimumInputLength: 3,
                     placeholder: 'Search for a repository',
                     templates: {
                         resultItem: function(item) {
