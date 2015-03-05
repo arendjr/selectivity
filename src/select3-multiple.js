@@ -33,7 +33,7 @@ function MultipleSelect3(options) {
                 selectHeight = $selectEl.height(),
                 windowHeight = (typeof window !== 'undefined' ? $(window).height() : 9999);
 
-            var position = { bottom: null, left: offset.left + 'px', top: null };
+            var position = { left: offset.left + 'px' };
             var top = offset.top;
             if (top + selectHeight + elHeight > windowHeight) {
                 position.bottom = (windowHeight - top) + 'px';
@@ -41,7 +41,7 @@ function MultipleSelect3(options) {
                 position.top = top + selectHeight + 'px';
             }
 
-            $el.css(position).width($selectEl.width());
+            $el.removeAttr('style').css(position).width($selectEl.width());
         };
     }
 }
