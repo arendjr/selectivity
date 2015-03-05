@@ -12,3 +12,6 @@ select3*.config
 select3*.creator*
 select3*.files
 select3*.includes
+
+# Sublime Text files
+select3.sublime-*
