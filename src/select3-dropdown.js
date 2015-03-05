@@ -2,6 +2,8 @@
 
 var $ = require('jquery');
 
+var debounce = require('./debounce');
+
 var Select3 = require('./select3-base');
 
 /**
@@ -74,6 +76,8 @@ function Select3Dropdown(options) {
     this.addToDom();
     this.position();
     this.setupCloseHandler();
+
+    this._scrolledProxy = debounce(this._scrolled.bind(this), 50);
 
     this._suppressMouseWheel();
 
@@ -243,6 +247,8 @@ $.extend(Select3Dropdown.prototype, {
         var position = this.options.position;
         if (position) {
             position(this.$el, this.select3.$el);
+
+            this._scrolled();
         }
     },
 
@@ -410,6 +416,13 @@ $.extend(Select3Dropdown.prototype, {
 
             this.$el.on(event, selector, listener);
         }.bind(this));
+
+        var $resultsContainer = this.$('.select3-results-container');
+        $resultsContainer.on('scroll', this._scrolledProxy);
+
+        if (this.select3.hasTouch) {
+            $resultsContainer.on('touchmove touchend', this._scrolledProxy);
+        }
     },
 
     /**
@@ -490,6 +503,20 @@ $.extend(Select3Dropdown.prototype, {
         var item = Select3.findNestedById(this.results, id);
         if (item) {
             this.highlight(item);
+        }
+    },
+
+    /**
+     * @private
+     */
+    _scrolled: function() {
+
+        var $loadMore = this.$('.select3-load-more');
+        if ($loadMore.length) {
+            var $resultsContainer = this.$('.select3-results-container');
+            if ($loadMore[0].offsetTop - $resultsContainer[0].scrollTop < this.$el.height()) {
+                this._loadMoreClicked();
+            }
         }
     },
 

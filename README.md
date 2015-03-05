@@ -208,15 +208,6 @@ Unit tests are available and can be ran using the following command:
 
     $ gulp unit-tests
 
-Project Status
---------------
-
-Select3 is in an early stage of development. The following items are on the short-term TODO list:
-
- * Implement automatic pagination.
- * Add module that will easily perform AJAX requests instead of doing this through the query()
-   function.
-
 Contributing
 ------------
 
