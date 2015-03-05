@@ -106,15 +106,8 @@ The following is an (incomplete) list of features which Select3 currently lacks:
 
  * Reordering of selected items. Select2 allows reordering of selected items, for example through
    drag 'n drop. Select3 doesn't and there are curently no plans to implement this.
- * AJAX. Select2 has a built-in AJAX query function that makes it easier to perform AJAX requests
-   for fetching requests. This is a convenience feature as you can achieve the same result by
-   calling `$.ajax()` in the query function, but it is one Select3 currently lacks.
- * Formatting functions. Select2 allows you to specify a wide range of `format*()` functions in the
-   options. With Select3, it is hoped you won't have much need for these as Select3 allows for much
-   easier customization of templates. However, practice will have to show if some of these are still
-   desired.
  * Options. Select3 lacks some miscellaneous options supported by Select2. Notable omissions are
-   `selectOnBlur`, `maximumSelectionSize`, and `minimumInputLength` among others.
+   `selectOnBlur` and `maximumSelectionSize`, among others.
  * Events. Select2 currently emits more events than Select3 does. Notable omissions are
    'select2-clearing', 'select2-focus' and 'select2-blur' among others.
 
@@ -122,6 +115,9 @@ The following is an (incomplete) list of features which Select3 currently lacks:
 
  * Select2 has explicit support for tags through the `tags` option. With Select3, tagging is also
    supported, but works through the regular `items` option.
+ * Formatting functions. Select2 allows you to specify a wide range of `format*()` functions in the
+   options. With Select3, instead of passing various formatting functions, you can customize the
+   templates, both globally and per instance.
 
 ### Miscellaneous
 
@@ -155,6 +151,7 @@ The following modules are available:
 
 Module          | Description
 ----------------|------------
+**ajax**        | Convenience module for performing AJAX requests. All options passed into the `ajax` object are provided by this module.
 **async**       | Blocks the query function from calling its callback functions if another query has been issued since. This prevents out-of-order replies from remote sources to display incorrect results. This module is only needed if you use the query function and call its callbacks asynchronously.
 **backdrop**    | This module provides the backdrop feature which is used by the dropdown. The backdrop is used to guarantee that when the dropdown is open and the user clicks outside the Select3 area, the dropdown will close. If you omit this module, a simpler implementation is used which will still attempt to close the dropdown when the user clicks outside the area, but which may fail when the user clicks on some element that has a custom click handler which prevents the event from bubbling.
 **base**        | The Select3 base module which is pulled in automatically into every build.
