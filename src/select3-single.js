@@ -17,22 +17,6 @@ function SingleSelect3(options) {
     this.$el.html(this.template('singleSelectInput', this.options));
 
     this._rerenderSelection();
-
-    if (!options.positionDropdown) {
-        this.options.positionDropdown = function($el, $selectEl) {
-            var offset = $selectEl.offset();
-            var elHeight = $el.height(),
-                selectHeight = $selectEl.height(),
-                windowHeight = (typeof window !== 'undefined' ? $(window).height() : 9999);
-
-            var top = offset.top + selectHeight;
-            if (top + elHeight > windowHeight) {
-                top = windowHeight - elHeight;
-            }
-
-            $el.css({ left: offset.left + 'px', top: top + 'px' }).width($selectEl.width());
-        };
-    }
 }
 
 /**
