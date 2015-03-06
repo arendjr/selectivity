@@ -159,7 +159,7 @@ Module          | Description
 **dropdown**    | Module that implements the dropdown. You will most likely want to include this, unless you only want to use Select3 without any dropdown or you provide a completely custom implementation instead.
 **email**       | Implements the 'Email' input type. This is a special case of the 'Multiple' input type with no dropdown and a specialized tokenizer for recognizing email addresses (including pasted content from address books).
 **keyboard**    | Provides keyboard support for navigating through the dropdown. If you don't use a dropdown, or are only targeting mobile, you may want to leave this module out.
-**locale**      | Localizable content pulled in by the default templates. You may or may not decide to use these with your own templates.
+**locale**      | Localizable content pulled in by the default templates. You may or may not decide to use these with your own templates. Also used for localizable messages by the ajax module.
 **multiple**    | Implements the 'Multiple' input type. If you only want to use Select3 with single values, you can leave this out.
 **single**      | Implements the 'Single' input type. If you only want to use Select3 with multiple values, you can leave this out.
 **submenu**     | Extends the default dropdown so that multiple levels of submenus can be created.
