@@ -166,7 +166,7 @@ jQuery builds without Sizzle.</li>
     templates: {
         resultItem: function(item) {
             return (
-                <span class="string">'&lt;div class="select3-result-item" data-item-id="' + item.id + '"&gt;'</span> +
+                <span class="string">'&lt;div class="select3-result-item" data-item-id="'</span> + item.id + <span class="string">'"&gt;'</span> +
                     <span class="string">'&lt;b&gt;'</span> + escape(item.text) + <span class="string">'&lt;/b&gt;&lt;br&gt;'</span> +
                     escape(item.description) +
                 <span class="string">'&lt;/div&gt;'</span>
@@ -202,8 +202,9 @@ jQuery builds without Sizzle.</li>
             <td><code>Object</code></td>
             <td>This object is used for convenience for loading result items through AJAX requests
                 to a remote resource. Below is an overview of properties that may be set on this
-                object. Any other properties on this object are passed directly to the *transport*,
-                which by default is <a href="http://api.jquery.com/jQuery.ajax/">`$.ajax()`</a>.
+                object. Any other properties on this object are passed directly to the
+                <i>transport</i>, which by default is
+                <a href="http://api.jquery.com/jQuery.ajax/"><code>$.ajax()</code></a>.
 
                 <table>
                     <thead>
@@ -216,13 +217,14 @@ jQuery builds without Sizzle.</li>
                         <tr>
                             <td>formatError</td>
                             <td>Function that returns an HTML-formatted error message in case of an
-                                AJAX error. By default, `Select3.Locale.ajaxError` is used. The
-                                function receives four paramenters: `term`, `jqXHR`, `textStatus`
-                                and `errorThrown`. The first is the term being searched for, while
-                                the other three are the parameters passed to the error callback of
-                                `$.ajax`. Please be aware that because the function returns raw
-                                HTML, you are responsible for properly escaping any output to
-                                prevent XSS attacks.</td>
+                                AJAX error. By default, <code>Select3.Locale.ajaxError</code> is
+                                used. The function receives four paramenters: <code>term</code>,
+                                <code>jqXHR</code>, <code>textStatus</code> and
+                                <code>errorThrown</code>. The first is the term being searched for,
+                                while the other three are the parameters passed to the error
+                                callback of <code>$.ajax</code>. Please be aware that because the
+                                function returns raw HTML, you are responsible for properly escaping
+                                any output to prevent XSS attacks.</td>
                         </tr>
                         <tr>
                             <td>minimumInputLength</td>
@@ -232,16 +234,17 @@ jQuery builds without Sizzle.</li>
                         <tr>
                             <td>params</td>
                             <td>Function that should return an object with additional query
-                                parameters to be added to the URL. Receives `term` and `offset`
-                                parameters. The term is a search term to search for and the offset
-                                is an integer of results that should be skipped for pagination.</td>
+                                parameters to be added to the URL. Receives <code>term</code> and
+                                <code>offset</code> parameters. The term is a search term to search
+                                for and the offset is an integer of results that should be skipped
+                                for pagination.</td>
                         </tr>
                         <tr>
                             <td>processItem</td>
                             <td>Function that processes an individual result item. Make sure that
-                                the returned item has `id` and `text` properties. By default, this
-                                is the identity function (a function that simply returns its only
-                                parameter).</td>
+                                the returned item has <code>id</code> and <code>text</code>
+                                properties. By default, this is the identity function (a function
+                                that simply returns its only parameter).</td>
                         </tr>
                         <tr>
                             <td>quietMillis</td>
@@ -253,22 +256,25 @@ jQuery builds without Sizzle.</li>
                         <tr>
                             <td>results</td>
                             <td>Function that interprets the data from the AJAX response and turns
-                                it into an object with `results` and `more` properties, just like
-                                the callback for the top-level `query` function. The function
-                                receives a `data` parameter containing the parsed AJAX response and
-                                an `offset` parameter used for pagination.</td>
+                                it into an object with <code>results</code> and <code>more</code>
+                                properties, just like the callback for the top-level
+                                <code>query</code> function. The function receives a
+                                <code>data</code> parameter containing the parsed AJAX response and
+                                an <code>offset</code> parameter used for pagination.</td>
                         </tr>t
                         <tr>
                             <td>transport</td>
                             <td>The transport to use for submitting the AJAX requests. By default,
-                                `$.ajax` is used, but you can specify any other function to use
-                                instead, as long as it's API-compatible with `$.ajax`.</td>
+                                <code>$.ajax</code> is used, but you can specify any other function
+                                to use instead, as long as it's API-compatible with
+                                <code>$.ajax</code>.</td>
                         </tr>
                         <tr>
                             <td>url</td>
                             <td>URL to send the AJAX requests to. This can be given either as a
                                 string or as a function returning a string. Additional query
-                                parameters can be provided through the `params` option.</td>
+                                parameters can be provided through the <code>params</code>
+                                option.</td>
                         </tr>
                     </tbody>
                 </table>
