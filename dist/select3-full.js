@@ -1,6 +1,94 @@
 !function(e){if("object"==typeof exports&&"undefined"!=typeof module)module.exports=e();else if("function"==typeof define&&define.amd)define([],e);else{var f;"undefined"!=typeof window?f=window:"undefined"!=typeof global?f=global:"undefined"!=typeof self&&(f=self),f.Select3=e()}}(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(_dereq_,module,exports){
-_dereq_(3);_dereq_(4);_dereq_(6);_dereq_(7);_dereq_(8);_dereq_(9);_dereq_(10);_dereq_(11);_dereq_(12);_dereq_(13);_dereq_(14);_dereq_(15);_dereq_(16);module.exports=_dereq_(5);
+_dereq_(4);_dereq_(5);_dereq_(6);_dereq_(8);_dereq_(9);_dereq_(10);_dereq_(11);_dereq_(12);_dereq_(13);_dereq_(14);_dereq_(15);_dereq_(16);_dereq_(17);_dereq_(18);module.exports=_dereq_(7);
 },{}],2:[function(_dereq_,module,exports){
+'use strict';
+
+/**
+ * @license
+ * lodash 3.3.1 (Custom Build) <https://lodash.com/>
+ * Copyright 2012-2015 The Dojo Foundation <http://dojofoundation.org/>
+ * Based on Underscore.js 1.8.2 <http://underscorejs.org/LICENSE>
+ * Copyright 2009-2015 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
+ * Available under MIT license <https://lodash.com/license>
+ */
+
+/**
+ * Gets the number of milliseconds that have elapsed since the Unix epoch
+ *  (1 January 1970 00:00:00 UTC).
+ *
+ * @static
+ * @memberOf _
+ * @category Date
+ * @example
+ *
+ * _.defer(function(stamp) {
+ *   console.log(_.now() - stamp);
+ * }, _.now());
+ * // => logs the number of milliseconds it took for the deferred function to be invoked
+ */
+var now = Date.now;
+
+/**
+ * Creates a function that delays invoking `func` until after `wait` milliseconds
+ * have elapsed since the last time it was invoked.
+ *
+ * See [David Corbacho's article](http://drupalmotion.com/article/debounce-and-throttle-visual-explanation)
+ * for details over the differences between `_.debounce` and `_.throttle`.
+ *
+ * @static
+ * @memberOf _
+ * @category Function
+ * @param {Function} func The function to debounce.
+ * @param {number} [wait=0] The number of milliseconds to delay.
+ * @returns {Function} Returns the new debounced function.
+ * @example
+ *
+ * // avoid costly calculations while the window size is in flux
+ * jQuery(window).on('resize', _.debounce(calculateLayout, 150));
+ */
+function debounce(func, wait) {
+    var args,
+        result,
+        stamp,
+        timeoutId,
+        trailingCall,
+        lastCalled = 0;
+
+    wait = wait < 0 ? 0 : (+wait || 0);
+
+    function delayed() {
+        var remaining = wait - (now() - stamp);
+        if (remaining <= 0 || remaining > wait) {
+            var isCalled = trailingCall;
+            timeoutId = trailingCall = undefined;
+            if (isCalled) {
+                lastCalled = now();
+                result = func.apply(null, args);
+                if (!timeoutId) {
+                    args = null;
+                }
+            }
+        } else {
+            timeoutId = setTimeout(delayed, remaining);
+        }
+    }
+
+    function debounced() {
+        args = arguments;
+        stamp = now();
+        trailingCall = true;
+
+        if (!timeoutId) {
+            timeoutId = setTimeout(delayed, wait);
+        }
+        return result;
+    }
+    return debounced;
+}
+
+module.exports = debounce;
+
+},{}],3:[function(_dereq_,module,exports){
 'use strict';
 
 /**
@@ -53,10 +141,85 @@ function escape(string) {
 
 module.exports = escape;
 
-},{}],3:[function(_dereq_,module,exports){
+},{}],4:[function(_dereq_,module,exports){
 'use strict';
 
-var Select3 = _dereq_(5);
+var $ = window.jQuery || window.Zepto;
+
+var debounce = _dereq_(2);
+
+var Select3 = _dereq_(7);
+
+_dereq_(12);
+
+/**
+ * Option listener that implements a convenience query function for performing AJAX requests.
+ */
+Select3.OptionListeners.unshift(function(select3, options) {
+
+    var ajax = options.ajax;
+    if (ajax && ajax.url) {
+        var formatError = ajax.formatError || Select3.Locale.ajaxError;
+        var minimumInputLength = ajax.minimumInputLength || 0;
+        var params = ajax.params;
+        var processItem = ajax.processItem || function(item) { return item; };
+        var quietMillis = ajax.quietMillis || 0;
+        var resultsCb = ajax.results || function(data) { return { results: data, more: false }; };
+        var transport = ajax.transport || $.ajax;
+
+        if (quietMillis) {
+            transport = debounce(transport, quietMillis);
+        }
+
+        options.query = function(queryOptions) {
+            var offset = queryOptions.offset;
+            var term = queryOptions.term;
+            if (term.length < minimumInputLength) {
+                queryOptions.error(
+                    Select3.Locale.needMoreCharacters(minimumInputLength - term.length)
+                );
+            } else {
+                select3.dropdown.showLoading();
+
+                var url = (ajax.url instanceof Function ? ajax.url() : ajax.url);
+                if (params) {
+                    url += (url.indexOf('?') > -1 ? '&' : '?') + $.param(params(term, offset));
+                }
+
+                var success = ajax.success;
+                var error = ajax.error;
+
+                transport($.extend({}, ajax, {
+                    url: url,
+                    success: function(data, textStatus, jqXHR) {
+                        if (success) {
+                            success(data, textStatus, jqXHR);
+                        }
+
+                        var results = resultsCb(data, offset);
+                        results.results = results.results.map(processItem);
+                        queryOptions.callback(results);
+                    },
+                    error: function(jqXHR, textStatus, errorThrown) {
+                        if (error) {
+                            error(jqXHR, textStatus, errorThrown);
+                        }
+
+                        queryOptions.error(
+                            formatError(term, jqXHR, textStatus, errorThrown),
+                            { escape: false }
+                        );
+                    }
+                }));
+            }
+        };
+    }
+});
+
+},{}],5:[function(_dereq_,module,exports){
+'use strict';
+
+var Select3 = _dereq_(7);
 
 var latestQueryNum = 0;
 
@@ -89,12 +252,12 @@ Select3.OptionListeners.push(function(select3, options) {
     }
 });
 
-},{}],4:[function(_dereq_,module,exports){
+},{}],6:[function(_dereq_,module,exports){
 'use strict';
 
 var $ = window.jQuery || window.Zepto;
 
-var Select3Dropdown = _dereq_(7);
+var Select3Dropdown = _dereq_(9);
 
 var BACKDROP_Z_INDEX = 9998;
 var FOREGROUND_Z_INDEX = 9999;
@@ -154,7 +317,7 @@ $.extend(Select3Dropdown.prototype, {
 
 });
 
-},{}],5:[function(_dereq_,module,exports){
+},{}],7:[function(_dereq_,module,exports){
 'use strict';
 
 var $ = window.jQuery || window.Zepto;
@@ -1228,7 +1391,7 @@ Select3.transformText = function(string) {
 
 module.exports = $.fn.select3 = Select3;
 
-},{}],6:[function(_dereq_,module,exports){
+},{}],8:[function(_dereq_,module,exports){
 'use strict';
 
 var DIACRITICS = {
@@ -2073,7 +2236,7 @@ var DIACRITICS = {
     '\u03C2': '\u03C3'
 };
 
-var Select3 = _dereq_(5);
+var Select3 = _dereq_(7);
 var previousTransform = Select3.transformText;
 
 /**
@@ -2092,12 +2255,14 @@ Select3.transformText = function(string) {
     return previousTransform(result);
 };
 
-},{}],7:[function(_dereq_,module,exports){
+},{}],9:[function(_dereq_,module,exports){
 'use strict';
 
 var $ = window.jQuery || window.Zepto;
 
-var Select3 = _dereq_(5);
+var debounce = _dereq_(2);
+
+var Select3 = _dereq_(7);
 
 /**
  * Returns the index of the first element in the jQuery container $elements that matches the given
@@ -2169,6 +2334,8 @@ function Select3Dropdown(options) {
     this.addToDom();
     this.position();
     this.setupCloseHandler();
+
+    this._scrolledProxy = debounce(this._scrolled.bind(this), 50);
 
     this._suppressMouseWheel();
 
@@ -2335,13 +2502,12 @@ $.extend(Select3Dropdown.prototype, {
      */
     position: function() {
 
-        var positionDropdown = this.options.position || function($el, $selectEl) {
-            var offset = $selectEl.offset();
-            $el.css({ left: offset.left + 'px', top: offset.top + $selectEl.height() + 'px' })
-               .width($selectEl.width());
-        };
+        var position = this.options.position;
+        if (position) {
+            position(this.$el, this.select3.$el);
 
-        positionDropdown(this.$el, this.select3.$el);
+            this._scrolled();
+        }
     },
 
     /**
@@ -2412,6 +2578,8 @@ $.extend(Select3Dropdown.prototype, {
 
         this.highlightedResult = null;
         this.loadMoreHighlighted = false;
+
+        this.position();
     },
 
     /**
@@ -2426,6 +2594,8 @@ $.extend(Select3Dropdown.prototype, {
 
         this.highlightedResult = null;
         this.loadMoreHighlighted = false;
+
+        this.position();
     },
 
     /**
@@ -2466,6 +2636,8 @@ $.extend(Select3Dropdown.prototype, {
         if (!options.add || this.loadMoreHighlighted) {
             this._highlightFirstItem(results);
         }
+
+        this.position();
     },
 
     /**
@@ -2502,6 +2674,13 @@ $.extend(Select3Dropdown.prototype, {
 
             this.$el.on(event, selector, listener);
         }.bind(this));
+
+        var $resultsContainer = this.$('.select3-results-container');
+        $resultsContainer.on('scroll', this._scrolledProxy);
+
+        if (this.select3.hasTouch) {
+            $resultsContainer.on('touchmove touchend', this._scrolledProxy);
+        }
     },
 
     /**
@@ -2538,9 +2717,6 @@ $.extend(Select3Dropdown.prototype, {
     _loadMoreClicked: function() {
 
         this.$('.select3-load-more').replaceWith(this.select3.template('loading'));
-
-
-
 
         this.select3.loadMore();
 
@@ -2585,6 +2761,20 @@ $.extend(Select3Dropdown.prototype, {
         var item = Select3.findNestedById(this.results, id);
         if (item) {
             this.highlight(item);
+        }
+    },
+
+    /**
+     * @private
+     */
+    _scrolled: function() {
+
+        var $loadMore = this.$('.select3-load-more');
+        if ($loadMore.length) {
+            var $resultsContainer = this.$('.select3-results-container');
+            if ($loadMore[0].offsetTop - $resultsContainer[0].scrollTop < this.$el.height()) {
+                this._loadMoreClicked();
+            }
         }
     },
 
@@ -2659,13 +2849,13 @@ $.extend(Select3Dropdown.prototype, {
 
 module.exports = Select3.Dropdown = Select3Dropdown;
 
-},{}],8:[function(_dereq_,module,exports){
+},{}],10:[function(_dereq_,module,exports){
 'use strict';
 
 var $ = window.jQuery || window.Zepto;
 
-var Select3 = _dereq_(5);
-var MultipleSelect3 = _dereq_(11);
+var Select3 = _dereq_(7);
+var MultipleSelect3 = _dereq_(13);
 
 function isValidEmail(email) {
 
@@ -2826,10 +3016,10 @@ var callSuper = Select3.inherits(EmailSelect3, MultipleSelect3, {
 
 module.exports = Select3.InputTypes.Email = EmailSelect3;
 
-},{}],9:[function(_dereq_,module,exports){
+},{}],11:[function(_dereq_,module,exports){
 'use strict';
 
-var Select3 = _dereq_(5);
+var Select3 = _dereq_(7);
 
 var KEY_DOWN_ARROW = 40;
 var KEY_ENTER = 13;
@@ -2891,11 +3081,11 @@ function listener(select3, $input) {
 
 Select3.SearchInputListeners.push(listener);
 
-},{}],10:[function(_dereq_,module,exports){
+},{}],12:[function(_dereq_,module,exports){
 'use strict';
 
-var escape = _dereq_(2);
-var Select3 = _dereq_(5);
+var escape = _dereq_(3);
+var Select3 = _dereq_(7);
 
 /**
  * Localizable elements of the Select3 Templates.
@@ -2905,19 +3095,23 @@ var Select3 = _dereq_(5);
  */
 Select3.Locale = {
 
+    ajaxError: function(term) { return 'Failed to fetch results for <b>' + escape(term) + '</b>'; },
     loading: 'Loading...',
     loadMore: 'Load more...',
+    needMoreCharacters: function(numCharacters) {
+        return 'Enter ' + numCharacters + ' more characters to search';
+    },
     noResults: 'No results found',
     noResultsForTerm: function(term) { return 'No results for <b>' + escape(term) + '</b>'; }
 
 };
 
-},{}],11:[function(_dereq_,module,exports){
+},{}],13:[function(_dereq_,module,exports){
 'use strict';
 
 var $ = window.jQuery || window.Zepto;
 
-var Select3 = _dereq_(5);
+var Select3 = _dereq_(7);
 
 var KEY_BACKSPACE = 8;
 var KEY_DELETE = 46;
@@ -2940,6 +3134,25 @@ function MultipleSelect3(options) {
     this.initSearchInput(this.$('.select3-multiple-input:not(.select3-width-detector)'));
 
     this._rerenderSelection();
+
+    if (!options.positionDropdown) {
+        this.options.positionDropdown = function($el, $selectEl) {
+            var offset = $selectEl.offset();
+            var elHeight = $el.height(),
+                selectHeight = $selectEl.height(),
+                windowHeight = (typeof window !== 'undefined' ? $(window).height() : 9999);
+
+            var position = { left: offset.left + 'px' };
+            var top = offset.top;
+            if (top + selectHeight + elHeight > windowHeight) {
+                position.bottom = (windowHeight - top) + 'px';
+            } else {
+                position.top = top + selectHeight + 'px';
+            }
+
+            $el.removeAttr('style').css(position).width($selectEl.width());
+        };
+    }
 }
 
 /**
@@ -3431,12 +3644,12 @@ var callSuper = Select3.inherits(MultipleSelect3, {
 
 module.exports = Select3.InputTypes.Multiple = MultipleSelect3;
 
-},{}],12:[function(_dereq_,module,exports){
+},{}],14:[function(_dereq_,module,exports){
 'use strict';
 
 var $ = window.jQuery || window.Zepto;
 
-var Select3 = _dereq_(5);
+var Select3 = _dereq_(7);
 
 /**
  * SingleSelect3 Constructor.
@@ -3451,6 +3664,22 @@ function SingleSelect3(options) {
     this.$el.html(this.template('singleSelectInput', this.options));
 
     this._rerenderSelection();
+
+    if (!options.positionDropdown) {
+        this.options.positionDropdown = function($el, $selectEl) {
+            var offset = $selectEl.offset();
+            var elHeight = $el.height(),
+                selectHeight = $selectEl.height(),
+                windowHeight = (typeof window !== 'undefined' ? $(window).height() : 9999);
+
+            var top = offset.top + selectHeight;
+            if (top + elHeight > windowHeight) {
+                top = windowHeight - elHeight;
+            }
+
+            $el.css({ left: offset.left + 'px', top: top + 'px' }).width($selectEl.width());
+        };
+    }
 }
 
 /**
@@ -3607,11 +3836,11 @@ var callSuper = Select3.inherits(SingleSelect3, {
 
 module.exports = Select3.InputTypes.Single = SingleSelect3;
 
-},{}],13:[function(_dereq_,module,exports){
+},{}],15:[function(_dereq_,module,exports){
 'use strict';
 
-var Select3 = _dereq_(5);
-var Select3Dropdown = _dereq_(7);
+var Select3 = _dereq_(7);
+var Select3Dropdown = _dereq_(9);
 
 /**
  * Extended dropdown that supports submenus.
@@ -3846,14 +4075,14 @@ Select3.findNestedById = function(array, id) {
 
 module.exports = Select3Submenu;
 
-},{}],14:[function(_dereq_,module,exports){
+},{}],16:[function(_dereq_,module,exports){
 'use strict';
 
-var escape = _dereq_(2);
+var escape = _dereq_(3);
 
-var Select3 = _dereq_(5);
+var Select3 = _dereq_(7);
 
-_dereq_(10);
+_dereq_(12);
 
 /**
  * Default set of templates to use with Select3.
@@ -4116,12 +4345,12 @@ Select3.Templates = {
 
 };
 
-},{}],15:[function(_dereq_,module,exports){
+},{}],17:[function(_dereq_,module,exports){
 'use strict';
 
 var $ = window.jQuery || window.Zepto;
 
-var Select3 = _dereq_(5);
+var Select3 = _dereq_(7);
 
 function defaultTokenizer(input, selection, createToken, options) {
 
@@ -4183,12 +4412,12 @@ Select3.OptionListeners.push(function(select3, options) {
     }
 });
 
-},{}],16:[function(_dereq_,module,exports){
+},{}],18:[function(_dereq_,module,exports){
 'use strict';
 
 var $ = window.jQuery || window.Zepto;
 
-var Select3 = _dereq_(5);
+var Select3 = _dereq_(7);
 
 function replaceSelectElement($el, options) {
 
