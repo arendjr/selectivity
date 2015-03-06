@@ -42,14 +42,25 @@ Select3.OptionListeners.unshift(function(select3, options) {
                     url += (url.indexOf('?') > -1 ? '&' : '?') + $.param(params(term, offset));
                 }
 
+                var success = ajax.success;
+                var error = ajax.error;
+
                 transport($.extend({}, ajax, {
                     url: url,
-                    success: function(data) {
+                    success: function(data, textStatus, jqXHR) {
+                        if (success) {
+                            success(data, textStatus, jqXHR);
+                        }
+
                         var results = resultsCb(data, offset);
                         results.results = results.results.map(processItem);
                         queryOptions.callback(results);
                     },
                     error: function(jqXHR, textStatus, errorThrown) {
+                        if (error) {
+                            error(jqXHR, textStatus, errorThrown);
+                        }
+
                         queryOptions.error(
                             formatError(term, jqXHR, textStatus, errorThrown),
                             { escape: false }
