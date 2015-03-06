@@ -131,6 +131,51 @@ jQuery builds without Sizzle.</li>
 });
 </code></pre>
 
+<h2>
+<a id="search-for-repository" class="anchor" href="#search-for-repository" aria-hidden="true"></a>Search a GitHub repository</h2>
+
+<p></p>
+
+<div id="example-6" class="select3-input example-input"></div>
+
+<pre class="example-code"><code>$(<span class="string">'#example-6'</span>).select3({
+    ajax: {
+        url: <span class="string">'https://api.github.com/search/repositories'</span>,
+        dataType: <span class="string">'json'</span>,
+        minimumInputLength: 3,
+        quietMillis: 250,
+        params: function(term, offset) {
+            <span class="comment">// GitHub uses 1-based pages with 30 results, by default</span>
+            return { q: term, page: 1 + Math.floor(offset / 30) };
+        },
+        processItem: function(item) {
+            return {
+                id: item.id,
+                text: item.name,
+                description: item.description
+            };
+        },
+        results: function(data, offset) {
+            return {
+                results: data.items,
+                more: (offset + data.items.length > data.total_count)
+            };
+        }
+    },
+    placeholder: <span class="string">'Search for a repository'</span>,
+    templates: {
+        resultItem: function(item) {
+            return (
+                <span class="string">'&lt;div class="select3-result-item" data-item-id="' + item.id + '"&gt;'</span> +
+                    <span class="string">'&lt;b&gt;'</span> + escape(item.text) + <span class="string">'&lt;/b&gt;&lt;br&gt;'</span> +
+                    escape(item.description) +
+                <span class="string">'&lt;/div&gt;'</span>
+            );
+        }
+    }
+});
+</code></pre>
+
 <h1>
 <a id="api" class="anchor" href="#api" aria-hidden="true"></a>API</h1>
 
@@ -152,6 +197,83 @@ jQuery builds without Sizzle.</li>
         </tr>
     </thead>
     <tbody>
+        <tr>
+            <td>ajax</td>
+            <td><code>Object</code></td>
+            <td>This object is used for convenience for loading result items through AJAX requests
+                to a remote resource. Below is an overview of properties that may be set on this
+                object. Any other properties on this object are passed directly to the *transport*,
+                which by default is <a href="http://api.jquery.com/jQuery.ajax/">`$.ajax()`</a>.
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Property</th>
+                            <th>Description</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>formatError</td>
+                            <td>Function that returns an HTML-formatted error message in case of an
+                                AJAX error. By default, `Select3.Locale.ajaxError` is used. The
+                                function receives four paramenters: `term`, `jqXHR`, `textStatus`
+                                and `errorThrown`. The first is the term being searched for, while
+                                the other three are the parameters passed to the error callback of
+                                `$.ajax`. Please be aware that because the function returns raw
+                                HTML, you are responsible for properly escaping any output to
+                                prevent XSS attacks.</td>
+                        </tr>
+                        <tr>
+                            <td>minimumInputLength</td>
+                            <td>An integer that specifies the minimum amount of characters required
+                                before an actual AJAX query will be performed.</td>
+                        </tr>
+                        <tr>
+                            <td>params</td>
+                            <td>Function that should return an object with additional query
+                                parameters to be added to the URL. Receives `term` and `offset`
+                                parameters. The term is a search term to search for and the offset
+                                is an integer of results that should be skipped for pagination.</td>
+                        </tr>
+                        <tr>
+                            <td>processItem</td>
+                            <td>Function that processes an individual result item. Make sure that
+                                the returned item has `id` and `text` properties. By default, this
+                                is the identity function (a function that simply returns its only
+                                parameter).</td>
+                        </tr>
+                        <tr>
+                            <td>quietMillis</td>
+                            <td>Number of milliseconds to wait before submitting AJAX requests when
+                                the user is entering a search term. I would advise to use some
+                                number from 200 to 300 (milliseconds) to not delay results too much,
+                                while not submitting too many requests while the user is typing.
+                        </tr>
+                        <tr>
+                            <td>results</td>
+                            <td>Function that interprets the data from the AJAX response and turns
+                                it into an object with `results` and `more` properties, just like
+                                the callback for the top-level `query` function. The function
+                                receives a `data` parameter containing the parsed AJAX response and
+                                an `offset` parameter used for pagination.</td>
+                        </tr>t
+                        <tr>
+                            <td>transport</td>
+                            <td>The transport to use for submitting the AJAX requests. By default,
+                                `$.ajax` is used, but you can specify any other function to use
+                                instead, as long as it's API-compatible with `$.ajax`.</td>
+                        </tr>
+                        <tr>
+                            <td>url</td>
+                            <td>URL to send the AJAX requests to. This can be given either as a
+                                string or as a function returning a string. Additional query
+                                parameters can be provided through the `params` option.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </td>
+        </tr>
         <tr>
             <td>allowClear</td>
             <td><code>Boolean</code></td>
@@ -309,7 +431,7 @@ jQuery builds without Sizzle.</li>
                                 <code>results</code> and <code>more</code> properties. The first is
                                 an array with result items in the same format as the
                                 <code>items</code> option and the latter is an optional boolean
-                                that may be set to <code>true</code> indicate more results are
+                                that may be set to <code>true</code> to indicate more results are
                                 available through pagination.</td>
                         </tr>
                         <tr>
@@ -375,7 +497,8 @@ jQuery builds without Sizzle.</li>
             <td>templates</td>
             <td><code>Object</code></td>
             <td>Object with instance-specific templates to override the global templates assigned to
-                <code>Select3.Templates</code>.</td>
+                <code>Select3.Templates</code>. Inline documentation for the templates is provided
+                in <a href="https://github.com/arendjr/select3/blob/master/src/select3-templates.js">select3-templates.js</a>.</td>
         </tr>
         <tr>
             <td>tokenizer</td>
