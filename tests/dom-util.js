@@ -32,7 +32,7 @@ module.exports = {
                     var $ = require('../vendor/jquery')(window);
                     var proxyquire = require('proxyquire').noCallThru();
 
-                    var Select3 = proxyquire('../src/select3-base', { 'jquery': $ });
+                    proxyquire('../src/select3-base', { 'jquery': $ });
 
                     // I wish this could be solved without hard-coding the dependenies here...
                     var dependencies = {
