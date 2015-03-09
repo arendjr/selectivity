@@ -13,3 +13,7 @@ var gulp = require('./gulp')([
 gulp.task('default', ['browserify', 'less']);
 
 gulp.task('dev', ['browserify', 'less', 'browser-sync', 'watch']);
+
+gulp.task('help', function() {
+    require('./gulp/custom-build-util').showUsage();
+});

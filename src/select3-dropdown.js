@@ -2,7 +2,7 @@
 
 var $ = require('jquery');
 
-var debounce = require('./debounce');
+var debounce = require('./lodash/debounce');
 
 var Select3 = require('./select3-base');
 

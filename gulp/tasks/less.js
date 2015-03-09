@@ -28,7 +28,7 @@ module.exports = function() {
             .on('error', function(error) {
                 gutil.log(gutil.colors.red('Error building CSS bundle: ') + error.toString());
             })
-            .pipe(concat('select3-' + argv['bundle-name'] + (argv.minify ? '.min' : '') + '.css'))
+            .pipe(concat('select3-' + argv.bundleName + (argv.minify ? '.min' : '') + '.css'))
             .pipe(gulpif(argv.minify, csso()))
             .pipe(gulp.dest('dist/'));
 };

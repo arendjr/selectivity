@@ -1,6 +1,6 @@
 'use strict';
 
-var escape = require('./escape');
+var escape = require('./lodash/escape');
 var Select3 = require('./select3-base');
 
 /**

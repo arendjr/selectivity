@@ -185,9 +185,7 @@ problems for you, you can pass the `--derequire` parameter to rename those calls
 you're using Browserify in your own project you may even decide to skip the whole build process and
 just copy the relevant modules from the `src/` directory straight into your project.
 
-Finally, you may wish to specify the `--minify` parameter to minimize the size of your custom
-builds. This will run Browserify's bundle-collapser plugin on the build and minimize the code using
-UglifyJS. The resulting build will be saved in `dist/select3-custom.min.js`.
+To display any other options available for custom builds, run `gulp help`.
 
 ### Development server
 

@@ -9,11 +9,16 @@ function showUsage() {
         '',
         'Options:',
         '--bundle-name=<name>      Name of the bundle to create. Default is "custom".',
+        '--common-js               Use CommonJS require() for loading dependencies',
+        '                          rather than expecting their globals on the window',
+        '                          object.',
         '--derequire               Renames all calls to require() to avoid conflicts',
         '                          with build systems.',
+        '--lodash                  Use lodash or underscore.js as a dependency, making',
+        '                          Select3 even smaller.',
         '--minify                  Minifies the bundle to reduce file size.',
-        '--modules=<module-list>   Comma-separated list of modules to build. Default is',
-        '                          "all".',
+        '--modules=<module-list>   Comma-separated list of modules to build. Default',
+        '                          is "all".',
         '--source-map              Adds a source map to the build for debugging.',
         '',
         'For a list of supported modules, see the README.md.'
@@ -25,9 +30,9 @@ module.exports = {
 
     checkOptions: function(argv) {
 
-        if (!argv['bundle-name']) {
-            argv['bundle-name'] = 'custom';
-        }
+        argv.bundleName = argv['bundle-name'] || 'custom';
+
+        argv.commonJs = argv['common-js'] || false;
 
         if (argv.modules === undefined || argv.modules === 'all') {
             argv.modules = glob.sync('src/select3-*.js').map(function(file) {
@@ -42,6 +47,8 @@ module.exports = {
         } else {
             showUsage();
         }
-    }
+    },
+
+    showUsage: showUsage
 
 };
