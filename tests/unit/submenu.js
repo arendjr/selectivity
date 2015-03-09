@@ -70,7 +70,7 @@ exports.testSelectItemInSubmenu = DomUtil.createDomTest(
 
 exports.testSetValue = DomUtil.createDomTest(
     ['single', 'dropdown', 'submenu', 'templates'],
-    function(test, $input, $) {
+    function(test, $input) {
         $input.select3({ items: items });
 
         $input.select3('value', '3-1');
