@@ -1,3 +1,15 @@
+function escape(string) {
+    return string ? String(string).replace(/[&<>"']/g, function(match) {
+        return {
+            '&': '&amp;',
+            '<': '&lt;',
+            '>': '&gt;',
+            '"': '&quot;',
+            "'": '&#39;'
+        }[match];
+    }) : '';
+}
+
 var cities = [
     'Amsterdam',
     'Antwerp',
