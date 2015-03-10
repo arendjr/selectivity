@@ -57,6 +57,12 @@ put the following in your HTML head:
 Verify the paths are correct for your particular project. The important thing is that jQuery (or
 Zepto.js) should be loaded before including Select3.
 
+### Using Bower
+
+Make sure Bower is installed, then run:
+
+    $ bower install select3
+
 ### Using Component
 
 Include as a [component(1)](https://github.com/componentjs/component) dependency.

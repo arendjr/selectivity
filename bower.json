@@ -1,0 +1,35 @@
+{
+  "name": "select3",
+  "version": "1.0.0",
+  "homepage": "https://arendjr.github.io/select3/",
+  "description": "Modular and light-weight selection library for jQuery and Zepto.js",
+  "main": [
+    "dist/select3-full.css",
+    "dist/select3-full.js"
+  ],
+  "keywords": [
+    "select",
+    "multiselect",
+    "dropdown",
+    "submenu",
+    "email",
+    "input"
+  ],
+  "authors": [
+    "Arend van Beelen jr."
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components"
+  ],
+  "dependencies": {
+    "jquery": ">=1.9",
+    "font-awesome": ">=4.1.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:arendjr/select3.git"
+  }
+}
