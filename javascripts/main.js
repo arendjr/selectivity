@@ -384,7 +384,8 @@ $('#example-3').select3({
 $('#example-4').select3({
     allowClear: true,
     items: citiesByTimezone,
-    placeholder: 'No city selected'
+    placeholder: 'No city selected',
+    showSearchInputInDropdown: false
 });
 
 $('#example-5').select3({
