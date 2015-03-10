@@ -2507,13 +2507,10 @@ $.extend(Select3Dropdown.prototype, {
      */
     position: function() {
 
-        var positionDropdown = this.options.position || function($el, $selectEl) {
-            var offset = $selectEl.offset();
-            $el.css({ left: offset.left + 'px', top: offset.top + $selectEl.height() + 'px' })
-               .width($selectEl.width());
-        };
-
-        positionDropdown(this.$el, this.select3.$el);
+        var position = this.options.position;
+        if (position) {
+            position(this.$el, this.select3.$el);
+        }
 
         this._scrolled();
     },
@@ -2607,6 +2604,8 @@ $.extend(Select3Dropdown.prototype, {
 
         this.highlightedResult = null;
         this.loadMoreHighlighted = false;
+
+        this.position();
     },
 
     /**
@@ -2621,6 +2620,8 @@ $.extend(Select3Dropdown.prototype, {
 
         this.highlightedResult = null;
         this.loadMoreHighlighted = false;
+
+        this.position();
     },
 
     /**
@@ -2659,6 +2660,8 @@ $.extend(Select3Dropdown.prototype, {
         if (!options.add || this.loadMoreHighlighted) {
             this._highlightFirstItem(results);
         }
+
+        this.position();
     },
 
     /**
@@ -3132,6 +3135,21 @@ function MultipleSelect3(options) {
     this.initSearchInput(this.$('.select3-multiple-input:not(.select3-width-detector)'));
 
     this._rerenderSelection();
+
+    if (!options.positionDropdown) {
+        this.options.positionDropdown = function($el, $selectEl) {
+            var offset = $selectEl.offset(),
+                elHeight = $el.height(),
+                selectHeight = $selectEl.height(),
+                bottom = $selectEl[0].getBoundingClientRect().top + selectHeight + elHeight;
+
+            $el.css({
+                left: offset.left + 'px',
+                top: offset.top + (typeof window !== 'undefined' &&
+                                   bottom > $(window).height() ? -elHeight : selectHeight) + 'px'
+            }).width($selectEl.width());
+        };
+    }
 }
 
 /**
@@ -3643,6 +3661,25 @@ function SingleSelect3(options) {
     this.$el.html(this.template('singleSelectInput', this.options));
 
     this._rerenderSelection();
+
+    if (!options.positionDropdown) {
+        this.options.positionDropdown = function($el, $selectEl) {
+            var offset = $selectEl.offset(),
+                top = offset.top + $selectEl.height();
+
+            if (typeof window !== 'undefined') {
+                var fixedOffset = $selectEl[0].getBoundingClientRect(),
+                    elHeight = $el.height(),
+                    windowHeight = $(window).height();
+
+                if (fixedOffset.top + elHeight > windowHeight) {
+                    top = Math.max(windowHeight - elHeight + offset.top - fixedOffset.top, 0);
+                }
+            }
+
+            $el.css({ left: offset.left + 'px', top: top + 'px' }).width($selectEl.width());
+        };
+    }
 }
 
 /**

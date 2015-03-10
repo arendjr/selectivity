@@ -137,6 +137,7 @@ input[type="text"].select3-multiple-input:focus {
   background-color: #ccc;
 }
 .select3-multiple-selected-item-remove {
+  color: #fff;
   cursor: pointer;
   padding: 5px;
 }
@@ -166,6 +167,7 @@ input[type="text"].select3-multiple-input:focus {
   color: #000;
 }
 .select3-single-selected-item-remove {
+  colo: #000;
   float: right;
   padding: 0 5px;
 }
