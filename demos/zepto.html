@@ -17,6 +17,18 @@
         <script src="../vendor/zepto.js"></script>
         <script src="../dist/select3-full.js"></script>
         <script>
+            function escape(string) {
+                return string ? String(string).replace(/[&<>"']/g, function(match) {
+                    return {
+                        '&': '&amp;',
+                        '<': '&lt;',
+                        '>': '&gt;',
+                        '"': '&quot;',
+                        "'": '&#39;'
+                    }[match];
+                }) : '';
+            }
+
             $(document).ready(function() {
                 // ['Amsterdam', 'Antwerp', ...]
                 var cities = $('#single-select-box').find('option').map(function() {
@@ -140,6 +152,45 @@
                 $('#single-select-box').select3();
 
                 $('#multiple-select-box').select3();
+
+                $('#repository-input').select3({
+                    ajax: {
+                        url: 'https://api.github.com/search/repositories',
+                        dataType: 'json',
+                        minimumInputLength: 3,
+                        quietMillis: 250,
+                        params: function(term, offset) {
+                            // GitHub uses 1-based pages with 30 results, by default
+                            var page = 1 + Math.floor(offset / 30);
+
+                            return { q: term, page: page };
+                        },
+                        processItem: function(item) {
+                            return {
+                                id: item.id,
+                                text: item.name,
+                                description: item.description
+                            };
+                        },
+                        results: function(data, offset) {
+                            return {
+                                results: data.items,
+                                more: (offset + data.items.length > data.total_count)
+                            };
+                        }
+                    },
+                    placeholder: 'Search for a repository',
+                    templates: {
+                        resultItem: function(item) {
+                            return (
+                                '<div class="select3-result-item" data-item-id="' + item.id + '">' +
+                                    '<b>' + escape(item.text) + '</b><br>' +
+                                    escape(item.description) +
+                                '</div>'
+                            );
+                        }
+                    }
+                });
             });
         </script>
     </head>
@@ -341,6 +392,8 @@
                 <option value="49" data-timezone="+01:00">Stockholm</option>
             </optgroup>
         </select>
+        <h2>Select a GitHub repository</h2>
+        <p><span id="repository-input" class="select3-input"></span></p>
         <script>
             if (location.hostname !== 'localhost' && location.hostname !== '127.0.0.1') {
                 Array.prototype.forEach.call(document.querySelectorAll('.dev-instructions'), function(element) {
