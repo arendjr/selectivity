@@ -1,3 +1,15 @@
+function escape(string) {
+    return string ? String(string).replace(/[&<>"']/g, function(match) {
+        return {
+            '&': '&amp;',
+            '<': '&lt;',
+            '>': '&gt;',
+            '"': '&quot;',
+            "'": '&#39;'
+        }[match];
+    }) : '';
+}
+
 var cities = [
     'Amsterdam',
     'Antwerp',
@@ -378,4 +390,43 @@ $('#example-4').select3({
 $('#example-5').select3({
     inputType: 'Email',
     placeholder: 'Type or paste email addresses'
+});
+
+$('#example-6').select3({
+    ajax: {
+        url: 'https://api.github.com/search/repositories',
+        dataType: 'json',
+        minimumInputLength: 3,
+        quietMillis: 250,
+        params: function(term, offset) {
+            // GitHub uses 1-based pages with 30 results, by default
+            var page = 1 + Math.floor(offset / 30);
+
+            return { q: term, page: page };
+        },
+        processItem: function(item) {
+            return {
+                id: item.id,
+                text: item.name,
+                description: item.description
+            };
+        },
+        results: function(data, offset) {
+            return {
+                results: data.items,
+                more: (offset + data.items.length > data.total_count)
+            };
+        }
+    },
+    placeholder: 'Search for a repository',
+    templates: {
+        resultItem: function(item) {
+            return (
+                '<div class="select3-result-item" data-item-id="' + item.id + '">' +
+                    '<b>' + escape(item.text) + '</b><br>' +
+                    escape(item.description) +
+                '</div>'
+            );
+        }
+    }
 });

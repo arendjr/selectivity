@@ -131,6 +131,51 @@ jQuery builds without Sizzle.</li>
 });
 </code></pre>
 
+<h2>
+<a id="search-for-repository" class="anchor" href="#search-for-repository" aria-hidden="true"></a>Search a GitHub repository</h2>
+
+<p></p>
+
+<div id="example-6" class="select3-input example-input"></div>
+
+<pre class="example-code"><code>$(<span class="string">'#example-6'</span>).select3({
+    ajax: {
+        url: <span class="string">'https://api.github.com/search/repositories'</span>,
+        dataType: <span class="string">'json'</span>,
+        minimumInputLength: 3,
+        quietMillis: 250,
+        params: function(term, offset) {
+            <span class="comment">// GitHub uses 1-based pages with 30 results, by default</span>
+            return { q: term, page: 1 + Math.floor(offset / 30) };
+        },
+        processItem: function(item) {
+            return {
+                id: item.id,
+                text: item.name,
+                description: item.description
+            };
+        },
+        results: function(data, offset) {
+            return {
+                results: data.items,
+                more: (offset + data.items.length > data.total_count)
+            };
+        }
+    },
+    placeholder: <span class="string">'Search for a repository'</span>,
+    templates: {
+        resultItem: function(item) {
+            return (
+                <span class="string">'&lt;div class="select3-result-item" data-item-id="'</span> + item.id + <span class="string">'"&gt;'</span> +
+                    <span class="string">'&lt;b&gt;'</span> + escape(item.text) + <span class="string">'&lt;/b&gt;&lt;br&gt;'</span> +
+                    escape(item.description) +
+                <span class="string">'&lt;/div&gt;'</span>
+            );
+        }
+    }
+});
+</code></pre>
+
 <h1>
 <a id="api" class="anchor" href="#api" aria-hidden="true"></a>API</h1>
 
@@ -153,6 +198,90 @@ jQuery builds without Sizzle.</li>
     </thead>
     <tbody>
         <tr>
+            <td>ajax</td>
+            <td><code>Object</code></td>
+            <td>This object is used for convenience for loading result items through AJAX requests
+                to a remote resource. Below is an overview of properties that may be set on this
+                object. Any other properties on this object are passed directly to the
+                <i>transport</i>, which by default is
+                <a href="http://api.jquery.com/jQuery.ajax/"><code>$.ajax()</code></a>.
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Property</th>
+                            <th>Description</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>formatError</td>
+                            <td>Function that returns an HTML-formatted error message in case of an
+                                AJAX error. By default, <code>Select3.Locale.ajaxError</code> is
+                                used. The function receives four paramenters: <code>term</code>,
+                                <code>jqXHR</code>, <code>textStatus</code> and
+                                <code>errorThrown</code>. The first is the term being searched for,
+                                while the other three are the parameters passed to the error
+                                callback of <code>$.ajax</code>. Please be aware that because the
+                                function returns raw HTML, you are responsible for properly escaping
+                                any output to prevent XSS attacks.</td>
+                        </tr>
+                        <tr>
+                            <td>minimumInputLength</td>
+                            <td>An integer that specifies the minimum amount of characters required
+                                before an actual AJAX query will be performed.</td>
+                        </tr>
+                        <tr>
+                            <td>params</td>
+                            <td>Function that should return an object with additional query
+                                parameters to be added to the URL. Receives <code>term</code> and
+                                <code>offset</code> parameters. The term is a search term to search
+                                for and the offset is an integer of results that should be skipped
+                                for pagination.</td>
+                        </tr>
+                        <tr>
+                            <td>processItem</td>
+                            <td>Function that processes an individual result item. Make sure that
+                                the returned item has <code>id</code> and <code>text</code>
+                                properties. By default, this is the identity function (a function
+                                that simply returns its only parameter).</td>
+                        </tr>
+                        <tr>
+                            <td>quietMillis</td>
+                            <td>Number of milliseconds to wait before submitting AJAX requests when
+                                the user is entering a search term. I would advise to use some
+                                number from 200 to 300 (milliseconds) to not delay results too much,
+                                while not submitting too many requests while the user is
+                                typing.</td>
+                        </tr>
+                        <tr>
+                            <td>results</td>
+                            <td>Function that interprets the data from the AJAX response and turns
+                                it into an object with <code>results</code> and <code>more</code>
+                                properties, just like the callback for the top-level
+                                <code>query</code> function. The function receives a
+                                <code>data</code> parameter containing the parsed AJAX response and
+                                an <code>offset</code> parameter used for pagination.</td>
+                        </tr>t
+                        <tr>
+                            <td>transport</td>
+                            <td>The transport to use for submitting the AJAX requests. By default,
+                                <code>$.ajax</code> is used, but you can specify any other function
+                                to use instead, as long as it's API-compatible with
+                                <code>$.ajax</code>.</td>
+                        </tr>
+                        <tr>
+                            <td>url</td>
+                            <td>URL to send the AJAX requests to. This can be given either as a
+                                string or as a function returning a string. Additional query
+                                parameters can be provided through the <code>params</code>
+                                option.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </td>
+        </tr>
+        <tr>
             <td>allowClear</td>
             <td><code>Boolean</code></td>
             <td>Set to <code>true</code> to allow the selection to be cleared. This option only
@@ -169,7 +298,8 @@ jQuery builds without Sizzle.</li>
                 in the search field but there are selected items, the last selected item will be
                 highlighted and when a second backspace is entered the item is deleted. If
                 <code>false</code>, the item gets deleted on the first backspace. The default value
-                is true on devices that have touch input and false on devices that don't.</td>
+                is <code>true</code> on devices that have touch input and <code>false</code> on
+                devices that don't.</td>
         </tr>
         <tr>
             <td>closeOnSelect</td>
@@ -189,7 +319,9 @@ jQuery builds without Sizzle.</li>
                 <code>id</code> and <code>text</code> properties or <code>null</code> if no token
                 can be created from the term. The default is a function that returns an item where
                 the ID and text both match the term for any non-empty string and which returns
-                <code>null</code> otherwise. This option only applies to multiple-value inputs.</td>
+                <code>null</code> otherwise.<br>
+                <br>
+                This option only applies to multiple-value inputs.</td>
         </tr>
         <tr>
             <td>data</td>
@@ -206,7 +338,7 @@ jQuery builds without Sizzle.</li>
         <tr>
             <td>dropdownCssClass</td>
             <td><code>String</code></td>
-            <td>Optional CSS class to add to the top-level dropdown element.</td>
+            <td>Optional CSS class to add to the dropdown's top-level element.</td>
         </tr>
         <tr>
             <td>initSelection</td>
@@ -214,8 +346,9 @@ jQuery builds without Sizzle.</li>
             <td>Function to map values by ID to selection data. This function receives two
                 arguments, <code>value</code> and <code>callback</code>. The value is the current
                 value of the selection, which is an ID or an array of IDs, depending on the input
-                type. The callback should be invoked with an object or array of objects,
-                respectively, containing <code>id</code> and <code>text</code> properties.</td>
+                type. The callback should be invoked with an object containing <code>id</code> and
+                <code>text</code> properties, or an array of such objects (again, depending on the
+                input type).</td>
         </tr>
         <tr>
             <td>inputType</td>
@@ -236,9 +369,11 @@ jQuery builds without Sizzle.</li>
                 having an ID.<br>
                 <br>
                 If <code>items</code> are specified, all items are expected to be available locally
-                nd all selection operations operate on this local array only. If omitted, items are
+                and all selection operations operate on this local array only. If omitted, items are
                 not available locally, and the <code>query</code> option should be provided to fetch
-                data. If you have used a <code>&lt;select&gt;</code> element to initialize the
+                data.<br>
+                <br>
+                If you have used a <code>&lt;select&gt;</code> element to initialize the
                 Select3 instance, its <code>&lt;option&gt;</code> and <code>&lt;optgroup&gt;</code>
                 elements are used to initialize the items array.</td>
         </tr>
@@ -250,7 +385,10 @@ jQuery builds without Sizzle.</li>
                 <code>term</code> and <code>text</code>. The term is the search term, which for
                 performance reasons has always been already processed using
                 <code>Select3.transformText()</code>. The text is the text that should match the
-                search term.</td>
+                search term.<br>
+                <br>
+                The function should return <code>true</code> if the text matches the term, and
+                <code>false</code> otherwise.</td>
         </tr>
         <tr>
             <td>multiple</td>
@@ -267,8 +405,9 @@ jQuery builds without Sizzle.</li>
             <td><code>String</code></td>
             <td>Placeholder text to display when the element has no focus and selected items.<br>
                 <br>
-                If you have used a &lt;select&gt; element to initialize the Select3 instance, this
-                option may be set through the <code>data-placeholder</code> attribute.</td>
+                If you have used a <code>&lt;select&gt;</code> element to initialize the Select3
+                instance, this option may be set through the <code>data-placeholder</code>
+                attribute.</td>
         </tr>
         <tr>
             <td>positionDropdown</td>
@@ -276,7 +415,7 @@ jQuery builds without Sizzle.</li>
             <td>Function to position the dropdown. Receives <code>$dropdownEl</code> (the element to
                 be positioned) and <code>$selectEl</code> (the element of the Select3 instance) as
                 arguments. The default implementation positions the dropdown element under the
-                Select3's element and gives it the same width as well.</td>
+                Select3 instance's element and gives it the same width as well.</td>
         </tr>
         <tr>
             <td>query</td>
@@ -299,7 +438,7 @@ jQuery builds without Sizzle.</li>
                                 <code>results</code> and <code>more</code> properties. The first is
                                 an array with result items in the same format as the
                                 <code>items</code> option and the latter is an optional boolean
-                                that may be set to <code>true</code> indicate more results are
+                                that may be set to <code>true</code> to indicate more results are
                                 available through pagination.</td>
                         </tr>
                         <tr>
@@ -329,10 +468,21 @@ jQuery builds without Sizzle.</li>
                 This option is ignored if the <code>items</code> option is used.</td>
         </tr>
         <tr>
+            <td>readOnly</td>
+            <td><code>Boolean</code></td>
+            <td>If <code>true</code>, disables any modification of the input.</td>
+        </tr>
+        <tr>
+            <td>removeOnly</td>
+            <td><code>Boolean</code></td>
+            <td>If <code>true</code>, disables any modification of the input except removing of
+                selected items.</td>
+        </tr>
+        <tr>
             <td>showDropdown</td>
             <td><code>Boolean</code></td>
             <td>Set to <code>false</code> if you don't want to use any dropdown (you can still open
-                still open it programmatically using <code>open()</code>).</td>
+                it programmatically using <code>open()</code>).</td>
         </tr>
         <tr>
             <td>show<wbr>SearchInput<wbr>InDropdown</td>
@@ -354,7 +504,8 @@ jQuery builds without Sizzle.</li>
             <td>templates</td>
             <td><code>Object</code></td>
             <td>Object with instance-specific templates to override the global templates assigned to
-                <code>Select3.Templates</code>.</td>
+                <code>Select3.Templates</code>. Inline documentation for the templates is provided
+                in <a href="https://github.com/arendjr/select3/blob/master/src/select3-templates.js">select3-templates.js</a>.</td>
         </tr>
         <tr>
             <td>tokenizer</td>
@@ -390,7 +541,7 @@ jQuery builds without Sizzle.</li>
 <h1>
 <a id="methods" class="anchor" href="#methods" aria-hidden="true"></a>Methods</h1>
 
-<p>Methods are invoked by passing the name of the method, followed by any arguments to the
+<p>Methods are invoked by passing the name of the method, followed by any arguments, to the
     <code>select3()</code> function. Example:<p>
 
 <p><code>$(selector).select3(<span class="string">'data'</span>, { id: 1, text: <span class="string">'Amsterdam'</span> })</code></p>
@@ -668,11 +819,12 @@ $(selector).select3(<span class="string">'value'</span>, [1, 2])</code></pre>
     <!-- FOOTER  -->
     <div id="footer_wrap" class="outer">
       <footer class="inner">
-        <p class="copyright">Select3 maintained by <a href="https://github.com/arendjr">arendjr</a></p>
+        <p class="copyright">Select3 maintained by <a href="https://github.com/arendjr">arendjr</a>.
+            Sponsored by <a href="https://www.speakap.com/">Speakap</a>.</p>
       </footer>
     </div>
 
-    
+
 
     <script src="javascripts/jquery.js"></script>
     <script src="javascripts/select3-full.js"></script>
