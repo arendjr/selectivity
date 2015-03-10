@@ -72,30 +72,6 @@ var callSuper = Select3.inherits(Select3Submenu, Select3Dropdown, {
     /**
      * @inherit
      */
-    highlightNext: function() {
-
-        if (this.submenu) {
-            this.submenu.highlightNext();
-        } else {
-            callSuper(this, 'highlightNext');
-        }
-    },
-
-    /**
-     * @inherit
-     */
-    highlightPrevious: function() {
-
-        if (this.submenu) {
-            this.submenu.highlightPrevious();
-        } else {
-            callSuper(this, 'highlightPrevious');
-        }
-    },
-
-    /**
-     * @inherit
-     */
     selectHighlight: function() {
 
         if (this.submenu) {

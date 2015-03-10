@@ -2265,20 +2265,6 @@ var debounce = _dereq_(2);
 var Select3 = _dereq_(7);
 
 /**
- * Returns the index of the first element in the jQuery container $elements that matches the given
- * selector, or -1 if no elements match the selector.
- */
-function findElementIndex($elements, selector) {
-
-    for (var i = 0, length = $elements.length; i < length; i++) {
-        if ($elements.eq(i).is(selector)) {
-            return i;
-        }
-    }
-    return -1;
-}
-
-/**
  * Select3 Dropdown Constructor.
  *
  * @param options Options object. Should have the following properties:
@@ -2436,70 +2422,6 @@ $.extend(Select3Dropdown.prototype, {
 
         this.highlightedResult = null;
         this.loadMoreHighlighted = true;
-    },
-
-    /**
-     * Highlights the next result item.
-     */
-    highlightNext: function() {
-
-        var results = this.results;
-        if (results.length) {
-            var $results = this.$('.select3-result-item');
-            var index = 0;
-            var highlightedResult = this.highlightedResult;
-            if (highlightedResult) {
-                var quotedId = Select3.quoteCssAttr(highlightedResult.id);
-                index = findElementIndex($results, '[data-item-id=' + quotedId + ']') + 1;
-                if (index >= $results.length) {
-                    if (this.hasMore) {
-                        this.highlightLoadMore();
-                        this._scrollToHighlight({ alignToTop: false });
-                        return;
-                    } else {
-                        index = 0;
-                    }
-                }
-            }
-
-            var result = Select3.findNestedById(results, this.select3._getItemId($results[index]));
-            if (result) {
-                this.highlight(result);
-                this._scrollToHighlight({ alignToTop: false });
-            }
-        }
-    },
-
-    /**
-     * Highlights the previous result item.
-     */
-    highlightPrevious: function() {
-
-        var results = this.results;
-        if (results.length) {
-            var $results = this.$('.select3-result-item');
-            var index = $results.length - 1;
-            var highlightedResult = this.highlightedResult;
-            if (highlightedResult) {
-                var quotedId = Select3.quoteCssAttr(highlightedResult.id);
-                index = findElementIndex($results, '[data-item-id=' + quotedId + ']') - 1;
-                if (index < 0) {
-                    if (this.hasMore) {
-                        this.highlightLoadMore();
-                        this._scrollToHighlight({ alignToTop: true });
-                        return;
-                    } else {
-                        index = $results.length - 1;
-                    }
-                }
-            }
-
-            var result = Select3.findNestedById(results, this.select3._getItemId($results[index]));
-            if (result) {
-                this.highlight(result);
-                this._scrollToHighlight({ alignToTop: true });
-            }
-        }
     },
 
     /**
@@ -3032,14 +2954,78 @@ var KEY_UP_ARROW = 38;
  */
 function listener(select3, $input) {
 
+    /**
+     * Moves a dropdown's highlight to the next or previous result item.
+     *
+     * @param delta Either 1 to move to the next item, or -1 to move to the previous item.
+     */
+    function moveHighlight(dropdown, delta) {
+
+        function findElementIndex($elements, selector) {
+            for (var i = 0, length = $elements.length; i < length; i++) {
+                if ($elements.eq(i).is(selector)) {
+                    return i;
+                }
+            }
+            return -1;
+        }
+
+        function scrollToHighlight() {
+            var el;
+            if (dropdown.highlightedResult) {
+                var quotedId = Select3.quoteCssAttr(dropdown.highlightedResult.id);
+                el = dropdown.$('.select3-result-item[data-item-id=' + quotedId + ']')[0];
+            } else if (dropdown.loadMoreHighlighted) {
+                el = dropdown.$('.select3-load-more')[0];
+            } else {
+                return; // no highlight to scroll to
+            }
+
+            var rect = el.getBoundingClientRect(),
+                containerRect = dropdown.$results[0].getBoundingClientRect();
+
+            if (rect.top < containerRect.top || rect.bottom > containerRect.bottom) {
+                el.scrollIntoView(delta < 0);
+            }
+        }
+
+        var results = dropdown.results;
+        if (results.length) {
+            var $results = dropdown.$('.select3-result-item');
+            var defaultIndex = (delta > 0 ? 0 : $results.length - 1);
+            var index = defaultIndex;
+            var highlightedResult = dropdown.highlightedResult;
+            if (highlightedResult) {
+                var quotedId = Select3.quoteCssAttr(highlightedResult.id);
+                index = findElementIndex($results, '[data-item-id=' + quotedId + ']') + delta;
+                if (delta > 0 ? index >= $results.length : index < 0) {
+                    if (dropdown.hasMore) {
+                        dropdown.highlightLoadMore();
+                        scrollToHighlight();
+                        return;
+                    } else {
+                        index = defaultIndex;
+                    }
+                }
+            }
+
+            var result = Select3.findNestedById(results,
+                                                dropdown.select3._getItemId($results[index]));
+            if (result) {
+                dropdown.highlight(result);
+                scrollToHighlight();
+            }
+        }
+    }
+
     function keyHeld(event) {
 
         var dropdown = select3.dropdown;
         if (dropdown) {
             if (event.keyCode === KEY_DOWN_ARROW) {
-                dropdown.highlightNext();
+                moveHighlight(dropdown, 1);
             } else if (event.keyCode === KEY_UP_ARROW) {
-                dropdown.highlightPrevious();
+                moveHighlight(dropdown, -1);
             }
         }
     }
@@ -3906,30 +3892,6 @@ var callSuper = Select3.inherits(Select3Submenu, Select3Dropdown, {
         }
 
         this._doHighlight(item);
-    },
-
-    /**
-     * @inherit
-     */
-    highlightNext: function() {
-
-        if (this.submenu) {
-            this.submenu.highlightNext();
-        } else {
-            callSuper(this, 'highlightNext');
-        }
-    },
-
-    /**
-     * @inherit
-     */
-    highlightPrevious: function() {
-
-        if (this.submenu) {
-            this.submenu.highlightPrevious();
-        } else {
-            callSuper(this, 'highlightPrevious');
-        }
     },
 
     /**

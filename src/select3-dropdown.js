@@ -7,20 +7,6 @@ var debounce = require('./lodash/debounce');
 var Select3 = require('./select3-base');
 
 /**
- * Returns the index of the first element in the jQuery container $elements that matches the given
- * selector, or -1 if no elements match the selector.
- */
-function findElementIndex($elements, selector) {
-
-    for (var i = 0, length = $elements.length; i < length; i++) {
-        if ($elements.eq(i).is(selector)) {
-            return i;
-        }
-    }
-    return -1;
-}
-
-/**
  * Select3 Dropdown Constructor.
  *
  * @param options Options object. Should have the following properties:
@@ -178,70 +164,6 @@ $.extend(Select3Dropdown.prototype, {
 
         this.highlightedResult = null;
         this.loadMoreHighlighted = true;
-    },
-
-    /**
-     * Highlights the next result item.
-     */
-    highlightNext: function() {
-
-        var results = this.results;
-        if (results.length) {
-            var $results = this.$('.select3-result-item');
-            var index = 0;
-            var highlightedResult = this.highlightedResult;
-            if (highlightedResult) {
-                var quotedId = Select3.quoteCssAttr(highlightedResult.id);
-                index = findElementIndex($results, '[data-item-id=' + quotedId + ']') + 1;
-                if (index >= $results.length) {
-                    if (this.hasMore) {
-                        this.highlightLoadMore();
-                        this._scrollToHighlight({ alignToTop: false });
-                        return;
-                    } else {
-                        index = 0;
-                    }
-                }
-            }
-
-            var result = Select3.findNestedById(results, this.select3._getItemId($results[index]));
-            if (result) {
-                this.highlight(result);
-                this._scrollToHighlight({ alignToTop: false });
-            }
-        }
-    },
-
-    /**
-     * Highlights the previous result item.
-     */
-    highlightPrevious: function() {
-
-        var results = this.results;
-        if (results.length) {
-            var $results = this.$('.select3-result-item');
-            var index = $results.length - 1;
-            var highlightedResult = this.highlightedResult;
-            if (highlightedResult) {
-                var quotedId = Select3.quoteCssAttr(highlightedResult.id);
-                index = findElementIndex($results, '[data-item-id=' + quotedId + ']') - 1;
-                if (index < 0) {
-                    if (this.hasMore) {
-                        this.highlightLoadMore();
-                        this._scrollToHighlight({ alignToTop: true });
-                        return;
-                    } else {
-                        index = $results.length - 1;
-                    }
-                }
-            }
-
-            var result = Select3.findNestedById(results, this.select3._getItemId($results[index]));
-            if (result) {
-                this.highlight(result);
-                this._scrollToHighlight({ alignToTop: true });
-            }
-        }
     },
 
     /**
