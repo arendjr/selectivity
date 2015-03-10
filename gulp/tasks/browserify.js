@@ -38,7 +38,7 @@ module.exports = function() {
     });
     if (argv.lodash) {
         lodashMethods.forEach(function(method) {
-            b.external('./' + method);
+            b.external('./lodash/' + method);
         });
     }
 
