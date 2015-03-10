@@ -99,42 +99,6 @@ API
 
 See the Select3 homepage: https://arendjr.github.io/select3/
 
-Migrating from Select2
-----------------------
-
-*Note: Select3 is not affiliated with the Select2 project.*
-
-Before you decide to migrate from Select2 to Select3, you should consider that not every feature
-supported by Select2 is supported by Select3. So check beforehand whether Select3 actually meets
-your requirements.
-
-### Unsupported features
-
-The following is an (incomplete) list of features which Select3 currently lacks:
-
- * Reordering of selected items. Select2 allows reordering of selected items, for example through
-   drag 'n drop. Select3 doesn't and there are curently no plans to implement this.
- * Options. Select3 lacks some miscellaneous options supported by Select2. Notable omissions are
-   `selectOnBlur` and `maximumSelectionSize`, among others.
- * Events. Select2 currently emits more events than Select3 does. Notable omissions are
-   'select2-clearing', 'select2-focus' and 'select2-blur' among others.
-
-### Notable differences
-
- * Select2 has explicit support for tags through the `tags` option. With Select3, tagging is also
-   supported, but works through the regular `items` option.
- * Formatting functions. Select2 allows you to specify a wide range of `format*()` functions in the
-   options. With Select3, instead of passing various formatting functions, you can customize the
-   templates, both globally and per instance.
-
-### Miscellaneous
-
- * If you have customized the CSS you use with Select2, you will have to take into account that you
-   may need to customize it again for Select3 as the templates are very different.
- * Some properties are named differently, even though they have very similar meaning. Examples:
-   * `createSearchChoice` is now `createTokenItem`.
-   * The `choice` parameter to events is now called `item`.
-
 Build System
 ------------
 
@@ -210,6 +174,42 @@ Unit Tests
 Unit tests are available and can be ran using the following command:
 
     $ gulp unit-tests
+
+Migrating from Select2
+----------------------
+
+*Note: Select3 is not affiliated with the Select2 project.*
+
+Before you decide to migrate from Select2 to Select3, you should consider that not every feature
+supported by Select2 is supported by Select3. So check beforehand whether Select3 actually meets
+your requirements.
+
+### Unsupported features
+
+The following is an (incomplete) list of features which Select3 currently lacks:
+
+ * Reordering of selected items. Select2 allows reordering of selected items, for example through
+   drag 'n drop. Select3 doesn't and there are curently no plans to implement this.
+ * Options. Select3 lacks some miscellaneous options supported by Select2. Notable omissions are
+   `selectOnBlur` and `maximumSelectionSize`, among others.
+ * Events. Select2 currently emits more events than Select3 does. Notable omissions are
+   'select2-clearing', 'select2-focus' and 'select2-blur' among others.
+
+### Notable differences
+
+ * Select2 has explicit support for tags through the `tags` option. With Select3, tagging is also
+   supported, but works through the regular `items` option.
+ * Formatting functions. Select2 allows you to specify a wide range of `format*()` functions in the
+   options. With Select3, instead of passing various formatting functions, you can customize the
+   templates, both globally and per instance.
+
+### Miscellaneous
+
+ * If you have customized the CSS you use with Select2, you will have to take into account that you
+   may need to customize it again for Select3 as the templates are very different.
+ * Some properties are named differently, even though they have very similar meaning. Examples:
+   * `createSearchChoice` is now `createTokenItem`.
+   * The `choice` parameter to events is now called `item`.
 
 Contributing
 ------------
