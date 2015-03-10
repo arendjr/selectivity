@@ -20,14 +20,17 @@ function SingleSelect3(options) {
 
     if (!options.positionDropdown) {
         this.options.positionDropdown = function($el, $selectEl) {
-            var offset = $selectEl.offset();
-            var elHeight = $el.height(),
-                selectHeight = $selectEl.height(),
-                windowHeight = $(window).height();
+            var offset = $selectEl.offset(),
+                top = offset.top + $selectEl.height();
 
-            var top = offset.top + selectHeight;
-            if (top + elHeight > windowHeight) {
-                top = windowHeight - elHeight;
+            if (typeof window !== 'undefined') {
+                var fixedOffset = $selectEl[0].getBoundingClientRect(),
+                    elHeight = $el.height(),
+                    windowHeight = $(window).height();
+
+                if (fixedOffset.top + elHeight > windowHeight) {
+                    top = Math.max(windowHeight - elHeight + offset.top - fixedOffset.top, 0);
+                }
             }
 
             $el.css({ left: offset.left + 'px', top: top + 'px' }).width($selectEl.width());

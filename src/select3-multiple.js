@@ -28,20 +28,16 @@ function MultipleSelect3(options) {
 
     if (!options.positionDropdown) {
         this.options.positionDropdown = function($el, $selectEl) {
-            var offset = $selectEl.offset();
-            var elHeight = $el.height(),
+            var offset = $selectEl.offset(),
+                elHeight = $el.height(),
                 selectHeight = $selectEl.height(),
-                windowHeight = $(window).height();
+                bottom = $selectEl[0].getBoundingClientRect().top + selectHeight + elHeight;
 
-            var position = { bottom: null, left: offset.left + 'px', top: null };
-            var top = offset.top;
-            if (top + selectHeight + elHeight > windowHeight) {
-                position.bottom = (windowHeight - top) + 'px';
-            } else {
-                position.top = top + selectHeight + 'px';
-            }
-
-            $el.css(position).width($selectEl.width());
+            $el.css({
+                left: offset.left + 'px',
+                top: offset.top + (typeof window !== 'undefined' &&
+                                   bottom > $(window).height() ? -elHeight : selectHeight) + 'px'
+            }).width($selectEl.width());
         };
     }
 }
