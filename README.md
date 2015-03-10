@@ -66,7 +66,7 @@ In your `component.json`:
     {
         "dependencies": {
             ...
-            "arendjr/select3": "^0.0.1"
+            "arendjr/select3": "^1.0.0"
             ...
         }
     }

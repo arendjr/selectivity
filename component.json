@@ -1,7 +1,7 @@
 {
     "name": "select3",
     "description": "Modular and light-weight selection library for jQuery and Zepto.js",
-    "version": "0.0.1",
+    "version": "1.0.0",
     "repo": "arendjr/select3",
     "main": "dist/select3-full.js",
     "scripts": [
