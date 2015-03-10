@@ -102,6 +102,8 @@ See the Select3 homepage: https://arendjr.github.io/select3/
 Migrating from Select2
 ----------------------
 
+*Note: Select3 is not affiliated with the Select2 project.*
+
 Before you decide to migrate from Select2 to Select3, you should consider that not every feature
 supported by Select2 is supported by Select3. So check beforehand whether Select3 actually meets
 your requirements.
