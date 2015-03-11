@@ -498,14 +498,16 @@ $.extend(Select3Dropdown.prototype, {
                 return false;
             }
 
-            if (!up && -delta > scrollHeight - height - scrollTop) {
-                // Scrolling down, but this will take us past the bottom.
-                $el.scrollTop(scrollHeight);
-                return prevent();
-            } else if (up && delta > scrollTop) {
-                // Scrolling up, but this will take us past the top.
-                $el.scrollTop(0);
-                return prevent();
+            if (scrollHeight > height) {
+                if (!up && -delta > scrollHeight - height - scrollTop) {
+                    // Scrolling down, but this will take us past the bottom.
+                    $el.scrollTop(scrollHeight);
+                    return prevent();
+                } else if (up && delta > scrollTop) {
+                    // Scrolling up, but this will take us past the top.
+                    $el.scrollTop(0);
+                    return prevent();
+                }
             }
         });
     }
