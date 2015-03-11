@@ -55,7 +55,7 @@ module.exports = function() {
 
     if (argv.lodash) {
         lodashMethods.forEach(function(method) {
-            var regExp = new RegExp('require\\([\'"]\\./' + method + '[\'"]\\)', 'g');
+            var regExp = new RegExp('require\\([\'"]\\./lodash/' + method + '[\'"]\\)', 'g');
             stream = stream.pipe(replace(regExp, 'window._.' + method));
         });
     }
