@@ -83,6 +83,14 @@ var callSuper = Select3.inherits(MultipleSelect3, {
     },
 
     /**
+     * Clears the data and value.
+     */
+    clear: function() {
+
+        this.data([]);
+    },
+
+    /**
      * Events map.
      *
      * Follows the same format as Backbone: http://backbonejs.org/#View-delegateEvents

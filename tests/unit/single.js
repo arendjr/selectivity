@@ -2,6 +2,26 @@
 
 var DomUtil = require('../dom-util');
 
+exports.testClear = DomUtil.createDomTest(
+    ['single', 'templates'],
+    function(test, $input) {
+        $input.select3({
+            data: { id: 1, text: 'Amsterdam' },
+            items: [
+                { id: 1, text: 'Amsterdam' },
+                { id: 2, text: 'Antwerp' },
+                { id: 3, text: 'Athens' }
+            ]
+        });
+
+        $input.select3('clear');
+
+        test.deepEqual($input.select3('data'), null);
+
+        test.deepEqual($input.select3('value'), null);
+    }
+);
+
 exports.testDontOpenAfterClear = DomUtil.createDomTest(
     ['single', 'dropdown', 'templates'],
     function(test, $input, $) {

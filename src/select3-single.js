@@ -55,6 +55,14 @@ var callSuper = Select3.inherits(SingleSelect3, {
     },
 
     /**
+     * Clears the data and value.
+     */
+    clear: function() {
+
+        this.data(null);
+    },
+
+    /**
      * Returns the correct data for a given value.
      *
      * @param value The value to get the data for. Should be an ID.
