@@ -337,7 +337,7 @@ var citiesByTimezone = [
     }
 ];
 
-var transformText = $.fn.select3.transformText;
+var transformText = $.fn.selectivity.transformText;
 
 // example query function that returns at most 10 cities matching the given text
 function queryFunction(query) {
@@ -363,37 +363,37 @@ function queryFunction(query) {
     }), 500);
 }
 
-$('#example-1').select3({
+$('#example-1').selectivity({
     allowClear: true,
     items: cities,
     placeholder: 'No city selected'
 });
 
-$('#example-2').select3({
+$('#example-2').selectivity({
     items: cities,
     multiple: true,
     placeholder: 'Type to search a city'
 });
 
-$('#example-3').select3({
+$('#example-3').selectivity({
     allowClear: true,
     items: citiesByCountry,
     placeholder: 'No city selected'
 });
 
-$('#example-4').select3({
+$('#example-4').selectivity({
     allowClear: true,
     items: citiesByTimezone,
     placeholder: 'No city selected',
     showSearchInputInDropdown: false
 });
 
-$('#example-5').select3({
+$('#example-5').selectivity({
     inputType: 'Email',
     placeholder: 'Type or paste email addresses'
 });
 
-$('#example-6').select3({
+$('#example-6').selectivity({
     ajax: {
         url: 'https://api.github.com/search/repositories',
         dataType: 'json',
@@ -423,7 +423,7 @@ $('#example-6').select3({
     templates: {
         resultItem: function(item) {
             return (
-                '<div class="select3-result-item" data-item-id="' + item.id + '">' +
+                '<div class="selectivity-result-item" data-item-id="' + item.id + '">' +
                     '<b>' + escape(item.text) + '</b><br>' +
                     escape(item.description) +
                 '</div>'

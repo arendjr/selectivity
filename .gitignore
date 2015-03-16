@@ -4,7 +4,7 @@ _site
 node_modules
 
 # Qt Creator IDE files
-select3*.config
-select3*.creator*
-select3*.files
-select3*.includes
+selectivity*.config
+selectivity*.creator*
+selectivity*.files
+selectivity*.includes

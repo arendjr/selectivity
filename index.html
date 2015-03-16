@@ -4,13 +4,13 @@
   <head>
     <meta charset='utf-8'>
     <meta http-equiv="X-UA-Compatible" content="chrome=1">
-    <meta name="description" content="Select3 : Flexible and modular alternative to Select2">
+    <meta name="description" content="Selectivity.js : Modular and light-weight selection library for jQuery and Zepto.js">
 
     <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
-    <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/select3.css">
+    <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/selectivity-full.css">
     <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css">
 
-    <title>Select3</title>
+    <title>selectivity</title>
   </head>
 
   <body>
@@ -18,13 +18,13 @@
     <!-- HEADER -->
     <div id="header_wrap" class="outer">
         <header class="inner">
-          <a id="forkme_banner" href="https://github.com/arendjr/select3">View on GitHub</a>
+          <a id="forkme_banner" href="https://github.com/arendjr/selectivity">View on GitHub</a>
 
-          <h1 id="project_title">Select3</h1>
+          <h1 id="project_title">Selectivity.js</h1>
           <h2 id="project_tagline">Modular and light-weight selection library for jQuery and Zepto.js</h2>
 
             <section id="downloads">
-              <a class="tar_download_link" href="https://github.com/arendjr/select3/tarball/master">Download this project as a tar.gz file</a>
+              <a class="tar_download_link" href="https://github.com/arendjr/selectivity/tarball/master">Download this project as a tar.gz file</a>
             </section>
         </header>
     </div>
@@ -36,13 +36,13 @@
 <h1>Benefits</h1>
 
 <ul>
-<li><b>Rich UI.</b> Select boxes made by Select3 have rich functionality, work out of the box and
+<li><b>Rich UI.</b> Select boxes made by selectivity have rich functionality, work out of the box and
 are customizable.</li>
-<li><b>Modular.</b> Select3's modular approach is aimed to make it easy to create custom builds with
+<li><b>Modular.</b> Selectivity's modular approach is aimed to make it easy to create custom builds with
 just the features that you care about and to easily swap modules for custom ones.</li>
-<li><b>Light-weight.</b> Select3 is smaller than comparable selection libraries, even if you're
+<li><b>Light-weight.</b> Selectivity.js is smaller than comparable selection libraries, even if you're
 using the &quot;full&quot; build with all features packed in.</li>
-<li><b>Compatibility.</b> Select3 can be used with both jQuery and Zepto.js and is compatible with
+<li><b>Compatibility.</b> Selectivity.js can be used with both jQuery and Zepto.js and is compatible with
 jQuery builds without Sizzle.</li>
 </ul>
 
@@ -54,9 +54,9 @@ jQuery builds without Sizzle.</li>
 
 <p></p>
 
-<div id="example-1" class="select3-input example-input"></div>
+<div id="example-1" class="selectivity-input example-input"></div>
 
-<pre class="example-code"><code>$(<span class="string">'#example-1'</span>).select3({
+<pre class="example-code"><code>$(<span class="string">'#example-1'</span>).selectivity({
     allowClear: true,
     items: [<span class="string">'Amsterdam'</span>, <span class="string">'Antwerp'</span><span class="comment">/*, ...*/</span>],
     placeholder: <span class="string">'No city selected'</span>
@@ -68,9 +68,9 @@ jQuery builds without Sizzle.</li>
 
 <p></p>
 
-<div id="example-2" class="select3-input example-input"></div>
+<div id="example-2" class="selectivity-input example-input"></div>
 
-<pre class="example-code"><code>$(<span class="string">'#example-2'</span>).select3({
+<pre class="example-code"><code>$(<span class="string">'#example-2'</span>).selectivity({
     items: [<span class="string">'Amsterdam'</span>, <span class="string">'Antwerp'</span><span class="comment">/*, ...*/</span>],
     multiple: true,
     placeholder: <span class="string">'Type to search a city'</span>
@@ -82,9 +82,9 @@ jQuery builds without Sizzle.</li>
 
 <p></p>
 
-<div id="example-3" class="select3-input example-input"></div>
+<div id="example-3" class="selectivity-input example-input"></div>
 
-<pre class="example-code"><code>$(<span class="string">'#example-3'</span>).select3({
+<pre class="example-code"><code>$(<span class="string">'#example-3'</span>).selectivity({
     allowClear: true,
     items: [{
         text: <span class="string">'Austria'</span>,
@@ -99,9 +99,9 @@ jQuery builds without Sizzle.</li>
 
 <p></p>
 
-<div id="example-4" class="select3-input example-input"></div>
+<div id="example-4" class="selectivity-input example-input"></div>
 
-<pre class="example-code"><code>$(<span class="string">'#example-4'</span>).select3({
+<pre class="example-code"><code>$(<span class="string">'#example-4'</span>).selectivity({
     allowClear: true,
     items: [{
         id: <span class="string">'+00:00'</span>,
@@ -124,9 +124,9 @@ jQuery builds without Sizzle.</li>
 
 <p></p>
 
-<div id="example-5" class="select3-input example-input"></div>
+<div id="example-5" class="selectivity-input example-input"></div>
 
-<pre class="example-code"><code>$(<span class="string">'#example-5'</span>).select3({
+<pre class="example-code"><code>$(<span class="string">'#example-5'</span>).selectivity({
     inputType: <span class="string">'Email'</span>,
     placeholder: <span class="string">'Type or paste email addresses'</span>
 });
@@ -137,9 +137,9 @@ jQuery builds without Sizzle.</li>
 
 <p><i>Note: If this example stops working, please wait a few minutes. There is an active rate-limit in the GitHub API.</i></p>
 
-<div id="example-6" class="select3-input example-input"></div>
+<div id="example-6" class="selectivity-input example-input"></div>
 
-<pre class="example-code"><code>$(<span class="string">'#example-6'</span>).select3({
+<pre class="example-code"><code>$(<span class="string">'#example-6'</span>).selectivity({
     ajax: {
         url: <span class="string">'https://api.github.com/search/repositories'</span>,
         dataType: <span class="string">'json'</span>,
@@ -167,7 +167,7 @@ jQuery builds without Sizzle.</li>
     templates: {
         resultItem: function(item) {
             return (
-                <span class="string">'&lt;div class="select3-result-item" data-item-id="'</span> + item.id + <span class="string">'"&gt;'</span> +
+                <span class="string">'&lt;div class="selectivity-result-item" data-item-id="'</span> + item.id + <span class="string">'"&gt;'</span> +
                     <span class="string">'&lt;b&gt;'</span> + escape(item.text) + <span class="string">'&lt;/b&gt;&lt;br&gt;'</span> +
                     escape(item.description) +
                 <span class="string">'&lt;/div&gt;'</span>
@@ -180,12 +180,12 @@ jQuery builds without Sizzle.</li>
 <h1>
 <a id="api" class="anchor" href="#api" aria-hidden="true"></a>API</h1>
 
-<p>Call <code>$(selector).select3(options)</code> to initialize a Select3 instance on the element
-    specified by the given selector. The element should be a <code>&lt;div&gt;</code> element which
-    will be used as container to render the Select3 control in. If the element is a
-    <code>&lt;select&gt;</code> element instead, this element will be used for initializing some of
-    the options below after which it is replaced with a <code>&lt;div&gt;</code> element to contain
-    the Select3 control.</p>
+<p>Call <code>$(selector).selectivity(options)</code> to initialize a Selectivity instance on the
+    element specified by the given selector. The element should be a <code>&lt;div&gt;</code>
+    element which will be used as container to render the Selectivity control in. If the element is
+    a <code>&lt;select&gt;</code> element instead, this element will be used for initializing some
+    of the options below after which it is replaced with a <code>&lt;div&gt;</code> element to
+    contain the Selectivity control.</p>
 
 <p>The following options are supported:</p>
 
@@ -218,7 +218,7 @@ jQuery builds without Sizzle.</li>
                         <tr>
                             <td>formatError</td>
                             <td>Function that returns an HTML-formatted error message in case of an
-                                AJAX error. By default, <code>Select3.Locale.ajaxError</code> is
+                                AJAX error. By default, <code>Selectivity.Locale.ajaxError</code> is
                                 used. The function receives four paramenters: <code>term</code>,
                                 <code>jqXHR</code>, <code>textStatus</code> and
                                 <code>errorThrown</code>. The first is the term being searched for,
@@ -288,7 +288,7 @@ jQuery builds without Sizzle.</li>
             <td>Set to <code>true</code> to allow the selection to be cleared. This option only
                 applies to single-value inputs.<br>
                 <br>
-                If you have used a <code>&lt;select&gt;</code> element to initialize the Select3
+                If you have used a <code>&lt;select&gt;</code> element to initialize the Selectivity
                 instance, this option defaults to <code>true</code> unless the element has a
                 <code>required</code> attribute.</td>
         </tr>
@@ -355,7 +355,7 @@ jQuery builds without Sizzle.</li>
             <td>inputType</td>
             <td><code>String</code> or <code>Function</code></td>
             <td>The input type to use. Default input types include 'Multiple', 'Single' and 'Email',
-                but you can add custom input types to the <code>Select3.InputTypes</code> map or
+                but you can add custom input types to the <code>Selectivity.InputTypes</code> map or
                 just specify one here as a function. The default value is 'Single', unless
                 <code>multiple</code> is <code>true</code> in which case it is 'Multiple'.</td>
         </tr>
@@ -375,8 +375,8 @@ jQuery builds without Sizzle.</li>
                 data.<br>
                 <br>
                 If you have used a <code>&lt;select&gt;</code> element to initialize the
-                Select3 instance, its <code>&lt;option&gt;</code> and <code>&lt;optgroup&gt;</code>
-                elements are used to initialize the items array.</td>
+                Selectivity instance, its <code>&lt;option&gt;</code> and
+                <code>&lt;optgroup&gt;</code> elements are used to initialize the items array.</td>
         </tr>
         <tr>
             <td>matcher</td>
@@ -385,7 +385,7 @@ jQuery builds without Sizzle.</li>
                 is only used if you have specified an array of items. Receives two arguments:
                 <code>term</code> and <code>text</code>. The term is the search term, which for
                 performance reasons has always been already processed using
-                <code>Select3.transformText()</code>. The text is the text that should match the
+                <code>Selectivity.transformText()</code>. The text is the text that should match the
                 search term.<br>
                 <br>
                 The function should return <code>true</code> if the text matches the term, and
@@ -397,7 +397,7 @@ jQuery builds without Sizzle.</li>
             <td>May be set to <code>true</code> as short-hand for specifying
                 <code>inputType: 'Multiple'</code>.<br>
                 <br>
-                If you have used a <code>&lt;select&gt;</code> element to initialize the Select3
+                If you have used a <code>&lt;select&gt;</code> element to initialize the Selectivity
                 instance, this option is set to <code>true</code> when the element has a
                 <code>multiple</code> attribute.</td>
         </tr>
@@ -406,7 +406,7 @@ jQuery builds without Sizzle.</li>
             <td><code>String</code></td>
             <td>Placeholder text to display when the element has no focus and selected items.<br>
                 <br>
-                If you have used a <code>&lt;select&gt;</code> element to initialize the Select3
+                If you have used a <code>&lt;select&gt;</code> element to initialize the Selectivity
                 instance, this option may be set through the <code>data-placeholder</code>
                 attribute.</td>
         </tr>
@@ -414,9 +414,9 @@ jQuery builds without Sizzle.</li>
             <td>positionDropdown</td>
             <td><code>Function</code></td>
             <td>Function to position the dropdown. Receives <code>$dropdownEl</code> (the element to
-                be positioned) and <code>$selectEl</code> (the element of the Select3 instance) as
-                arguments. The default implementation positions the dropdown element under the
-                Select3 instance's element and gives it the same width as well.</td>
+                be positioned) and <code>$selectEl</code> (the element of the Selectivity instance)
+                as arguments. The default implementation positions the dropdown element under the
+                Selectivity instance's element and gives it the same width as well.</td>
         </tr>
         <tr>
             <td>query</td>
@@ -461,7 +461,7 @@ jQuery builds without Sizzle.</li>
                             <td>term</td>
                             <td>The search term the user is searching for. Unlike with the
                                 <code>matcher</code> function, the term has not been processed
-                                using <code>Select3.transformText()</code>.</td>
+                                using <code>Selectivity.transformText()</code>.</td>
                         </tr>
                     </tbody>
                 </table>
@@ -495,18 +495,18 @@ jQuery builds without Sizzle.</li>
         <tr>
             <td>suppressMouse<wbr>WheelSelector</td>
             <td><code>String</code> or <code>null</code></td>
-            <td>The Select3 Dropdown by default suppresses mousewheel events so that any scrolling
+            <td>The Selectivity Dropdown by default suppresses mousewheel events so that any scrolling
                 in the dropdown doesn't affect the scroll position of the page. Through this option
                 you can select which selector should be monited for scroll events to suppress. Set
                 it to <code>null</code> to disable suppressing of mousewheel events altogether. The
-                default value is <code>".select3-results-container"</code>.</td>
+                default value is <code>".selectivity-results-container"</code>.</td>
         </tr>
         <tr>
             <td>templates</td>
             <td><code>Object</code></td>
             <td>Object with instance-specific templates to override the global templates assigned to
-                <code>Select3.Templates</code>. Inline documentation for the templates is provided
-                in <a href="https://github.com/arendjr/select3/blob/master/src/select3-templates.js">select3-templates.js</a>.</td>
+                <code>selectivity.Templates</code>. Inline documentation for the templates is provided
+                in <a href="https://github.com/arendjr/selectivity/blob/master/src/selectivity-templates.js">selectivity-templates.js</a>.</td>
         </tr>
         <tr>
             <td>tokenizer</td>
@@ -515,7 +515,7 @@ jQuery builds without Sizzle.</li>
                 string to tokenize), <code>selection</code> (the current selection data),
                 <code>createToken</code> (callback to create a token from the search terms, should
                 be passed an item object with <code>id</code> and <code>text</code> properties) and
-                <code>options</code> (the options set on the Select3 instance) arguments. Any string
+                <code>options</code> (the options set on the Selectivity instance) arguments. Any string
                 returned by the tokenizer function is treated as the remainder of untokenized input.
                 This option only applies to multiple-value inputs.</td>
         </tr>
@@ -543,9 +543,9 @@ jQuery builds without Sizzle.</li>
 <a id="methods" class="anchor" href="#methods" aria-hidden="true"></a>Methods</h1>
 
 <p>Methods are invoked by passing the name of the method, followed by any arguments, to the
-    <code>select3()</code> function. Example:<p>
+    <code>selectivity()</code> function. Example:<p>
 
-<p><code>$(selector).select3(<span class="string">'data'</span>, { id: 1, text: <span class="string">'Amsterdam'</span> })</code></p>
+<p><code>$(selector).selectivity(<span class="string">'data'</span>, { id: 1, text: <span class="string">'Amsterdam'</span> })</code></p>
 
 <h2>add</h2>
 <p><i>(multiple-value inputs only)</i></p>
@@ -572,9 +572,9 @@ jQuery builds without Sizzle.</li>
 
 <p><b>Examples:</b></p>
 
-<p><code>$(selector).select3(<span class="string">'add'</span>, 1)</code></p>
+<p><code>$(selector).selectivity(<span class="string">'add'</span>, 1)</code></p>
 
-<p><code>$(selector).select3(<span class="string">'add'</span>, { id: 1, text: <span class="string">'Amsterdam'</span> })</code></p>
+<p><code>$(selector).selectivity(<span class="string">'add'</span>, { id: 1, text: <span class="string">'Amsterdam'</span> })</code></p>
 
 <h2>close</h2>
 
@@ -620,13 +620,13 @@ jQuery builds without Sizzle.</li>
 <p><b>Examples:</b></p>
 
 <pre class="api-example"><code><span class="comment">// returns the current data:</span>
-$(selector).select3(<span class="string">'data'</span>)</code></pre>
+$(selector).selectivity(<span class="string">'data'</span>)</code></pre>
 
 <pre class="api-example"><code><span class="comment">// sets new data on a single-value input:</span>
-$(selector).select3(<span class="string">'data'</span>, { id: 1, text: <span class="string">'Amsterdam'</span> })</code></pre>
+$(selector).selectivity(<span class="string">'data'</span>, { id: 1, text: <span class="string">'Amsterdam'</span> })</code></pre>
 
 <pre class="api-example"><code><span class="comment">// sets new data on a multiple-value input:</span>
-$(selector).select3(<span class="string">'data'</span>, [{ id: 1, text: <span class="string">'Amsterdam'</span> }, { id: 2, text: <span class="string">'Antwerp'</span> }])</code></pre>
+$(selector).selectivity(<span class="string">'data'</span>, [{ id: 1, text: <span class="string">'Amsterdam'</span> }, { id: 2, text: <span class="string">'Antwerp'</span> }])</code></pre>
 
 <h2>focus</h2>
 
@@ -661,9 +661,9 @@ $(selector).select3(<span class="string">'data'</span>, [{ id: 1, text: <span cl
 
 <p><b>Examples:</b></p>
 
-<p><code>$(selector).select3(<span class="string">'remove'</span>, 1)</code></p>
+<p><code>$(selector).selectivity(<span class="string">'remove'</span>, 1)</code></p>
 
-<p><code>$(selector).select3(<span class="string">'remove'</span>, { id: 1, text: <span class="string">'Amsterdam'</span> })</code></p>
+<p><code>$(selector).selectivity(<span class="string">'remove'</span>, { id: 1, text: <span class="string">'Amsterdam'</span> })</code></p>
 
 <h2>value / val</h2>
 
@@ -672,10 +672,10 @@ $(selector).select3(<span class="string">'data'</span>, [{ id: 1, text: <span cl
 
 <p><b>Note:</b> When setting the value of the selection, the full data (including the
     <code>text</code> properties) is updated as well. In order to detect the right text for the
-    ID(s), Select3 will inspect the <code>items</code> array to look up the corresponding item(s).
-    If no items have been provided, it is assumed the text should be equal to the ID. If this is
-    not what you want, you may want to pass the <code>initSelection</code> option to the Select3
-    instance to override this process.</p>
+    ID(s), Selectivity will inspect the <code>items</code> array to look up the corresponding
+    item(s). If no items have been provided, it is assumed the text should be equal to the ID. If
+    this is not what you want, you may want to pass the <code>initSelection</code> option to the
+    Selectivity instance to override this process.</p>
 
 <p>When a new value is set, the appropriate <code>change</code> event is automatically
     generated, unless <code>triggerChange</code> is set to <code>false</code>.</p>
@@ -711,25 +711,25 @@ $(selector).select3(<span class="string">'data'</span>, [{ id: 1, text: <span cl
 <p><b>Examples:</b></p>
 
 <pre class="api-example"><code><span class="comment">// returns the current value:</span>
-$(selector).select3(<span class="string">'value'</span>)</code></pre>
+$(selector).selectivity(<span class="string">'value'</span>)</code></pre>
 
-<pre class="api-example"><code>$(selector).select3(<span class="string">'val'</span>)</code></pre>
+<pre class="api-example"><code>$(selector).selectivity(<span class="string">'val'</span>)</code></pre>
 
 <pre class="api-example"><code><span class="comment">// sets a new value on a single-value input:</span>
-$(selector).select3(<span class="string">'value'</span>, 1)</code></pre>
+$(selector).selectivity(<span class="string">'value'</span>, 1)</code></pre>
 
 <pre class="api-example"><code><span class="comment">// sets a new value on a multiple-value input:</span>
-$(selector).select3(<span class="string">'value'</span>, [1, 2])</code></pre>
+$(selector).selectivity(<span class="string">'value'</span>, [1, 2])</code></pre>
 
 <h1>
 <a id="events" class="anchor" href="#events" aria-hidden="true"></a>Events</h1>
 
-<p>All of these events are emitted on the element to which the Select3 instance is attached and can
-    be listened to using jQuery's <code>on()</code> method.</p>
+<p>All of these events are emitted on the element to which the Selectivity instance is attached and
+    can be listened to using jQuery's <code>on()</code> method.</p>
 
-<p><b>Note:</b> If you have used a <code>&lt;select&gt;</code> element for initializing the Select3
-    instance, you should realize it is replaced by a <code>&lt;div&gt;</code> element after the
-    initialization. Any events will be triggered on the latter.</p>
+<p><b>Note:</b> If you have used a <code>&lt;select&gt;</code> element for initializing the
+    Selectivity instance, you should realize it is replaced by a <code>&lt;div&gt;</code> element
+    after the initialization. Any events will be triggered on the latter.</p>
 
 <table>
     <thead>
@@ -756,11 +756,11 @@ $(selector).select3(<span class="string">'value'</span>, [1, 2])</code></pre>
             </td>
         </tr>
         <tr>
-            <td class="nowrap"><code>"select3-closed"</code></td>
+            <td class="nowrap"><code>"selectivity-closed"</code></td>
             <td>Emitted when the dropdown is closed.</td>
         </tr>
         <tr>
-            <td class="nowrap"><code>"select3-highlight"</code></td>
+            <td class="nowrap"><code>"selectivity-highlight"</code></td>
             <td>Emitted when an item in the dropdown is highlighted. The event object will contain
                 the following properties:
                 <dl>
@@ -772,17 +772,17 @@ $(selector).select3(<span class="string">'value'</span>, [1, 2])</code></pre>
             </td>
         </tr>
         <tr>
-            <td class="nowrap"><code>"select3-open"</code></td>
+            <td class="nowrap"><code>"selectivity-open"</code></td>
             <td>Emitted when the dropdown is opened.</td>
         </tr>
         <tr>
-            <td class="nowrap"><code>"select3-opening"</code></td>
+            <td class="nowrap"><code>"selectivity-opening"</code></td>
             <td>Emitted when the dropdown is about to be opened. You can call
                 <code>preventDefault()</code> on the event object to cancel the opening of the
                 dropdown.</td>
         </tr>
         <tr>
-            <td class="nowrap"><code>"select3-selected"</code></td>
+            <td class="nowrap"><code>"selectivity-selected"</code></td>
             <td>Emitted when an item has been selected. The event object will contain the following
                 properties:
                 <dl>
@@ -794,7 +794,7 @@ $(selector).select3(<span class="string">'value'</span>, [1, 2])</code></pre>
             </td>
         </tr>
         <tr>
-            <td class="nowrap"><code>"select3-selecting"</code></td>
+            <td class="nowrap"><code>"selectivity-selecting"</code></td>
             <td>Emitted when an item is about to be selected. You can call
                 <code>preventDefault()</code> on on the event object to prevent the item from being
                 selected. The event object will contain the following properties:
@@ -812,7 +812,7 @@ $(selector).select3(<span class="string">'value'</span>, [1, 2])</code></pre>
 <h1>
 <a id="events" class="anchor" href="#more-information" aria-hidden="true"></a>More information</h1>
 
-<p>For more information, see the <a href="https://github.com/arendjr/select3/">GitHub page</a>.</p>
+<p>For more information, see the <a href="https://github.com/arendjr/selectivity/">GitHub page</a>.</p>
 
 </section>
 </div>
@@ -820,7 +820,7 @@ $(selector).select3(<span class="string">'value'</span>, [1, 2])</code></pre>
     <!-- FOOTER  -->
     <div id="footer_wrap" class="outer">
       <footer class="inner">
-        <p class="copyright">Select3 maintained by <a href="https://github.com/arendjr">arendjr</a>.
+        <p class="copyright">Selectivity.js maintained by <a href="https://github.com/arendjr">arendjr</a>.
             Sponsored by <a href="https://www.speakap.com/">Speakap</a>.</p>
       </footer>
     </div>
@@ -828,7 +828,7 @@ $(selector).select3(<span class="string">'value'</span>, [1, 2])</code></pre>
 
 
     <script src="javascripts/jquery.js"></script>
-    <script src="javascripts/select3-full.js"></script>
+    <script src="javascripts/selectivity-full.js"></script>
     <script src="javascripts/main.js"></script>
   </body>
 </html>

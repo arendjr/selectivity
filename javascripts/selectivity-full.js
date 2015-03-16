@@ -1,6 +1,6 @@
-!function(e){if("object"==typeof exports&&"undefined"!=typeof module)module.exports=e();else if("function"==typeof define&&define.amd)define([],e);else{var f;"undefined"!=typeof window?f=window:"undefined"!=typeof global?f=global:"undefined"!=typeof self&&(f=self),f.Select3=e()}}(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(_dereq_,module,exports){
+!function(e){if("object"==typeof exports&&"undefined"!=typeof module)module.exports=e();else if("function"==typeof define&&define.amd)define([],e);else{var f;"undefined"!=typeof window?f=window:"undefined"!=typeof global?f=global:"undefined"!=typeof self&&(f=self),f.selectivity=e()}}(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(_dereq_,module,exports){
 _dereq_(4);_dereq_(5);_dereq_(6);_dereq_(8);_dereq_(9);_dereq_(10);_dereq_(11);_dereq_(12);_dereq_(13);_dereq_(14);_dereq_(15);_dereq_(16);_dereq_(17);_dereq_(18);module.exports=_dereq_(7);
-},{}],2:[function(_dereq_,module,exports){
+},{"10":10,"11":11,"12":12,"13":13,"14":14,"15":15,"16":16,"17":17,"18":18,"4":4,"5":5,"6":6,"7":7,"8":8,"9":9}],2:[function(_dereq_,module,exports){
 'use strict';
 
 /**
@@ -148,18 +148,18 @@ var $ = window.jQuery || window.Zepto;
 
 var debounce = _dereq_(2);
 
-var Select3 = _dereq_(7);
+var Selectivity = _dereq_(7);
 
 _dereq_(12);
 
 /**
  * Option listener that implements a convenience query function for performing AJAX requests.
  */
-Select3.OptionListeners.unshift(function(select3, options) {
+Selectivity.OptionListeners.unshift(function(selectivity, options) {
 
     var ajax = options.ajax;
     if (ajax && ajax.url) {
-        var formatError = ajax.formatError || Select3.Locale.ajaxError;
+        var formatError = ajax.formatError || Selectivity.Locale.ajaxError;
         var minimumInputLength = ajax.minimumInputLength || 0;
         var params = ajax.params;
         var processItem = ajax.processItem || function(item) { return item; };
@@ -176,10 +176,10 @@ Select3.OptionListeners.unshift(function(select3, options) {
             var term = queryOptions.term;
             if (term.length < minimumInputLength) {
                 queryOptions.error(
-                    Select3.Locale.needMoreCharacters(minimumInputLength - term.length)
+                    Selectivity.Locale.needMoreCharacters(minimumInputLength - term.length)
                 );
             } else {
-                select3.dropdown.showLoading();
+                selectivity.dropdown.showLoading();
 
                 var url = (ajax.url instanceof Function ? ajax.url() : ajax.url);
                 if (params) {
@@ -216,10 +216,10 @@ Select3.OptionListeners.unshift(function(select3, options) {
     }
 });
 
-},{}],5:[function(_dereq_,module,exports){
+},{"12":12,"2":2,"7":7,"jquery":"jquery"}],5:[function(_dereq_,module,exports){
 'use strict';
 
-var Select3 = _dereq_(7);
+var Selectivity = _dereq_(7);
 
 var latestQueryNum = 0;
 
@@ -227,7 +227,7 @@ var latestQueryNum = 0;
  * Option listener that will discard any callbacks from the query function if another query has
  * been called afterwards. This prevents responses from remote sources arriving out-of-order.
  */
-Select3.OptionListeners.push(function(select3, options) {
+Selectivity.OptionListeners.push(function(selectivity, options) {
 
     var query = options.query;
     if (query) {
@@ -252,12 +252,12 @@ Select3.OptionListeners.push(function(select3, options) {
     }
 });
 
-},{}],6:[function(_dereq_,module,exports){
+},{"7":7}],6:[function(_dereq_,module,exports){
 'use strict';
 
 var $ = window.jQuery || window.Zepto;
 
-var Select3Dropdown = _dereq_(9);
+var SelectivityDropdown = _dereq_(9);
 
 var BACKDROP_Z_INDEX = 9998;
 var FOREGROUND_Z_INDEX = 9999;
@@ -265,16 +265,16 @@ var FOREGROUND_Z_INDEX = 9999;
 /**
  * Methods.
  */
-$.extend(Select3Dropdown.prototype, {
+$.extend(SelectivityDropdown.prototype, {
 
     /**
      * @inherit
      */
     addToDom: function() {
 
-        var $select3El = this.select3.$el;
-        $select3El.css({ zIndex: FOREGROUND_Z_INDEX, position: 'relative' });
-        this.$el.appendTo($select3El[0].ownerDocument.body).css('zIndex', FOREGROUND_Z_INDEX);
+        var $selectivityEl = this.selectivity.$el;
+        $selectivityEl.css({ zIndex: FOREGROUND_Z_INDEX, position: 'relative' });
+        this.$el.appendTo($selectivityEl[0].ownerDocument.body).css('zIndex', FOREGROUND_Z_INDEX);
     },
 
     /**
@@ -297,7 +297,7 @@ $.extend(Select3Dropdown.prototype, {
         if (this.parentMenu) {
             $backdrop = this.parentMenu._$backdrop;
         } else {
-            $backdrop = $('<div>').addClass('.select3-backdrop').css({
+            $backdrop = $('<div>').addClass('.selectivity-backdrop').css({
                 background: 'transparent',
                 bottom: 0,
                 left: 0,
@@ -317,18 +317,18 @@ $.extend(Select3Dropdown.prototype, {
 
 });
 
-},{}],7:[function(_dereq_,module,exports){
+},{"9":9,"jquery":"jquery"}],7:[function(_dereq_,module,exports){
 'use strict';
 
 var $ = window.jQuery || window.Zepto;
 
 /**
- * Create a new Select3 instance or invoke a method on an instance.
+ * Create a new Selectivity instance or invoke a method on an instance.
  *
- * @param methodName Optional name of a method to call. If omitted, a Select3 instance is created
- *                   for each element in the set of matched elements. If an element in the set
- *                   already has a Select3 instance, the result is the same as if the setOptions()
- *                   method is called.
+ * @param methodName Optional name of a method to call. If omitted, a Selectivity instance is
+ *                   created for each element in the set of matched elements. If an element in the
+ *                   set already has a Selectivity instance, the result is the same as if the
+ *                   setOptions() method is called.
  * @param options Optional options object to pass to the given method or the constructor. See the
  *                documentation for the respective methods to see which options they accept. In case
  *                a new instance is being created, the following property is used:
@@ -337,19 +337,19 @@ var $ = window.jQuery || window.Zepto;
  *                            just specify one here as a function. The default value is 'Single',
  *                            unless multiple is true in which case it is 'Multiple'.
  *                multiple - Boolean determining whether multiple items may be selected
- *                           (default: false). If true, a MultipleSelect3 instance is created,
- *                           otherwise a SingleSelect3 instance is created.
+ *                           (default: false). If true, a MultipleSelectivity instance is created,
+ *                           otherwise a SingleSelectivity instance is created.
  *
  * @return If the given method returns a value, this method returns the value of that method
  *         executed on the first element in the set of matched elements.
  */
-function select3(methodName, options) {
+function selectivity(methodName, options) {
     /* jshint validthis: true */
 
     var result;
 
     this.each(function() {
-        var instance = this.select3;
+        var instance = this.selectivity;
 
         if (instance) {
             if ($.type(methodName) !== 'string') {
@@ -367,29 +367,29 @@ function select3(methodName, options) {
         } else {
             if ($.type(methodName) === 'string') {
                 if (methodName !== 'destroy') {
-                    throw new Error('Cannot call method on element without Select3 instance');
+                    throw new Error('Cannot call method on element without Selectivity instance');
                 }
             } else {
                 options = $.extend({}, methodName, { element: this });
 
-                // this is a one-time hack to facilitate the select3-traditional module, because
+                // this is a one-time hack to facilitate the selectivity-traditional module, because
                 // the module is not able to hook this early into creation of the instance
                 var $this = $(this);
                 if ($this.is('select') && $this.prop('multiple')) {
                     options.multiple = true;
                 }
 
-                var InputTypes = Select3.InputTypes;
+                var InputTypes = Selectivity.InputTypes;
                 var InputType = (options.inputType || (options.multiple ? 'Multiple' : 'Single'));
                 if ($.type(InputType) !== 'function') {
                     if (InputTypes[InputType]) {
                         InputType = InputTypes[InputType];
                     } else {
-                        throw new Error('Unknown Select3 input type: ' + InputType);
+                        throw new Error('Unknown Selectivity input type: ' + InputType);
                     }
                 }
 
-                this.select3 = new InputType(options);
+                this.selectivity = new InputType(options);
             }
         }
     });
@@ -398,25 +398,25 @@ function select3(methodName, options) {
 }
 
 /**
- * Select3 Base Constructor.
+ * Selectivity Base Constructor.
  *
- * You will never use this constructor directly. Instead, you use $(selector).select3(options) to
- * create an instance of either MultipleSelect3 or SingleSelect3. This class defines all
+ * You will never use this constructor directly. Instead, you use $(selector).selectivity(options)
+ * to create an instance of either MultipleSelectivity or SingleSelectivity. This class defines all
  * functionality that is common between both.
  *
  * @param options Options object. Accepts the same options as the setOptions method(), in addition
  *                to the following ones:
  *                data - Initial selection data to set. This should be an array of objects with 'id'
  *                       and 'text' properties. This option is mutually exclusive with 'value'.
- *                element - The DOM element to which to attach the Select3 instance. This property
- *                          is set automatically by the $.fn.select3() function.
+ *                element - The DOM element to which to attach the Selectivity instance. This
+ *                          property is set automatically by the $.fn.selectivity() function.
  *                value - Initial value to set. This should be an array of IDs. This property is
  *                        mutually exclusive with 'data'.
  */
-function Select3(options) {
+function Selectivity(options) {
 
-    if (!(this instanceof Select3)) {
-        return select3.apply(this, arguments);
+    if (!(this instanceof Selectivity)) {
+        return selectivity.apply(this, arguments);
     }
 
     /**
@@ -469,10 +469,10 @@ function Select3(options) {
     /**
      * The function to be used for matching search results.
      */
-    this.matcher = Select3.matcher;
+    this.matcher = Selectivity.matcher;
 
     /**
-     * Options passed to the Select3 instance or set through setOptions().
+     * Options passed to the Selectivity instance or set through setOptions().
      */
     this.options = {};
 
@@ -486,14 +486,14 @@ function Select3(options) {
      *
      * Custom listeners can be specified in the options object.
      */
-    this.searchInputListeners = Select3.SearchInputListeners;
+    this.searchInputListeners = Selectivity.SearchInputListeners;
 
     /**
      * Mapping of templates.
      *
      * Custom templates can be specified in the options object.
      */
-    this.templates = $.extend({}, Select3.Templates);
+    this.templates = $.extend({}, Selectivity.Templates);
 
     /**
      * The last used search term.
@@ -510,7 +510,7 @@ function Select3(options) {
 
     this._events = [];
 
-    this.$el.on('select3-close', this._closed.bind(this));
+    this.$el.on('selectivity-close', this._closed.bind(this));
 
     this.delegateEvents();
 }
@@ -518,7 +518,7 @@ function Select3(options) {
 /**
  * Methods.
  */
-$.extend(Select3.prototype, {
+$.extend(Selectivity.prototype, {
 
     /**
      * Convenience shortcut for this.$el.find(selector).
@@ -544,8 +544,8 @@ $.extend(Select3.prototype, {
      * The selection data contains both IDs and text labels. If you only want to set or get the IDs,
      * you should use the value() method.
      *
-     * @param newData Optional new data to set. For a MultipleSelect3 instance the data must be
-     *                an array of objects with 'id' and 'text' properties, for a SingleSelect3
+     * @param newData Optional new data to set. For a MultipleSelectivity instance the data must be
+     *                an array of objects with 'id' and 'text' properties, for a SingleSelectivity
      *                instance the data must be a single such object or null to indicate no item is
      *                selected.
      * @param options Optional options object. May contain the following property:
@@ -605,7 +605,7 @@ $.extend(Select3.prototype, {
     },
 
     /**
-     * Destroys the Select3 instance.
+     * Destroys the Selectivity instance.
      */
     destroy: function() {
 
@@ -613,15 +613,15 @@ $.extend(Select3.prototype, {
 
         var $el = this.$el;
         $el.children().remove();
-        $el[0].select3 = null;
+        $el[0].selectivity = null;
         $el = null;
     },
 
     /**
      * Filters the results to be displayed in the dropdown.
      *
-     * The default implementation simply returns the results unfiltered, but the MultiSelect3 class
-     * overrides this method to filter out any items that have already been selected.
+     * The default implementation simply returns the results unfiltered, but the MultipleSelectivity
+     * class overrides this method to filter out any items that have already been selected.
      *
      * @param results Array of items with 'id' and 'text' properties.
      *
@@ -655,7 +655,7 @@ $.extend(Select3.prototype, {
 
         var items = this.items;
         if (items) {
-            return Select3.findNestedById(items, id);
+            return Selectivity.findNestedById(items, id);
         } else {
             return { id: id, text: '' + id };
         }
@@ -694,7 +694,7 @@ $.extend(Select3.prototype, {
             callback: function(response) {
                 if (response && response.results) {
                     this._addResults(
-                        Select3.processItems(response.results),
+                        Selectivity.processItems(response.results),
                         { hasMore: !!response.more }
                     );
                 } else {
@@ -703,7 +703,7 @@ $.extend(Select3.prototype, {
             }.bind(this),
             error: this._addResults.bind(this, []),
             offset: this.results.length,
-            select3: this,
+            selectivity: this,
             term: this.term,
         });
     },
@@ -720,12 +720,12 @@ $.extend(Select3.prototype, {
         options = options || {};
 
         if (!this.dropdown) {
-            if (this.triggerEvent('select3-opening')) {
-                var Dropdown = this.options.dropdown || Select3.Dropdown;
+            if (this.triggerEvent('selectivity-opening')) {
+                var Dropdown = this.options.dropdown || Selectivity.Dropdown;
                 if (Dropdown) {
                     this.dropdown = new Dropdown({
                         position: this.options.positionDropdown,
-                        select3: this,
+                        selectivity: this,
                         showSearchInput: options.showSearchInput
                     });
                 }
@@ -748,9 +748,9 @@ $.extend(Select3.prototype, {
     /**
      * Searches for results based on the term entered in the search input.
      *
-     * If an items array has been passed with the options to the Select3 instance, a local search
-     * will be performed among those items. Otherwise, the query function specified in the options
-     * will be used to perform the search. If neither is defined, nothing happens.
+     * If an items array has been passed with the options to the Selectivity instance, a local
+     * search will be performed among those items. Otherwise, the query function specified in the
+     * options will be used to perform the search. If neither is defined, nothing happens.
      *
      * @param term Optional term to search for. If ommitted, the value of the search input element
      *             is used as term.
@@ -771,7 +771,7 @@ $.extend(Select3.prototype, {
         }
 
         if (self.items) {
-            term = Select3.transformText(term);
+            term = Selectivity.transformText(term);
             var matcher = self.matcher;
             setResults(self.items.map(function(item) {
                 return matcher(item, term);
@@ -783,7 +783,7 @@ $.extend(Select3.prototype, {
                 callback: function(response) {
                     if (response && response.results) {
                         setResults(
-                            Select3.processItems(response.results),
+                            Selectivity.processItems(response.results),
                             { hasMore: !!response.more }
                         );
                     } else {
@@ -792,7 +792,7 @@ $.extend(Select3.prototype, {
                 },
                 error: self._showError.bind(self),
                 offset: 0,
-                select3: self,
+                selectivity: self,
                 term: term,
             });
         }
@@ -801,7 +801,7 @@ $.extend(Select3.prototype, {
     },
 
     /**
-     * Sets one or more options on this Select3 instance.
+     * Sets one or more options on this Selectivity instance.
      *
      * @param options Options object. May contain one or more of the following properties:
      *                closeOnSelect - Set to false to keep the dropdown open after the user has
@@ -827,7 +827,7 @@ $.extend(Select3.prototype, {
      *                          item - The item that should match the search term.
      *                          term - The search term. Note that for performance reasons, the term
      *                                 has always been already processed using
-     *                                 Select3.transformText().
+     *                                 Selectivity.transformText().
      *                          The method should return the item if it matches, and null otherwise.
      *                          If the item has a children array, the matcher is expected to filter
      *                          those itself (be sure to only return the filtered array of children
@@ -837,10 +837,11 @@ $.extend(Select3.prototype, {
      *                              no selected items.
      *                positionDropdown - Function to position the dropdown. Receives two arguments:
      *                                   $dropdownEl - The element to be positioned.
-     *                                   $selectEl - The element of the Select3 instance, that you
-     *                                               can position the dropdown to.
+     *                                   $selectEl - The element of the Selectivity instance, that
+     *                                               you can position the dropdown to.
      *                                   The default implementation positions the dropdown element
-     *                                   under the Select3's element and gives it the same width.
+     *                                   under the Selectivity's element and gives it the same
+     *                                   width.
      *                query - Function to use for querying items. Receives a single object as
      *                        argument with the following properties:
      *                        callback - Callback to invoke when the results are available. This
@@ -853,25 +854,25 @@ $.extend(Select3.prototype, {
      *                                             items is the same as for passing local items.
      *                        offset - This property is only used for pagination and indicates how
      *                                 many results should be skipped when returning more results.
-     *                        select3 - The Select3 instance the query function is used on.
+     *                        selectivity - The Selectivity instance the query function is used on.
      *                        term - The search term the user is searching for. Unlike with the
      *                               matcher function, the term has not been processed using
-     *                               Select3.transformText().
+     *                               Selectivity.transformText().
      *                readOnly - If true, disables any modification of the input.
      *                removeOnly - If true, disables any modification of the input except removing
      *                             of selected items.
      *                searchInputListeners - Array of search input listeners. By default, the global
-     *                                       array Select3.SearchInputListeners is used.
+     *                                       array Selectivity.SearchInputListeners is used.
      *                showDropdown - Set to false if you don't want to use any dropdown (you can
      *                               still open it programmatically using open()).
      *                templates - Object with instance-specific templates to override the global
-     *                            templates assigned to Select3.Templates.
+     *                            templates assigned to Selectivity.Templates.
      */
     setOptions: function(options) {
 
         options = options || {};
 
-        Select3.OptionListeners.forEach(function(listener) {
+        Selectivity.OptionListeners.forEach(function(listener) {
             listener(this, options);
         }.bind(this));
 
@@ -898,7 +899,7 @@ $.extend(Select3.prototype, {
 
             switch (key) {
             case 'items':
-                this.items = (value === null ? value : Select3.processItems(value));
+                this.items = (value === null ? value : Selectivity.processItems(value));
                 break;
 
             case 'matcher':
@@ -946,7 +947,7 @@ $.extend(Select3.prototype, {
      * Triggers the change event.
      *
      * The event object at least contains the following property:
-     * value - The new value of the Select3 instance.
+     * value - The new value of the Selectivity instance.
      *
      * @param Optional additional options added to the event object.
      */
@@ -1006,7 +1007,7 @@ $.extend(Select3.prototype, {
      */
     validateItem: function(item) {
 
-        if (item && Select3.isValidId(item.id) && $.type(item.text) === 'string') {
+        if (item && Selectivity.isValidId(item.id) && $.type(item.text) === 'string') {
             return item;
         } else {
             throw new Error('Item should have id (number or string) and text (string) properties');
@@ -1019,13 +1020,13 @@ $.extend(Select3.prototype, {
      * The value of the selection only concerns the IDs of the selection items. If you are
      * interested in the IDs and the text labels, you should use the data() method.
      *
-     * Note that if neither the items option nor the initSelection option have been set, Select3
+     * Note that if neither the items option nor the initSelection option have been set, Selectivity
      * will have no way to determine what text labels should be used with the given IDs in which
      * case it will assume the text is equal to the ID. This is useful if you're working with tags,
      * or selecting e-mail addresses for instance, but may not always be what you want.
      *
-     * @param newValue Optional new value to set. For a MultipleSelect3 instance the value must be
-     *                 an array of IDs, for a SingleSelect3 instance the value must be a single ID
+     * @param newValue Optional new value to set. For a MultipleSelectivity instance the value must be
+     *                 an array of IDs, for a SingleSelectivity instance the value must be a single ID
      *                 (a string or a number) or null to indicate no item is selected.
      * @param options Optional options object. May contain the following property:
      *                triggerChange - Set to false to suppress the "change" event being triggered.
@@ -1113,8 +1114,8 @@ $.extend(Select3.prototype, {
         if ($.type(id) === 'string') {
             return id;
         } else {
-            if (Select3.findById(this._data || [], id) ||
-                Select3.findNestedById(this.results, id)) {
+            if (Selectivity.findById(this._data || [], id) ||
+                Selectivity.findNestedById(this.results, id)) {
                 return id;
             } else {
                 return '' + id;
@@ -1151,26 +1152,26 @@ $.extend(Select3.prototype, {
 /**
  * Dropdown class to use for displaying dropdowns.
  *
- * The default implementation of a dropdown is defined in the select3-dropdown module.
+ * The default implementation of a dropdown is defined in the selectivity-dropdown module.
  */
-Select3.Dropdown = null;
+Selectivity.Dropdown = null;
 
 /**
  * Mapping of input types.
  */
-Select3.InputTypes = {};
+Selectivity.InputTypes = {};
 
 /**
  * Array of option listeners.
  *
  * Option listeners are invoked when setOptions() is called. Every listener receives two arguments:
  *
- * select3 - The Select3 instance.
+ * selectivity - The Selectivity instance.
  * options - The options that are about to be set. The listener may modify this options object.
  *
- * An example of an option listener is the select3-traditional module.
+ * An example of an option listener is the selectivity-traditional module.
  */
-Select3.OptionListeners = [];
+Selectivity.OptionListeners = [];
 
 /**
  * Array of search input listeners.
@@ -1178,18 +1179,19 @@ Select3.OptionListeners = [];
  * Search input listeners are invoked when initSearchInput() is called (typically right after the
  * search input is created). Every listener receives two arguments:
  *
- * select3 - The Select3 instance.
+ * selectivity - The Selectivity instance.
  * $input - jQuery container with the search input.
  *
- * An example of a search input listener is the select3-keyboard module.
+ * An example of a search input listener is the selectivity-keyboard module.
  */
-Select3.SearchInputListeners = [];
+Selectivity.SearchInputListeners = [];
 
 /**
- * Mapping with templates to use for rendering select boxes and dropdowns. See select3-templates.js
- * for a useful set of default templates, as well as for documentation of the individual templates.
+ * Mapping with templates to use for rendering select boxes and dropdowns. See
+ * selectivity-templates.js for a useful set of default templates, as well as for documentation of
+ * the individual templates.
  */
-Select3.Templates = {};
+Selectivity.Templates = {};
 
 /**
  * Finds an item in the given array with the specified ID.
@@ -1199,9 +1201,9 @@ Select3.Templates = {};
  *
  * @return The item in the array with the given ID, or null if the item was not found.
  */
-Select3.findById = function(array, id) {
+Selectivity.findById = function(array, id) {
 
-    var index = Select3.findIndexById(array, id);
+    var index = Selectivity.findIndexById(array, id);
     return (index > -1 ? array[index] : null);
 };
 
@@ -1213,7 +1215,7 @@ Select3.findById = function(array, id) {
  *
  * @return The index of the item in the array with the given ID, or -1 if the item was not found.
  */
-Select3.findIndexById = function(array, id) {
+Selectivity.findIndexById = function(array, id) {
 
     for (var i = 0, length = array.length; i < length; i++) {
         if (array[i].id === id) {
@@ -1232,14 +1234,14 @@ Select3.findIndexById = function(array, id) {
  *
  * @return The item in the array with the given ID, or null if the item was not found.
  */
-Select3.findNestedById = function(array, id) {
+Selectivity.findNestedById = function(array, id) {
 
     for (var i = 0, length = array.length; i < length; i++) {
         var item = array[i];
         if (item.id === id) {
             return item;
         } else if (item.children) {
-            var result = Select3.findNestedById(item.children, id);
+            var result = Selectivity.findNestedById(item.children, id);
             if (result) {
                 return result;
             }
@@ -1252,19 +1254,19 @@ Select3.findNestedById = function(array, id) {
  * Utility method for inheriting another class.
  *
  * @param SubClass Constructor function of the subclass.
- * @param SuperClass Optional constructor function of the superclass. If omitted, Select3 is used
- *                   as superclass.
+ * @param SuperClass Optional constructor function of the superclass. If omitted, Selectivity is
+ *                   used as superclass.
  * @param prototype Object with methods you want to add to the subclass prototype.
  *
  * @return A utility function for calling the methods of the superclass. This function receives two
  *         arguments: The this object on which you want to execute the method and the name of the
  *         method. Any arguments past those are passed to the superclass method.
  */
-Select3.inherits = function(SubClass, SuperClass, prototype) {
+Selectivity.inherits = function(SubClass, SuperClass, prototype) {
 
     if (arguments.length === 2) {
         prototype = SuperClass;
-        SuperClass = Select3;
+        SuperClass = Selectivity;
     }
 
     SubClass.prototype = $.extend(
@@ -1286,7 +1288,7 @@ Select3.inherits = function(SubClass, SuperClass, prototype) {
  *
  * @return true if the value is a valid ID, false otherwise.
  */
-Select3.isValidId = function(id) {
+Selectivity.isValidId = function(id) {
 
     var type = $.type(id);
     return type === 'number' || type === 'string';
@@ -1303,14 +1305,14 @@ Select3.isValidId = function(id) {
  *
  * @return true if the text matches the term, false otherwise.
  */
-Select3.matcher = function(item, term) {
+Selectivity.matcher = function(item, term) {
 
     var result = null;
-    if (Select3.transformText(item.text).indexOf(term) > -1) {
+    if (Selectivity.transformText(item.text).indexOf(term) > -1) {
         result = item;
     } else if (item.children) {
         var matchingChildren = item.children.map(function(child) {
-            return Select3.matcher(child, term);
+            return Selectivity.matcher(child, term);
         }).filter(function(child) {
             return !!child;
         });
@@ -1330,15 +1332,15 @@ Select3.matcher = function(item, term) {
  *
  * @return Object containing 'id' and 'text' properties.
  */
-Select3.processItem = function(item) {
+Selectivity.processItem = function(item) {
 
-    if (Select3.isValidId(item)) {
+    if (Selectivity.isValidId(item)) {
         return { id: item, text: '' + item };
     } else if (item &&
-               (Select3.isValidId(item.id) || item.children) &&
+               (Selectivity.isValidId(item.id) || item.children) &&
                $.type(item.text) === 'string') {
         if (item.children) {
-            item.children = Select3.processItems(item.children);
+            item.children = Selectivity.processItems(item.children);
         }
 
         return item;
@@ -1354,10 +1356,10 @@ Select3.processItem = function(item) {
  *
  * @return Array with items.
  */
-Select3.processItems = function(items) {
+Selectivity.processItems = function(items) {
 
     if ($.type(items) === 'array') {
-        return items.map(Select3.processItem);
+        return items.map(Selectivity.processItem);
     } else {
         throw new Error('invalid items');
     }
@@ -1371,7 +1373,7 @@ Select3.processItems = function(items) {
  *
  * @return The quoted string.
  */
-Select3.quoteCssAttr = function(string) {
+Selectivity.quoteCssAttr = function(string) {
 
     return '"' + ('' + string).replace(/\\/g, '\\\\').replace(/"/g, '\\"') + '"';
 };
@@ -1384,14 +1386,14 @@ Select3.quoteCssAttr = function(string) {
  *
  * @return The transformed string.
  */
-Select3.transformText = function(string) {
+Selectivity.transformText = function(string) {
 
     return string.toLowerCase();
 };
 
-module.exports = $.fn.select3 = Select3;
+module.exports = $.fn.selectivity = Selectivity;
 
-},{}],8:[function(_dereq_,module,exports){
+},{"jquery":"jquery"}],8:[function(_dereq_,module,exports){
 'use strict';
 
 var DIACRITICS = {
@@ -2236,8 +2238,8 @@ var DIACRITICS = {
     '\u03C2': '\u03C3'
 };
 
-var Select3 = _dereq_(7);
-var previousTransform = Select3.transformText;
+var Selectivity = _dereq_(7);
+var previousTransform = Selectivity.transformText;
 
 /**
  * Extended version of the transformText() function that simplifies diacritics to their latin1
@@ -2246,7 +2248,7 @@ var previousTransform = Select3.transformText;
  * Note that if all query functions fetch their results from a remote server, you may not need this
  * function, because it makes sense to remove diacritics server-side in such cases.
  */
-Select3.transformText = function(string) {
+Selectivity.transformText = function(string) {
     var result = '';
     for (var i = 0, length = string.length; i < length; i++) {
         var character = string[i];
@@ -2255,50 +2257,36 @@ Select3.transformText = function(string) {
     return previousTransform(result);
 };
 
-},{}],9:[function(_dereq_,module,exports){
+},{"7":7}],9:[function(_dereq_,module,exports){
 'use strict';
 
 var $ = window.jQuery || window.Zepto;
 
 var debounce = _dereq_(2);
 
-var Select3 = _dereq_(7);
+var Selectivity = _dereq_(7);
 
 /**
- * Returns the index of the first element in the jQuery container $elements that matches the given
- * selector, or -1 if no elements match the selector.
- */
-function findElementIndex($elements, selector) {
-
-    for (var i = 0, length = $elements.length; i < length; i++) {
-        if ($elements.eq(i).is(selector)) {
-            return i;
-        }
-    }
-    return -1;
-}
-
-/**
- * Select3 Dropdown Constructor.
+ * selectivity Dropdown Constructor.
  *
  * @param options Options object. Should have the following properties:
- *                select3 - Select3 instance to show the dropdown for.
+ *                selectivity - Selectivity instance to show the dropdown for.
  *                showSearchInput - Boolean whether a search input should be shown.
  */
-function Select3Dropdown(options) {
+function SelectivityDropdown(options) {
 
-    var select3 = options.select3;
+    var selectivity = options.selectivity;
 
-    this.$el = $(select3.template('dropdown', {
-        dropdownCssClass: select3.options.dropdownCssClass,
-        searchInputPlaceholder: select3.options.searchInputPlaceholder,
+    this.$el = $(selectivity.template('dropdown', {
+        dropdownCssClass: selectivity.options.dropdownCssClass,
+        searchInputPlaceholder: selectivity.options.searchInputPlaceholder,
         showSearchInput: options.showSearchInput
     }));
 
     /**
      * jQuery container to add the results to.
      */
-    this.$results = this.$('.select3-results-container');
+    this.$results = this.$('.selectivity-results-container');
 
     /**
      * Boolean indicating whether more results are available than currently displayed in the
@@ -2327,13 +2315,13 @@ function Select3Dropdown(options) {
     this.results = [];
 
     /**
-     * Select3 instance.
+     * Selectivity instance.
      */
-    this.select3 = select3;
+    this.selectivity = selectivity;
 
     this._closeProxy = this.close.bind(this);
-    if (select3.options.closeOnSelect !== false) {
-        select3.$el.on('select3-selecting', this._closeProxy);
+    if (selectivity.options.closeOnSelect !== false) {
+        selectivity.$el.on('selectivity-selecting', this._closeProxy);
     }
 
     this.addToDom();
@@ -2345,8 +2333,8 @@ function Select3Dropdown(options) {
     this._suppressMouseWheel();
 
     if (options.showSearchInput) {
-        select3.initSearchInput(this.$('.select3-search-input'));
-        select3.focus();
+        selectivity.initSearchInput(this.$('.selectivity-search-input'));
+        selectivity.focus();
     }
 
     this._delegateEvents();
@@ -2359,7 +2347,7 @@ function Select3Dropdown(options) {
 /**
  * Methods.
  */
-$.extend(Select3Dropdown.prototype, {
+$.extend(SelectivityDropdown.prototype, {
 
     /**
      * Convenience shortcut for this.$el.find(selector).
@@ -2374,7 +2362,7 @@ $.extend(Select3Dropdown.prototype, {
      */
     addToDom: function() {
 
-        this.$el.appendTo(this.select3.$el[0].ownerDocument.body);
+        this.$el.appendTo(this.selectivity.$el[0].ownerDocument.body);
     },
 
     /**
@@ -2386,7 +2374,7 @@ $.extend(Select3Dropdown.prototype, {
 
         this.removeCloseHandler();
 
-        this.select3.$el.off('select3-selecting', this._closeProxy);
+        this.selectivity.$el.off('selectivity-selecting', this._closeProxy);
 
         this.triggerClose();
     },
@@ -2397,10 +2385,10 @@ $.extend(Select3Dropdown.prototype, {
      * Follows the same format as Backbone: http://backbonejs.org/#View-delegateEvents
      */
     events: {
-        'click .select3-load-more': '_loadMoreClicked',
-        'click .select3-result-item': '_resultClicked',
-        'mouseenter .select3-load-more': 'highlightLoadMore',
-        'mouseenter .select3-result-item': '_resultHovered'
+        'click .selectivity-load-more': '_loadMoreClicked',
+        'click .selectivity-result-item': '_resultClicked',
+        'mouseenter .selectivity-load-more': 'highlightLoadMore',
+        'mouseenter .selectivity-result-item': '_resultHovered'
     },
 
     /**
@@ -2411,16 +2399,17 @@ $.extend(Select3Dropdown.prototype, {
     highlight: function(item) {
 
         if (this.loadMoreHighlighted) {
-            this.$('.select3-load-more').removeClass('highlight');
+            this.$('.selectivity-load-more').removeClass('highlight');
         }
 
-        this.$('.select3-result-item').removeClass('highlight')
-            .filter('[data-item-id=' + Select3.quoteCssAttr(item.id) + ']').addClass('highlight');
+        this.$('.selectivity-result-item').removeClass('highlight')
+            .filter('[data-item-id=' + Selectivity.quoteCssAttr(item.id) + ']')
+            .addClass('highlight');
 
         this.highlightedResult = item;
         this.loadMoreHighlighted = false;
 
-        this.select3.triggerEvent('select3-highlight', { item: item, id: item.id });
+        this.selectivity.triggerEvent('selectivity-highlight', { item: item, id: item.id });
     },
 
     /**
@@ -2430,76 +2419,12 @@ $.extend(Select3Dropdown.prototype, {
      */
     highlightLoadMore: function() {
 
-        this.$('.select3-result-item').removeClass('highlight');
+        this.$('.selectivity-result-item').removeClass('highlight');
 
-        this.$('.select3-load-more').addClass('highlight');
+        this.$('.selectivity-load-more').addClass('highlight');
 
         this.highlightedResult = null;
         this.loadMoreHighlighted = true;
-    },
-
-    /**
-     * Highlights the next result item.
-     */
-    highlightNext: function() {
-
-        var results = this.results;
-        if (results.length) {
-            var $results = this.$('.select3-result-item');
-            var index = 0;
-            var highlightedResult = this.highlightedResult;
-            if (highlightedResult) {
-                var quotedId = Select3.quoteCssAttr(highlightedResult.id);
-                index = findElementIndex($results, '[data-item-id=' + quotedId + ']') + 1;
-                if (index >= $results.length) {
-                    if (this.hasMore) {
-                        this.highlightLoadMore();
-                        this._scrollToHighlight({ alignToTop: false });
-                        return;
-                    } else {
-                        index = 0;
-                    }
-                }
-            }
-
-            var result = Select3.findNestedById(results, this.select3._getItemId($results[index]));
-            if (result) {
-                this.highlight(result);
-                this._scrollToHighlight({ alignToTop: false });
-            }
-        }
-    },
-
-    /**
-     * Highlights the previous result item.
-     */
-    highlightPrevious: function() {
-
-        var results = this.results;
-        if (results.length) {
-            var $results = this.$('.select3-result-item');
-            var index = $results.length - 1;
-            var highlightedResult = this.highlightedResult;
-            if (highlightedResult) {
-                var quotedId = Select3.quoteCssAttr(highlightedResult.id);
-                index = findElementIndex($results, '[data-item-id=' + quotedId + ']') - 1;
-                if (index < 0) {
-                    if (this.hasMore) {
-                        this.highlightLoadMore();
-                        this._scrollToHighlight({ alignToTop: true });
-                        return;
-                    } else {
-                        index = $results.length - 1;
-                    }
-                }
-            }
-
-            var result = Select3.findNestedById(results, this.select3._getItemId($results[index]));
-            if (result) {
-                this.highlight(result);
-                this._scrollToHighlight({ alignToTop: true });
-            }
-        }
     },
 
     /**
@@ -2509,7 +2434,7 @@ $.extend(Select3Dropdown.prototype, {
 
         var position = this.options.position;
         if (position) {
-            position(this.$el, this.select3.$el);
+            position(this.$el, this.selectivity.$el);
         }
 
         this._scrolled();
@@ -2532,11 +2457,11 @@ $.extend(Select3Dropdown.prototype, {
      */
     renderItems: function(items) {
 
-        var select3 = this.select3;
+        var selectivity = this.selectivity;
         return items.map(function(item) {
-            var result = select3.template(item.id ? 'resultItem' : 'resultLabel', item);
+            var result = selectivity.template(item.id ? 'resultItem' : 'resultLabel', item);
             if (item.children) {
-                result += select3.template('resultChildren', {
+                result += selectivity.template('resultChildren', {
                     childrenHtml: this.renderItems(item.children)
                 });
             }
@@ -2563,18 +2488,19 @@ $.extend(Select3Dropdown.prototype, {
      */
     selectItem: function(id) {
 
-        var select3 = this.select3;
-        var item = Select3.findNestedById(select3.results, id);
+        var selectivity = this.selectivity;
+        var item = Selectivity.findNestedById(selectivity.results, id);
         if (item) {
             var options = { id: id, item: item };
-            if (select3.triggerEvent('select3-selecting', options)) {
-                select3.triggerEvent('select3-selected', options);
+            if (selectivity.triggerEvent('selectivity-selecting', options)) {
+                selectivity.triggerEvent('selectivity-selected', options);
             }
         }
     },
 
     /**
-     * Sets up an event handler that will close the dropdown when the Select3 control loses focus.
+     * Sets up an event handler that will close the dropdown when the Selectivity control loses
+     * focus.
      */
     setupCloseHandler: function() {
 
@@ -2594,7 +2520,7 @@ $.extend(Select3Dropdown.prototype, {
 
         options = options || {};
 
-        this.$results.html(this.select3.template('error', {
+        this.$results.html(this.selectivity.template('error', {
             escape: options.escape !== false,
             message: message,
         }));
@@ -2613,7 +2539,7 @@ $.extend(Select3Dropdown.prototype, {
      */
     showLoading: function() {
 
-        this.$results.html(this.select3.template('loading'));
+        this.$results.html(this.selectivity.template('loading'));
 
         this.hasMore = false;
         this.results = [];
@@ -2638,15 +2564,15 @@ $.extend(Select3Dropdown.prototype, {
 
         var resultsHtml = this.renderItems(results);
         if (options.hasMore) {
-            resultsHtml += this.select3.template('loadMore');
+            resultsHtml += this.selectivity.template('loadMore');
         } else {
             if (!resultsHtml && !options.add) {
-                resultsHtml = this.select3.template('noResults', { term: options.term });
+                resultsHtml = this.selectivity.template('noResults', { term: options.term });
             }
         }
 
         if (options.add) {
-            this.$('.select3-loading').replaceWith(resultsHtml);
+            this.$('.selectivity-loading').replaceWith(resultsHtml);
 
             this.results = this.results.concat(results);
         } else {
@@ -2665,19 +2591,19 @@ $.extend(Select3Dropdown.prototype, {
     },
 
     /**
-     * Triggers the 'select3-close' event.
+     * Triggers the 'selectivity-close' event.
      */
     triggerClose: function() {
 
-        this.select3.$el.trigger('select3-close');
+        this.selectivity.$el.trigger('selectivity-close');
     },
 
     /**
-     * Triggers the 'select3-open' event.
+     * Triggers the 'selectivity-open' event.
      */
     triggerOpen: function() {
 
-        this.select3.$el.trigger('select3-open');
+        this.selectivity.$el.trigger('selectivity-open');
     },
 
     /**
@@ -2735,11 +2661,11 @@ $.extend(Select3Dropdown.prototype, {
      */
     _loadMoreClicked: function() {
 
-        this.$('.select3-load-more').replaceWith(this.select3.template('loading'));
+        this.$('.selectivity-load-more').replaceWith(this.selectivity.template('loading'));
 
-        this.select3.loadMore();
+        this.selectivity.loadMore();
 
-        this.select3.focus();
+        this.selectivity.focus();
 
         return false;
     },
@@ -2749,7 +2675,7 @@ $.extend(Select3Dropdown.prototype, {
      */
     _resultClicked: function(event) {
 
-        this.selectItem(this.select3._getItemId(event));
+        this.selectItem(this.selectivity._getItemId(event));
 
         return false;
     },
@@ -2759,8 +2685,8 @@ $.extend(Select3Dropdown.prototype, {
      */
     _resultHovered: function(event) {
 
-        var id = this.select3._getItemId(event);
-        var item = Select3.findNestedById(this.results, id);
+        var id = this.selectivity._getItemId(event);
+        var item = Selectivity.findNestedById(this.results, id);
         if (item) {
             this.highlight(item);
         }
@@ -2771,7 +2697,7 @@ $.extend(Select3Dropdown.prototype, {
      */
     _scrolled: function() {
 
-        var $loadMore = this.$('.select3-load-more');
+        var $loadMore = this.$('.selectivity-load-more');
         if ($loadMore.length) {
             if ($loadMore[0].offsetTop - this.$results[0].scrollTop < this.$el.height()) {
                 this._loadMoreClicked();
@@ -2786,10 +2712,10 @@ $.extend(Select3Dropdown.prototype, {
 
         var el;
         if (this.highlightedResult) {
-            var quotedId = Select3.quoteCssAttr(this.highlightedResult.id);
-            el = this.$('.select3-result-item[data-item-id=' + quotedId + ']')[0];
+            var quotedId = Selectivity.quoteCssAttr(this.highlightedResult.id);
+            el = this.$('.selectivity-result-item[data-item-id=' + quotedId + ']')[0];
         } else if (this.loadMoreHighlighted) {
-            el = this.$('.select3-load-more')[0];
+            el = this.$('.selectivity-load-more')[0];
         } else {
             return; // no highlight to scroll to
         }
@@ -2807,12 +2733,12 @@ $.extend(Select3Dropdown.prototype, {
      */
     _suppressMouseWheel: function() {
 
-        var suppressMouseWheelSelector = this.select3.options.suppressMouseWheelSelector;
+        var suppressMouseWheelSelector = this.selectivity.options.suppressMouseWheelSelector;
         if (suppressMouseWheelSelector === null) {
             return;
         }
 
-        var selector = suppressMouseWheelSelector || '.select3-results-container';
+        var selector = suppressMouseWheelSelector || '.selectivity-results-container';
         this.$el.on('DOMMouseScroll mousewheel', selector, function(event) {
 
             // Thanks to Troy Alford:
@@ -2834,29 +2760,31 @@ $.extend(Select3Dropdown.prototype, {
                 return false;
             }
 
-            if (!up && -delta > scrollHeight - height - scrollTop) {
-                // Scrolling down, but this will take us past the bottom.
-                $el.scrollTop(scrollHeight);
-                return prevent();
-            } else if (up && delta > scrollTop) {
-                // Scrolling up, but this will take us past the top.
-                $el.scrollTop(0);
-                return prevent();
+            if (scrollHeight > height) {
+                if (!up && -delta > scrollHeight - height - scrollTop) {
+                    // Scrolling down, but this will take us past the bottom.
+                    $el.scrollTop(scrollHeight);
+                    return prevent();
+                } else if (up && delta > scrollTop) {
+                    // Scrolling up, but this will take us past the top.
+                    $el.scrollTop(0);
+                    return prevent();
+                }
             }
         });
     }
 
 });
 
-module.exports = Select3.Dropdown = Select3Dropdown;
+module.exports = Selectivity.Dropdown = SelectivityDropdown;
 
-},{}],10:[function(_dereq_,module,exports){
+},{"2":2,"7":7,"jquery":"jquery"}],10:[function(_dereq_,module,exports){
 'use strict';
 
 var $ = window.jQuery || window.Zepto;
 
-var Select3 = _dereq_(7);
-var MultipleSelect3 = _dereq_(13);
+var Selectivity = _dereq_(7);
+var MultipleSelectivity = _dereq_(13);
 
 function isValidEmail(email) {
 
@@ -2956,7 +2884,7 @@ function emailTokenizer(input, selection, createToken) {
         var token = takeToken(input);
         if (token.term) {
             var item = createEmailItem(token.term);
-            if (item && !(item.id && Select3.findById(selection, item.id))) {
+            if (item && !(item.id && Selectivity.findById(selection, item.id))) {
                 createToken(item);
             }
         }
@@ -2967,19 +2895,19 @@ function emailTokenizer(input, selection, createToken) {
 }
 
 /**
- * EmailSelect3 Constructor.
+ * Emailselectivity Constructor.
  *
- * @param options Options object. Accepts all options from the MultipleSelect3 Constructor.
+ * @param options Options object. Accepts all options from the MultipleSelectivity Constructor.
  */
-function EmailSelect3(options) {
+function Emailselectivity(options) {
 
-    MultipleSelect3.call(this, options);
+    MultipleSelectivity.call(this, options);
 }
 
 /**
  * Methods.
  */
-var callSuper = Select3.inherits(EmailSelect3, MultipleSelect3, {
+var callSuper = Selectivity.inherits(Emailselectivity, MultipleSelectivity, {
 
     /**
      * @inherit
@@ -3015,12 +2943,12 @@ var callSuper = Select3.inherits(EmailSelect3, MultipleSelect3, {
 
 });
 
-module.exports = Select3.InputTypes.Email = EmailSelect3;
+module.exports = Selectivity.InputTypes.Email = Emailselectivity;
 
-},{}],11:[function(_dereq_,module,exports){
+},{"13":13,"7":7,"jquery":"jquery"}],11:[function(_dereq_,module,exports){
 'use strict';
 
-var Select3 = _dereq_(7);
+var Selectivity = _dereq_(7);
 
 var KEY_DOWN_ARROW = 40;
 var KEY_ENTER = 13;
@@ -3030,16 +2958,80 @@ var KEY_UP_ARROW = 38;
 /**
  * Search input listener providing keyboard support for navigating the dropdown.
  */
-function listener(select3, $input) {
+function listener(selectivity, $input) {
+
+    /**
+     * Moves a dropdown's highlight to the next or previous result item.
+     *
+     * @param delta Either 1 to move to the next item, or -1 to move to the previous item.
+     */
+    function moveHighlight(dropdown, delta) {
+
+        function findElementIndex($elements, selector) {
+            for (var i = 0, length = $elements.length; i < length; i++) {
+                if ($elements.eq(i).is(selector)) {
+                    return i;
+                }
+            }
+            return -1;
+        }
+
+        function scrollToHighlight() {
+            var el;
+            if (dropdown.highlightedResult) {
+                var quotedId = Selectivity.quoteCssAttr(dropdown.highlightedResult.id);
+                el = dropdown.$('.selectivity-result-item[data-item-id=' + quotedId + ']')[0];
+            } else if (dropdown.loadMoreHighlighted) {
+                el = dropdown.$('.selectivity-load-more')[0];
+            } else {
+                return; // no highlight to scroll to
+            }
+
+            var rect = el.getBoundingClientRect(),
+                containerRect = dropdown.$results[0].getBoundingClientRect();
+
+            if (rect.top < containerRect.top || rect.bottom > containerRect.bottom) {
+                el.scrollIntoView(delta < 0);
+            }
+        }
+
+        var results = dropdown.results;
+        if (results.length) {
+            var $results = dropdown.$('.selectivity-result-item');
+            var defaultIndex = (delta > 0 ? 0 : $results.length - 1);
+            var index = defaultIndex;
+            var highlightedResult = dropdown.highlightedResult;
+            if (highlightedResult) {
+                var quotedId = Selectivity.quoteCssAttr(highlightedResult.id);
+                index = findElementIndex($results, '[data-item-id=' + quotedId + ']') + delta;
+                if (delta > 0 ? index >= $results.length : index < 0) {
+                    if (dropdown.hasMore) {
+                        dropdown.highlightLoadMore();
+                        scrollToHighlight();
+                        return;
+                    } else {
+                        index = defaultIndex;
+                    }
+                }
+            }
+
+            var result = Selectivity.findNestedById(results,
+                                                dropdown.selectivity._getItemId($results[index]));
+            if (result) {
+                dropdown.highlight(result);
+                scrollToHighlight();
+            }
+        }
+    }
 
     function keyHeld(event) {
 
-        var dropdown = select3.dropdown;
+        var dropdown = selectivity.dropdown;
         if (dropdown) {
             if (event.keyCode === KEY_DOWN_ARROW) {
-                dropdown.highlightNext();
+                moveHighlight(dropdown, 1);
             } else if (event.keyCode === KEY_UP_ARROW) {
-                dropdown.highlightPrevious();
+                moveHighlight(dropdown, -1);
             }
         }
     }
@@ -3047,22 +3039,22 @@ function listener(select3, $input) {
     function keyReleased(event) {
 
         function open() {
-            if (select3.options.showDropdown !== false) {
-                select3.open();
+            if (selectivity.options.showDropdown !== false) {
+                selectivity.open();
             }
         }
 
-        var dropdown = select3.dropdown;
+        var dropdown = selectivity.dropdown;
         if (event.keyCode === KEY_ENTER && !event.ctrlKey) {
             if (dropdown) {
                 dropdown.selectHighlight();
-            } else if (select3.options.showDropdown !== false) {
+            } else if (selectivity.options.showDropdown !== false) {
                 open();
             }
 
             event.preventDefault();
         } else if (event.keyCode === KEY_ESCAPE) {
-            select3.close();
+            selectivity.close();
 
             event.preventDefault();
         } else if (event.keyCode === KEY_DOWN_ARROW || event.keyCode === KEY_UP_ARROW) {
@@ -3080,21 +3072,21 @@ function listener(select3, $input) {
     $input.on('keydown', keyHeld).on('keyup', keyReleased);
 }
 
-Select3.SearchInputListeners.push(listener);
+Selectivity.SearchInputListeners.push(listener);
 
-},{}],12:[function(_dereq_,module,exports){
+},{"7":7}],12:[function(_dereq_,module,exports){
 'use strict';
 
 var escape = _dereq_(3);
-var Select3 = _dereq_(7);
+var Selectivity = _dereq_(7);
 
 /**
- * Localizable elements of the Select3 Templates.
+ * Localizable elements of the Selectivity Templates.
  *
  * Be aware that these strings are added straight to the HTML output of the templates, so any
  * non-safe strings should be escaped.
  */
-Select3.Locale = {
+Selectivity.Locale = {
 
     ajaxError: function(term) { return 'Failed to fetch results for <b>' + escape(term) + '</b>'; },
     loading: 'Loading...',
@@ -3107,32 +3099,32 @@ Select3.Locale = {
 
 };
 
-},{}],13:[function(_dereq_,module,exports){
+},{"3":3,"7":7}],13:[function(_dereq_,module,exports){
 'use strict';
 
 var $ = window.jQuery || window.Zepto;
 
-var Select3 = _dereq_(7);
+var Selectivity = _dereq_(7);
 
 var KEY_BACKSPACE = 8;
 var KEY_DELETE = 46;
 var KEY_ENTER = 13;
 
 /**
- * MultipleSelect3 Constructor.
+ * MultipleSelectivity Constructor.
  *
- * @param options Options object. Accepts all options from the Select3 Base Constructor in addition
- *                to those accepted by MultipleSelect3.setOptions().
+ * @param options Options object. Accepts all options from the Selectivity Base Constructor in
+ *                addition to those accepted by MultipleSelectivity.setOptions().
  */
-function MultipleSelect3(options) {
+function MultipleSelectivity(options) {
 
-    Select3.call(this, options);
+    Selectivity.call(this, options);
 
     this.$el.html(this.template('multipleSelectInput', { enabled: this.enabled }));
 
     this._highlightedItemId = null;
 
-    this.initSearchInput(this.$('.select3-multiple-input:not(.select3-width-detector)'));
+    this.initSearchInput(this.$('.selectivity-multiple-input:not(.selectivity-width-detector)'));
 
     this._rerenderSelection();
 
@@ -3155,7 +3147,7 @@ function MultipleSelect3(options) {
 /**
  * Methods.
  */
-var callSuper = Select3.inherits(MultipleSelect3, {
+var callSuper = Selectivity.inherits(MultipleSelectivity, {
 
     /**
      * Adds an item to the selection, if it's not selected yet.
@@ -3164,7 +3156,7 @@ var callSuper = Select3.inherits(MultipleSelect3, {
      */
     add: function(item) {
 
-        var itemIsId = Select3.isValidId(item);
+        var itemIsId = Selectivity.isValidId(item);
         var id = (itemIsId ? item : this.validateItem(item) && item.id);
 
         if (this._value.indexOf(id) === -1) {
@@ -3193,19 +3185,27 @@ var callSuper = Select3.inherits(MultipleSelect3, {
     },
 
     /**
+     * Clears the data and value.
+     */
+    clear: function() {
+
+        this.data([]);
+    },
+
+    /**
      * Events map.
      *
      * Follows the same format as Backbone: http://backbonejs.org/#View-delegateEvents
      */
     events: {
         'change': '_rerenderSelection',
-        'change .select3-multiple-input': function() { return false; },
+        'change .selectivity-multiple-input': function() { return false; },
         'click': '_clicked',
-        'click .select3-multiple-selected-item': '_itemClicked',
-        'keydown .select3-multiple-input': '_keyHeld',
-        'keyup .select3-multiple-input': '_keyReleased',
-        'paste .select3-multiple-input': '_onPaste',
-        'select3-selected': '_resultSelected'
+        'click .selectivity-multiple-selected-item': '_itemClicked',
+        'keydown .selectivity-multiple-input': '_keyHeld',
+        'keyup .selectivity-multiple-input': '_keyReleased',
+        'paste .selectivity-multiple-input': '_onPaste',
+        'selectivity-selected': '_resultSelected'
     },
 
     /**
@@ -3214,7 +3214,7 @@ var callSuper = Select3.inherits(MultipleSelect3, {
     filterResults: function(results) {
 
         return results.filter(function(item) {
-            return !Select3.findById(this._data, item.id);
+            return !Selectivity.findById(this._data, item.id);
         }, this);
     },
 
@@ -3255,7 +3255,7 @@ var callSuper = Select3.inherits(MultipleSelect3, {
         var id = ($.type(item) === 'object' ? item.id : item);
 
         var removedItem;
-        var index = Select3.findIndexById(this._data, id);
+        var index = Selectivity.findIndexById(this._data, id);
         if (index > -1) {
             removedItem = this._data[index];
             this._data.splice(index, 1);
@@ -3331,7 +3331,7 @@ var callSuper = Select3.inherits(MultipleSelect3, {
      *                            createToken - Callback to create a token from the search terms.
      *                                          Should be passed an item object with 'id' and 'text'
      *                                          properties.
-     *                            options - The options set on the Select3 instance.
+     *                            options - The options set on the Selectivity instance.
      *                            Any string returned by the tokenizer function is treated as the
      *                            remainder of untokenized input.
      */
@@ -3365,7 +3365,7 @@ var callSuper = Select3.inherits(MultipleSelect3, {
         } else if ($.type(data) === 'array') {
             return data.map(this.validateItem.bind(this));
         } else {
-            throw new Error('Data for MultiSelect3 instance should be array');
+            throw new Error('Data for MultiSelectivity instance should be array');
         }
     },
 
@@ -3381,13 +3381,13 @@ var callSuper = Select3.inherits(MultipleSelect3, {
         if (value === null) {
             return [];
         } else if ($.type(value) === 'array') {
-            if (value.every(Select3.isValidId)) {
+            if (value.every(Selectivity.isValidId)) {
                 return value;
             } else {
                 throw new Error('Value contains invalid IDs');
             }
         } else {
-            throw new Error('Value for MultiSelect3 instance should be an array');
+            throw new Error('Value for MultiSelectivity instance should be an array');
         }
     },
 
@@ -3453,8 +3453,8 @@ var callSuper = Select3.inherits(MultipleSelect3, {
     _highlightItem: function(id) {
 
         this._highlightedItemId = id;
-        this.$('.select3-multiple-selected-item').removeClass('highlighted')
-            .filter('[data-item-id=' + Select3.quoteCssAttr(id) + ']').addClass('highlighted');
+        this.$('.selectivity-multiple-selected-item').removeClass('highlighted')
+            .filter('[data-item-id=' + Selectivity.quoteCssAttr(id) + ']').addClass('highlighted');
 
         if (this.hasKeyboard) {
             this.focus();
@@ -3542,9 +3542,9 @@ var callSuper = Select3.inherits(MultipleSelect3, {
             removable: !this.options.readOnly
         }, item)));
 
-        var quotedId = Select3.quoteCssAttr(item.id);
-        this.$('.select3-multiple-selected-item[data-item-id=' + quotedId + ']')
-            .find('.select3-multiple-selected-item-remove')
+        var quotedId = Selectivity.quoteCssAttr(item.id);
+        this.$('.selectivity-multiple-selected-item[data-item-id=' + quotedId + ']')
+            .find('.selectivity-multiple-selected-item-remove')
             .on('click', this._itemRemoveClicked.bind(this));
     },
 
@@ -3560,10 +3560,10 @@ var callSuper = Select3.inherits(MultipleSelect3, {
 
             this._scrollToBottom();
         } else if (event.removed) {
-            var quotedId = Select3.quoteCssAttr(event.removed.id);
-            this.$('.select3-multiple-selected-item[data-item-id=' + quotedId + ']').remove();
+            var quotedId = Selectivity.quoteCssAttr(event.removed.id);
+            this.$('.selectivity-multiple-selected-item[data-item-id=' + quotedId + ']').remove();
         } else {
-            this.$('.select3-multiple-selected-item').remove();
+            this.$('.selectivity-multiple-selected-item').remove();
 
             this._data.forEach(this._renderSelectedItem, this);
 
@@ -3604,7 +3604,7 @@ var callSuper = Select3.inherits(MultipleSelect3, {
      */
     _scrollToBottom: function() {
 
-        var $inputContainer = this.$('.select3-multiple-input-container');
+        var $inputContainer = this.$('.selectivity-multiple-input-container');
         $inputContainer.scrollTop($inputContainer.height());
     },
 
@@ -3614,7 +3614,7 @@ var callSuper = Select3.inherits(MultipleSelect3, {
     _updateInputWidth: function() {
 
         if (this.enabled) {
-            var $input = this.$searchInput, $widthDetector = this.$('.select3-width-detector');
+            var $input = this.$searchInput, $widthDetector = this.$('.selectivity-width-detector');
             $widthDetector.text($input.val() ||
                                 !this._data.length && this.options.placeholder ||
                                 '');
@@ -3633,30 +3633,30 @@ var callSuper = Select3.inherits(MultipleSelect3, {
         if (this.enabled) {
             this.$searchInput.attr('placeholder', placeholder);
         } else {
-            this.$('.select3-placeholder').text(placeholder);
+            this.$('.selectivity-placeholder').text(placeholder);
         }
     }
 
 });
 
-module.exports = Select3.InputTypes.Multiple = MultipleSelect3;
+module.exports = Selectivity.InputTypes.Multiple = MultipleSelectivity;
 
-},{}],14:[function(_dereq_,module,exports){
+},{"7":7,"jquery":"jquery"}],14:[function(_dereq_,module,exports){
 'use strict';
 
 var $ = window.jQuery || window.Zepto;
 
-var Select3 = _dereq_(7);
+var Selectivity = _dereq_(7);
 
 /**
- * SingleSelect3 Constructor.
+ * SingleSelectivity Constructor.
  *
- * @param options Options object. Accepts all options from the Select3 Base Constructor in addition
- *                to those accepted by SingleSelect3.setOptions().
+ * @param options Options object. Accepts all options from the Selectivity Base Constructor in
+ *                addition to those accepted by SingleSelectivity.setOptions().
  */
-function SingleSelect3(options) {
+function SingleSelectivity(options) {
 
-    Select3.call(this, options);
+    Selectivity.call(this, options);
 
     this.$el.html(this.template('singleSelectInput', this.options));
 
@@ -3685,7 +3685,7 @@ function SingleSelect3(options) {
 /**
  * Methods.
  */
-var callSuper = Select3.inherits(SingleSelect3, {
+var callSuper = Selectivity.inherits(SingleSelectivity, {
 
     /**
      * Events map.
@@ -3695,7 +3695,15 @@ var callSuper = Select3.inherits(SingleSelect3, {
     events: {
         'change': '_rerenderSelection',
         'click': '_clicked',
-        'select3-selected': '_resultSelected'
+        'selectivity-selected': '_resultSelected'
+    },
+
+    /**
+     * Clears the data and value.
+     */
+    clear: function() {
+
+        this.data(null);
     },
 
     /**
@@ -3767,10 +3775,10 @@ var callSuper = Select3.inherits(SingleSelect3, {
      */
     validateValue: function(value) {
 
-        if (value === null || Select3.isValidId(value)) {
+        if (value === null || Selectivity.isValidId(value)) {
             return value;
         } else {
-            throw new Error('Value for SingleSelect3 instance should be a valid ID or null');
+            throw new Error('Value for SingleSelectivity instance should be a valid ID or null');
         }
     },
 
@@ -3805,7 +3813,7 @@ var callSuper = Select3.inherits(SingleSelect3, {
      */
     _rerenderSelection: function() {
 
-        var $container = this.$('.select3-single-result-container');
+        var $container = this.$('.selectivity-single-result-container');
         if (this._data) {
             $container.html(
                 this.template('singleSelectedItem', $.extend({
@@ -3813,7 +3821,7 @@ var callSuper = Select3.inherits(SingleSelect3, {
                 }, this._data))
             );
 
-            $container.find('.select3-single-selected-item-remove')
+            $container.find('.selectivity-single-selected-item-remove')
                       .on('click', this._itemRemoveClicked.bind(this));
         } else {
             $container.html(
@@ -3834,30 +3842,30 @@ var callSuper = Select3.inherits(SingleSelect3, {
 
 });
 
-module.exports = Select3.InputTypes.Single = SingleSelect3;
+module.exports = Selectivity.InputTypes.Single = SingleSelectivity;
 
-},{}],15:[function(_dereq_,module,exports){
+},{"7":7,"jquery":"jquery"}],15:[function(_dereq_,module,exports){
 'use strict';
 
-var Select3 = _dereq_(7);
-var Select3Dropdown = _dereq_(9);
+var Selectivity = _dereq_(7);
+var SelectivityDropdown = _dereq_(9);
 
 /**
  * Extended dropdown that supports submenus.
  */
-function Select3Submenu(options) {
+function SelectivitySubmenu(options) {
 
     /**
      * Optional parent dropdown menu from which this dropdown was opened.
      */
     this.parentMenu = options.parentMenu;
 
-    Select3Dropdown.call(this, options);
+    SelectivityDropdown.call(this, options);
 
     this._closeSubmenuTimeout = 0;
 }
 
-var callSuper = Select3.inherits(Select3Submenu, Select3Dropdown, {
+var callSuper = Selectivity.inherits(SelectivitySubmenu, SelectivityDropdown, {
 
     /**
      * @inherit
@@ -3865,10 +3873,10 @@ var callSuper = Select3.inherits(Select3Submenu, Select3Dropdown, {
     close: function() {
 
         if (this.options.restoreOptions) {
-            this.select3.setOptions(this.options.restoreOptions);
+            this.selectivity.setOptions(this.options.restoreOptions);
         }
         if (this.options.restoreResults) {
-            this.select3.results = this.options.restoreResults;
+            this.selectivity.results = this.options.restoreResults;
         }
 
         if (this.submenu) {
@@ -3911,30 +3919,6 @@ var callSuper = Select3.inherits(Select3Submenu, Select3Dropdown, {
     /**
      * @inherit
      */
-    highlightNext: function() {
-
-        if (this.submenu) {
-            this.submenu.highlightNext();
-        } else {
-            callSuper(this, 'highlightNext');
-        }
-    },
-
-    /**
-     * @inherit
-     */
-    highlightPrevious: function() {
-
-        if (this.submenu) {
-            this.submenu.highlightPrevious();
-        } else {
-            callSuper(this, 'highlightPrevious');
-        }
-    },
-
-    /**
-     * @inherit
-     */
     selectHighlight: function() {
 
         if (this.submenu) {
@@ -3949,12 +3933,12 @@ var callSuper = Select3.inherits(Select3Submenu, Select3Dropdown, {
      */
     selectItem: function(id) {
 
-        var select3 = this.select3;
-        var item = Select3.findNestedById(select3.results, id);
+        var selectivity = this.selectivity;
+        var item = Selectivity.findNestedById(selectivity.results, id);
         if (item && !item.submenu) {
             var options = { id: id, item: item };
-            if (select3.triggerEvent('select3-selecting', options)) {
-                select3.triggerEvent('select3-selected', options);
+            if (selectivity.triggerEvent('selectivity-selecting', options)) {
+                selectivity.triggerEvent('selectivity-selected', options);
             }
         }
     },
@@ -3977,7 +3961,7 @@ var callSuper = Select3.inherits(Select3Submenu, Select3Dropdown, {
     triggerClose: function() {
 
         if (this.parentMenu) {
-            this.select3.$el.trigger('select3-close-submenu');
+            this.selectivity.$el.trigger('selectivity-close-submenu');
         } else {
             callSuper(this, 'triggerClose');
         }
@@ -3989,7 +3973,7 @@ var callSuper = Select3.inherits(Select3Submenu, Select3Dropdown, {
     triggerOpen: function() {
 
         if (this.parentMenu) {
-            this.select3.$el.trigger('select3-open-submenu');
+            this.selectivity.$el.trigger('selectivity-open-submenu');
         } else {
             callSuper(this, 'triggerOpen');
         }
@@ -4015,11 +3999,11 @@ var callSuper = Select3.inherits(Select3Submenu, Select3Dropdown, {
         callSuper(this, 'highlight', item);
 
         if (item.submenu && !this.submenu) {
-            var select3 = this.select3;
-            var Dropdown = select3.options.dropdown || Select3.Dropdown;
+            var selectivity = this.selectivity;
+            var Dropdown = selectivity.options.dropdown || Selectivity.Dropdown;
             if (Dropdown) {
-                var quotedId = Select3.quoteCssAttr(item.id);
-                var $item = this.$('.select3-result-item[data-item-id=' + quotedId + ']');
+                var quotedId = Selectivity.quoteCssAttr(item.id);
+                var $item = this.$('.selectivity-result-item[data-item-id=' + quotedId + ']');
                 var $dropdownEl = this.$el;
 
                 this.submenu = new Dropdown({
@@ -4033,38 +4017,38 @@ var callSuper = Select3.inherits(Select3Submenu, Select3Dropdown, {
                         }).width(width);
                     },
                     restoreOptions: {
-                        items: select3.items,
-                        query: select3.options.query || null
+                        items: selectivity.items,
+                        query: selectivity.options.query || null
                     },
-                    restoreResults: select3.results,
-                    select3: select3,
+                    restoreResults: selectivity.results,
+                    selectivity: selectivity,
                     showSearchInput: item.submenu.showSearchInput
                 });
 
-                select3.setOptions({
+                selectivity.setOptions({
                     items: item.submenu.items || null,
                     query: item.submenu.query || null
                 });
 
-                select3.search('');
+                selectivity.search('');
             }
         }
     }
 
 });
 
-Select3.Dropdown = Select3Submenu;
+Selectivity.Dropdown = SelectivitySubmenu;
 
-Select3.findNestedById = function(array, id) {
+Selectivity.findNestedById = function(array, id) {
 
     for (var i = 0, length = array.length; i < length; i++) {
         var item = array[i], result;
         if (item.id === id) {
             result = item;
         } else if (item.children) {
-            result = Select3.findNestedById(item.children, id);
+            result = Selectivity.findNestedById(item.children, id);
         } else if (item.submenu && item.submenu.items) {
-            result = Select3.findNestedById(item.submenu.items, id);
+            result = Selectivity.findNestedById(item.submenu.items, id);
         }
         if (result) {
             return result;
@@ -4073,38 +4057,38 @@ Select3.findNestedById = function(array, id) {
     return null;
 };
 
-module.exports = Select3Submenu;
+module.exports = SelectivitySubmenu;
 
-},{}],16:[function(_dereq_,module,exports){
+},{"7":7,"9":9}],16:[function(_dereq_,module,exports){
 'use strict';
 
 var escape = _dereq_(3);
 
-var Select3 = _dereq_(7);
+var Selectivity = _dereq_(7);
 
 _dereq_(12);
 
 /**
- * Default set of templates to use with Select3.
+ * Default set of templates to use with Selectivity.js.
  *
  * Note that every template can be defined as either a string, a function returning a string (like
  * Handlebars templates, for instance) or as an object containing a render function (like Hogan.js
  * templates, for instance).
  */
-Select3.Templates = {
+Selectivity.Templates = {
 
     /**
      * Renders the dropdown.
      *
      * The template is expected to have at least one element with the class
-     * 'select3-results-container', which is where all results will be added to.
+     * 'selectivity-results-container', which is where all results will be added to.
      *
      * @param options Options object containing the following properties:
      *                dropdownCssClass - Optional CSS class to add to the top-level element.
      *                searchInputPlaceholder - Optional placeholder text to display in the search
      *                                         input in the dropdown.
      *                showSearchInput - Boolean whether a search input should be shown. If true,
-     *                                  an input element with the 'select3-search-input' is
+     *                                  an input element with the 'selectivity-search-input' is
      *                                  expected.
      */
     dropdown: function(options) {
@@ -4115,17 +4099,17 @@ Select3.Templates = {
 
             var placeholder = options.searchInputPlaceholder;
             searchInput = (
-                '<div class="select3-search-input-container">' +
-                    '<input class="select3-search-input"' +
+                '<div class="selectivity-search-input-container">' +
+                    '<input class="selectivity-search-input"' +
                             (placeholder ? ' placeholder="' + escape(placeholder) + '"'
                                          : '') + '>' +
                 '</div>'
             );
         }
         return (
-            '<div class="select3-dropdown' + extraClass + '">' +
+            '<div class="selectivity-dropdown' + extraClass + '">' +
                 searchInput +
-                '<div class="select3-results-container"></div>' +
+                '<div class="selectivity-results-container"></div>' +
             '</div>'
         );
     },
@@ -4139,7 +4123,7 @@ Select3.Templates = {
      */
     error: function(options) {
         return (
-            '<div class="select3-error">' +
+            '<div class="selectivity-error">' +
                 (options.escape ? escape(options.message) : options.message) +
             '</div>'
         );
@@ -4148,50 +4132,51 @@ Select3.Templates = {
     /**
      * Renders a loading indicator in the dropdown.
      *
-     * This template is expected to have an element with a 'select3-loading' class which may be
+     * This template is expected to have an element with a 'selectivity-loading' class which may be
      * replaced with actual results.
      */
     loading: function() {
-        return '<div class="select3-loading">' + Select3.Locale.loading + '</div>';
+        return '<div class="selectivity-loading">' + Selectivity.Locale.loading + '</div>';
     },
 
     /**
      * Load more indicator.
      *
-     * This template is expected to have an element with a 'select3-load-more' class which, when
+     * This template is expected to have an element with a 'selectivity-load-more' class which, when
      * clicked, will load more results.
      */
     loadMore: function() {
-        return '<div class="select3-load-more">' + Select3.Locale.loadMore + '</div>';
+        return '<div class="selectivity-load-more">' + Selectivity.Locale.loadMore + '</div>';
     },
 
     /**
      * Renders multi-selection input boxes.
      *
      * The template is expected to have at least have elements with the following classes:
-     * 'select3-multiple-input-container' - The element containing all the selected items and the
-     *                                      input for selecting additional items.
-     * 'select3-multiple-input' - The actual input element that allows the user to type to search
-     *                            for more items. When selected items are added, they are inserted
-     *                            right before this element.
-     * 'select3-width-detector' - This element is optional, but important to make sure the
-     *                            '.select3-multiple-input' element will fit in the container. The
-     *                            width detector also has the 'select2-multiple-input' class on
-     *                            purpose to be able to detect the width of text entered in the
-     *                            input element.
+     * 'selectivity-multiple-input-container' - The element containing all the selected items and
+     *                                          the input for selecting additional items.
+     * 'selectivity-multiple-input' - The actual input element that allows the user to type to
+     *                                search for more items. When selected items are added, they are
+     *                                inserted right before this element.
+     * 'selectivity-width-detector' - This element is optional, but important to make sure the
+     *                                '.selectivity-multiple-input' element will fit in the
+     *                                container. The width detector also has the
+     *                                'select2-multiple-input' class on purpose to be able to detect
+     *                                the width of text entered in the input element.
      *
      * @param options Options object containing the following property:
      *                enabled - Boolean whether the input is enabled.
      */
     multipleSelectInput: function(options) {
         return (
-            '<div class="select3-multiple-input-container">' +
+            '<div class="selectivity-multiple-input-container">' +
                 (options.enabled ? '<input type="text" autocomplete="off" autocorrect="off" ' +
-                                          'autocapitalize="off" class="select3-multiple-input">' +
-                                   '<span class="select3-multiple-input select3-width-detector">' +
-                                   '</span>'
-                                 : '<div class="select3-multiple-input select3-placeholder">' +
-                                   '</div>') +
+                                          'autocapitalize="off" ' +
+                                          'class="selectivity-multiple-input">' +
+                                   '<span class="selectivity-multiple-input ' +
+                                                'selectivity-width-detector"></span>'
+                                 : '<div class="selectivity-multiple-input ' +
+                                               'selectivity-placeholder"></div>') +
                 '<div class="clearfix"></div>' +
             '</div>'
         );
@@ -4201,11 +4186,11 @@ Select3.Templates = {
      * Renders a selected item in multi-selection input boxes.
      *
      * The template is expected to have a top-level element with the class
-     * 'select3-multiple-selected-item'. This element is also required to have a 'data-item-id'
+     * 'selectivity-multiple-selected-item'. This element is also required to have a 'data-item-id'
      * attribute with the ID set to that passed through the options object.
      *
-     * An element with the class 'select3-multiple-selected-item-remove' should be present which,
-     * when clicked, will cause the element to be removed.
+     * An element with the class 'selectivity-multiple-selected-item-remove' should be present
+     * which, when clicked, will cause the element to be removed.
      *
      * @param options Options object containing the following properties:
      *                highlighted - Boolean whether this item is currently highlighted.
@@ -4216,10 +4201,10 @@ Select3.Templates = {
     multipleSelectedItem: function(options) {
         var extraClass = (options.highlighted ? ' highlighted' : '');
         return (
-            '<span class="select3-multiple-selected-item' + extraClass + '" ' +
+            '<span class="selectivity-multiple-selected-item' + extraClass + '" ' +
                   'data-item-id="' + escape(options.id) + '">' +
                 escape(options.text) +
-                (options.removable ? '<a class="select3-multiple-selected-item-remove">' +
+                (options.removable ? '<a class="selectivity-multiple-selected-item-remove">' +
                                          '<i class="fa fa-remove"></i>' +
                                      '</a>'
                                    : '') +
@@ -4234,9 +4219,9 @@ Select3.Templates = {
      *                term - Search term the user is searching for.
      */
     noResults: function(options) {
-        var Locale = Select3.Locale;
+        var Locale = Selectivity.Locale;
         return (
-            '<div class="select3-error">' +
+            '<div class="selectivity-error">' +
                 (options.term ? Locale.noResultsForTerm(options.term) : Locale.noResults) +
             '</div>'
         );
@@ -4245,21 +4230,21 @@ Select3.Templates = {
     /**
      * Renders a container for item children.
      *
-     * The template is expected to have an element with the class 'select3-result-children'.
+     * The template is expected to have an element with the class 'selectivity-result-children'.
      *
      * @param options Options object containing the following property:
      *                childrenHtml - Rendered HTML for the children.
      */
     resultChildren: function(options) {
-        return '<div class="select3-result-children">' + options.childrenHtml + '</div>';
+        return '<div class="selectivity-result-children">' + options.childrenHtml + '</div>';
     },
 
     /**
      * Render a result item in the dropdown.
      *
-     * The template is expected to have a top-level element with the class 'select3-result-item'.
-     * This element is also required to have a 'data-item-id' attribute with the ID set to that
-     * passed through the options object.
+     * The template is expected to have a top-level element with the class
+     * 'selectivity-result-item'. This element is also required to have a 'data-item-id' attribute
+     * with the ID set to that passed through the options object.
      *
      * @param options Options object containing the following properties:
      *                id - Identifier for the item.
@@ -4268,9 +4253,9 @@ Select3.Templates = {
      */
     resultItem: function(options) {
         return (
-            '<div class="select3-result-item" data-item-id="' + escape(options.id) + '">' +
+            '<div class="selectivity-result-item" data-item-id="' + escape(options.id) + '">' +
                 escape(options.text) +
-                (options.submenu ? '<i class="select3-submenu-icon fa fa-chevron-right"></i>'
+                (options.submenu ? '<i class="selectivity-submenu-icon fa fa-chevron-right"></i>'
                                  : '') +
             '</div>'
         );
@@ -4279,40 +4264,42 @@ Select3.Templates = {
     /**
      * Render a result label in the dropdown.
      *
-     * The template is expected to have a top-level element with the class 'select3-result-label'.
+     * The template is expected to have a top-level element with the class
+     * 'selectivity-result-label'.
      *
      * @param options Options object containing the following properties:
      *                text - Text label.
      */
     resultLabel: function(options) {
-        return '<div class="select3-result-label">' + escape(options.text) + '</div>';
+        return '<div class="selectivity-result-label">' + escape(options.text) + '</div>';
     },
 
     /**
      * Renders single-select input boxes.
      *
      * The template is expected to have at least one element with the class
-     * 'select3-single-result-container' which is the element containing the selected item or the
-     * placeholder.
+     * 'selectivity-single-result-container' which is the element containing the selected item or
+     * the placeholder.
      */
     singleSelectInput: (
-        '<div class="select3-single-select">' +
-            '<div class="select3-single-result-container"></div>' +
-            '<i class="fa fa-sort-desc select3-caret"></i>' +
+        '<div class="selectivity-single-select">' +
+            '<div class="selectivity-single-result-container"></div>' +
+            '<i class="fa fa-sort-desc selectivity-caret"></i>' +
         '</div>'
     ),
 
     /**
      * Renders the placeholder for single-select input boxes.
      *
-     * The template is expected to have a top-level element with the class 'select3-placeholder'.
+     * The template is expected to have a top-level element with the class
+     * 'selectivity-placeholder'.
      *
      * @param options Options object containing the following property:
      *                placeholder - The placeholder text.
      */
     singleSelectPlaceholder: function(options) {
         return (
-            '<div class="select3-placeholder">' +
+            '<div class="selectivity-placeholder">' +
                 escape(options.placeholder) +
             '</div>'
         );
@@ -4322,7 +4309,7 @@ Select3.Templates = {
      * Renders the selected item in single-select input boxes.
      *
      * The template is expected to have a top-level element with the class
-     * 'select3-single-selected-item'. This element is also required to have a 'data-item-id'
+     * 'selectivity-single-selected-item'. This element is also required to have a 'data-item-id'
      * attribute with the ID set to that passed through the options object.
      *
      * @param options Options object containing the following properties:
@@ -4332,9 +4319,9 @@ Select3.Templates = {
      */
     singleSelectedItem: function(options) {
         return (
-            '<span class="select3-single-selected-item" ' +
+            '<span class="selectivity-single-selected-item" ' +
                   'data-item-id="' + escape(options.id) + '">' +
-                (options.removable ? '<a class="select3-single-selected-item-remove">' +
+                (options.removable ? '<a class="selectivity-single-selected-item-remove">' +
                                          '<i class="fa fa-remove"></i>' +
                                      '</a>'
                                    : '') +
@@ -4345,12 +4332,12 @@ Select3.Templates = {
 
 };
 
-},{}],17:[function(_dereq_,module,exports){
+},{"12":12,"3":3,"7":7}],17:[function(_dereq_,module,exports){
 'use strict';
 
 var $ = window.jQuery || window.Zepto;
 
-var Select3 = _dereq_(7);
+var Selectivity = _dereq_(7);
 
 function defaultTokenizer(input, selection, createToken, options) {
 
@@ -4379,7 +4366,7 @@ function defaultTokenizer(input, selection, createToken, options) {
         var token = takeToken(input);
         if (token.term) {
             var item = createTokenItem(token.term);
-            if (item && !Select3.findById(selection, item.id)) {
+            if (item && !Selectivity.findById(selection, item.id)) {
                 createToken(item);
             }
         }
@@ -4403,7 +4390,7 @@ function defaultTokenizer(input, selection, createToken, options) {
  *                                  using the 'createTokenItem' function. The default tokenizer also
  *                                  filters out already selected items.
  */
-Select3.OptionListeners.push(function(select3, options) {
+Selectivity.OptionListeners.push(function(selectivity, options) {
 
     if (options.tokenSeparators) {
         options.allowedTypes = $.extend({ tokenSeparators: 'array' }, options.allowedTypes);
@@ -4412,12 +4399,12 @@ Select3.OptionListeners.push(function(select3, options) {
     }
 });
 
-},{}],18:[function(_dereq_,module,exports){
+},{"7":7,"jquery":"jquery"}],18:[function(_dereq_,module,exports){
 'use strict';
 
 var $ = window.jQuery || window.Zepto;
 
-var Select3 = _dereq_(7);
+var Selectivity = _dereq_(7);
 
 function replaceSelectElement($el, options) {
 
@@ -4466,23 +4453,23 @@ function replaceSelectElement($el, options) {
 }
 
 /**
- * Option listener providing support for converting traditional <select> boxes into Select3
+ * Option listener providing support for converting traditional <select> boxes into Selectivity
  * instances.
  */
-Select3.OptionListeners.push(function(select3, options) {
+Selectivity.OptionListeners.push(function(selectivity, options) {
 
-    var $el = select3.$el;
+    var $el = selectivity.$el;
     if ($el.is('select')) {
         if ($el.attr('autofocus')) {
             setTimeout(function() {
-                select3.focus();
+                selectivity.focus();
             }, 1);
         }
 
-        select3.$el = replaceSelectElement($el, options);
-        select3.$el[0].select3 = select3;
+        selectivity.$el = replaceSelectElement($el, options);
+        selectivity.$el[0].selectivity = selectivity;
     }
 });
 
-},{}]},{},[1])(1)
+},{"7":7,"jquery":"jquery"}]},{},[1])(1)
 });
