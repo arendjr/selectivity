@@ -19,27 +19,27 @@ exports.testSelectItemAfterOpeningSubmenu = DomUtil.createDomTest(
     ['single', 'dropdown', 'submenu', 'templates'],
     { async: true },
     function(test, $input, $) {
-        $input.select3({ items: items });
+        $input.selectivity({ items: items });
 
         $input.click();
 
-        test.equal($('.select3-dropdown').length, 1);
+        test.equal($('.selectivity-dropdown').length, 1);
 
-        $('.select3-result-item[data-item-id="3"]').mouseover();
+        $('.selectivity-result-item[data-item-id="3"]').mouseover();
 
-        test.equal($('.select3-dropdown').length, 2);
+        test.equal($('.selectivity-dropdown').length, 2);
 
-        $('.select3-result-item[data-item-id="2"]').mouseover();
+        $('.selectivity-result-item[data-item-id="2"]').mouseover();
 
         setTimeout(function() {
-            test.equal($('.select3-dropdown').length, 1);
+            test.equal($('.selectivity-dropdown').length, 1);
 
-            $('.select3-result-item[data-item-id="2"]').click();
+            $('.selectivity-result-item[data-item-id="2"]').click();
 
-            test.equal($('.select3-dropdown').length, 0);
+            test.equal($('.selectivity-dropdown').length, 0);
 
-            test.deepEqual($input.select3('data'), { id: '2', text: 'Second Item' });
-            test.equal($input.select3('value'), '2');
+            test.deepEqual($input.selectivity('data'), { id: '2', text: 'Second Item' });
+            test.equal($input.selectivity('value'), '2');
 
             test.done();
         }, 150);
@@ -49,33 +49,33 @@ exports.testSelectItemAfterOpeningSubmenu = DomUtil.createDomTest(
 exports.testSelectItemInSubmenu = DomUtil.createDomTest(
     ['single', 'dropdown', 'submenu', 'templates'],
     function(test, $input, $) {
-        $input.select3({ items: items });
+        $input.selectivity({ items: items });
 
         $input.click();
 
-        test.equal($('.select3-dropdown').length, 1);
+        test.equal($('.selectivity-dropdown').length, 1);
 
-        $('.select3-result-item[data-item-id="3"]').mouseover();
+        $('.selectivity-result-item[data-item-id="3"]').mouseover();
 
-        test.equal($('.select3-dropdown').length, 2);
+        test.equal($('.selectivity-dropdown').length, 2);
 
-        $('.select3-result-item[data-item-id="3-1"]').click();
+        $('.selectivity-result-item[data-item-id="3-1"]').click();
 
-        test.equal($('.select3-dropdown').length, 0);
+        test.equal($('.selectivity-dropdown').length, 0);
 
-        test.deepEqual($input.select3('data'), { id: '3-1', text: 'Third Item' });
-        test.equal($input.select3('value'), '3-1');
+        test.deepEqual($input.selectivity('data'), { id: '3-1', text: 'Third Item' });
+        test.equal($input.selectivity('value'), '3-1');
     }
 );
 
 exports.testSetValue = DomUtil.createDomTest(
     ['single', 'dropdown', 'submenu', 'templates'],
     function(test, $input) {
-        $input.select3({ items: items });
+        $input.selectivity({ items: items });
 
-        $input.select3('value', '3-1');
+        $input.selectivity('value', '3-1');
 
-        test.deepEqual($input.select3('data'), { id: '3-1', text: 'Third Item' });
-        test.equal($input.select3('value'), '3-1');
+        test.deepEqual($input.selectivity('data'), { id: '3-1', text: 'Third Item' });
+        test.equal($input.selectivity('value'), '3-1');
     }
 );

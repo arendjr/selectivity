@@ -1,11 +1,11 @@
 {
-  "name": "select3",
+  "name": "Selectivity.js",
   "version": "1.0.0",
-  "homepage": "https://arendjr.github.io/select3/",
+  "homepage": "https://arendjr.github.io/selectivity/",
   "description": "Modular and light-weight selection library for jQuery and Zepto.js",
   "main": [
-    "dist/select3-full.css",
-    "dist/select3-full.js"
+    "dist/selectivity-full.css",
+    "dist/selectivity-full.js"
   ],
   "keywords": [
     "select",
@@ -30,6 +30,6 @@
   },
   "repository": {
     "type": "git",
-    "url": "git@github.com:arendjr/select3.git"
+    "url": "git@github.com:arendjr/selectivity.git"
   }
 }

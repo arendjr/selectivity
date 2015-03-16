@@ -3,12 +3,12 @@
 var $ = require('jquery');
 
 /**
- * Create a new Select3 instance or invoke a method on an instance.
+ * Create a new Selectivity instance or invoke a method on an instance.
  *
- * @param methodName Optional name of a method to call. If omitted, a Select3 instance is created
- *                   for each element in the set of matched elements. If an element in the set
- *                   already has a Select3 instance, the result is the same as if the setOptions()
- *                   method is called.
+ * @param methodName Optional name of a method to call. If omitted, a Selectivity instance is
+ *                   created for each element in the set of matched elements. If an element in the
+ *                   set already has a Selectivity instance, the result is the same as if the
+ *                   setOptions() method is called.
  * @param options Optional options object to pass to the given method or the constructor. See the
  *                documentation for the respective methods to see which options they accept. In case
  *                a new instance is being created, the following property is used:
@@ -17,19 +17,19 @@ var $ = require('jquery');
  *                            just specify one here as a function. The default value is 'Single',
  *                            unless multiple is true in which case it is 'Multiple'.
  *                multiple - Boolean determining whether multiple items may be selected
- *                           (default: false). If true, a MultipleSelect3 instance is created,
- *                           otherwise a SingleSelect3 instance is created.
+ *                           (default: false). If true, a MultipleSelectivity instance is created,
+ *                           otherwise a SingleSelectivity instance is created.
  *
  * @return If the given method returns a value, this method returns the value of that method
  *         executed on the first element in the set of matched elements.
  */
-function select3(methodName, options) {
+function selectivity(methodName, options) {
     /* jshint validthis: true */
 
     var result;
 
     this.each(function() {
-        var instance = this.select3;
+        var instance = this.selectivity;
 
         if (instance) {
             if ($.type(methodName) !== 'string') {
@@ -47,29 +47,29 @@ function select3(methodName, options) {
         } else {
             if ($.type(methodName) === 'string') {
                 if (methodName !== 'destroy') {
-                    throw new Error('Cannot call method on element without Select3 instance');
+                    throw new Error('Cannot call method on element without Selectivity instance');
                 }
             } else {
                 options = $.extend({}, methodName, { element: this });
 
-                // this is a one-time hack to facilitate the select3-traditional module, because
+                // this is a one-time hack to facilitate the selectivity-traditional module, because
                 // the module is not able to hook this early into creation of the instance
                 var $this = $(this);
                 if ($this.is('select') && $this.prop('multiple')) {
                     options.multiple = true;
                 }
 
-                var InputTypes = Select3.InputTypes;
+                var InputTypes = Selectivity.InputTypes;
                 var InputType = (options.inputType || (options.multiple ? 'Multiple' : 'Single'));
                 if ($.type(InputType) !== 'function') {
                     if (InputTypes[InputType]) {
                         InputType = InputTypes[InputType];
                     } else {
-                        throw new Error('Unknown Select3 input type: ' + InputType);
+                        throw new Error('Unknown Selectivity input type: ' + InputType);
                     }
                 }
 
-                this.select3 = new InputType(options);
+                this.selectivity = new InputType(options);
             }
         }
     });
@@ -78,25 +78,25 @@ function select3(methodName, options) {
 }
 
 /**
- * Select3 Base Constructor.
+ * Selectivity Base Constructor.
  *
- * You will never use this constructor directly. Instead, you use $(selector).select3(options) to
- * create an instance of either MultipleSelect3 or SingleSelect3. This class defines all
+ * You will never use this constructor directly. Instead, you use $(selector).selectivity(options)
+ * to create an instance of either MultipleSelectivity or SingleSelectivity. This class defines all
  * functionality that is common between both.
  *
  * @param options Options object. Accepts the same options as the setOptions method(), in addition
  *                to the following ones:
  *                data - Initial selection data to set. This should be an array of objects with 'id'
  *                       and 'text' properties. This option is mutually exclusive with 'value'.
- *                element - The DOM element to which to attach the Select3 instance. This property
- *                          is set automatically by the $.fn.select3() function.
+ *                element - The DOM element to which to attach the Selectivity instance. This
+ *                          property is set automatically by the $.fn.selectivity() function.
  *                value - Initial value to set. This should be an array of IDs. This property is
  *                        mutually exclusive with 'data'.
  */
-function Select3(options) {
+function Selectivity(options) {
 
-    if (!(this instanceof Select3)) {
-        return select3.apply(this, arguments);
+    if (!(this instanceof Selectivity)) {
+        return selectivity.apply(this, arguments);
     }
 
     /**
@@ -149,10 +149,10 @@ function Select3(options) {
     /**
      * The function to be used for matching search results.
      */
-    this.matcher = Select3.matcher;
+    this.matcher = Selectivity.matcher;
 
     /**
-     * Options passed to the Select3 instance or set through setOptions().
+     * Options passed to the Selectivity instance or set through setOptions().
      */
     this.options = {};
 
@@ -166,14 +166,14 @@ function Select3(options) {
      *
      * Custom listeners can be specified in the options object.
      */
-    this.searchInputListeners = Select3.SearchInputListeners;
+    this.searchInputListeners = Selectivity.SearchInputListeners;
 
     /**
      * Mapping of templates.
      *
      * Custom templates can be specified in the options object.
      */
-    this.templates = $.extend({}, Select3.Templates);
+    this.templates = $.extend({}, Selectivity.Templates);
 
     /**
      * The last used search term.
@@ -190,7 +190,7 @@ function Select3(options) {
 
     this._events = [];
 
-    this.$el.on('select3-close', this._closed.bind(this));
+    this.$el.on('selectivity-close', this._closed.bind(this));
 
     this.delegateEvents();
 }
@@ -198,7 +198,7 @@ function Select3(options) {
 /**
  * Methods.
  */
-$.extend(Select3.prototype, {
+$.extend(Selectivity.prototype, {
 
     /**
      * Convenience shortcut for this.$el.find(selector).
@@ -224,8 +224,8 @@ $.extend(Select3.prototype, {
      * The selection data contains both IDs and text labels. If you only want to set or get the IDs,
      * you should use the value() method.
      *
-     * @param newData Optional new data to set. For a MultipleSelect3 instance the data must be
-     *                an array of objects with 'id' and 'text' properties, for a SingleSelect3
+     * @param newData Optional new data to set. For a MultipleSelectivity instance the data must be
+     *                an array of objects with 'id' and 'text' properties, for a SingleSelectivity
      *                instance the data must be a single such object or null to indicate no item is
      *                selected.
      * @param options Optional options object. May contain the following property:
@@ -285,7 +285,7 @@ $.extend(Select3.prototype, {
     },
 
     /**
-     * Destroys the Select3 instance.
+     * Destroys the Selectivity instance.
      */
     destroy: function() {
 
@@ -293,15 +293,15 @@ $.extend(Select3.prototype, {
 
         var $el = this.$el;
         $el.children().remove();
-        $el[0].select3 = null;
+        $el[0].selectivity = null;
         $el = null;
     },
 
     /**
      * Filters the results to be displayed in the dropdown.
      *
-     * The default implementation simply returns the results unfiltered, but the MultiSelect3 class
-     * overrides this method to filter out any items that have already been selected.
+     * The default implementation simply returns the results unfiltered, but the MultipleSelectivity
+     * class overrides this method to filter out any items that have already been selected.
      *
      * @param results Array of items with 'id' and 'text' properties.
      *
@@ -335,7 +335,7 @@ $.extend(Select3.prototype, {
 
         var items = this.items;
         if (items) {
-            return Select3.findNestedById(items, id);
+            return Selectivity.findNestedById(items, id);
         } else {
             return { id: id, text: '' + id };
         }
@@ -374,7 +374,7 @@ $.extend(Select3.prototype, {
             callback: function(response) {
                 if (response && response.results) {
                     this._addResults(
-                        Select3.processItems(response.results),
+                        Selectivity.processItems(response.results),
                         { hasMore: !!response.more }
                     );
                 } else {
@@ -383,7 +383,7 @@ $.extend(Select3.prototype, {
             }.bind(this),
             error: this._addResults.bind(this, []),
             offset: this.results.length,
-            select3: this,
+            selectivity: this,
             term: this.term,
         });
     },
@@ -400,12 +400,12 @@ $.extend(Select3.prototype, {
         options = options || {};
 
         if (!this.dropdown) {
-            if (this.triggerEvent('select3-opening')) {
-                var Dropdown = this.options.dropdown || Select3.Dropdown;
+            if (this.triggerEvent('selectivity-opening')) {
+                var Dropdown = this.options.dropdown || Selectivity.Dropdown;
                 if (Dropdown) {
                     this.dropdown = new Dropdown({
                         position: this.options.positionDropdown,
-                        select3: this,
+                        selectivity: this,
                         showSearchInput: options.showSearchInput
                     });
                 }
@@ -428,9 +428,9 @@ $.extend(Select3.prototype, {
     /**
      * Searches for results based on the term entered in the search input.
      *
-     * If an items array has been passed with the options to the Select3 instance, a local search
-     * will be performed among those items. Otherwise, the query function specified in the options
-     * will be used to perform the search. If neither is defined, nothing happens.
+     * If an items array has been passed with the options to the Selectivity instance, a local
+     * search will be performed among those items. Otherwise, the query function specified in the
+     * options will be used to perform the search. If neither is defined, nothing happens.
      *
      * @param term Optional term to search for. If ommitted, the value of the search input element
      *             is used as term.
@@ -451,7 +451,7 @@ $.extend(Select3.prototype, {
         }
 
         if (self.items) {
-            term = Select3.transformText(term);
+            term = Selectivity.transformText(term);
             var matcher = self.matcher;
             setResults(self.items.map(function(item) {
                 return matcher(item, term);
@@ -463,7 +463,7 @@ $.extend(Select3.prototype, {
                 callback: function(response) {
                     if (response && response.results) {
                         setResults(
-                            Select3.processItems(response.results),
+                            Selectivity.processItems(response.results),
                             { hasMore: !!response.more }
                         );
                     } else {
@@ -472,7 +472,7 @@ $.extend(Select3.prototype, {
                 },
                 error: self._showError.bind(self),
                 offset: 0,
-                select3: self,
+                selectivity: self,
                 term: term,
             });
         }
@@ -481,7 +481,7 @@ $.extend(Select3.prototype, {
     },
 
     /**
-     * Sets one or more options on this Select3 instance.
+     * Sets one or more options on this Selectivity instance.
      *
      * @param options Options object. May contain one or more of the following properties:
      *                closeOnSelect - Set to false to keep the dropdown open after the user has
@@ -507,7 +507,7 @@ $.extend(Select3.prototype, {
      *                          item - The item that should match the search term.
      *                          term - The search term. Note that for performance reasons, the term
      *                                 has always been already processed using
-     *                                 Select3.transformText().
+     *                                 Selectivity.transformText().
      *                          The method should return the item if it matches, and null otherwise.
      *                          If the item has a children array, the matcher is expected to filter
      *                          those itself (be sure to only return the filtered array of children
@@ -517,10 +517,11 @@ $.extend(Select3.prototype, {
      *                              no selected items.
      *                positionDropdown - Function to position the dropdown. Receives two arguments:
      *                                   $dropdownEl - The element to be positioned.
-     *                                   $selectEl - The element of the Select3 instance, that you
-     *                                               can position the dropdown to.
+     *                                   $selectEl - The element of the Selectivity instance, that
+     *                                               you can position the dropdown to.
      *                                   The default implementation positions the dropdown element
-     *                                   under the Select3's element and gives it the same width.
+     *                                   under the Selectivity's element and gives it the same
+     *                                   width.
      *                query - Function to use for querying items. Receives a single object as
      *                        argument with the following properties:
      *                        callback - Callback to invoke when the results are available. This
@@ -533,25 +534,25 @@ $.extend(Select3.prototype, {
      *                                             items is the same as for passing local items.
      *                        offset - This property is only used for pagination and indicates how
      *                                 many results should be skipped when returning more results.
-     *                        select3 - The Select3 instance the query function is used on.
+     *                        selectivity - The Selectivity instance the query function is used on.
      *                        term - The search term the user is searching for. Unlike with the
      *                               matcher function, the term has not been processed using
-     *                               Select3.transformText().
+     *                               Selectivity.transformText().
      *                readOnly - If true, disables any modification of the input.
      *                removeOnly - If true, disables any modification of the input except removing
      *                             of selected items.
      *                searchInputListeners - Array of search input listeners. By default, the global
-     *                                       array Select3.SearchInputListeners is used.
+     *                                       array Selectivity.SearchInputListeners is used.
      *                showDropdown - Set to false if you don't want to use any dropdown (you can
      *                               still open it programmatically using open()).
      *                templates - Object with instance-specific templates to override the global
-     *                            templates assigned to Select3.Templates.
+     *                            templates assigned to Selectivity.Templates.
      */
     setOptions: function(options) {
 
         options = options || {};
 
-        Select3.OptionListeners.forEach(function(listener) {
+        Selectivity.OptionListeners.forEach(function(listener) {
             listener(this, options);
         }.bind(this));
 
@@ -578,7 +579,7 @@ $.extend(Select3.prototype, {
 
             switch (key) {
             case 'items':
-                this.items = (value === null ? value : Select3.processItems(value));
+                this.items = (value === null ? value : Selectivity.processItems(value));
                 break;
 
             case 'matcher':
@@ -626,7 +627,7 @@ $.extend(Select3.prototype, {
      * Triggers the change event.
      *
      * The event object at least contains the following property:
-     * value - The new value of the Select3 instance.
+     * value - The new value of the Selectivity instance.
      *
      * @param Optional additional options added to the event object.
      */
@@ -686,7 +687,7 @@ $.extend(Select3.prototype, {
      */
     validateItem: function(item) {
 
-        if (item && Select3.isValidId(item.id) && $.type(item.text) === 'string') {
+        if (item && Selectivity.isValidId(item.id) && $.type(item.text) === 'string') {
             return item;
         } else {
             throw new Error('Item should have id (number or string) and text (string) properties');
@@ -699,13 +700,13 @@ $.extend(Select3.prototype, {
      * The value of the selection only concerns the IDs of the selection items. If you are
      * interested in the IDs and the text labels, you should use the data() method.
      *
-     * Note that if neither the items option nor the initSelection option have been set, Select3
+     * Note that if neither the items option nor the initSelection option have been set, Selectivity
      * will have no way to determine what text labels should be used with the given IDs in which
      * case it will assume the text is equal to the ID. This is useful if you're working with tags,
      * or selecting e-mail addresses for instance, but may not always be what you want.
      *
-     * @param newValue Optional new value to set. For a MultipleSelect3 instance the value must be
-     *                 an array of IDs, for a SingleSelect3 instance the value must be a single ID
+     * @param newValue Optional new value to set. For a MultipleSelectivity instance the value must be
+     *                 an array of IDs, for a SingleSelectivity instance the value must be a single ID
      *                 (a string or a number) or null to indicate no item is selected.
      * @param options Optional options object. May contain the following property:
      *                triggerChange - Set to false to suppress the "change" event being triggered.
@@ -793,8 +794,8 @@ $.extend(Select3.prototype, {
         if ($.type(id) === 'string') {
             return id;
         } else {
-            if (Select3.findById(this._data || [], id) ||
-                Select3.findNestedById(this.results, id)) {
+            if (Selectivity.findById(this._data || [], id) ||
+                Selectivity.findNestedById(this.results, id)) {
                 return id;
             } else {
                 return '' + id;
@@ -831,26 +832,26 @@ $.extend(Select3.prototype, {
 /**
  * Dropdown class to use for displaying dropdowns.
  *
- * The default implementation of a dropdown is defined in the select3-dropdown module.
+ * The default implementation of a dropdown is defined in the selectivity-dropdown module.
  */
-Select3.Dropdown = null;
+Selectivity.Dropdown = null;
 
 /**
  * Mapping of input types.
  */
-Select3.InputTypes = {};
+Selectivity.InputTypes = {};
 
 /**
  * Array of option listeners.
  *
  * Option listeners are invoked when setOptions() is called. Every listener receives two arguments:
  *
- * select3 - The Select3 instance.
+ * selectivity - The Selectivity instance.
  * options - The options that are about to be set. The listener may modify this options object.
  *
- * An example of an option listener is the select3-traditional module.
+ * An example of an option listener is the selectivity-traditional module.
  */
-Select3.OptionListeners = [];
+Selectivity.OptionListeners = [];
 
 /**
  * Array of search input listeners.
@@ -858,18 +859,19 @@ Select3.OptionListeners = [];
  * Search input listeners are invoked when initSearchInput() is called (typically right after the
  * search input is created). Every listener receives two arguments:
  *
- * select3 - The Select3 instance.
+ * selectivity - The Selectivity instance.
  * $input - jQuery container with the search input.
  *
- * An example of a search input listener is the select3-keyboard module.
+ * An example of a search input listener is the selectivity-keyboard module.
  */
-Select3.SearchInputListeners = [];
+Selectivity.SearchInputListeners = [];
 
 /**
- * Mapping with templates to use for rendering select boxes and dropdowns. See select3-templates.js
- * for a useful set of default templates, as well as for documentation of the individual templates.
+ * Mapping with templates to use for rendering select boxes and dropdowns. See
+ * selectivity-templates.js for a useful set of default templates, as well as for documentation of
+ * the individual templates.
  */
-Select3.Templates = {};
+Selectivity.Templates = {};
 
 /**
  * Finds an item in the given array with the specified ID.
@@ -879,9 +881,9 @@ Select3.Templates = {};
  *
  * @return The item in the array with the given ID, or null if the item was not found.
  */
-Select3.findById = function(array, id) {
+Selectivity.findById = function(array, id) {
 
-    var index = Select3.findIndexById(array, id);
+    var index = Selectivity.findIndexById(array, id);
     return (index > -1 ? array[index] : null);
 };
 
@@ -893,7 +895,7 @@ Select3.findById = function(array, id) {
  *
  * @return The index of the item in the array with the given ID, or -1 if the item was not found.
  */
-Select3.findIndexById = function(array, id) {
+Selectivity.findIndexById = function(array, id) {
 
     for (var i = 0, length = array.length; i < length; i++) {
         if (array[i].id === id) {
@@ -912,14 +914,14 @@ Select3.findIndexById = function(array, id) {
  *
  * @return The item in the array with the given ID, or null if the item was not found.
  */
-Select3.findNestedById = function(array, id) {
+Selectivity.findNestedById = function(array, id) {
 
     for (var i = 0, length = array.length; i < length; i++) {
         var item = array[i];
         if (item.id === id) {
             return item;
         } else if (item.children) {
-            var result = Select3.findNestedById(item.children, id);
+            var result = Selectivity.findNestedById(item.children, id);
             if (result) {
                 return result;
             }
@@ -932,19 +934,19 @@ Select3.findNestedById = function(array, id) {
  * Utility method for inheriting another class.
  *
  * @param SubClass Constructor function of the subclass.
- * @param SuperClass Optional constructor function of the superclass. If omitted, Select3 is used
- *                   as superclass.
+ * @param SuperClass Optional constructor function of the superclass. If omitted, Selectivity is
+ *                   used as superclass.
  * @param prototype Object with methods you want to add to the subclass prototype.
  *
  * @return A utility function for calling the methods of the superclass. This function receives two
  *         arguments: The this object on which you want to execute the method and the name of the
  *         method. Any arguments past those are passed to the superclass method.
  */
-Select3.inherits = function(SubClass, SuperClass, prototype) {
+Selectivity.inherits = function(SubClass, SuperClass, prototype) {
 
     if (arguments.length === 2) {
         prototype = SuperClass;
-        SuperClass = Select3;
+        SuperClass = Selectivity;
     }
 
     SubClass.prototype = $.extend(
@@ -966,7 +968,7 @@ Select3.inherits = function(SubClass, SuperClass, prototype) {
  *
  * @return true if the value is a valid ID, false otherwise.
  */
-Select3.isValidId = function(id) {
+Selectivity.isValidId = function(id) {
 
     var type = $.type(id);
     return type === 'number' || type === 'string';
@@ -983,14 +985,14 @@ Select3.isValidId = function(id) {
  *
  * @return true if the text matches the term, false otherwise.
  */
-Select3.matcher = function(item, term) {
+Selectivity.matcher = function(item, term) {
 
     var result = null;
-    if (Select3.transformText(item.text).indexOf(term) > -1) {
+    if (Selectivity.transformText(item.text).indexOf(term) > -1) {
         result = item;
     } else if (item.children) {
         var matchingChildren = item.children.map(function(child) {
-            return Select3.matcher(child, term);
+            return Selectivity.matcher(child, term);
         }).filter(function(child) {
             return !!child;
         });
@@ -1010,15 +1012,15 @@ Select3.matcher = function(item, term) {
  *
  * @return Object containing 'id' and 'text' properties.
  */
-Select3.processItem = function(item) {
+Selectivity.processItem = function(item) {
 
-    if (Select3.isValidId(item)) {
+    if (Selectivity.isValidId(item)) {
         return { id: item, text: '' + item };
     } else if (item &&
-               (Select3.isValidId(item.id) || item.children) &&
+               (Selectivity.isValidId(item.id) || item.children) &&
                $.type(item.text) === 'string') {
         if (item.children) {
-            item.children = Select3.processItems(item.children);
+            item.children = Selectivity.processItems(item.children);
         }
 
         return item;
@@ -1034,10 +1036,10 @@ Select3.processItem = function(item) {
  *
  * @return Array with items.
  */
-Select3.processItems = function(items) {
+Selectivity.processItems = function(items) {
 
     if ($.type(items) === 'array') {
-        return items.map(Select3.processItem);
+        return items.map(Selectivity.processItem);
     } else {
         throw new Error('invalid items');
     }
@@ -1051,7 +1053,7 @@ Select3.processItems = function(items) {
  *
  * @return The quoted string.
  */
-Select3.quoteCssAttr = function(string) {
+Selectivity.quoteCssAttr = function(string) {
 
     return '"' + ('' + string).replace(/\\/g, '\\\\').replace(/"/g, '\\"') + '"';
 };
@@ -1064,9 +1066,9 @@ Select3.quoteCssAttr = function(string) {
  *
  * @return The transformed string.
  */
-Select3.transformText = function(string) {
+Selectivity.transformText = function(string) {
 
     return string.toLowerCase();
 };
 
-module.exports = $.fn.select3 = Select3;
+module.exports = $.fn.selectivity = Selectivity;

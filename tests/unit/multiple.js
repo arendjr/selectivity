@@ -7,7 +7,7 @@ exports.testChangeEvent = DomUtil.createDomTest(
     function(test, $input, $) {
         var numChangeEvents = 0;
 
-        $input.select3({
+        $input.selectivity({
             items: ['Amsterdam', 'Antwerp', 'Athens'],
             multiple: true
         }).on('change', function(event) {
@@ -17,12 +17,12 @@ exports.testChangeEvent = DomUtil.createDomTest(
             test.deepEqual(event.value, ['Amsterdam']);
         });
 
-        $input.find('.select3-multiple-input').val('Amsterdam')
-                                              .trigger('keyup')
-                                              .trigger('change')
-                                              .trigger(new $.Event('keyup', { keyCode: 13 }));
+        $input.find('.selectivity-multiple-input').val('Amsterdam')
+                                                  .trigger('keyup')
+                                                  .trigger('change')
+                                                  .trigger(new $.Event('keyup', { keyCode: 13 }));
 
-        test.deepEqual($input.select3('value'), ['Amsterdam']);
+        test.deepEqual($input.selectivity('value'), ['Amsterdam']);
 
         test.equal(numChangeEvents, 1);
     }
@@ -31,7 +31,7 @@ exports.testChangeEvent = DomUtil.createDomTest(
 exports.testClear = DomUtil.createDomTest(
     ['multiple', 'templates'],
     function(test, $input) {
-        $input.select3({
+        $input.selectivity({
             data: [
                 { id: 1, text: 'Amsterdam' },
                 { id: 2, text: 'Antwerp' }
@@ -44,34 +44,34 @@ exports.testClear = DomUtil.createDomTest(
             multiple: true
         });
 
-        $input.select3('clear');
+        $input.selectivity('clear');
 
-        test.deepEqual($input.select3('data'), []);
+        test.deepEqual($input.selectivity('data'), []);
 
-        test.deepEqual($input.select3('value'), []);
+        test.deepEqual($input.selectivity('value'), []);
     }
 );
 
 exports.testClickAfterSearch = DomUtil.createDomTest(
     ['multiple', 'dropdown', 'templates'],
     function(test, $input, $) {
-        $input.select3({
+        $input.selectivity({
             items: ['Amsterdam', 'Antwerp', 'Athens'],
             multiple: true
         });
 
-        $input.find('.select3-multiple-input').click().val('amster').trigger('keyup');
-        $('.select3-result-item[data-item-id="Amsterdam"]').click();
+        $input.find('.selectivity-multiple-input').click().val('amster').trigger('keyup');
+        $('.selectivity-result-item[data-item-id="Amsterdam"]').click();
 
-        test.deepEqual($input.select3('value'), ['Amsterdam']);
-        test.equal($input.find('.select3-multiple-input').val(), '');
+        test.deepEqual($input.selectivity('value'), ['Amsterdam']);
+        test.equal($input.find('.selectivity-multiple-input').val(), '');
     }
 );
 
 exports.testInitialData = DomUtil.createDomTest(
     ['multiple', 'templates'],
     function(test, $input) {
-        $input.select3({
+        $input.selectivity({
             data: [
                 { id: 1, text: 'Amsterdam' },
                 { id: 2, text: 'Antwerp' }
@@ -84,37 +84,37 @@ exports.testInitialData = DomUtil.createDomTest(
             multiple: true
         });
 
-        test.deepEqual($input.select3('data'), [
+        test.deepEqual($input.selectivity('data'), [
             { id: 1, text: 'Amsterdam' },
             { id: 2, text: 'Antwerp' }
         ]);
 
-        test.deepEqual($input.select3('value'), [1, 2]);
+        test.deepEqual($input.selectivity('value'), [1, 2]);
     }
 );
 
 exports.testInitialValue = DomUtil.createDomTest(
     ['multiple', 'templates'],
     function(test, $input) {
-        $input.select3({
+        $input.selectivity({
             items: ['Amsterdam', 'Antwerp', 'Athens'],
             multiple: true,
             value: ['Amsterdam', 'Antwerp']
         });
 
-        test.deepEqual($input.select3('data'), [
+        test.deepEqual($input.selectivity('data'), [
             { id: 'Amsterdam', text: 'Amsterdam' },
             { id: 'Antwerp', text: 'Antwerp' }
         ]);
 
-        test.deepEqual($input.select3('value'), ['Amsterdam', 'Antwerp']);
+        test.deepEqual($input.selectivity('value'), ['Amsterdam', 'Antwerp']);
     }
 );
 
 exports.testNestedData = DomUtil.createDomTest(
     ['multiple', 'templates'],
     function(test, $input) {
-        $input.select3({
+        $input.selectivity({
             data: [
                 { id: 54, text: 'Vienna' },
                 { id: 2, text: 'Antwerp' }
@@ -143,19 +143,19 @@ exports.testNestedData = DomUtil.createDomTest(
             multiple: true
         });
 
-        test.deepEqual($input.select3('data'), [
+        test.deepEqual($input.selectivity('data'), [
             { id: 54, text: 'Vienna' },
             { id: 2, text: 'Antwerp' }
         ]);
 
-        test.deepEqual($input.select3('value'), [54, 2]);
+        test.deepEqual($input.selectivity('value'), [54, 2]);
     }
 );
 
 exports.testNoData = DomUtil.createDomTest(
     ['multiple', 'templates'],
     function(test, $input) {
-        $input.select3({
+        $input.selectivity({
             items: [
                 { id: 1, text: 'Amsterdam' },
                 { id: 2, text: 'Antwerp' },
@@ -164,38 +164,38 @@ exports.testNoData = DomUtil.createDomTest(
             multiple: true
         });
 
-        test.deepEqual($input.select3('data'), []);
+        test.deepEqual($input.selectivity('data'), []);
 
-        test.deepEqual($input.select3('value'), []);
+        test.deepEqual($input.selectivity('value'), []);
     }
 );
 
 exports.testSetValue = DomUtil.createDomTest(
     ['multiple', 'templates'],
     function(test, $input) {
-        $input.select3({
+        $input.selectivity({
             items: ['Amsterdam', 'Antwerp', 'Athens'],
             multiple: true,
             value: ['Amsterdam']
         });
 
-        test.deepEqual($input.select3('value'), ['Amsterdam']);
+        test.deepEqual($input.selectivity('value'), ['Amsterdam']);
 
-        $input.select3('value', ['Antwerp', 'Athens']);
+        $input.selectivity('value', ['Antwerp', 'Athens']);
 
-        test.deepEqual($input.select3('data'), [
+        test.deepEqual($input.selectivity('data'), [
             { id: 'Antwerp', text: 'Antwerp' },
             { id: 'Athens', text: 'Athens' }
         ]);
 
-        test.deepEqual($input.select3('value'), ['Antwerp', 'Athens']);
+        test.deepEqual($input.selectivity('value'), ['Antwerp', 'Athens']);
     }
 );
 
 exports.testSetValueWithInitSelection = DomUtil.createDomTest(
     ['multiple', 'templates'],
     function(test, $input) {
-        $input.select3({
+        $input.selectivity({
             initSelection: function(value, callback) {
                 var cities = {
                     1: 'Amsterdam',
@@ -208,38 +208,38 @@ exports.testSetValueWithInitSelection = DomUtil.createDomTest(
             value: [1]
         });
 
-        test.deepEqual($input.select3('data'), [{ id: 1, text: 'Amsterdam' }]);
+        test.deepEqual($input.selectivity('data'), [{ id: 1, text: 'Amsterdam' }]);
 
-        test.deepEqual($input.select3('value'), [1]);
+        test.deepEqual($input.selectivity('value'), [1]);
 
-        $input.select3('value', [2, 3]);
+        $input.selectivity('value', [2, 3]);
 
-        test.deepEqual($input.select3('data'), [
+        test.deepEqual($input.selectivity('data'), [
             { id: 2, text: 'Antwerp' },
             { id: 3, text: 'Athens' }
         ]);
 
-        test.deepEqual($input.select3('value'), [2, 3]);
+        test.deepEqual($input.selectivity('value'), [2, 3]);
     }
 );
 
 exports.testSetValueWithoutItems = DomUtil.createDomTest(
     ['multiple', 'templates'],
     function(test, $input) {
-        $input.select3({
+        $input.selectivity({
             multiple: true,
             value: ['Amsterdam']
         });
 
-        test.deepEqual($input.select3('value'), ['Amsterdam']);
+        test.deepEqual($input.selectivity('value'), ['Amsterdam']);
 
-        $input.select3('value', ['Antwerp', 'Athens']);
+        $input.selectivity('value', ['Antwerp', 'Athens']);
 
-        test.deepEqual($input.select3('data'), [
+        test.deepEqual($input.selectivity('data'), [
             { id: 'Antwerp', text: 'Antwerp' },
             { id: 'Athens', text: 'Athens' }
         ]);
 
-        test.deepEqual($input.select3('value'), ['Antwerp', 'Athens']);
+        test.deepEqual($input.selectivity('value'), ['Antwerp', 'Athens']);
     }
 );

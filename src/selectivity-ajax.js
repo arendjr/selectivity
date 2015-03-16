@@ -4,18 +4,18 @@ var $ = require('jquery');
 
 var debounce = require('./lodash/debounce');
 
-var Select3 = require('./select3-base');
+var Selectivity = require('./selectivity-base');
 
-require('./select3-locale');
+require('./selectivity-locale');
 
 /**
  * Option listener that implements a convenience query function for performing AJAX requests.
  */
-Select3.OptionListeners.unshift(function(select3, options) {
+Selectivity.OptionListeners.unshift(function(selectivity, options) {
 
     var ajax = options.ajax;
     if (ajax && ajax.url) {
-        var formatError = ajax.formatError || Select3.Locale.ajaxError;
+        var formatError = ajax.formatError || Selectivity.Locale.ajaxError;
         var minimumInputLength = ajax.minimumInputLength || 0;
         var params = ajax.params;
         var processItem = ajax.processItem || function(item) { return item; };
@@ -32,10 +32,10 @@ Select3.OptionListeners.unshift(function(select3, options) {
             var term = queryOptions.term;
             if (term.length < minimumInputLength) {
                 queryOptions.error(
-                    Select3.Locale.needMoreCharacters(minimumInputLength - term.length)
+                    Selectivity.Locale.needMoreCharacters(minimumInputLength - term.length)
                 );
             } else {
-                select3.dropdown.showLoading();
+                selectivity.dropdown.showLoading();
 
                 var url = (ajax.url instanceof Function ? ajax.url() : ajax.url);
                 if (params) {

@@ -44,60 +44,60 @@ function query(options) {
 exports.testLoadMore = DomUtil.createDomTest(
     ['single', 'dropdown', 'templates'],
     function(test, $input, $) {
-        $input.select3({ query: query });
+        $input.selectivity({ query: query });
 
-        test.equal($('.select3-dropdown').length, 0);
-        test.equal($('.select3-result-item').length, 0);
-        test.equal($('.select3-load-more').length, 0);
+        test.equal($('.selectivity-dropdown').length, 0);
+        test.equal($('.selectivity-result-item').length, 0);
+        test.equal($('.selectivity-load-more').length, 0);
 
         $input.click();
 
-        test.equal($('.select3-dropdown').length, 1);
-        test.equal($('.select3-result-item').length, 10);
-        test.equal($('.select3-load-more').length, 1);
+        test.equal($('.selectivity-dropdown').length, 1);
+        test.equal($('.selectivity-result-item').length, 10);
+        test.equal($('.selectivity-load-more').length, 1);
 
-        test.equal($('.select3-result-item').first().text(), 'Amsterdam');
-        test.equal($('.select3-result-item').last().text(), 'Bucharest');
+        test.equal($('.selectivity-result-item').first().text(), 'Amsterdam');
+        test.equal($('.selectivity-result-item').last().text(), 'Bucharest');
 
-        $('.select3-load-more').click();
+        $('.selectivity-load-more').click();
 
-        test.equal($('.select3-dropdown').length, 1);
-        test.equal($('.select3-result-item').length, 20);
-        test.equal($('.select3-load-more').length, 1);
+        test.equal($('.selectivity-dropdown').length, 1);
+        test.equal($('.selectivity-result-item').length, 20);
+        test.equal($('.selectivity-load-more').length, 1);
 
-        $('.select3-load-more').click();
+        $('.selectivity-load-more').click();
 
-        test.equal($('.select3-dropdown').length, 1);
-        test.equal($('.select3-result-item').length, 25);
-        test.equal($('.select3-load-more').length, 0);
+        test.equal($('.selectivity-dropdown').length, 1);
+        test.equal($('.selectivity-result-item').length, 25);
+        test.equal($('.selectivity-load-more').length, 0);
 
-        test.equal($('.select3-result-item').first().text(), 'Amsterdam');
-        test.equal($('.select3-result-item').last().text(), 'Helsinki');
+        test.equal($('.selectivity-result-item').first().text(), 'Amsterdam');
+        test.equal($('.selectivity-result-item').last().text(), 'Helsinki');
     }
 );
 
 exports.testSearch = DomUtil.createDomTest(
     ['single', 'dropdown', 'templates'],
     function(test, $input, $) {
-        $input.select3({ query: query });
+        $input.selectivity({ query: query });
 
         $input.click();
 
-        test.equal($('.select3-dropdown').length, 1);
-        test.equal($('.select3-result-item').length, 10);
-        test.equal($('.select3-load-more').length, 1);
+        test.equal($('.selectivity-dropdown').length, 1);
+        test.equal($('.selectivity-result-item').length, 10);
+        test.equal($('.selectivity-load-more').length, 1);
 
-        $('.select3-search-input').val('am').keyup();
+        $('.selectivity-search-input').val('am').keyup();
 
-        test.equal($('.select3-dropdown').length, 1);
-        test.equal($('.select3-result-item').length, 3);
-        test.equal($('.select3-load-more').length, 0);
+        test.equal($('.selectivity-dropdown').length, 1);
+        test.equal($('.selectivity-result-item').length, 3);
+        test.equal($('.selectivity-load-more').length, 0);
 
-        $('.select3-search-input').val('').keyup();
+        $('.selectivity-search-input').val('').keyup();
 
-        test.equal($('.select3-dropdown').length, 1);
-        test.equal($('.select3-result-item').length, 10);
-        test.equal($('.select3-load-more').length, 1);
+        test.equal($('.selectivity-dropdown').length, 1);
+        test.equal($('.selectivity-result-item').length, 10);
+        test.equal($('.selectivity-load-more').length, 1);
     }
 
 );

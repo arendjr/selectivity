@@ -2,7 +2,7 @@
 
 var $ = require('jquery');
 
-var Select3 = require('./select3-base');
+var Selectivity = require('./selectivity-base');
 
 function defaultTokenizer(input, selection, createToken, options) {
 
@@ -31,7 +31,7 @@ function defaultTokenizer(input, selection, createToken, options) {
         var token = takeToken(input);
         if (token.term) {
             var item = createTokenItem(token.term);
-            if (item && !Select3.findById(selection, item.id)) {
+            if (item && !Selectivity.findById(selection, item.id)) {
                 createToken(item);
             }
         }
@@ -55,7 +55,7 @@ function defaultTokenizer(input, selection, createToken, options) {
  *                                  using the 'createTokenItem' function. The default tokenizer also
  *                                  filters out already selected items.
  */
-Select3.OptionListeners.push(function(select3, options) {
+Selectivity.OptionListeners.push(function(selectivity, options) {
 
     if (options.tokenSeparators) {
         options.allowedTypes = $.extend({ tokenSeparators: 'array' }, options.allowedTypes);

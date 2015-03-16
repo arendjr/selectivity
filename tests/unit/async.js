@@ -52,19 +52,19 @@ exports.testAsync = DomUtil.createDomTest(
     ['async', 'single', 'dropdown', 'templates'],
     { async: true },
     function(test, $input, $) {
-        $input.select3({ query: query() });
+        $input.selectivity({ query: query() });
 
         $input.click();
-        $input.select3('search', 'am');
-        $input.select3('search', 'dam');
+        $input.selectivity('search', 'am');
+        $input.selectivity('search', 'dam');
 
         setTimeout(function() {
-            test.equal($('.select3-result-item').length, 1);
-            test.equal($('.select3-result-item').text(), 'Amsterdam');
+            test.equal($('.selectivity-result-item').length, 1);
+            test.equal($('.selectivity-result-item').text(), 'Amsterdam');
         }, 5);
 
         setTimeout(function() {
-            test.equal($('.select3-result-item').length, 1);
+            test.equal($('.selectivity-result-item').length, 1);
 
             test.done();
         }, 25);
@@ -75,19 +75,19 @@ exports.testWithoutAsync = DomUtil.createDomTest(
     ['single', 'dropdown', 'templates'],
     { async: true },
     function(test, $input, $) {
-        $input.select3({ query: query() });
+        $input.selectivity({ query: query() });
 
         $input.click();
-        $input.select3('search', 'am');
-        $input.select3('search', 'dam');
+        $input.selectivity('search', 'am');
+        $input.selectivity('search', 'dam');
 
         setTimeout(function() {
-            test.equal($('.select3-result-item').length, 1);
-            test.equal($('.select3-result-item').text(), 'Amsterdam');
+            test.equal($('.selectivity-result-item').length, 1);
+            test.equal($('.selectivity-result-item').text(), 'Amsterdam');
         }, 5);
 
         setTimeout(function() {
-            test.equal($('.select3-result-item').length, 10);
+            test.equal($('.selectivity-result-item').length, 10);
 
             test.done();
         }, 25);

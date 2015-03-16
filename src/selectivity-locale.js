@@ -1,15 +1,15 @@
 'use strict';
 
 var escape = require('./lodash/escape');
-var Select3 = require('./select3-base');
+var Selectivity = require('./selectivity-base');
 
 /**
- * Localizable elements of the Select3 Templates.
+ * Localizable elements of the Selectivity Templates.
  *
  * Be aware that these strings are added straight to the HTML output of the templates, so any
  * non-safe strings should be escaped.
  */
-Select3.Locale = {
+Selectivity.Locale = {
 
     ajaxError: function(term) { return 'Failed to fetch results for <b>' + escape(term) + '</b>'; },
     loading: 'Loading...',

@@ -2,8 +2,8 @@
 
 var $ = require('jquery');
 
-var Select3 = require('./select3-base');
-var MultipleSelect3 = require('./select3-multiple');
+var Selectivity = require('./selectivity-base');
+var MultipleSelectivity = require('./selectivity-multiple');
 
 function isValidEmail(email) {
 
@@ -103,7 +103,7 @@ function emailTokenizer(input, selection, createToken) {
         var token = takeToken(input);
         if (token.term) {
             var item = createEmailItem(token.term);
-            if (item && !(item.id && Select3.findById(selection, item.id))) {
+            if (item && !(item.id && Selectivity.findById(selection, item.id))) {
                 createToken(item);
             }
         }
@@ -114,19 +114,19 @@ function emailTokenizer(input, selection, createToken) {
 }
 
 /**
- * EmailSelect3 Constructor.
+ * Emailselectivity Constructor.
  *
- * @param options Options object. Accepts all options from the MultipleSelect3 Constructor.
+ * @param options Options object. Accepts all options from the MultipleSelectivity Constructor.
  */
-function EmailSelect3(options) {
+function Emailselectivity(options) {
 
-    MultipleSelect3.call(this, options);
+    MultipleSelectivity.call(this, options);
 }
 
 /**
  * Methods.
  */
-var callSuper = Select3.inherits(EmailSelect3, MultipleSelect3, {
+var callSuper = Selectivity.inherits(Emailselectivity, MultipleSelectivity, {
 
     /**
      * @inherit
@@ -162,4 +162,4 @@ var callSuper = Select3.inherits(EmailSelect3, MultipleSelect3, {
 
 });
 
-module.exports = Select3.InputTypes.Email = EmailSelect3;
+module.exports = Selectivity.InputTypes.Email = Emailselectivity;

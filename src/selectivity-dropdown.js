@@ -4,29 +4,29 @@ var $ = require('jquery');
 
 var debounce = require('./lodash/debounce');
 
-var Select3 = require('./select3-base');
+var Selectivity = require('./selectivity-base');
 
 /**
- * Select3 Dropdown Constructor.
+ * selectivity Dropdown Constructor.
  *
  * @param options Options object. Should have the following properties:
- *                select3 - Select3 instance to show the dropdown for.
+ *                selectivity - Selectivity instance to show the dropdown for.
  *                showSearchInput - Boolean whether a search input should be shown.
  */
-function Select3Dropdown(options) {
+function SelectivityDropdown(options) {
 
-    var select3 = options.select3;
+    var selectivity = options.selectivity;
 
-    this.$el = $(select3.template('dropdown', {
-        dropdownCssClass: select3.options.dropdownCssClass,
-        searchInputPlaceholder: select3.options.searchInputPlaceholder,
+    this.$el = $(selectivity.template('dropdown', {
+        dropdownCssClass: selectivity.options.dropdownCssClass,
+        searchInputPlaceholder: selectivity.options.searchInputPlaceholder,
         showSearchInput: options.showSearchInput
     }));
 
     /**
      * jQuery container to add the results to.
      */
-    this.$results = this.$('.select3-results-container');
+    this.$results = this.$('.selectivity-results-container');
 
     /**
      * Boolean indicating whether more results are available than currently displayed in the
@@ -55,13 +55,13 @@ function Select3Dropdown(options) {
     this.results = [];
 
     /**
-     * Select3 instance.
+     * Selectivity instance.
      */
-    this.select3 = select3;
+    this.selectivity = selectivity;
 
     this._closeProxy = this.close.bind(this);
-    if (select3.options.closeOnSelect !== false) {
-        select3.$el.on('select3-selecting', this._closeProxy);
+    if (selectivity.options.closeOnSelect !== false) {
+        selectivity.$el.on('selectivity-selecting', this._closeProxy);
     }
 
     this.addToDom();
@@ -73,8 +73,8 @@ function Select3Dropdown(options) {
     this._suppressMouseWheel();
 
     if (options.showSearchInput) {
-        select3.initSearchInput(this.$('.select3-search-input'));
-        select3.focus();
+        selectivity.initSearchInput(this.$('.selectivity-search-input'));
+        selectivity.focus();
     }
 
     this._delegateEvents();
@@ -87,7 +87,7 @@ function Select3Dropdown(options) {
 /**
  * Methods.
  */
-$.extend(Select3Dropdown.prototype, {
+$.extend(SelectivityDropdown.prototype, {
 
     /**
      * Convenience shortcut for this.$el.find(selector).
@@ -102,7 +102,7 @@ $.extend(Select3Dropdown.prototype, {
      */
     addToDom: function() {
 
-        this.$el.appendTo(this.select3.$el[0].ownerDocument.body);
+        this.$el.appendTo(this.selectivity.$el[0].ownerDocument.body);
     },
 
     /**
@@ -114,7 +114,7 @@ $.extend(Select3Dropdown.prototype, {
 
         this.removeCloseHandler();
 
-        this.select3.$el.off('select3-selecting', this._closeProxy);
+        this.selectivity.$el.off('selectivity-selecting', this._closeProxy);
 
         this.triggerClose();
     },
@@ -125,10 +125,10 @@ $.extend(Select3Dropdown.prototype, {
      * Follows the same format as Backbone: http://backbonejs.org/#View-delegateEvents
      */
     events: {
-        'click .select3-load-more': '_loadMoreClicked',
-        'click .select3-result-item': '_resultClicked',
-        'mouseenter .select3-load-more': 'highlightLoadMore',
-        'mouseenter .select3-result-item': '_resultHovered'
+        'click .selectivity-load-more': '_loadMoreClicked',
+        'click .selectivity-result-item': '_resultClicked',
+        'mouseenter .selectivity-load-more': 'highlightLoadMore',
+        'mouseenter .selectivity-result-item': '_resultHovered'
     },
 
     /**
@@ -139,16 +139,17 @@ $.extend(Select3Dropdown.prototype, {
     highlight: function(item) {
 
         if (this.loadMoreHighlighted) {
-            this.$('.select3-load-more').removeClass('highlight');
+            this.$('.selectivity-load-more').removeClass('highlight');
         }
 
-        this.$('.select3-result-item').removeClass('highlight')
-            .filter('[data-item-id=' + Select3.quoteCssAttr(item.id) + ']').addClass('highlight');
+        this.$('.selectivity-result-item').removeClass('highlight')
+            .filter('[data-item-id=' + Selectivity.quoteCssAttr(item.id) + ']')
+            .addClass('highlight');
 
         this.highlightedResult = item;
         this.loadMoreHighlighted = false;
 
-        this.select3.triggerEvent('select3-highlight', { item: item, id: item.id });
+        this.selectivity.triggerEvent('selectivity-highlight', { item: item, id: item.id });
     },
 
     /**
@@ -158,9 +159,9 @@ $.extend(Select3Dropdown.prototype, {
      */
     highlightLoadMore: function() {
 
-        this.$('.select3-result-item').removeClass('highlight');
+        this.$('.selectivity-result-item').removeClass('highlight');
 
-        this.$('.select3-load-more').addClass('highlight');
+        this.$('.selectivity-load-more').addClass('highlight');
 
         this.highlightedResult = null;
         this.loadMoreHighlighted = true;
@@ -173,7 +174,7 @@ $.extend(Select3Dropdown.prototype, {
 
         var position = this.options.position;
         if (position) {
-            position(this.$el, this.select3.$el);
+            position(this.$el, this.selectivity.$el);
         }
 
         this._scrolled();
@@ -196,11 +197,11 @@ $.extend(Select3Dropdown.prototype, {
      */
     renderItems: function(items) {
 
-        var select3 = this.select3;
+        var selectivity = this.selectivity;
         return items.map(function(item) {
-            var result = select3.template(item.id ? 'resultItem' : 'resultLabel', item);
+            var result = selectivity.template(item.id ? 'resultItem' : 'resultLabel', item);
             if (item.children) {
-                result += select3.template('resultChildren', {
+                result += selectivity.template('resultChildren', {
                     childrenHtml: this.renderItems(item.children)
                 });
             }
@@ -227,18 +228,19 @@ $.extend(Select3Dropdown.prototype, {
      */
     selectItem: function(id) {
 
-        var select3 = this.select3;
-        var item = Select3.findNestedById(select3.results, id);
+        var selectivity = this.selectivity;
+        var item = Selectivity.findNestedById(selectivity.results, id);
         if (item) {
             var options = { id: id, item: item };
-            if (select3.triggerEvent('select3-selecting', options)) {
-                select3.triggerEvent('select3-selected', options);
+            if (selectivity.triggerEvent('selectivity-selecting', options)) {
+                selectivity.triggerEvent('selectivity-selected', options);
             }
         }
     },
 
     /**
-     * Sets up an event handler that will close the dropdown when the Select3 control loses focus.
+     * Sets up an event handler that will close the dropdown when the Selectivity control loses
+     * focus.
      */
     setupCloseHandler: function() {
 
@@ -258,7 +260,7 @@ $.extend(Select3Dropdown.prototype, {
 
         options = options || {};
 
-        this.$results.html(this.select3.template('error', {
+        this.$results.html(this.selectivity.template('error', {
             escape: options.escape !== false,
             message: message,
         }));
@@ -277,7 +279,7 @@ $.extend(Select3Dropdown.prototype, {
      */
     showLoading: function() {
 
-        this.$results.html(this.select3.template('loading'));
+        this.$results.html(this.selectivity.template('loading'));
 
         this.hasMore = false;
         this.results = [];
@@ -302,15 +304,15 @@ $.extend(Select3Dropdown.prototype, {
 
         var resultsHtml = this.renderItems(results);
         if (options.hasMore) {
-            resultsHtml += this.select3.template('loadMore');
+            resultsHtml += this.selectivity.template('loadMore');
         } else {
             if (!resultsHtml && !options.add) {
-                resultsHtml = this.select3.template('noResults', { term: options.term });
+                resultsHtml = this.selectivity.template('noResults', { term: options.term });
             }
         }
 
         if (options.add) {
-            this.$('.select3-loading').replaceWith(resultsHtml);
+            this.$('.selectivity-loading').replaceWith(resultsHtml);
 
             this.results = this.results.concat(results);
         } else {
@@ -329,19 +331,19 @@ $.extend(Select3Dropdown.prototype, {
     },
 
     /**
-     * Triggers the 'select3-close' event.
+     * Triggers the 'selectivity-close' event.
      */
     triggerClose: function() {
 
-        this.select3.$el.trigger('select3-close');
+        this.selectivity.$el.trigger('selectivity-close');
     },
 
     /**
-     * Triggers the 'select3-open' event.
+     * Triggers the 'selectivity-open' event.
      */
     triggerOpen: function() {
 
-        this.select3.$el.trigger('select3-open');
+        this.selectivity.$el.trigger('selectivity-open');
     },
 
     /**
@@ -399,11 +401,11 @@ $.extend(Select3Dropdown.prototype, {
      */
     _loadMoreClicked: function() {
 
-        this.$('.select3-load-more').replaceWith(this.select3.template('loading'));
+        this.$('.selectivity-load-more').replaceWith(this.selectivity.template('loading'));
 
-        this.select3.loadMore();
+        this.selectivity.loadMore();
 
-        this.select3.focus();
+        this.selectivity.focus();
 
         return false;
     },
@@ -413,7 +415,7 @@ $.extend(Select3Dropdown.prototype, {
      */
     _resultClicked: function(event) {
 
-        this.selectItem(this.select3._getItemId(event));
+        this.selectItem(this.selectivity._getItemId(event));
 
         return false;
     },
@@ -423,8 +425,8 @@ $.extend(Select3Dropdown.prototype, {
      */
     _resultHovered: function(event) {
 
-        var id = this.select3._getItemId(event);
-        var item = Select3.findNestedById(this.results, id);
+        var id = this.selectivity._getItemId(event);
+        var item = Selectivity.findNestedById(this.results, id);
         if (item) {
             this.highlight(item);
         }
@@ -435,7 +437,7 @@ $.extend(Select3Dropdown.prototype, {
      */
     _scrolled: function() {
 
-        var $loadMore = this.$('.select3-load-more');
+        var $loadMore = this.$('.selectivity-load-more');
         if ($loadMore.length) {
             if ($loadMore[0].offsetTop - this.$results[0].scrollTop < this.$el.height()) {
                 this._loadMoreClicked();
@@ -450,10 +452,10 @@ $.extend(Select3Dropdown.prototype, {
 
         var el;
         if (this.highlightedResult) {
-            var quotedId = Select3.quoteCssAttr(this.highlightedResult.id);
-            el = this.$('.select3-result-item[data-item-id=' + quotedId + ']')[0];
+            var quotedId = Selectivity.quoteCssAttr(this.highlightedResult.id);
+            el = this.$('.selectivity-result-item[data-item-id=' + quotedId + ']')[0];
         } else if (this.loadMoreHighlighted) {
-            el = this.$('.select3-load-more')[0];
+            el = this.$('.selectivity-load-more')[0];
         } else {
             return; // no highlight to scroll to
         }
@@ -471,12 +473,12 @@ $.extend(Select3Dropdown.prototype, {
      */
     _suppressMouseWheel: function() {
 
-        var suppressMouseWheelSelector = this.select3.options.suppressMouseWheelSelector;
+        var suppressMouseWheelSelector = this.selectivity.options.suppressMouseWheelSelector;
         if (suppressMouseWheelSelector === null) {
             return;
         }
 
-        var selector = suppressMouseWheelSelector || '.select3-results-container';
+        var selector = suppressMouseWheelSelector || '.selectivity-results-container';
         this.$el.on('DOMMouseScroll mousewheel', selector, function(event) {
 
             // Thanks to Troy Alford:
@@ -514,4 +516,4 @@ $.extend(Select3Dropdown.prototype, {
 
 });
 
-module.exports = Select3.Dropdown = Select3Dropdown;
+module.exports = Selectivity.Dropdown = SelectivityDropdown;

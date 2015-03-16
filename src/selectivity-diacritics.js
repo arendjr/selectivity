@@ -842,8 +842,8 @@ var DIACRITICS = {
     '\u03C2': '\u03C3'
 };
 
-var Select3 = require('./select3-base');
-var previousTransform = Select3.transformText;
+var Selectivity = require('./selectivity-base');
+var previousTransform = Selectivity.transformText;
 
 /**
  * Extended version of the transformText() function that simplifies diacritics to their latin1
@@ -852,7 +852,7 @@ var previousTransform = Select3.transformText;
  * Note that if all query functions fetch their results from a remote server, you may not need this
  * function, because it makes sense to remove diacritics server-side in such cases.
  */
-Select3.transformText = function(string) {
+Selectivity.transformText = function(string) {
     var result = '';
     for (var i = 0, length = string.length; i < length; i++) {
         var character = string[i];

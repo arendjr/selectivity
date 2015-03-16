@@ -1,6 +1,6 @@
 'use strict';
 
-var Select3 = require('./select3-base');
+var Selectivity = require('./selectivity-base');
 
 var KEY_DOWN_ARROW = 40;
 var KEY_ENTER = 13;
@@ -10,7 +10,7 @@ var KEY_UP_ARROW = 38;
 /**
  * Search input listener providing keyboard support for navigating the dropdown.
  */
-function listener(select3, $input) {
+function listener(selectivity, $input) {
 
     /**
      * Moves a dropdown's highlight to the next or previous result item.
@@ -31,10 +31,10 @@ function listener(select3, $input) {
         function scrollToHighlight() {
             var el;
             if (dropdown.highlightedResult) {
-                var quotedId = Select3.quoteCssAttr(dropdown.highlightedResult.id);
-                el = dropdown.$('.select3-result-item[data-item-id=' + quotedId + ']')[0];
+                var quotedId = Selectivity.quoteCssAttr(dropdown.highlightedResult.id);
+                el = dropdown.$('.selectivity-result-item[data-item-id=' + quotedId + ']')[0];
             } else if (dropdown.loadMoreHighlighted) {
-                el = dropdown.$('.select3-load-more')[0];
+                el = dropdown.$('.selectivity-load-more')[0];
             } else {
                 return; // no highlight to scroll to
             }
@@ -49,12 +49,12 @@ function listener(select3, $input) {
 
         var results = dropdown.results;
         if (results.length) {
-            var $results = dropdown.$('.select3-result-item');
+            var $results = dropdown.$('.selectivity-result-item');
             var defaultIndex = (delta > 0 ? 0 : $results.length - 1);
             var index = defaultIndex;
             var highlightedResult = dropdown.highlightedResult;
             if (highlightedResult) {
-                var quotedId = Select3.quoteCssAttr(highlightedResult.id);
+                var quotedId = Selectivity.quoteCssAttr(highlightedResult.id);
                 index = findElementIndex($results, '[data-item-id=' + quotedId + ']') + delta;
                 if (delta > 0 ? index >= $results.length : index < 0) {
                     if (dropdown.hasMore) {
@@ -67,8 +67,8 @@ function listener(select3, $input) {
                 }
             }
 
-            var result = Select3.findNestedById(results,
-                                                dropdown.select3._getItemId($results[index]));
+            var result = Selectivity.findNestedById(results,
+                                                dropdown.selectivity._getItemId($results[index]));
             if (result) {
                 dropdown.highlight(result);
                 scrollToHighlight();
@@ -78,7 +78,7 @@ function listener(select3, $input) {
 
     function keyHeld(event) {
 
-        var dropdown = select3.dropdown;
+        var dropdown = selectivity.dropdown;
         if (dropdown) {
             if (event.keyCode === KEY_DOWN_ARROW) {
                 moveHighlight(dropdown, 1);
@@ -91,22 +91,22 @@ function listener(select3, $input) {
     function keyReleased(event) {
 
         function open() {
-            if (select3.options.showDropdown !== false) {
-                select3.open();
+            if (selectivity.options.showDropdown !== false) {
+                selectivity.open();
             }
         }
 
-        var dropdown = select3.dropdown;
+        var dropdown = selectivity.dropdown;
         if (event.keyCode === KEY_ENTER && !event.ctrlKey) {
             if (dropdown) {
                 dropdown.selectHighlight();
-            } else if (select3.options.showDropdown !== false) {
+            } else if (selectivity.options.showDropdown !== false) {
                 open();
             }
 
             event.preventDefault();
         } else if (event.keyCode === KEY_ESCAPE) {
-            select3.close();
+            selectivity.close();
 
             event.preventDefault();
         } else if (event.keyCode === KEY_DOWN_ARROW || event.keyCode === KEY_UP_ARROW) {
@@ -124,4 +124,4 @@ function listener(select3, $input) {
     $input.on('keydown', keyHeld).on('keyup', keyReleased);
 }
 
-Select3.SearchInputListeners.push(listener);
+Selectivity.SearchInputListeners.push(listener);

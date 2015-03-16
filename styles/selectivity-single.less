@@ -1,21 +1,21 @@
-@import "select3-base.less";
+@import "selectivity-base.less";
 
 /**
  * Single-select input.
  */
 
-.select3-single-select {
+.selectivity-single-select {
     border-radius: 2px;
     cursor: pointer;
     min-height: 2em;
     padding: 5px;
     position: relative;
 }
-.select3-single-select:hover {
+.selectivity-single-select:hover {
     background: #eee;
 }
 
-.select3-single-result-container {
+.selectivity-single-result-container {
     left: 5px;
     overflow: hidden;
     position: absolute;
@@ -25,33 +25,33 @@
     white-space: nowrap;
 }
 
-.select3-single-selected-item {
+.selectivity-single-selected-item {
     color: #000;
 }
 
-.select3-single-selected-item-remove {
+.selectivity-single-selected-item-remove {
     colo: #000;
     float: right;
     padding: 0 5px;
 }
 
-.select3-caret {
+.selectivity-caret {
     position: absolute;
     right: 5px;
     top: 0.7em;
 }
 
 @media only screen and (max-device-width: 480px) {
-    .select3-single-select {
+    .selectivity-single-select {
         background: #eee;
         border-radius: 2px;
     }
 
-    .select3-single-result-container {
+    .selectivity-single-result-container {
         right: 5px;
     }
 
-    .select3-caret {
+    .selectivity-caret {
         display: none;
     }
 }

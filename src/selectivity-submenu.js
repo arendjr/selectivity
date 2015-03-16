@@ -1,24 +1,24 @@
 'use strict';
 
-var Select3 = require('./select3-base');
-var Select3Dropdown = require('./select3-dropdown');
+var Selectivity = require('./selectivity-base');
+var SelectivityDropdown = require('./selectivity-dropdown');
 
 /**
  * Extended dropdown that supports submenus.
  */
-function Select3Submenu(options) {
+function SelectivitySubmenu(options) {
 
     /**
      * Optional parent dropdown menu from which this dropdown was opened.
      */
     this.parentMenu = options.parentMenu;
 
-    Select3Dropdown.call(this, options);
+    SelectivityDropdown.call(this, options);
 
     this._closeSubmenuTimeout = 0;
 }
 
-var callSuper = Select3.inherits(Select3Submenu, Select3Dropdown, {
+var callSuper = Selectivity.inherits(SelectivitySubmenu, SelectivityDropdown, {
 
     /**
      * @inherit
@@ -26,10 +26,10 @@ var callSuper = Select3.inherits(Select3Submenu, Select3Dropdown, {
     close: function() {
 
         if (this.options.restoreOptions) {
-            this.select3.setOptions(this.options.restoreOptions);
+            this.selectivity.setOptions(this.options.restoreOptions);
         }
         if (this.options.restoreResults) {
-            this.select3.results = this.options.restoreResults;
+            this.selectivity.results = this.options.restoreResults;
         }
 
         if (this.submenu) {
@@ -86,12 +86,12 @@ var callSuper = Select3.inherits(Select3Submenu, Select3Dropdown, {
      */
     selectItem: function(id) {
 
-        var select3 = this.select3;
-        var item = Select3.findNestedById(select3.results, id);
+        var selectivity = this.selectivity;
+        var item = Selectivity.findNestedById(selectivity.results, id);
         if (item && !item.submenu) {
             var options = { id: id, item: item };
-            if (select3.triggerEvent('select3-selecting', options)) {
-                select3.triggerEvent('select3-selected', options);
+            if (selectivity.triggerEvent('selectivity-selecting', options)) {
+                selectivity.triggerEvent('selectivity-selected', options);
             }
         }
     },
@@ -114,7 +114,7 @@ var callSuper = Select3.inherits(Select3Submenu, Select3Dropdown, {
     triggerClose: function() {
 
         if (this.parentMenu) {
-            this.select3.$el.trigger('select3-close-submenu');
+            this.selectivity.$el.trigger('selectivity-close-submenu');
         } else {
             callSuper(this, 'triggerClose');
         }
@@ -126,7 +126,7 @@ var callSuper = Select3.inherits(Select3Submenu, Select3Dropdown, {
     triggerOpen: function() {
 
         if (this.parentMenu) {
-            this.select3.$el.trigger('select3-open-submenu');
+            this.selectivity.$el.trigger('selectivity-open-submenu');
         } else {
             callSuper(this, 'triggerOpen');
         }
@@ -152,11 +152,11 @@ var callSuper = Select3.inherits(Select3Submenu, Select3Dropdown, {
         callSuper(this, 'highlight', item);
 
         if (item.submenu && !this.submenu) {
-            var select3 = this.select3;
-            var Dropdown = select3.options.dropdown || Select3.Dropdown;
+            var selectivity = this.selectivity;
+            var Dropdown = selectivity.options.dropdown || Selectivity.Dropdown;
             if (Dropdown) {
-                var quotedId = Select3.quoteCssAttr(item.id);
-                var $item = this.$('.select3-result-item[data-item-id=' + quotedId + ']');
+                var quotedId = Selectivity.quoteCssAttr(item.id);
+                var $item = this.$('.selectivity-result-item[data-item-id=' + quotedId + ']');
                 var $dropdownEl = this.$el;
 
                 this.submenu = new Dropdown({
@@ -170,38 +170,38 @@ var callSuper = Select3.inherits(Select3Submenu, Select3Dropdown, {
                         }).width(width);
                     },
                     restoreOptions: {
-                        items: select3.items,
-                        query: select3.options.query || null
+                        items: selectivity.items,
+                        query: selectivity.options.query || null
                     },
-                    restoreResults: select3.results,
-                    select3: select3,
+                    restoreResults: selectivity.results,
+                    selectivity: selectivity,
                     showSearchInput: item.submenu.showSearchInput
                 });
 
-                select3.setOptions({
+                selectivity.setOptions({
                     items: item.submenu.items || null,
                     query: item.submenu.query || null
                 });
 
-                select3.search('');
+                selectivity.search('');
             }
         }
     }
 
 });
 
-Select3.Dropdown = Select3Submenu;
+Selectivity.Dropdown = SelectivitySubmenu;
 
-Select3.findNestedById = function(array, id) {
+Selectivity.findNestedById = function(array, id) {
 
     for (var i = 0, length = array.length; i < length; i++) {
         var item = array[i], result;
         if (item.id === id) {
             result = item;
         } else if (item.children) {
-            result = Select3.findNestedById(item.children, id);
+            result = Selectivity.findNestedById(item.children, id);
         } else if (item.submenu && item.submenu.items) {
-            result = Select3.findNestedById(item.submenu.items, id);
+            result = Selectivity.findNestedById(item.submenu.items, id);
         }
         if (result) {
             return result;
@@ -210,4 +210,4 @@ Select3.findNestedById = function(array, id) {
     return null;
 };
 
-module.exports = Select3Submenu;
+module.exports = SelectivitySubmenu;

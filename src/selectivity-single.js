@@ -2,17 +2,17 @@
 
 var $ = require('jquery');
 
-var Select3 = require('./select3-base');
+var Selectivity = require('./selectivity-base');
 
 /**
- * SingleSelect3 Constructor.
+ * SingleSelectivity Constructor.
  *
- * @param options Options object. Accepts all options from the Select3 Base Constructor in addition
- *                to those accepted by SingleSelect3.setOptions().
+ * @param options Options object. Accepts all options from the Selectivity Base Constructor in
+ *                addition to those accepted by SingleSelectivity.setOptions().
  */
-function SingleSelect3(options) {
+function SingleSelectivity(options) {
 
-    Select3.call(this, options);
+    Selectivity.call(this, options);
 
     this.$el.html(this.template('singleSelectInput', this.options));
 
@@ -41,7 +41,7 @@ function SingleSelect3(options) {
 /**
  * Methods.
  */
-var callSuper = Select3.inherits(SingleSelect3, {
+var callSuper = Selectivity.inherits(SingleSelectivity, {
 
     /**
      * Events map.
@@ -51,7 +51,7 @@ var callSuper = Select3.inherits(SingleSelect3, {
     events: {
         'change': '_rerenderSelection',
         'click': '_clicked',
-        'select3-selected': '_resultSelected'
+        'selectivity-selected': '_resultSelected'
     },
 
     /**
@@ -131,10 +131,10 @@ var callSuper = Select3.inherits(SingleSelect3, {
      */
     validateValue: function(value) {
 
-        if (value === null || Select3.isValidId(value)) {
+        if (value === null || Selectivity.isValidId(value)) {
             return value;
         } else {
-            throw new Error('Value for SingleSelect3 instance should be a valid ID or null');
+            throw new Error('Value for SingleSelectivity instance should be a valid ID or null');
         }
     },
 
@@ -169,7 +169,7 @@ var callSuper = Select3.inherits(SingleSelect3, {
      */
     _rerenderSelection: function() {
 
-        var $container = this.$('.select3-single-result-container');
+        var $container = this.$('.selectivity-single-result-container');
         if (this._data) {
             $container.html(
                 this.template('singleSelectedItem', $.extend({
@@ -177,7 +177,7 @@ var callSuper = Select3.inherits(SingleSelect3, {
                 }, this._data))
             );
 
-            $container.find('.select3-single-selected-item-remove')
+            $container.find('.selectivity-single-selected-item-remove')
                       .on('click', this._itemRemoveClicked.bind(this));
         } else {
             $container.html(
@@ -198,4 +198,4 @@ var callSuper = Select3.inherits(SingleSelect3, {
 
 });
 
-module.exports = Select3.InputTypes.Single = SingleSelect3;
+module.exports = Selectivity.InputTypes.Single = SingleSelectivity;

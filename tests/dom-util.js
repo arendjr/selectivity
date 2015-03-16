@@ -3,16 +3,16 @@
 module.exports = {
 
     /**
-     * Wrapper to easily create unit tests that test Select3 within a DOM environment.
+     * Wrapper to easily create unit tests that test Selectivity within a DOM environment.
      *
-     * @param modules Array of Select3 modules to test, e.g. ['base', 'single'].
+     * @param modules Array of Selectivity modules to test, e.g. ['base', 'single'].
      * @param options Optional options object. May contain the following properties:
      *                indexResource - Filename of the index resource (default: 'testcase.html').
      *                async - Set to true to indicate the test function is asynchronous and calls
      *                        done() itself.
      * @param fn The actual test function. Receives two arguments:
      *           test - The nodeunit test instance.
-     *           $input - jQuery container for the '#select3-input' element defined in
+     *           $input - jQuery container for the '#selectivity-input' element defined in
      *                    resources/testcase.html.
      */
     createDomTest: function(modules, options, fn) {
@@ -32,7 +32,7 @@ module.exports = {
                     var $ = require('../vendor/jquery')(window);
                     var proxyquire = require('proxyquire').noCallThru();
 
-                    proxyquire('../src/select3-base', { 'jquery': $ });
+                    proxyquire('../src/selectivity-base', { 'jquery': $ });
 
                     // I wish this could be solved without hard-coding the dependenies here...
                     var dependencies = {
@@ -75,11 +75,11 @@ module.exports = {
                     var stubs = { 'jquery': $ };
 
                     orderedModules.forEach(function(module) {
-                        var Select3Module = proxyquire('../src/select3-' + module, stubs);
-                        stubs['./select3-' + module] = Select3Module;
+                        var selectivityModule = proxyquire('../src/selectivity-' + module, stubs);
+                        stubs['./selectivity-' + module] = selectivityModule;
                     });
 
-                    fn(test, window.$('#select3-input'), $);
+                    fn(test, window.$('#selectivity-input'), $);
                 });
 
                 if (!options.async) {

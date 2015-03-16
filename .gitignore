@@ -1,6 +1,6 @@
-dist/select3-custom.*
-src/select3-custom.js
-styles/select3-custom.less
+dist/selectivity-custom.*
+src/selectivity-custom.js
+styles/selectivity-custom.less
 
 node_modules
 
@@ -8,10 +8,10 @@ node_modules
 .DS_Store
 
 # Qt Creator IDE files
-select3*.config
-select3*.creator*
-select3*.files
-select3*.includes
+selectivity*.config
+selectivity*.creator*
+selectivity*.files
+selectivity*.includes
 
 # Sublime Text files
-select3.sublime-*
+selectivity.sublime-*

@@ -1,10 +1,10 @@
 {
-  "name": "select3",
+  "name": "Selectivity.js",
   "desc": "Modular and light-weight selection library for jQuery and Zepto.js",
   "version": "1.0.0",
   "repository": {
     "type": "git",
-    "url": "git://github.com/arendjr/select3.git"
+    "url": "git://github.com/arendjr/selectivity.git"
   },
   "scripts": {
     "build-min": "gulp --bundle-name=full --minify",

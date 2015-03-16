@@ -15,20 +15,20 @@ module.exports = function() {
 
     CustomBuildUtil.checkOptions(argv);
 
-    fs.writeFileSync('styles/select3-custom.less', argv.modules.map(function(module) {
-        if (fs.existsSync('styles/select3-' + module + '.less')) {
-            return '@import "select3-' + module + '";';
+    fs.writeFileSync('styles/selectivity-custom.less', argv.modules.map(function(module) {
+        if (fs.existsSync('styles/selectivity-' + module + '.less')) {
+            return '@import "selectivity-' + module + '";';
         } else {
             return '';
         }
     }).join(''));
 
-    return gulp.src('styles/select3-custom.less')
+    return gulp.src('styles/selectivity-custom.less')
             .pipe(less({ strictMath: true }))
             .on('error', function(error) {
                 gutil.log(gutil.colors.red('Error building CSS bundle: ') + error.toString());
             })
-            .pipe(concat('select3-' + argv.bundleName + (argv.minify ? '.min' : '') + '.css'))
+            .pipe(concat('selectivity-' + argv.bundleName + (argv.minify ? '.min' : '') + '.css'))
             .pipe(gulpif(argv.minify, csso()))
             .pipe(gulp.dest('dist/'));
 };

@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <title>Select3 Demo Use Cases</title>
+        <title>Selectivity.js Demo Use Cases</title>
         <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
-        <link href="../dist/select3-custom.css" rel="stylesheet">
+        <link href="../dist/selectivity-custom.css" rel="stylesheet">
         <style>
             body, input {
                 font-family: Helvetica, sans-serif;
@@ -15,7 +15,7 @@
             }
         </style>
         <script src="../vendor/zepto.js"></script>
-        <script src="../dist/select3-custom.js"></script>
+        <script src="../dist/selectivity-custom.js"></script>
         <script>
             function escape(string) {
                 return string ? String(string).replace(/[&<>"']/g, function(match) {
@@ -56,16 +56,16 @@
                     };
                 }).get();
 
-                var transformText = $.fn.select3.transformText;
+                var transformText = $.fn.selectivity.transformText;
 
                 // example query function that returns at most 10 cities matching the given text
                 function queryFunction(query) {
-                    var select3 = query.select3;
+                    var selectivity = query.selectivity;
                     var term = query.term;
                     var offset = query.offset || 0;
                     var results;
-                    if (select3.$el.attr('id') === 'single-input-with-submenus') {
-                        var timezone = select3.dropdown.highlightedResult.id;
+                    if (selectivity.$el.attr('id') === 'single-input-with-submenus') {
+                        var timezone = selectivity.dropdown.highlightedResult.id;
                         results = citiesWithTimezone.filter(function(city) {
                             return transformText(city.id).indexOf(transformText(term)) > -1 &&
                                    city.timezone === timezone;
@@ -94,21 +94,21 @@
                     }, 500);
                 }
 
-                $('#single-input').select3({
+                $('#single-input').selectivity({
                     allowClear: true,
                     placeholder: 'No city selected',
                     query: queryFunction,
                     searchInputPlaceholder: 'Type to search a city'
                 });
 
-                $('#single-input-without-search').select3({
+                $('#single-input-without-search').selectivity({
                     allowClear: true,
                     items: cities,
                     placeholder: 'No city selected',
                     showSearchInputInDropdown: false
                 });
 
-                $('#single-input-with-labels').select3({
+                $('#single-input-with-labels').selectivity({
                     allowClear: true,
                     items: citiesByCountry,
                     placeholder: 'No city selected',
@@ -120,7 +120,7 @@
                     showSearchInput: true
                 };
 
-                $('#single-input-with-submenus').select3({
+                $('#single-input-with-submenus').selectivity({
                     allowClear: true,
                     items: [
                         { text: 'Western European Time Zone', id: '+00:00', submenu: submenu },
@@ -131,29 +131,29 @@
                     showSearchInputInDropdown: false
                 });
 
-                $('#multiple-input').select3({
+                $('#multiple-input').selectivity({
                     multiple: true,
                     placeholder: 'Type to search cities',
                     query: queryFunction
                 });
 
-                $('#tags-input').select3({
+                $('#tags-input').selectivity({
                     items: ['red', 'green', 'blue'],
                     multiple: true,
                     tokenSeparators: [' '],
                     value: ['brown', 'red', 'green']
                 });
 
-                $('#emails-input').select3({
+                $('#emails-input').selectivity({
                     inputType: 'Email',
                     placeholder: 'Type or paste email addresses'
                 });
 
-                $('#single-select-box').select3();
+                $('#single-select-box').selectivity();
 
-                $('#multiple-select-box').select3();
+                $('#multiple-select-box').selectivity();
 
-                $('#repository-input').select3({
+                $('#repository-input').selectivity({
                     ajax: {
                         url: 'https://api.github.com/search/repositories',
                         dataType: 'json',
@@ -183,7 +183,7 @@
                     templates: {
                         resultItem: function(item) {
                             return (
-                                '<div class="select3-result-item" data-item-id="' + item.id + '">' +
+                                '<div class="selectivity-result-item" data-item-id="' + item.id + '">' +
                                     '<b>' + escape(item.text) + '</b><br>' +
                                     escape(item.description) +
                                 '</div>'
@@ -196,33 +196,33 @@
     </head>
     <body>
         <h1>Custom Build Demo's</h1>
-        <p>Demo use-cases showing how a custom build of Select3 with a custom build is behaving.</p>
+        <p>Demo use-cases showing how a custom build of selectivity with a custom build is behaving.</p>
         <p class="dev-instructions"><b>Important:</b> In order for the functionality on this page to work, you need to be
             running a development server:</p>
         <ul class="dev-instructions">
-            <li><code>git clone https://github.com/arendjr/select3.git</code></li>
-            <li><code>cd select3</code></li>
+            <li><code>git clone https://github.com/arendjr/selectivity.git</code></li>
+            <li><code>cd selectivity</code></li>
             <li><code>npm install</code></li>
             <li><code>node_modules/.bin/gulp dev --browser-sync</code></li>
             <li>Then open <a href="http://localhost:3000/demos/custom.html">http://localhost:3000/demos/custom.html</a>
                 (the port number may differ, check the console output from the previous command)</li>
         </ul>
         <h2>Select a single city</h2>
-        <p><span id="single-input" class="select3-input"></span></p>
+        <p><span id="single-input" class="selectivity-input"></span></p>
         <h2>Select a single city without a search field</h2>
-        <p><span id="single-input-without-search" class="select3-input"></span></p>
+        <p><span id="single-input-without-search" class="selectivity-input"></span></p>
         <h2>Select a single city by country</h2>
-        <p><span id="single-input-with-labels" class="select3-input"></span></p>
+        <p><span id="single-input-with-labels" class="selectivity-input"></span></p>
         <h2>Select a single city by timezone</h2>
-        <p><span id="single-input-with-submenus" class="select3-input"></span></p>
+        <p><span id="single-input-with-submenus" class="selectivity-input"></span></p>
         <h2>Select multiple cities</h2>
-        <p><span id="multiple-input" class="select3-input"></span></p>
+        <p><span id="multiple-input" class="selectivity-input"></span></p>
         <h2>Select one or more tags</h2>
-        <p><span id="tags-input" class="select3-input"></span></p>
+        <p><span id="tags-input" class="selectivity-input"></span></p>
         <h2>Enter one or more email addresses</h2>
-        <p><span id="emails-input" class="select3-input"></span></p>
+        <p><span id="emails-input" class="selectivity-input"></span></p>
         <h2>Select a single city (initialized from a traditional &lt;select&gt; box)</h2>
-        <select id="single-select-box" class="select3-input" data-placeholder="No city selected">
+        <select id="single-select-box" class="selectivity-input" data-placeholder="No city selected">
             <option>Amsterdam</option>
             <option>Antwerp</option>
             <option>Athens</option>
@@ -284,7 +284,7 @@
             <option>Zaragoza</option>
         </select>
         <h2>Select multiple cities by country (initialized from a traditional &lt;select&gt; box)</h2>
-        <select id="multiple-select-box" class="select3-input" data-placeholder="Type to search cities" multiple>
+        <select id="multiple-select-box" class="selectivity-input" data-placeholder="Type to search cities" multiple>
             <optgroup label="Austria">
                 <option value="54" data-timezone="+01:00">Vienna</option>
             </optgroup>
@@ -392,7 +392,7 @@
             </optgroup>
         </select>
         <h2>Select a GitHub repository</h2>
-        <p><span id="repository-input" class="select3-input"></span></p>
+        <p><span id="repository-input" class="selectivity-input"></span></p>
         <script>
             if (location.hostname !== 'localhost' && location.hostname !== '127.0.0.1') {
                 Array.prototype.forEach.call(document.querySelectorAll('.dev-instructions'), function(element) {

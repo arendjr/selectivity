@@ -15,7 +15,7 @@ function showUsage() {
         '--derequire               Renames all calls to require() to avoid conflicts',
         '                          with build systems.',
         '--lodash                  Use lodash or underscore.js as a dependency, making',
-        '                          Select3 even smaller.',
+        '                          Selectivity even smaller.',
         '--minify                  Minifies the bundle to reduce file size.',
         '--modules=<module-list>   Comma-separated list of modules to build. Default',
         '                          is "all".',
@@ -35,8 +35,8 @@ module.exports = {
         argv.commonJs = argv['common-js'] || false;
 
         if (argv.modules === undefined || argv.modules === 'all') {
-            argv.modules = glob.sync('src/select3-*.js').map(function(file) {
-                return file.slice(12, -3);
+            argv.modules = glob.sync('src/selectivity-*.js').map(function(file) {
+                return file.slice(16, -3);
             }).filter(function(module) {
                 return module !== 'base' && module !== 'custom';
             });

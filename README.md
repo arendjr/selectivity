@@ -1,5 +1,5 @@
-Select3
-=======
+Selectivity.js
+==============
 
 Modular and light-weight selection library for jQuery and Zepto.js.
 
@@ -33,35 +33,35 @@ ain't broken ;)
 Setup
 -----
 
-Select3 only relies on [jQuery](http://jquery.com/) or [Zepto.js](http://zeptojs.com/) being loaded
-on the page to work.
+Selectivity only relies on [jQuery](http://jquery.com/) or [Zepto.js](http://zeptojs.com/) being
+loaded on the page to work.
 
 In addition, the default templates assume that you have included
 [FontAwesome](http://fortawesome.github.io/Font-Awesome/) in your page to display the icons.
 
 ### Manual
 
-Copy `select3-full.js` and `select3-full.css` from the `dist/` directory into your project. Then
-put the following in your HTML head:
+Copy `selectivity-full.js` and `selectivity-full.css` from the `dist/` directory into your project.
+Then put the following in your HTML head:
 
     <head>
         ...
         <link href="font-awesome.css" rel="stylesheet">
-        <link href="select3-full.css" rel="stylesheet">
+        <link href="selectivity-full.css" rel="stylesheet">
         ...
         <script src="jquery.js"></script>
-        <script src="select3-full.js"></script>
+        <script src="selectivity-full.js"></script>
         ...
     </head>
 
 Verify the paths are correct for your particular project. The important thing is that jQuery (or
-Zepto.js) should be loaded before including Select3.
+Zepto.js) should be loaded before including Selectivity.
 
 ### Using Bower
 
 Make sure Bower is installed, then run:
 
-    $ bower install select3
+    $ bower install selectivity
 
 ### Using Component
 
@@ -72,7 +72,7 @@ In your `component.json`:
     {
         "dependencies": {
             ...
-            "arendjr/select3": "^1.0.0"
+            "arendjr/selectivity": "^1.0.0"
             ...
         }
     }
@@ -80,7 +80,7 @@ In your `component.json`:
 And in your code:
 
     var $ = require('jquery');
-    require('select3');
+    require('selectivity');
 
 Browser Support
 ---------------
@@ -97,12 +97,12 @@ to create a &quot;legacy&quot; build would be welcomed.
 API
 ---
 
-See the Select3 homepage: https://arendjr.github.io/select3/
+See the Selectivity homepage: https://arendjr.github.io/selectivity/
 
 Build System
 ------------
 
-Select3 is built modularly and uses Gulp as a build system to build its distributable files. To
+Selectivity is built modularly and uses Gulp as a build system to build its distributable files. To
 install the necessary dependencies, please run:
 
     $ npm install -g gulp
@@ -114,8 +114,8 @@ Then you can generate new distributable files from the sources, using:
 
 ### Creating custom builds
 
-If you want to create your own Select3 library that contains just the modules you need, you can use
-the following command:
+If you want to create your own Selectivity library that contains just the modules you need, you can
+use the following command:
 
     $ gulp --modules=<comma-separated-module-list>
 
@@ -125,19 +125,19 @@ Module          | Description
 ----------------|------------
 **ajax**        | Convenience module for performing AJAX requests. All options passed into the `ajax` object are provided by this module.
 **async**       | Blocks the query function from calling its callback functions if another query has been issued since. This prevents out-of-order replies from remote sources to display incorrect results. This module is only needed if you use the query function and call its callbacks asynchronously.
-**backdrop**    | This module provides the backdrop feature which is used by the dropdown. The backdrop is used to guarantee that when the dropdown is open and the user clicks outside the Select3 area, the dropdown will close. If you omit this module, a simpler implementation is used which will still attempt to close the dropdown when the user clicks outside the area, but which may fail when the user clicks on some element that has a custom click handler which prevents the event from bubbling.
-**base**        | The Select3 base module which is pulled in automatically into every build.
+**backdrop**    | This module provides the backdrop feature which is used by the dropdown. The backdrop is used to guarantee that when the dropdown is open and the user clicks outside the Selectivity area, the dropdown will close. If you omit this module, a simpler implementation is used which will still attempt to close the dropdown when the user clicks outside the area, but which may fail when the user clicks on some element that has a custom click handler which prevents the event from bubbling.
+**base**        | The Selectivity base module which is pulled in automatically into every build.
 **diacritics**  | Diacritics support. This will make sure that `"Łódź"` will match when the user searches for `"Lodz"`, for example. However, if you always query a server when searching for results, you may want to solve matching of diacritics server-side, in which case this module can be ommitted.
-**dropdown**    | Module that implements the dropdown. You will most likely want to include this, unless you only want to use Select3 without any dropdown or you provide a completely custom implementation instead.
+**dropdown**    | Module that implements the dropdown. You will most likely want to include this, unless you only want to use Selectivity without any dropdown or you provide a completely custom implementation instead.
 **email**       | Implements the 'Email' input type. This is a special case of the 'Multiple' input type with no dropdown and a specialized tokenizer for recognizing email addresses (including pasted content from address books).
 **keyboard**    | Provides keyboard support for navigating through the dropdown. If you don't use a dropdown, or are only targeting mobile, you may want to leave this module out.
 **locale**      | Localizable content pulled in by the default templates. You may or may not decide to use these with your own templates. Also used for localizable messages by the ajax module.
-**multiple**    | Implements the 'Multiple' input type. If you only want to use Select3 with single values, you can leave this out.
-**single**      | Implements the 'Single' input type. If you only want to use Select3 with multiple values, you can leave this out.
+**multiple**    | Implements the 'Multiple' input type. If you only want to use Selectivity with single values, you can leave this out.
+**single**      | Implements the 'Single' input type. If you only want to use Selectivity with multiple values, you can leave this out.
 **submenu**     | Extends the default dropdown so that multiple levels of submenus can be created.
-**templates**   | Default templates to use with Select3. If you provide your own templates, you may want to skip this.
+**templates**   | Default templates to use with Selectivity. If you provide your own templates, you may want to skip this.
 **tokenizer**   | Default tokenizer implementation. This module adds support for the `tokenSeparators` option which is used by the default tokenizer. Support for tokenizers themselves is already included in the "multiple" module, so you can omit this module if you don't want to use any tokenizers or want to specify your own tokenizer.
-**traditional** | This module allows you to convert an HTML5 &lt;select&gt; form element into a Select3 instance. The items will be initialized from the &lt;option&gt; and &lt;optgroup&gt; elements.
+**traditional** | This module allows you to convert an HTML5 &lt;select&gt; form element into a Selectivity instance. The items will be initialized from the &lt;option&gt; and &lt;optgroup&gt; elements.
 
 Note that the build system automatically resolves dependencies between modules, so you never need to
 explicitly specify that you want to include the base module, as it will be pulled in by others.
@@ -147,11 +147,11 @@ Example:
     $ gulp --modules=multiple,dropdown
 
 This will create a custom build with support for selecting multiple values and a dropdown. The build
-will be saved in `dist/select3-custom.js`. The dropdown will not feature a backdrop, there will be
-no diacritics support, you will have to provide your own templates with their localizable content,
-and you cannot use this build for creating a single-select input.
+will be saved in `dist/selectivity-custom.js`. The dropdown will not feature a backdrop, there will
+be no diacritics support, you will have to provide your own templates with their localizable
+content, and you cannot use this build for creating a single-select input.
 
-Note that because Select3 uses Browserify internally, the build will contain various `require()`
+Note that because Selectivity uses Browserify internally, the build will contain various `require()`
 calls, which may sometimes interfere with build systems that scan for those calls. If this gives
 problems for you, you can pass the `--derequire` parameter to rename those calls. Of course, if
 you're using Browserify in your own project you may even decide to skip the whole build process and
@@ -178,35 +178,33 @@ Unit tests are available and can be ran using the following command:
 Migrating from Select2
 ----------------------
 
-*Note: Select3 is not affiliated with the Select2 project.*
-
-Before you decide to migrate from Select2 to Select3, you should consider that not every feature
-supported by Select2 is supported by Select3. So check beforehand whether Select3 actually meets
-your requirements.
+Before you decide to migrate from Select2 to Selectivity, you should consider that not every feature
+supported by Select2 is supported by Selectivity. So check beforehand whether Selectivity actually
+meets your requirements.
 
 ### Unsupported features
 
-The following is an (incomplete) list of features which Select3 currently lacks:
+The following is an (incomplete) list of features which Selectivity currently lacks:
 
  * Reordering of selected items. Select2 allows reordering of selected items, for example through
-   drag 'n drop. Select3 doesn't and there are curently no plans to implement this.
- * Options. Select3 lacks some miscellaneous options supported by Select2. Notable omissions are
+   drag 'n drop. Selectivity doesn't and there are curently no plans to implement this.
+ * Options. Selectivity lacks some miscellaneous options supported by Select2. Notable omissions are
    `selectOnBlur` and `maximumSelectionSize`, among others.
- * Events. Select2 currently emits more events than Select3 does. Notable omissions are
+ * Events. Select2 currently emits more events than Selectivity does. Notable omissions are
    'select2-clearing', 'select2-focus' and 'select2-blur' among others.
 
 ### Notable differences
 
- * Select2 has explicit support for tags through the `tags` option. With Select3, tagging is also
-   supported, but works through the regular `items` option.
+ * Select2 has explicit support for tags through the `tags` option. With Selectivity, tagging is
+   also supported, but works through the regular `items` option.
  * Formatting functions. Select2 allows you to specify a wide range of `format*()` functions in the
-   options. With Select3, instead of passing various formatting functions, you can customize the
+   options. With Selectivity, instead of passing various formatting functions, you can customize the
    templates, both globally and per instance.
 
 ### Miscellaneous
 
  * If you have customized the CSS you use with Select2, you will have to take into account that you
-   may need to customize it again for Select3 as the templates are very different.
+   may need to customize it again for Selectivity as the templates are very different.
  * Some properties are named differently, even though they have very similar meaning. Examples:
    * `createSearchChoice` is now `createTokenItem`.
    * The `choice` parameter to events is now called `item`.
@@ -218,7 +216,7 @@ Patches for bugfixes are always welcome. Please accompany pull requests for bugf
 case that is fixed by the PR.
 
 If you want to implement a new feature, I advise to open an issue first in the
-[GitHub issue tracker](https://github.com/arendjr/select3/issues) so we can discuss its merits.
+[GitHub issue tracker](https://github.com/arendjr/selectivity/issues) so we can discuss its merits.
 
 In the absence of a formal style guide, please take the following into consideration:
 

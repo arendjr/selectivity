@@ -20,13 +20,13 @@ module.exports = function() {
 
     CustomBuildUtil.checkOptions(argv);
 
-    var b = browserify({ debug: argv['source-map'] === true, standalone: 'Select3' });
+    var b = browserify({ debug: argv['source-map'] === true, standalone: 'selectivity' });
 
-    fs.writeFileSync('src/select3-custom.js', argv.modules.map(function(module) {
-        return 'require("./select3-' + module + '");';
-    }).join('') + 'module.exports=require("./select3-base");');
+    fs.writeFileSync('src/selectivity-custom.js', argv.modules.map(function(module) {
+        return 'require("./selectivity-' + module + '");';
+    }).join('') + 'module.exports=require("./selectivity-base");');
 
-    b.add('./src/select3-custom.js');
+    b.add('./src/selectivity-custom.js');
 
     glob.sync('vendor/*.js').forEach(function(file) {
         var basename = path.basename(file, '.js');
@@ -49,7 +49,7 @@ module.exports = function() {
             gutil.log(gutil.colors.red('Error creating bundle: ') + error.toString());
             this.end();
         })
-        .pipe(source('select3-' + argv.bundleName + (argv.minify ? '.min' : '') + '.js'))
+        .pipe(source('selectivity-' + argv.bundleName + (argv.minify ? '.min' : '') + '.js'))
         .pipe(buffer())
         .pipe(replace(/require\(['"]jquery['"]\)/g, 'window.jQuery || window.Zepto'));
 

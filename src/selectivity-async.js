@@ -1,6 +1,6 @@
 'use strict';
 
-var Select3 = require('./select3-base');
+var Selectivity = require('./selectivity-base');
 
 var latestQueryNum = 0;
 
@@ -8,7 +8,7 @@ var latestQueryNum = 0;
  * Option listener that will discard any callbacks from the query function if another query has
  * been called afterwards. This prevents responses from remote sources arriving out-of-order.
  */
-Select3.OptionListeners.push(function(select3, options) {
+Selectivity.OptionListeners.push(function(selectivity, options) {
 
     var query = options.query;
     if (query) {

@@ -2,7 +2,7 @@
 
 var $ = require('jquery');
 
-var Select3 = require('./select3-base');
+var Selectivity = require('./selectivity-base');
 
 function replaceSelectElement($el, options) {
 
@@ -51,20 +51,20 @@ function replaceSelectElement($el, options) {
 }
 
 /**
- * Option listener providing support for converting traditional <select> boxes into Select3
+ * Option listener providing support for converting traditional <select> boxes into Selectivity
  * instances.
  */
-Select3.OptionListeners.push(function(select3, options) {
+Selectivity.OptionListeners.push(function(selectivity, options) {
 
-    var $el = select3.$el;
+    var $el = selectivity.$el;
     if ($el.is('select')) {
         if ($el.attr('autofocus')) {
             setTimeout(function() {
-                select3.focus();
+                selectivity.focus();
             }, 1);
         }
 
-        select3.$el = replaceSelectElement($el, options);
-        select3.$el[0].select3 = select3;
+        selectivity.$el = replaceSelectElement($el, options);
+        selectivity.$el[0].selectivity = selectivity;
     }
 });

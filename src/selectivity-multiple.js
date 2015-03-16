@@ -2,27 +2,27 @@
 
 var $ = require('jquery');
 
-var Select3 = require('./select3-base');
+var Selectivity = require('./selectivity-base');
 
 var KEY_BACKSPACE = 8;
 var KEY_DELETE = 46;
 var KEY_ENTER = 13;
 
 /**
- * MultipleSelect3 Constructor.
+ * MultipleSelectivity Constructor.
  *
- * @param options Options object. Accepts all options from the Select3 Base Constructor in addition
- *                to those accepted by MultipleSelect3.setOptions().
+ * @param options Options object. Accepts all options from the Selectivity Base Constructor in
+ *                addition to those accepted by MultipleSelectivity.setOptions().
  */
-function MultipleSelect3(options) {
+function MultipleSelectivity(options) {
 
-    Select3.call(this, options);
+    Selectivity.call(this, options);
 
     this.$el.html(this.template('multipleSelectInput', { enabled: this.enabled }));
 
     this._highlightedItemId = null;
 
-    this.initSearchInput(this.$('.select3-multiple-input:not(.select3-width-detector)'));
+    this.initSearchInput(this.$('.selectivity-multiple-input:not(.selectivity-width-detector)'));
 
     this._rerenderSelection();
 
@@ -45,7 +45,7 @@ function MultipleSelect3(options) {
 /**
  * Methods.
  */
-var callSuper = Select3.inherits(MultipleSelect3, {
+var callSuper = Selectivity.inherits(MultipleSelectivity, {
 
     /**
      * Adds an item to the selection, if it's not selected yet.
@@ -54,7 +54,7 @@ var callSuper = Select3.inherits(MultipleSelect3, {
      */
     add: function(item) {
 
-        var itemIsId = Select3.isValidId(item);
+        var itemIsId = Selectivity.isValidId(item);
         var id = (itemIsId ? item : this.validateItem(item) && item.id);
 
         if (this._value.indexOf(id) === -1) {
@@ -97,13 +97,13 @@ var callSuper = Select3.inherits(MultipleSelect3, {
      */
     events: {
         'change': '_rerenderSelection',
-        'change .select3-multiple-input': function() { return false; },
+        'change .selectivity-multiple-input': function() { return false; },
         'click': '_clicked',
-        'click .select3-multiple-selected-item': '_itemClicked',
-        'keydown .select3-multiple-input': '_keyHeld',
-        'keyup .select3-multiple-input': '_keyReleased',
-        'paste .select3-multiple-input': '_onPaste',
-        'select3-selected': '_resultSelected'
+        'click .selectivity-multiple-selected-item': '_itemClicked',
+        'keydown .selectivity-multiple-input': '_keyHeld',
+        'keyup .selectivity-multiple-input': '_keyReleased',
+        'paste .selectivity-multiple-input': '_onPaste',
+        'selectivity-selected': '_resultSelected'
     },
 
     /**
@@ -112,7 +112,7 @@ var callSuper = Select3.inherits(MultipleSelect3, {
     filterResults: function(results) {
 
         return results.filter(function(item) {
-            return !Select3.findById(this._data, item.id);
+            return !Selectivity.findById(this._data, item.id);
         }, this);
     },
 
@@ -153,7 +153,7 @@ var callSuper = Select3.inherits(MultipleSelect3, {
         var id = ($.type(item) === 'object' ? item.id : item);
 
         var removedItem;
-        var index = Select3.findIndexById(this._data, id);
+        var index = Selectivity.findIndexById(this._data, id);
         if (index > -1) {
             removedItem = this._data[index];
             this._data.splice(index, 1);
@@ -229,7 +229,7 @@ var callSuper = Select3.inherits(MultipleSelect3, {
      *                            createToken - Callback to create a token from the search terms.
      *                                          Should be passed an item object with 'id' and 'text'
      *                                          properties.
-     *                            options - The options set on the Select3 instance.
+     *                            options - The options set on the Selectivity instance.
      *                            Any string returned by the tokenizer function is treated as the
      *                            remainder of untokenized input.
      */
@@ -263,7 +263,7 @@ var callSuper = Select3.inherits(MultipleSelect3, {
         } else if ($.type(data) === 'array') {
             return data.map(this.validateItem.bind(this));
         } else {
-            throw new Error('Data for MultiSelect3 instance should be array');
+            throw new Error('Data for MultiSelectivity instance should be array');
         }
     },
 
@@ -279,13 +279,13 @@ var callSuper = Select3.inherits(MultipleSelect3, {
         if (value === null) {
             return [];
         } else if ($.type(value) === 'array') {
-            if (value.every(Select3.isValidId)) {
+            if (value.every(Selectivity.isValidId)) {
                 return value;
             } else {
                 throw new Error('Value contains invalid IDs');
             }
         } else {
-            throw new Error('Value for MultiSelect3 instance should be an array');
+            throw new Error('Value for MultiSelectivity instance should be an array');
         }
     },
 
@@ -351,8 +351,8 @@ var callSuper = Select3.inherits(MultipleSelect3, {
     _highlightItem: function(id) {
 
         this._highlightedItemId = id;
-        this.$('.select3-multiple-selected-item').removeClass('highlighted')
-            .filter('[data-item-id=' + Select3.quoteCssAttr(id) + ']').addClass('highlighted');
+        this.$('.selectivity-multiple-selected-item').removeClass('highlighted')
+            .filter('[data-item-id=' + Selectivity.quoteCssAttr(id) + ']').addClass('highlighted');
 
         if (this.hasKeyboard) {
             this.focus();
@@ -440,9 +440,9 @@ var callSuper = Select3.inherits(MultipleSelect3, {
             removable: !this.options.readOnly
         }, item)));
 
-        var quotedId = Select3.quoteCssAttr(item.id);
-        this.$('.select3-multiple-selected-item[data-item-id=' + quotedId + ']')
-            .find('.select3-multiple-selected-item-remove')
+        var quotedId = Selectivity.quoteCssAttr(item.id);
+        this.$('.selectivity-multiple-selected-item[data-item-id=' + quotedId + ']')
+            .find('.selectivity-multiple-selected-item-remove')
             .on('click', this._itemRemoveClicked.bind(this));
     },
 
@@ -458,10 +458,10 @@ var callSuper = Select3.inherits(MultipleSelect3, {
 
             this._scrollToBottom();
         } else if (event.removed) {
-            var quotedId = Select3.quoteCssAttr(event.removed.id);
-            this.$('.select3-multiple-selected-item[data-item-id=' + quotedId + ']').remove();
+            var quotedId = Selectivity.quoteCssAttr(event.removed.id);
+            this.$('.selectivity-multiple-selected-item[data-item-id=' + quotedId + ']').remove();
         } else {
-            this.$('.select3-multiple-selected-item').remove();
+            this.$('.selectivity-multiple-selected-item').remove();
 
             this._data.forEach(this._renderSelectedItem, this);
 
@@ -502,7 +502,7 @@ var callSuper = Select3.inherits(MultipleSelect3, {
      */
     _scrollToBottom: function() {
 
-        var $inputContainer = this.$('.select3-multiple-input-container');
+        var $inputContainer = this.$('.selectivity-multiple-input-container');
         $inputContainer.scrollTop($inputContainer.height());
     },
 
@@ -512,7 +512,7 @@ var callSuper = Select3.inherits(MultipleSelect3, {
     _updateInputWidth: function() {
 
         if (this.enabled) {
-            var $input = this.$searchInput, $widthDetector = this.$('.select3-width-detector');
+            var $input = this.$searchInput, $widthDetector = this.$('.selectivity-width-detector');
             $widthDetector.text($input.val() ||
                                 !this._data.length && this.options.placeholder ||
                                 '');
@@ -531,10 +531,10 @@ var callSuper = Select3.inherits(MultipleSelect3, {
         if (this.enabled) {
             this.$searchInput.attr('placeholder', placeholder);
         } else {
-            this.$('.select3-placeholder').text(placeholder);
+            this.$('.selectivity-placeholder').text(placeholder);
         }
     }
 
 });
 
-module.exports = Select3.InputTypes.Multiple = MultipleSelect3;
+module.exports = Selectivity.InputTypes.Multiple = MultipleSelectivity;
