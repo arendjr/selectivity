@@ -115,7 +115,7 @@ Selectivity.Templates = {
                                                 'selectivity-width-detector"></span>'
                                  : '<div class="selectivity-multiple-input ' +
                                                'selectivity-placeholder"></div>') +
-                '<div class="clearfix"></div>' +
+                '<div class="selectivity-clearfix"></div>' +
             '</div>'
         );
     },
