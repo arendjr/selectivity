@@ -52,8 +52,7 @@ function emailTokenizer(input, selection, createToken) {
     function hasToken(input) {
         if (input) {
             for (var i = 0, length = input.length; i < length; i++) {
-                var char = input[i];
-                switch (char) {
+                switch (input[i]) {
                 case ';':
                 case ',':
                 case '\n':
@@ -77,8 +76,7 @@ function emailTokenizer(input, selection, createToken) {
 
     function takeToken(input) {
         for (var i = 0, length = input.length; i < length; i++) {
-            var char = input[i];
-            switch (char) {
+            switch (input[i]) {
             case ';':
             case ',':
             case '\n':
