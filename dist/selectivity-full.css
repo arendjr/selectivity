@@ -8,7 +8,7 @@
  * working across patch versions and any changes necessary to templates will be documented in the
  * changelog.
  */
-.clearfix {
+.selectivity-clearfix {
   clear: both;
 }
 .selectivity-input {
