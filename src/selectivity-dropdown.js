@@ -262,7 +262,7 @@ $.extend(SelectivityDropdown.prototype, {
 
         this.$results.html(this.selectivity.template('error', {
             escape: options.escape !== false,
-            message: message,
+            message: message
         }));
 
         this.hasMore = false;

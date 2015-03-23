@@ -384,7 +384,7 @@ $.extend(Selectivity.prototype, {
             error: this._addResults.bind(this, []),
             offset: this.results.length,
             selectivity: this,
-            term: this.term,
+            term: this.term
         });
     },
 
@@ -473,7 +473,7 @@ $.extend(Selectivity.prototype, {
                 error: self._showError.bind(self),
                 offset: 0,
                 selectivity: self,
-                term: term,
+                term: term
             });
         }
 
