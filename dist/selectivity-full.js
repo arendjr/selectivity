@@ -4089,7 +4089,7 @@ Selectivity.Templates = {
             var placeholder = options.searchInputPlaceholder;
             searchInput = (
                 '<div class="selectivity-search-input-container">' +
-                    '<input class="selectivity-search-input"' +
+                    '<input type="text" class="selectivity-search-input"' +
                             (placeholder ? ' placeholder="' + escape(placeholder) + '"'
                                          : '') + '>' +
                 '</div>'
