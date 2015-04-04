@@ -387,6 +387,10 @@ var callSuper = Selectivity.inherits(MultipleSelectivity, {
     _keyHeld: function() {
 
         this._originalValue = this.$searchInput.val();
+
+        if (event.keyCode === KEY_ENTER && !event.ctrlKey) {
+          event.preventDefault();
+        }
     },
 
     /**
