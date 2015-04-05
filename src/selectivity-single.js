@@ -68,6 +68,19 @@ var callSuper = Selectivity.inherits(SingleSelectivity, {
     },
 
     /**
+     * @inherit
+     */
+    close: function() {
+
+        this._closing = true;
+
+        callSuper(this, 'close');
+        this.$('.selectivity-single-select-input').focus();
+
+        this._closing = false;
+    },
+
+    /**
      * Returns the correct data for a given value.
      *
      * @param value The value to get the data for. Should be an ID.
@@ -178,7 +191,7 @@ var callSuper = Selectivity.inherits(SingleSelectivity, {
      */
     _focused: function() {
 
-        if (this.enabled && this.options.showDropdown !== false) {
+        if (this.enabled && !this._closing && this.options.showDropdown !== false) {
             this.open();
         }
     },

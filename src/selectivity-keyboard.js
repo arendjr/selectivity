@@ -69,7 +69,7 @@ function listener(selectivity, $input) {
             }
 
             var result = Selectivity.findNestedById(results,
-                                                dropdown.selectivity._getItemId($results[index]));
+                                                    selectivity._getItemId($results[index]));
             if (result) {
                 dropdown.highlight(result);
                 scrollToHighlight();
