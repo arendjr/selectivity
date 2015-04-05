@@ -5,6 +5,7 @@ var Selectivity = require('./selectivity-base');
 var KEY_DOWN_ARROW = 40;
 var KEY_ENTER = 13;
 var KEY_ESCAPE = 27;
+var KEY_TAB = 9;
 var KEY_UP_ARROW = 38;
 
 /**
@@ -84,6 +85,10 @@ function listener(selectivity, $input) {
                 moveHighlight(dropdown, 1);
             } else if (event.keyCode === KEY_UP_ARROW) {
                 moveHighlight(dropdown, -1);
+            } else if (event.keyCode === KEY_TAB) {
+                setTimeout(function() {
+                    selectivity.close();
+                }, 1);
             }
         }
     }

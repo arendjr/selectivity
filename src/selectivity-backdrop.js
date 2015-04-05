@@ -12,14 +12,6 @@ $.extend(SelectivityDropdown.prototype, {
     /**
      * @inherit
      */
-    addToDom: function() {
-
-        this.$el.appendTo(this.selectivity.$el[0].ownerDocument.body);
-    },
-
-    /**
-     * @inherit
-     */
     removeCloseHandler: function() {
 
         if (this._$backdrop && !this.parentMenu) {

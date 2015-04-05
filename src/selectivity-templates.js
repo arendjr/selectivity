@@ -221,6 +221,7 @@ Selectivity.Templates = {
      */
     singleSelectInput: (
         '<div class="selectivity-single-select">' +
+            '<input type="text" class="selectivity-single-select-input">' +
             '<div class="selectivity-single-result-container"></div>' +
             '<i class="fa fa-sort-desc selectivity-caret"></i>' +
         '</div>'

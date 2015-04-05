@@ -36,6 +36,10 @@ function SingleSelectivity(options) {
             $el.css({ left: offset.left + 'px', top: top + 'px' }).width($selectEl.width());
         };
     }
+
+    if (options.showSearchInputInDropdown === false) {
+        this.initSearchInput(this.$('.selectivity-single-select-input'), { noSearch: true });
+    }
 }
 
 /**
@@ -51,6 +55,7 @@ var callSuper = Selectivity.inherits(SingleSelectivity, {
     events: {
         'change': '_rerenderSelection',
         'click': '_clicked',
+        'focus .selectivity-single-select-input': '_focused',
         'selectivity-selected': '_resultSelected'
     },
 
@@ -86,6 +91,20 @@ var callSuper = Selectivity.inherits(SingleSelectivity, {
     getValueForData: function(data) {
 
         return (data ? data.id : null);
+    },
+
+    /**
+     * @inherit
+     */
+    open: function(options) {
+
+        var showSearchInput = (this.options.showSearchInputInDropdown !== false);
+
+        callSuper(this, 'open', $.extend({ showSearchInput: showSearchInput }, options));
+
+        if (!showSearchInput) {
+            this.focus();
+        }
     },
 
     /**
@@ -147,10 +166,20 @@ var callSuper = Selectivity.inherits(SingleSelectivity, {
             if (this.dropdown) {
                 this.close();
             } else if (this.options.showDropdown !== false) {
-                this.open({ showSearchInput: this.options.showSearchInputInDropdown !== false });
+                this.open();
             }
 
             return false;
+        }
+    },
+
+    /**
+     * @private
+     */
+    _focused: function() {
+
+        if (this.enabled && this.options.showDropdown !== false) {
+            this.open();
         }
     },
 

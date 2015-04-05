@@ -346,8 +346,14 @@ $.extend(Selectivity.prototype, {
      *
      * Sets the $searchInput property, invokes all search input listeners and attaches the default
      * action of searching when something is typed.
+     *
+     * @param $input jQuery container for the input element.
+     * @param options Optional options object. May contain the following property:
+     *                noSearch - If false, no event handlers are setup to initiate searching when
+     *                           the user types in the input field. This is useful if you want to
+     *                           use the input only to handle keyboard support.
      */
-    initSearchInput: function($input) {
+    initSearchInput: function($input, options) {
 
         this.$searchInput = $input;
 
@@ -355,11 +361,13 @@ $.extend(Selectivity.prototype, {
             listener(this, $input);
         }.bind(this));
 
-        $input.on('keyup', function(event) {
-            if (!event.isDefaultPrevented()) {
-                this.search();
-            }
-        }.bind(this));
+        if (!options || options.noSearch !== false) {
+            $input.on('keyup', function(event) {
+                if (!event.isDefaultPrevented()) {
+                    this.search();
+                }
+            }.bind(this));
+        }
     },
 
     /**
