@@ -384,12 +384,12 @@ var callSuper = Selectivity.inherits(MultipleSelectivity, {
     /**
      * @private
      */
-    _keyHeld: function() {
+    _keyHeld: function(event) {
 
         this._originalValue = this.$searchInput.val();
 
         if (event.keyCode === KEY_ENTER && !event.ctrlKey) {
-          event.preventDefault();
+            event.preventDefault();
         }
     },
 
