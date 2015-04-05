@@ -259,9 +259,6 @@ var $ = window.jQuery || window.Zepto;
 
 var SelectivityDropdown = _dereq_(9);
 
-var BACKDROP_Z_INDEX = 9998;
-var FOREGROUND_Z_INDEX = 9999;
-
 /**
  * Methods.
  */
@@ -272,9 +269,7 @@ $.extend(SelectivityDropdown.prototype, {
      */
     addToDom: function() {
 
-        var $selectivityEl = this.selectivity.$el;
-        $selectivityEl.css({ zIndex: FOREGROUND_Z_INDEX, position: 'relative' });
-        this.$el.appendTo($selectivityEl[0].ownerDocument.body).css('zIndex', FOREGROUND_Z_INDEX);
+        this.$el.appendTo(this.selectivity.$el[0].ownerDocument.body);
     },
 
     /**
@@ -297,15 +292,7 @@ $.extend(SelectivityDropdown.prototype, {
         if (this.parentMenu) {
             $backdrop = this.parentMenu._$backdrop;
         } else {
-            $backdrop = $('<div>').addClass('.selectivity-backdrop').css({
-                background: 'transparent',
-                bottom: 0,
-                left: 0,
-                position: 'fixed',
-                right: 0,
-                top: 0,
-                zIndex: BACKDROP_Z_INDEX
-            });
+            $backdrop = $('<div>').addClass('selectivity-backdrop');
 
             $('body').append($backdrop);
         }
@@ -704,7 +691,7 @@ $.extend(Selectivity.prototype, {
             error: this._addResults.bind(this, []),
             offset: this.results.length,
             selectivity: this,
-            term: this.term,
+            term: this.term
         });
     },
 
@@ -793,7 +780,7 @@ $.extend(Selectivity.prototype, {
                 error: self._showError.bind(self),
                 offset: 0,
                 selectivity: self,
-                term: term,
+                term: term
             });
         }
 
@@ -2522,7 +2509,7 @@ $.extend(SelectivityDropdown.prototype, {
 
         this.$results.html(this.selectivity.template('error', {
             escape: options.escape !== false,
-            message: message,
+            message: message
         }));
 
         this.hasMore = false;
@@ -2833,8 +2820,7 @@ function emailTokenizer(input, selection, createToken) {
     function hasToken(input) {
         if (input) {
             for (var i = 0, length = input.length; i < length; i++) {
-                var char = input[i];
-                switch (char) {
+                switch (input[i]) {
                 case ';':
                 case ',':
                 case '\n':
@@ -2858,8 +2844,7 @@ function emailTokenizer(input, selection, createToken) {
 
     function takeToken(input) {
         for (var i = 0, length = input.length; i < length; i++) {
-            var char = input[i];
-            switch (char) {
+            switch (input[i]) {
             case ';':
             case ',':
             case '\n':
@@ -3486,9 +3471,13 @@ var callSuper = Selectivity.inherits(MultipleSelectivity, {
     /**
      * @private
      */
-    _keyHeld: function() {
+    _keyHeld: function(event) {
 
         this._originalValue = this.$searchInput.val();
+
+        if (event.keyCode === KEY_ENTER && !event.ctrlKey) {
+            event.preventDefault();
+        }
     },
 
     /**
@@ -4100,7 +4089,7 @@ Selectivity.Templates = {
             var placeholder = options.searchInputPlaceholder;
             searchInput = (
                 '<div class="selectivity-search-input-container">' +
-                    '<input class="selectivity-search-input"' +
+                    '<input type="text" class="selectivity-search-input"' +
                             (placeholder ? ' placeholder="' + escape(placeholder) + '"'
                                          : '') + '>' +
                 '</div>'
@@ -4177,7 +4166,7 @@ Selectivity.Templates = {
                                                 'selectivity-width-detector"></span>'
                                  : '<div class="selectivity-multiple-input ' +
                                                'selectivity-placeholder"></div>') +
-                '<div class="clearfix"></div>' +
+                '<div class="selectivity-clearfix"></div>' +
             '</div>'
         );
     },

@@ -8,7 +8,7 @@
  * working across patch versions and any changes necessary to templates will be documented in the
  * changelog.
  */
-.clearfix {
+.selectivity-clearfix {
   clear: both;
 }
 .selectivity-input {
@@ -17,6 +17,18 @@
 }
 .selectivity-placeholder {
   color: #999;
+}
+/**
+ * Backdrop.
+ */
+.selectivity-backdrop {
+  background: transparent;
+  bottom: 0;
+  left: 0;
+  position: fixed;
+  right: 0;
+  top: 0;
+  z-index: 9998;
 }
 /**
  * Dropdown
@@ -152,6 +164,9 @@ input[type="text"].selectivity-multiple-input:focus {
   min-height: 2em;
   padding: 5px;
   position: relative;
+  -moz-box-sizing: content-box;
+  -webkit-box-sizing: content-box;
+  box-sizing: content-box;
 }
 .selectivity-single-result-container {
   left: 5px;
