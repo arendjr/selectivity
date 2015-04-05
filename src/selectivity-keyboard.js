@@ -87,7 +87,7 @@ function listener(selectivity, $input) {
                 moveHighlight(dropdown, -1);
             } else if (event.keyCode === KEY_TAB) {
                 setTimeout(function() {
-                    selectivity.close();
+                    selectivity.close({ keepFocus: false });
                 }, 1);
             }
         }

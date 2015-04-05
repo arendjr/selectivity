@@ -3006,7 +3006,7 @@ function listener(selectivity, $input) {
             }
 
             var result = Selectivity.findNestedById(results,
-                                                dropdown.selectivity._getItemId($results[index]));
+                                                    selectivity._getItemId($results[index]));
             if (result) {
                 dropdown.highlight(result);
                 scrollToHighlight();
@@ -3024,7 +3024,7 @@ function listener(selectivity, $input) {
                 moveHighlight(dropdown, -1);
             } else if (event.keyCode === KEY_TAB) {
                 setTimeout(function() {
-                    selectivity.close();
+                    selectivity.close({ keepFocus: false });
                 }, 1);
             }
         }
@@ -3710,6 +3710,25 @@ var callSuper = Selectivity.inherits(SingleSelectivity, {
     },
 
     /**
+     * @inherit
+     *
+     * @param options Optional options object. May contain the following property:
+     *                keepFocus - If false, the focus won't remain on the input.
+     */
+    close: function(options) {
+
+        this._closing = true;
+
+        callSuper(this, 'close');
+
+        if (!options || options.keepFocus !== false) {
+            this.$('.selectivity-single-select-input').focus();
+        }
+
+        this._closing = false;
+    },
+
+    /**
      * Returns the correct data for a given value.
      *
      * @param value The value to get the data for. Should be an ID.
@@ -3820,7 +3839,7 @@ var callSuper = Selectivity.inherits(SingleSelectivity, {
      */
     _focused: function() {
 
-        if (this.enabled && this.options.showDropdown !== false) {
+        if (this.enabled && !this._closing && this.options.showDropdown !== false) {
             this.open();
         }
     },
