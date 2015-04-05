@@ -6,7 +6,7 @@ Modular and light-weight selection library for jQuery and Zepto.js.
 Motivation
 ----------
 
-I've used [Select2](http://ivaynberg.github.io/select2/) for a long time because I reckon it is the
+I've used [Select2](https://select2.github.io/) for a long time because I reckon it is the
 best and most feature-rich selection library out there.
 
 However, time and again I've ran into its limitations. It is difficult to customize the styling, and
