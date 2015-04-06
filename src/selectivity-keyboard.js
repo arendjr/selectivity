@@ -2,6 +2,7 @@
 
 var Selectivity = require('./selectivity-base');
 
+var KEY_BACKSPACE = 8;
 var KEY_DOWN_ARROW = 40;
 var KEY_ENTER = 13;
 var KEY_ESCAPE = 27;
@@ -46,6 +47,11 @@ function listener(selectivity, $input) {
             if (rect.top < containerRect.top || rect.bottom > containerRect.bottom) {
                 el.scrollIntoView(delta < 0);
             }
+        }
+
+        if (dropdown.submenu) {
+            moveHighlight(dropdown.submenu, delta);
+            return;
         }
 
         var results = dropdown.results;
@@ -102,7 +108,20 @@ function listener(selectivity, $input) {
         }
 
         var dropdown = selectivity.dropdown;
-        if (event.keyCode === KEY_ENTER && !event.ctrlKey) {
+        if (event.keyCode === KEY_BACKSPACE) {
+            if (!$input.val()) {
+                if (dropdown && dropdown.submenu) {
+                    var submenu = dropdown.submenu;
+                    while (submenu.submenu) {
+                        submenu = submenu.submenu;
+                    }
+                    submenu.close();
+                    selectivity.focus();
+                }
+
+                event.preventDefault();
+            }
+        } else if (event.keyCode === KEY_ENTER && !event.ctrlKey) {
             if (dropdown) {
                 dropdown.selectHighlight();
             } else if (selectivity.options.showDropdown !== false) {

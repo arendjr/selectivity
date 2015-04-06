@@ -81,7 +81,7 @@ function SelectivityDropdown(options) {
 
     this.showLoading();
 
-    this.triggerOpen();
+    setTimeout(this.triggerOpen.bind(this), 1);
 }
 
 /**
@@ -113,6 +113,10 @@ $.extend(SelectivityDropdown.prototype, {
      * Closes the dropdown.
      */
     close: function() {
+
+        if (this.options.showSearchInput) {
+            this.selectivity.removeSearchInput();
+        }
 
         this.$el.remove();
 

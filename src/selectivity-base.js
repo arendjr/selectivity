@@ -190,6 +190,8 @@ function Selectivity(options) {
 
     this._events = [];
 
+    this._$searchInputs = [];
+
     this.$el.on('selectivity-close', this._closed.bind(this));
 
     this.delegateEvents();
@@ -355,6 +357,7 @@ $.extend(Selectivity.prototype, {
      */
     initSearchInput: function($input, options) {
 
+        this._$searchInputs.push($input);
         this.$searchInput = $input;
 
         this.searchInputListeners.forEach(function(listener) {
@@ -431,6 +434,16 @@ $.extend(Selectivity.prototype, {
         if (this.dropdown) {
             this.dropdown.position();
         }
+    },
+
+    /**
+     * Removes the search input last initialized with initSearchInput().
+     */
+    removeSearchInput: function() {
+
+        this._$searchInputs.pop();
+
+        this.$searchInput = this._$searchInputs[this._$searchInputs.length - 1] || null;
     },
 
     /**
