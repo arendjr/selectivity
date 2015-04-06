@@ -1221,7 +1221,7 @@ Selectivity.findIndexById = function(array, id) {
  *
  * @return The item in the array with the given ID, or null if the item was not found.
  */
-Selectivity.findNestedById = function(array, id) {
+Selectivity.findNestedById =  null && function(array, id) {
 
     for (var i = 0, length = array.length; i < length; i++) {
         var item = array[i];

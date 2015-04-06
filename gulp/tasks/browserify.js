@@ -69,6 +69,10 @@ module.exports = function() {
         stream = stream.pipe(replace(/window\._/g, 'require("lodash")'));
     }
 
+    stream = stream.pipe(replace(/\/\*\s*hasModule\('(\w+)'\):(.*?)\*\//g, function(match, p1, p2) {
+        return (argv.modules.indexOf(p1) > -1 ? p2 : '');
+    }));
+
     if (argv.minify) {
         stream = stream.pipe(uglify());
     }
