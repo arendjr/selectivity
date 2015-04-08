@@ -102,11 +102,7 @@ $.extend(SelectivityDropdown.prototype, {
      */
     addToDom: function() {
 
-        var $anchor = this.selectivity.$el, $next;
-        while (($next = $anchor.next('.selectivity-dropdown')).length) {
-            $anchor = $next;
-        }
-        this.$el.insertAfter($anchor);
+        this.$el.appendTo(this.selectivity.$el[0].ownerDocument.body);
     },
 
     /**
