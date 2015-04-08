@@ -489,6 +489,8 @@ function Selectivity(options) {
 
     this._events = [];
 
+    this._$searchInputs = [];
+
     this.$el.on('selectivity-close', this._closed.bind(this));
 
     this.delegateEvents();
@@ -654,6 +656,7 @@ $.extend(Selectivity.prototype, {
      */
     initSearchInput: function($input, options) {
 
+        this._$searchInputs.push($input);
         this.$searchInput = $input;
 
         this.searchInputListeners.forEach(function(listener) {
@@ -730,6 +733,16 @@ $.extend(Selectivity.prototype, {
         if (this.dropdown) {
             this.dropdown.position();
         }
+    },
+
+    /**
+     * Removes the search input last initialized with initSearchInput().
+     */
+    removeSearchInput: function() {
+
+        this._$searchInputs.pop();
+
+        this.$searchInput = this._$searchInputs[this._$searchInputs.length - 1] || null;
     },
 
     /**
@@ -2328,7 +2341,7 @@ function SelectivityDropdown(options) {
 
     this.showLoading();
 
-    this.triggerOpen();
+    setTimeout(this.triggerOpen.bind(this), 1);
 }
 
 /**
@@ -2349,17 +2362,17 @@ $.extend(SelectivityDropdown.prototype, {
      */
     addToDom: function() {
 
-        var $anchor = this.selectivity.$el, $next;
-        while (($next = $anchor.next('.selectivity-dropdown')).length) {
-            $anchor = $next;
-        }
-        this.$el.insertAfter($anchor);
+        this.$el.appendTo(this.selectivity.$el[0].ownerDocument.body);
     },
 
     /**
      * Closes the dropdown.
      */
     close: function() {
+
+        if (this.options.showSearchInput) {
+            this.selectivity.removeSearchInput();
+        }
 
         this.$el.remove();
 
@@ -2939,6 +2952,7 @@ module.exports = Selectivity.InputTypes.Email = Emailselectivity;
 
 var Selectivity = _dereq_(7);
 
+var KEY_BACKSPACE = 8;
 var KEY_DOWN_ARROW = 40;
 var KEY_ENTER = 13;
 var KEY_ESCAPE = 27;
@@ -2983,6 +2997,11 @@ function listener(selectivity, $input) {
             if (rect.top < containerRect.top || rect.bottom > containerRect.bottom) {
                 el.scrollIntoView(delta < 0);
             }
+        }
+
+        if (dropdown.submenu) {
+            moveHighlight(dropdown.submenu, delta);
+            return;
         }
 
         var results = dropdown.results;
@@ -3039,7 +3058,20 @@ function listener(selectivity, $input) {
         }
 
         var dropdown = selectivity.dropdown;
-        if (event.keyCode === KEY_ENTER && !event.ctrlKey) {
+        if (event.keyCode === KEY_BACKSPACE) {
+            if (!$input.val()) {
+                if (dropdown && dropdown.submenu) {
+                    var submenu = dropdown.submenu;
+                    while (submenu.submenu) {
+                        submenu = submenu.submenu;
+                    }
+                    submenu.close();
+                    selectivity.focus();
+                }
+
+                event.preventDefault();
+            }
+        } else if (event.keyCode === KEY_ENTER && !event.ctrlKey) {
             if (dropdown) {
                 dropdown.selectHighlight();
             } else if (selectivity.options.showDropdown !== false) {
