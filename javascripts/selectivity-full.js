@@ -267,14 +267,6 @@ $.extend(SelectivityDropdown.prototype, {
     /**
      * @inherit
      */
-    addToDom: function() {
-
-        this.$el.appendTo(this.selectivity.$el[0].ownerDocument.body);
-    },
-
-    /**
-     * @inherit
-     */
     removeCloseHandler: function() {
 
         if (this._$backdrop && !this.parentMenu) {
@@ -497,6 +489,8 @@ function Selectivity(options) {
 
     this._events = [];
 
+    this._$searchInputs = [];
+
     this.$el.on('selectivity-close', this._closed.bind(this));
 
     this.delegateEvents();
@@ -653,20 +647,29 @@ $.extend(Selectivity.prototype, {
      *
      * Sets the $searchInput property, invokes all search input listeners and attaches the default
      * action of searching when something is typed.
+     *
+     * @param $input jQuery container for the input element.
+     * @param options Optional options object. May contain the following property:
+     *                noSearch - If false, no event handlers are setup to initiate searching when
+     *                           the user types in the input field. This is useful if you want to
+     *                           use the input only to handle keyboard support.
      */
-    initSearchInput: function($input) {
+    initSearchInput: function($input, options) {
 
+        this._$searchInputs.push($input);
         this.$searchInput = $input;
 
         this.searchInputListeners.forEach(function(listener) {
             listener(this, $input);
         }.bind(this));
 
-        $input.on('keyup', function(event) {
-            if (!event.isDefaultPrevented()) {
-                this.search();
-            }
-        }.bind(this));
+        if (!options || options.noSearch !== false) {
+            $input.on('keyup', function(event) {
+                if (!event.isDefaultPrevented()) {
+                    this.search();
+                }
+            }.bind(this));
+        }
     },
 
     /**
@@ -730,6 +733,16 @@ $.extend(Selectivity.prototype, {
         if (this.dropdown) {
             this.dropdown.position();
         }
+    },
+
+    /**
+     * Removes the search input last initialized with initSearchInput().
+     */
+    removeSearchInput: function() {
+
+        this._$searchInputs.pop();
+
+        this.$searchInput = this._$searchInputs[this._$searchInputs.length - 1] || null;
     },
 
     /**
@@ -1221,7 +1234,7 @@ Selectivity.findIndexById = function(array, id) {
  *
  * @return The item in the array with the given ID, or null if the item was not found.
  */
-Selectivity.findNestedById = function(array, id) {
+Selectivity.findNestedById =  null && function(array, id) {
 
     for (var i = 0, length = array.length; i < length; i++) {
         var item = array[i];
@@ -2328,7 +2341,7 @@ function SelectivityDropdown(options) {
 
     this.showLoading();
 
-    this.triggerOpen();
+    setTimeout(this.triggerOpen.bind(this), 1);
 }
 
 /**
@@ -2356,6 +2369,10 @@ $.extend(SelectivityDropdown.prototype, {
      * Closes the dropdown.
      */
     close: function() {
+
+        if (this.options.showSearchInput) {
+            this.selectivity.removeSearchInput();
+        }
 
         this.$el.remove();
 
@@ -2935,9 +2952,11 @@ module.exports = Selectivity.InputTypes.Email = Emailselectivity;
 
 var Selectivity = _dereq_(7);
 
+var KEY_BACKSPACE = 8;
 var KEY_DOWN_ARROW = 40;
 var KEY_ENTER = 13;
 var KEY_ESCAPE = 27;
+var KEY_TAB = 9;
 var KEY_UP_ARROW = 38;
 
 /**
@@ -2980,6 +2999,11 @@ function listener(selectivity, $input) {
             }
         }
 
+        if (dropdown.submenu) {
+            moveHighlight(dropdown.submenu, delta);
+            return;
+        }
+
         var results = dropdown.results;
         if (results.length) {
             var $results = dropdown.$('.selectivity-result-item');
@@ -3001,7 +3025,7 @@ function listener(selectivity, $input) {
             }
 
             var result = Selectivity.findNestedById(results,
-                                                dropdown.selectivity._getItemId($results[index]));
+                                                    selectivity._getItemId($results[index]));
             if (result) {
                 dropdown.highlight(result);
                 scrollToHighlight();
@@ -3017,6 +3041,10 @@ function listener(selectivity, $input) {
                 moveHighlight(dropdown, 1);
             } else if (event.keyCode === KEY_UP_ARROW) {
                 moveHighlight(dropdown, -1);
+            } else if (event.keyCode === KEY_TAB) {
+                setTimeout(function() {
+                    selectivity.close({ keepFocus: false });
+                }, 1);
             }
         }
     }
@@ -3030,7 +3058,20 @@ function listener(selectivity, $input) {
         }
 
         var dropdown = selectivity.dropdown;
-        if (event.keyCode === KEY_ENTER && !event.ctrlKey) {
+        if (event.keyCode === KEY_BACKSPACE) {
+            if (!$input.val()) {
+                if (dropdown && dropdown.submenu) {
+                    var submenu = dropdown.submenu;
+                    while (submenu.submenu) {
+                        submenu = submenu.submenu;
+                    }
+                    submenu.close();
+                    selectivity.focus();
+                }
+
+                event.preventDefault();
+            }
+        } else if (event.keyCode === KEY_ENTER && !event.ctrlKey) {
             if (dropdown) {
                 dropdown.selectHighlight();
             } else if (selectivity.options.showDropdown !== false) {
@@ -3669,6 +3710,10 @@ function SingleSelectivity(options) {
             $el.css({ left: offset.left + 'px', top: top + 'px' }).width($selectEl.width());
         };
     }
+
+    if (options.showSearchInputInDropdown === false) {
+        this.initSearchInput(this.$('.selectivity-single-select-input'), { noSearch: true });
+    }
 }
 
 /**
@@ -3684,6 +3729,7 @@ var callSuper = Selectivity.inherits(SingleSelectivity, {
     events: {
         'change': '_rerenderSelection',
         'click': '_clicked',
+        'focus .selectivity-single-select-input': '_focused',
         'selectivity-selected': '_resultSelected'
     },
 
@@ -3693,6 +3739,25 @@ var callSuper = Selectivity.inherits(SingleSelectivity, {
     clear: function() {
 
         this.data(null);
+    },
+
+    /**
+     * @inherit
+     *
+     * @param options Optional options object. May contain the following property:
+     *                keepFocus - If false, the focus won't remain on the input.
+     */
+    close: function(options) {
+
+        this._closing = true;
+
+        callSuper(this, 'close');
+
+        if (!options || options.keepFocus !== false) {
+            this.$('.selectivity-single-select-input').focus();
+        }
+
+        this._closing = false;
     },
 
     /**
@@ -3719,6 +3784,20 @@ var callSuper = Selectivity.inherits(SingleSelectivity, {
     getValueForData: function(data) {
 
         return (data ? data.id : null);
+    },
+
+    /**
+     * @inherit
+     */
+    open: function(options) {
+
+        var showSearchInput = (this.options.showSearchInputInDropdown !== false);
+
+        callSuper(this, 'open', $.extend({ showSearchInput: showSearchInput }, options));
+
+        if (!showSearchInput) {
+            this.focus();
+        }
     },
 
     /**
@@ -3780,10 +3859,20 @@ var callSuper = Selectivity.inherits(SingleSelectivity, {
             if (this.dropdown) {
                 this.close();
             } else if (this.options.showDropdown !== false) {
-                this.open({ showSearchInput: this.options.showSearchInputInDropdown !== false });
+                this.open();
             }
 
             return false;
+        }
+    },
+
+    /**
+     * @private
+     */
+    _focused: function() {
+
+        if (this.enabled && !this._closing && this.options.showDropdown !== false) {
+            this.open();
         }
     },
 
@@ -4272,6 +4361,7 @@ Selectivity.Templates = {
      */
     singleSelectInput: (
         '<div class="selectivity-single-select">' +
+            '<input type="text" class="selectivity-single-select-input">' +
             '<div class="selectivity-single-result-container"></div>' +
             '<i class="fa fa-sort-desc selectivity-caret"></i>' +
         '</div>'
