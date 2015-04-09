@@ -19,7 +19,7 @@ module.exports = function() {
     // Config files!
     argv.modules.unshift('variables', 'base');
 
-    fs.writeFileSync('styles/selectivity.sass', argv.modules.map(function(module) {
+    fs.writeFileSync('styles/selectivity-custom.sass', argv.modules.map(function(module) {
       if (fs.existsSync('styles/selectivity/' + module + '.sass')) {
         return "@import 'selectivity/" + module + "'\n";
       } else {
@@ -27,7 +27,7 @@ module.exports = function() {
       }
     }).join(''));
 
-    return sass('styles/selectivity.sass')
+    return sass('styles/selectivity-custom.sass')
             .on('error', function(error) {
                 gutil.log(gutil.colors.red('Error building CSS bundle: ') + error.toString());
             })
