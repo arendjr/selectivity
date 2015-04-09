@@ -10,16 +10,13 @@
 
 .selectivity-backdrop {
   background: transparent;
-  bottom: 0;
-  left: 0;
   position: fixed;
-  right: 0;
+  z-index: 9998;
   top: 0;
-  z-index: 9998; }
+  right: 0;
+  bottom: 0;
+  left: 0; }
 
-/**
- * Dropdown
- */
 .selectivity-dropdown {
   background: #fff;
   border-radius: 4px;
@@ -76,9 +73,6 @@
 .selectivity-result-label {
   padding: 7px; }
 
-/**
- * Multi-selection input.
- */
 .selectivity-multiple-input-container {
   background: #eee;
   border-radius: 2px;
