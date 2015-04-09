@@ -78,12 +78,15 @@
   border-radius: 2px;
   cursor: text;
   max-height: 10em;
+  min-height: -webkit-calc(2em + 4px);
   min-height: calc(2em + 4px);
   overflow: auto;
   padding: 5px; }
 
 .selectivity-multiple-input-container .selectivity-placeholder {
+  height: -webkit-calc(2em + 4px);
   height: calc(2em + 4px);
+  line-height: -webkit-calc(2em + 4px);
   line-height: calc(2em + 4px); }
 
 .selectivity-multiple-input,
@@ -91,6 +94,7 @@ input[type="text"].selectivity-multiple-input {
   background-color: transparent;
   border: none;
   float: left;
+  height: -webkit-calc(2em + 4px);
   height: calc(2em + 4px);
   max-width: 100%;
   outline: 0;
@@ -140,8 +144,6 @@ input[type="text"].selectivity-multiple-input {
   min-height: 2em;
   padding: 5px;
   position: relative;
-  -moz-box-sizing: content-box;
-  -webkit-box-sizing: content-box;
   box-sizing: content-box; }
 
 .selectivity-single-select-input {
