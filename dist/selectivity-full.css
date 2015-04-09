@@ -90,7 +90,7 @@
   line-height: calc(2em + 4px); }
 
 .selectivity-multiple-input,
-input[type="text"].selectivity-multiple-input {
+input[type='text'].selectivity-multiple-input {
   background-color: transparent;
   border: none;
   float: left;
@@ -100,7 +100,7 @@ input[type="text"].selectivity-multiple-input {
   outline: 0;
   padding: 0; }
   .selectivity-multiple-input:focus,
-  input[type="text"].selectivity-multiple-input:focus {
+  input[type='text'].selectivity-multiple-input:focus {
     background-color: transparent;
     box-shadow: none;
     outline: none; }
@@ -109,9 +109,9 @@ input[type="text"].selectivity-multiple-input {
   display: none; }
 
 .selectivity-multiple-input.selectivity-width-detector {
-  left: 0;
   position: absolute;
   top: -10000px;
+  left: 0;
   white-space: pre; }
 
 .selectivity-multiple-selected-item {
@@ -150,12 +150,12 @@ input[type="text"].selectivity-multiple-input {
   opacity: 0; }
 
 .selectivity-single-result-container {
+  position: absolute;
+  top: 0.8em;
+  right: 15px;
   left: 5px;
   overflow: hidden;
-  position: absolute;
-  right: 15px;
   text-overflow: ellipsis;
-  top: 0.8em;
   white-space: nowrap; }
 
 .selectivity-single-selected-item {

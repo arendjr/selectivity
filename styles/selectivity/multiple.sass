@@ -1,18 +1,18 @@
 .selectivity-multiple-input-container
-  background: #eee
-  border-radius: 2px
+  background: $selectivity-bg
+  border-radius: $selectivity-border-radius
   cursor: text
   max-height: 10em
   min-height: calc(2em + 4px)
   overflow: auto
-  padding: 5px
+  padding: $selectivity-padding
 
 .selectivity-multiple-input-container .selectivity-placeholder
   height: calc(2em + 4px)
   line-height: calc(2em + 4px)
 
 .selectivity-multiple-input,
-input[type="text"].selectivity-multiple-input
+input[type='text'].selectivity-multiple-input
   background-color: transparent
   border: none
   float: left
@@ -30,15 +30,15 @@ input[type="text"].selectivity-multiple-input
   display: none
 
 .selectivity-multiple-input.selectivity-width-detector
-  left: 0
   position: absolute
   top: -10000px
+  left: 0
   white-space: pre
 
 .selectivity-multiple-selected-item
-  background: #4484c7
-  border-radius: 3px
-  color: #fff
+  background: $selectivity-multiple-selected-bg
+  border-radius: $selectivity-multiple-selected-border-radius
+  color: $selectivity-multiple-selected-color
   cursor: default
   float: left
   line-height: 2em
@@ -52,9 +52,9 @@ input[type="text"].selectivity-multiple-input
   white-space: nowrap
 
   &.highlighted
-    background-color: #ccc
+    background-color: $selectivity-multiple-selected-highlight-bg
 
 .selectivity-multiple-selected-item-remove
-  color: #fff
+  color: $selectivity-multiple-selected-color
   cursor: pointer
   padding: 5px

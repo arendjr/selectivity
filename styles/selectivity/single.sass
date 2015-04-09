@@ -1,9 +1,9 @@
 .selectivity-single-select
-  background: #eee
-  border-radius: 2px
+  background: $selectivity-bg
+  border-radius: $selectivity-border-radius
   cursor: pointer
   min-height: 2em
-  padding: 5px
+  padding: $selectivity-padding
   position: relative
   -moz-box-sizing: content-box
   -webkit-box-sizing: content-box
@@ -13,19 +13,19 @@
   opacity: 0
 
 .selectivity-single-result-container
+  position: absolute
+  top: 0.8em
+  right: 15px
   left: 5px
   overflow: hidden
-  position: absolute
-  right: 15px
   text-overflow: ellipsis
-  top: 0.8em
   white-space: nowrap
 
 .selectivity-single-selected-item
-  color: #000
+  color: $selectivity-single-selected-color
 
 .selectivity-single-selected-item-remove
-  color: #000
+  color: $selectivity-single-selected-color
   float: right
   padding: 0 5px
 
@@ -36,8 +36,8 @@
 
 @media only screen and (max-device-width: 480px)
   .selectivity-single-select
-    background: #eee
-    border-radius: 2px
+    background: $selectivity-bg
+    border-radius: $selectivity-border-radius
 
   .selectivity-single-result-container
     right: 5px
