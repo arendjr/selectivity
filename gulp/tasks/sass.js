@@ -1,5 +1,6 @@
 'use strict';
 
+var fs = require('fs');
 var gulp = require('gulp');
 var concat = require('gulp-concat');
 var csso = require('gulp-csso');
@@ -14,6 +15,17 @@ var CustomBuildUtil = require('../custom-build-util');
 module.exports = function() {
 
     CustomBuildUtil.checkOptions(argv);
+
+    // Config files!
+    argv.modules.unshift('variables', 'base');
+
+    fs.writeFileSync('styles/selectivity.sass', argv.modules.map(function(module) {
+      if (fs.existsSync('styles/selectivity/' + module + '.sass')) {
+        return "@import 'selectivity/" + module + "'\n";
+      } else {
+        return '';
+      }
+    }).join(''));
 
     return sass('styles/selectivity.sass')
             .on('error', function(error) {
