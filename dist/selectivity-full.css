@@ -1,13 +1,3 @@
-/**
- * All CSS that comes with Selectivity.js can be used as is, or tweaked to your heart's content :)
- *
- * Please realize though there is no "API contract" regarding styling of CSS classes, meaning that
- * any customized CSS made may need to be updated without warning if you want to upgrade the
- * Selectivity version you use. You can mitigate this problem by using your own templates instead of
- * those defined in selectivity-templates.js, since templates will at the very least continue
- * working across patch versions and any changes necessary to templates will be documented in the
- * changelog.
- */
 .selectivity-clearfix {
   clear: both; }
 
@@ -18,9 +8,6 @@
 .selectivity-placeholder {
   color: #999; }
 
-/**
- * Backdrop.
- */
 .selectivity-backdrop {
   background: transparent;
   bottom: 0;
@@ -29,26 +16,6 @@
   right: 0;
   top: 0;
   z-index: 9998; }
-
-/**
- * All CSS that comes with Selectivity.js can be used as is, or tweaked to your heart's content :)
- *
- * Please realize though there is no "API contract" regarding styling of CSS classes, meaning that
- * any customized CSS made may need to be updated without warning if you want to upgrade the
- * Selectivity version you use. You can mitigate this problem by using your own templates instead of
- * those defined in selectivity-templates.js, since templates will at the very least continue
- * working across patch versions and any changes necessary to templates will be documented in the
- * changelog.
- */
-.selectivity-clearfix {
-  clear: both; }
-
-.selectivity-input {
-  display: inline-block;
-  width: 250px; }
-
-.selectivity-placeholder {
-  color: #999; }
 
 /**
  * Dropdown
@@ -108,26 +75,6 @@
 .selectivity-search-input-container,
 .selectivity-result-label {
   padding: 7px; }
-
-/**
- * All CSS that comes with Selectivity.js can be used as is, or tweaked to your heart's content :)
- *
- * Please realize though there is no "API contract" regarding styling of CSS classes, meaning that
- * any customized CSS made may need to be updated without warning if you want to upgrade the
- * Selectivity version you use. You can mitigate this problem by using your own templates instead of
- * those defined in selectivity-templates.js, since templates will at the very least continue
- * working across patch versions and any changes necessary to templates will be documented in the
- * changelog.
- */
-.selectivity-clearfix {
-  clear: both; }
-
-.selectivity-input {
-  display: inline-block;
-  width: 250px; }
-
-.selectivity-placeholder {
-  color: #999; }
 
 /**
  * Multi-selection input.
@@ -192,29 +139,6 @@ input[type="text"].selectivity-multiple-input {
   cursor: pointer;
   padding: 5px; }
 
-/**
- * All CSS that comes with Selectivity.js can be used as is, or tweaked to your heart's content :)
- *
- * Please realize though there is no "API contract" regarding styling of CSS classes, meaning that
- * any customized CSS made may need to be updated without warning if you want to upgrade the
- * Selectivity version you use. You can mitigate this problem by using your own templates instead of
- * those defined in selectivity-templates.js, since templates will at the very least continue
- * working across patch versions and any changes necessary to templates will be documented in the
- * changelog.
- */
-.selectivity-clearfix {
-  clear: both; }
-
-.selectivity-input {
-  display: inline-block;
-  width: 250px; }
-
-.selectivity-placeholder {
-  color: #999; }
-
-/**
- * Single-select input.
- */
 .selectivity-single-select {
   background: #eee;
   border-radius: 2px;
@@ -261,9 +185,6 @@ input[type="text"].selectivity-multiple-input {
 
   .selectivity-caret {
     display: none; } }
-/**
- * Submenu
- */
 .selectivity-submenu-icon {
   position: absolute;
   right: 4px; }
