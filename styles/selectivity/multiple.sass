@@ -1,0 +1,64 @@
+/**
+ * Multi-selection input
+ */
+
+.selectivity-multiple-input-container
+    background: $selectivity-bg
+    border-radius: $selectivity-border-radius
+    cursor: text
+    max-height: 10em
+    min-height: calc(2em + 4px)
+    overflow: auto
+    padding: $selectivity-padding
+
+.selectivity-multiple-input-container .selectivity-placeholder
+    height: calc(2em + 4px)
+    line-height: calc(2em + 4px)
+
+.selectivity-multiple-input,
+input[type='text'].selectivity-multiple-input
+    background-color: transparent
+    border: none
+    float: left
+    height: calc(2em + 4px)
+    max-width: 100%
+    outline: 0
+    padding: 0
+
+    &:focus
+        background-color: transparent
+        box-shadow: none
+        outline: none
+
+.selectivity-multiple-input::-ms-clear
+    display: none
+
+.selectivity-multiple-input.selectivity-width-detector
+    position: absolute
+    top: -10000px
+    left: 0
+    white-space: pre
+
+.selectivity-multiple-selected-item
+    background: $selectivity-multiple-selected-bg
+    border-radius: $selectivity-multiple-selected-border-radius
+    color: $selectivity-multiple-selected-color
+    cursor: default
+    float: left
+    line-height: 2em
+    margin: 2px
+    padding-left: 5px
+    position: relative
+    -moz-user-select: none
+    -ms-user-select: none
+    -webkit-user-select: none
+    user-select: none
+    white-space: nowrap
+
+    &.highlighted
+        background-color: $selectivity-multiple-selected-highlight-bg
+
+.selectivity-multiple-selected-item-remove
+    color: $selectivity-multiple-selected-color
+    cursor: pointer
+    padding: 5px

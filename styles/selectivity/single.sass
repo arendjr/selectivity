@@ -1,0 +1,50 @@
+/**
+ * Single-selection input
+ */
+
+.selectivity-single-select
+    background: $selectivity-bg
+    border-radius: $selectivity-border-radius
+    cursor: pointer
+    min-height: 2em
+    padding: $selectivity-padding
+    position: relative
+    -moz-box-sizing: content-box
+    -webkit-box-sizing: content-box
+    box-sizing: content-box
+
+.selectivity-single-select-input
+    opacity: 0
+
+.selectivity-single-result-container
+    position: absolute
+    top: 0.8em
+    right: 15px
+    left: 5px
+    overflow: hidden
+    text-overflow: ellipsis
+    white-space: nowrap
+
+.selectivity-single-selected-item
+    color: $selectivity-single-selected-color
+
+.selectivity-single-selected-item-remove
+    color: $selectivity-single-selected-color
+    float: right
+    padding: 0 5px
+
+.selectivity-caret
+    position: absolute
+    right: 5px
+    top: 0.7em
+
+@media only screen and (max-device-width: 480px)
+    .selectivity-single-select
+        background: $selectivity-bg
+        border-radius: $selectivity-border-radius
+
+    .selectivity-single-result-container
+        right: 5px
+
+    .selectivity-caret
+        display: none

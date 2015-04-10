@@ -1,6 +1,6 @@
 dist/selectivity-custom.*
 src/selectivity-custom.js
-styles/selectivity-custom.less
+styles/selectivity-custom.sass
 
 node_modules
 
