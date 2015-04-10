@@ -17,10 +17,10 @@ module.exports = function() {
     CustomBuildUtil.checkOptions(argv);
 
     // Config files!
-    argv.sassModules = argv.modules.slice();
-    argv.sassModules.unshift('variables', 'base');
+    var sassModules = argv.modules.slice();
+    sassModules.unshift('variables', 'base');
 
-    fs.writeFileSync('styles/selectivity-custom.sass', argv.sassModules.map(function(module) {
+    fs.writeFileSync('styles/selectivity-custom.sass', sassModules.map(function(module) {
       if (fs.existsSync('styles/selectivity/' + module + '.sass')) {
         return "@import 'selectivity/" + module + "'\n";
       } else {
