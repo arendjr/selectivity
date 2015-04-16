@@ -4457,7 +4457,6 @@ Selectivity.Templates = {
      *
      * @param options Options object containing the following properties
      *                id - Identifier for the item.
-     *                removable - Boolean whether a remove icon should be displayed.
      *                text - Text label which the user sees.
      */
     selectOptionCompliance: function(options) {
