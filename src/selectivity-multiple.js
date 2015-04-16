@@ -18,15 +18,10 @@ function MultipleSelectivity(options) {
 
     Selectivity.call(this, options);
 
-    this.$el.html(this.template('multipleSelectInput', { enabled: this.enabled }));
+    this.$el.html(this.template('multipleSelectInput', { enabled: this.enabled }))
+            .trigger('selectivity-init', 'multiple');
 
     this._highlightedItemId = null;
-
-    var selectName = this.$el.attr('data-name');
-    if (selectName) {
-        this.$el.append(this.template('selectCompliance', selectName, true));
-        this.$el.removeAttr('data-name');
-    }
 
     this.initSearchInput(this.$('.selectivity-multiple-input:not(.selectivity-width-detector)'));
 
@@ -450,11 +445,6 @@ var callSuper = Selectivity.inherits(MultipleSelectivity, {
             removable: !this.options.readOnly
         }, item)));
 
-        var $select = this.$('select');
-        if ($select.length) {
-            $select.append(this.template('selectOptionCompliance', item));
-        }
-
         var quotedId = Selectivity.quoteCssAttr(item.id);
         this.$('.selectivity-multiple-selected-item[data-item-id=' + quotedId + ']')
             .find('.selectivity-multiple-selected-item-remove')
@@ -475,11 +465,6 @@ var callSuper = Selectivity.inherits(MultipleSelectivity, {
         } else if (event.removed) {
             var quotedId = Selectivity.quoteCssAttr(event.removed.id);
             this.$('.selectivity-multiple-selected-item[data-item-id=' + quotedId + ']').remove();
-
-            var $select = this.$('select');
-            if ($select.length) {
-                $select.find('[value=' + quotedId + ']').remove();
-            }
         } else {
             this.$('.selectivity-multiple-selected-item').remove();
 

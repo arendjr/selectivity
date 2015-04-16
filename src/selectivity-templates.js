@@ -273,10 +273,12 @@ Selectivity.Templates = {
      * Renders select-box inside single-select input that was initialized on
      * traditional <select> element.
      *
+     * @param options Options object containing the following properties:
+     *                name - Name of the <select> element.
+     *                mode - Mode in which select exists, single or multiple.
      */
-    selectCompliance: function(name, isMultiple) {
-        isMultiple = isMultiple || false;
-        return ('<select name="' + name + '"' + (isMultiple ? ' multiple' : '') + '></select>');
+    selectCompliance: function(options) {
+        return ('<select name="' + options.name + '"' + (options.mode == 'multiple' ? ' multiple' : '') + '></select>');
     },
 
     /**

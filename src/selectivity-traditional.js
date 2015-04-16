@@ -55,6 +55,41 @@ function replaceSelectElement($el, options) {
     return $div;
 }
 
+function bindTraditionalSelectEvents(selectivity) {
+
+    var $el = selectivity.$el;
+
+    $el.on('selectivity-init', function(event, mode) {
+
+            $el.append(selectivity.template('selectCompliance', {name: $el.attr('data-name'), mode: mode}))
+              .removeAttr('data-name');
+        })
+        .on('change', function(event) {
+
+            var data = selectivity._data;
+            var $select = $el.find('select');
+
+            if (data instanceof Array) {
+
+                event = event || {};
+
+                if (event.added) {
+                    $select.append(selectivity.template('selectOptionCompliance', event.added));
+                } else if (event.removed) {
+                    var quotedId = Selectivity.quoteCssAttr(event.removed.id);
+
+                    $select.find('[value=' + quotedId + ']').remove();
+                }
+            } else {
+                if (data) {
+                    $select.html(selectivity.template('selectOptionCompliance', data));
+                } else {
+                    $select.empty();
+                }
+            }
+        });
+}
+
 /**
  * Option listener providing support for converting traditional <select> boxes into Selectivity
  * instances.
@@ -71,5 +106,7 @@ Selectivity.OptionListeners.push(function(selectivity, options) {
 
         selectivity.$el = replaceSelectElement($el, options);
         selectivity.$el[0].selectivity = selectivity;
+
+        bindTraditionalSelectEvents(selectivity);
     }
 });

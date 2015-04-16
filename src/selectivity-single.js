@@ -14,13 +14,8 @@ function SingleSelectivity(options) {
 
     Selectivity.call(this, options);
 
-    this.$el.html(this.template('singleSelectInput', this.options));
-
-    var selectName = this.$el.attr('data-name');
-    if (selectName) {
-        this.$el.append(this.template('selectCompliance', selectName));
-        this.$el.removeAttr('data-name');
-    }
+    this.$el.html(this.template('singleSelectInput', this.options))
+            .trigger('selectivity-init', 'single');
 
     this._rerenderSelection();
 
@@ -224,28 +219,19 @@ var callSuper = Selectivity.inherits(SingleSelectivity, {
     _rerenderSelection: function() {
 
         var $container = this.$('.selectivity-single-result-container');
-        var $select = this.$('select');
         if (this._data) {
-            var options = $.extend({
-                removable: this.options.allowClear && !this.options.readOnly
-            }, this._data);
-
-            $container.html(this.template('singleSelectedItem', options));
+            $container.html(
+                this.template('singleSelectedItem', $.extend({
+                    removable: this.options.allowClear && !this.options.readOnly
+                }, this._data))
+            );
 
             $container.find('.selectivity-single-selected-item-remove')
                       .on('click', this._itemRemoveClicked.bind(this));
-
-            if ($select.length) {
-                $select.html(this.template('selectOptionCompliance', options));
-            }
         } else {
             $container.html(
                 this.template('singleSelectPlaceholder', { placeholder: this.options.placeholder })
             );
-
-            if ($select.length) {
-                $select.empty();
-            }
         }
     },
 
