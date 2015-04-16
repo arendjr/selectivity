@@ -445,16 +445,14 @@ var callSuper = Selectivity.inherits(MultipleSelectivity, {
 
     _renderSelectedItem: function(item) {
 
-        var options = $.extend({
+        this.$searchInput.before(this.template('multipleSelectedItem', $.extend({
             highlighted: (item.id === this._highlightedItemId),
             removable: !this.options.readOnly
-        }, item);
-
-        this.$searchInput.before(this.template('multipleSelectedItem', options));
+        }, item)));
 
         var $select = this.$('select');
         if ($select.length) {
-            $select.append(this.template('selectOptionCompliance', options));
+            $select.append(this.template('selectOptionCompliance', item));
         }
 
         var quotedId = Selectivity.quoteCssAttr(item.id);
