@@ -69,16 +69,11 @@ function bindTraditionalSelectEvents(selectivity) {
             var $select = $el.find('select');
 
             if (data instanceof Array) {
+                $select.empty();
 
-                event = event || {};
-
-                if (event.added) {
-                    $select.append(selectivity.template('selectOptionCompliance', event.added));
-                } else if (event.removed) {
-                    var quotedId = Selectivity.quoteCssAttr(event.removed.id);
-
-                    $select.find('[value=' + quotedId + ']').remove();
-                }
+                data.forEach(function(item) {
+                    $select.append(selectivity.template('selectOptionCompliance', item));
+                });
             } else {
                 if (data) {
                     $select.html(selectivity.template('selectOptionCompliance', data));
