@@ -14,7 +14,9 @@ exports.testInitializationSingle = DomUtil.createDomTest(
 
         test.equal($('#selectivity-input').selectivity('value'), 3);
 
-        test.equal($input.find('select[name="my_select"] option[selected]').length, 1);
+        var $options = $input.find('select[name="my_select"] option[selected]');
+        test.equal($options.length, 1);
+        test.equal($options.first().val(), '3');
     }
 );
 
@@ -33,6 +35,9 @@ exports.testInitializationMultiple = DomUtil.createDomTest(
 
         test.deepEqual($('#selectivity-input').selectivity('value'), [3, 4]);
 
-        test.equal($input.find('select[name="my_select"] option[selected]').length, 2);
+        var $options = $input.find('select[name="my_select"] option[selected]');
+        test.equal($options.length, 2);
+        test.equal($options.first().val(), '3');
+        test.equal($options.last().val(), '4');
     }
 );
