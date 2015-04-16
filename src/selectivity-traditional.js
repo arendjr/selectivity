@@ -41,10 +41,10 @@ function replaceSelectElement($el, options) {
     options.value = value;
 
     var $div = $('<div>').attr({
-        'class': $el.attr('class'),
         'id': $el.attr('id'),
-        'name': $el.attr('name'),
-        'style': $el.attr('style')
+        'class': $el.attr('class'),
+        'style': $el.attr('style'),
+        'data-name': $el.attr('name')
     });
     $el.replaceWith($div);
     return $div;

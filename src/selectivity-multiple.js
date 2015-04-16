@@ -22,6 +22,12 @@ function MultipleSelectivity(options) {
 
     this._highlightedItemId = null;
 
+    var selectName;
+    if (selectName = this.$el.attr('data-name')) {
+        this.$el.append(this.template('multipleSelectCompliance', selectName));
+        this.$el.removeAttr('data-name');
+    }
+
     this.initSearchInput(this.$('.selectivity-multiple-input:not(.selectivity-width-detector)'));
 
     this._rerenderSelection();

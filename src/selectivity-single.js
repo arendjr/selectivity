@@ -16,6 +16,12 @@ function SingleSelectivity(options) {
 
     this.$el.html(this.template('singleSelectInput', this.options));
 
+    var selectName;
+    if (selectName = this.$el.attr('data-name')) {
+        this.$el.append(this.template('singleSelectCompliance', selectName));
+        this.$el.removeAttr('data-name');
+    }
+
     this._rerenderSelection();
 
     if (!options.positionDropdown) {

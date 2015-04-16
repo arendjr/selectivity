@@ -107,7 +107,7 @@ Selectivity.Templates = {
      */
     multipleSelectInput: function(options) {
         return (
-            '<div class="selectivity-multiple-input-container">' +
+            '<div class="selectivity-container selectivity-multiple-input-container">' +
                 (options.enabled ? '<input type="text" autocomplete="off" autocorrect="off" ' +
                                           'autocapitalize="off" ' +
                                           'class="selectivity-multiple-input">' +
@@ -148,6 +148,15 @@ Selectivity.Templates = {
                                    : '') +
             '</span>'
         );
+    },
+
+    /**
+     * Renders select-box inside single-select input that was initialized on
+     * traditional <select> element.
+     *
+     */
+    multipleSelectCompliance: function(name) {
+      return ('<select name="' + name + '" multiple></select>');
     },
 
     /**
@@ -220,12 +229,21 @@ Selectivity.Templates = {
      * the placeholder.
      */
     singleSelectInput: (
-        '<div class="selectivity-single-select">' +
+        '<div class="selectivity-container selectivity-single-select">' +
             '<input type="text" class="selectivity-single-select-input">' +
             '<div class="selectivity-single-result-container"></div>' +
             '<i class="fa fa-sort-desc selectivity-caret"></i>' +
         '</div>'
     ),
+
+    /**
+     * Renders select-box inside single-select input that was initialized on
+     * traditional <select> element.
+     *
+     */
+    singleSelectCompliance: function(name) {
+      return ('<select name="' + name + '"></select>');
+    },
 
     /**
      * Renders the placeholder for single-select input boxes.
