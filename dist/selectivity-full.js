@@ -3152,7 +3152,7 @@ function MultipleSelectivity(options) {
 
     var selectName = this.$el.attr('data-name');
     if (selectName) {
-        this.$el.append(this.template('multipleSelectCompliance', selectName));
+        this.$el.append(this.template('selectCompliance', selectName, true));
         this.$el.removeAttr('data-name');
     }
 
@@ -3596,8 +3596,6 @@ var callSuper = Selectivity.inherits(MultipleSelectivity, {
      */
     _rerenderSelection: function(event) {
 
-        var $select = this.$('select');
-
         event = event || {};
 
         if (event.added) {
@@ -3607,6 +3605,8 @@ var callSuper = Selectivity.inherits(MultipleSelectivity, {
         } else if (event.removed) {
             var quotedId = Selectivity.quoteCssAttr(event.removed.id);
             this.$('.selectivity-multiple-selected-item[data-item-id=' + quotedId + ']').remove();
+
+            var $select = this.$('select');
             if ($select.length) {
                 $select.find('[value=' + quotedId + ']').remove();
             }
@@ -3710,7 +3710,7 @@ function SingleSelectivity(options) {
 
     var selectName = this.$el.attr('data-name');
     if (selectName) {
-        this.$el.append(this.template('singleSelectCompliance', selectName));
+        this.$el.append(this.template('selectCompliance', selectName));
         this.$el.removeAttr('data-name');
     }
 
@@ -3936,7 +3936,7 @@ var callSuper = Selectivity.inherits(SingleSelectivity, {
             );
 
             if ($select.length) {
-                $select.html('');
+                $select.empty();
             }
         }
     },
@@ -4324,15 +4324,6 @@ Selectivity.Templates = {
     },
 
     /**
-     * Renders select-box inside single-select input that was initialized on
-     * traditional <select> element.
-     *
-     */
-    multipleSelectCompliance: function(name) {
-      return ('<select name="' + name + '" multiple></select>');
-    },
-
-    /**
      * Renders a message there are no results for the given query.
      *
      * @param options Options object containing the following property:
@@ -4410,15 +4401,6 @@ Selectivity.Templates = {
     ),
 
     /**
-     * Renders select-box inside single-select input that was initialized on
-     * traditional <select> element.
-     *
-     */
-    singleSelectCompliance: function(name) {
-      return ('<select name="' + name + '"></select>');
-    },
-
-    /**
      * Renders the placeholder for single-select input boxes.
      *
      * The template is expected to have a top-level element with the class
@@ -4458,6 +4440,16 @@ Selectivity.Templates = {
                 escape(options.text) +
             '</span>'
         );
+    },
+
+    /**
+     * Renders select-box inside single-select input that was initialized on
+     * traditional <select> element.
+     *
+     */
+    selectCompliance: function(name, isMultiple) {
+        isMultiple = isMultiple || false;
+        return ('<select name="' + name + '"' + (isMultiple ? ' multiple' : '') + '></select>');
     },
 
     /**
