@@ -3150,6 +3150,12 @@ function MultipleSelectivity(options) {
 
     this._highlightedItemId = null;
 
+    var selectName;
+    if (selectName = this.$el.attr('data-name')) {
+        this.$el.append(this.template('multipleSelectCompliance', selectName));
+        this.$el.removeAttr('data-name');
+    }
+
     this.initSearchInput(this.$('.selectivity-multiple-input:not(.selectivity-width-detector)'));
 
     this._rerenderSelection();
@@ -3690,6 +3696,12 @@ function SingleSelectivity(options) {
 
     this.$el.html(this.template('singleSelectInput', this.options));
 
+    var selectName;
+    if (selectName = this.$el.attr('data-name')) {
+        this.$el.append(this.template('singleSelectCompliance', selectName));
+        this.$el.removeAttr('data-name');
+    }
+
     this._rerenderSelection();
 
     if (!options.positionDropdown) {
@@ -3892,19 +3904,28 @@ var callSuper = Selectivity.inherits(SingleSelectivity, {
     _rerenderSelection: function() {
 
         var $container = this.$('.selectivity-single-result-container');
+        var $select = this.$('select');
         if (this._data) {
-            $container.html(
-                this.template('singleSelectedItem', $.extend({
-                    removable: this.options.allowClear && !this.options.readOnly
-                }, this._data))
-            );
+            var options = $.extend({
+                removable: this.options.allowClear && !this.options.readOnly
+            }, this._data);
+
+            $container.html(this.template('singleSelectedItem', options));
 
             $container.find('.selectivity-single-selected-item-remove')
                       .on('click', this._itemRemoveClicked.bind(this));
+
+            if ($select.length) {
+              $select.html(this.template('selectOptionCompliance', options));
+            }
         } else {
             $container.html(
                 this.template('singleSelectPlaceholder', { placeholder: this.options.placeholder })
             );
+
+            if ($select.length) {
+              $select.html('');
+            }
         }
     },
 
@@ -4247,7 +4268,7 @@ Selectivity.Templates = {
      */
     multipleSelectInput: function(options) {
         return (
-            '<div class="selectivity-multiple-input-container">' +
+            '<div class="selectivity-container selectivity-multiple-input-container">' +
                 (options.enabled ? '<input type="text" autocomplete="off" autocorrect="off" ' +
                                           'autocapitalize="off" ' +
                                           'class="selectivity-multiple-input">' +
@@ -4288,6 +4309,15 @@ Selectivity.Templates = {
                                    : '') +
             '</span>'
         );
+    },
+
+    /**
+     * Renders select-box inside single-select input that was initialized on
+     * traditional <select> element.
+     *
+     */
+    multipleSelectCompliance: function(name) {
+      return ('<select name="' + name + '" multiple></select>');
     },
 
     /**
@@ -4360,12 +4390,21 @@ Selectivity.Templates = {
      * the placeholder.
      */
     singleSelectInput: (
-        '<div class="selectivity-single-select">' +
+        '<div class="selectivity-container selectivity-single-select">' +
             '<input type="text" class="selectivity-single-select-input">' +
             '<div class="selectivity-single-result-container"></div>' +
             '<i class="fa fa-sort-desc selectivity-caret"></i>' +
         '</div>'
     ),
+
+    /**
+     * Renders select-box inside single-select input that was initialized on
+     * traditional <select> element.
+     *
+     */
+    singleSelectCompliance: function(name) {
+      return ('<select name="' + name + '"></select>');
+    },
 
     /**
      * Renders the placeholder for single-select input boxes.
@@ -4406,6 +4445,22 @@ Selectivity.Templates = {
                                    : '') +
                 escape(options.text) +
             '</span>'
+        );
+    },
+
+    /**
+     * Renders the selected item in compliance <select> element as <option>.
+     *
+     * @param options Options object containing the following properties
+     *                id - Identifier for the item.
+     *                removable - Boolean whether a remove icon should be displayed.
+     *                text - Text label which the user sees.
+     */
+    selectOptionCompliance: function(options) {
+        return (
+            '<option value="' + escape(options.id) + '">' +
+              escape(options.text) +
+            '</option'
         );
     }
 
@@ -4522,10 +4577,10 @@ function replaceSelectElement($el, options) {
     options.value = value;
 
     var $div = $('<div>').attr({
-        'class': $el.attr('class'),
         'id': $el.attr('id'),
-        'name': $el.attr('name'),
-        'style': $el.attr('style')
+        'class': $el.attr('class'),
+        'style': $el.attr('style'),
+        'data-name': $el.attr('name')
     });
     $el.replaceWith($div);
     return $div;
