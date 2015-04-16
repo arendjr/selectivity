@@ -224,19 +224,28 @@ var callSuper = Selectivity.inherits(SingleSelectivity, {
     _rerenderSelection: function() {
 
         var $container = this.$('.selectivity-single-result-container');
+        var $select = this.$('select');
         if (this._data) {
-            $container.html(
-                this.template('singleSelectedItem', $.extend({
-                    removable: this.options.allowClear && !this.options.readOnly
-                }, this._data))
-            );
+            var options = $.extend({
+                removable: this.options.allowClear && !this.options.readOnly
+            }, this._data);
+
+            $container.html(this.template('singleSelectedItem', options));
 
             $container.find('.selectivity-single-selected-item-remove')
                       .on('click', this._itemRemoveClicked.bind(this));
+
+            if ($select.length) {
+              $select.html(this.template('selectOptionCompliance', options));
+            }
         } else {
             $container.html(
                 this.template('singleSelectPlaceholder', { placeholder: this.options.placeholder })
             );
+
+            if ($select.length) {
+              $select.html('');
+            }
         }
     },
 

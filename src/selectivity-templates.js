@@ -285,6 +285,22 @@ Selectivity.Templates = {
                 escape(options.text) +
             '</span>'
         );
+    },
+
+    /**
+     * Renders the selected item in compliance <select> element as <option>.
+     *
+     * @param options Options object containing the following properties
+     *                id - Identifier for the item.
+     *                removable - Boolean whether a remove icon should be displayed.
+     *                text - Text label which the user sees.
+     */
+    selectOptionCompliance: function(options) {
+        return (
+            '<option value="' + escape(options.id) + '">' +
+              escape(options.text) +
+            '</option'
+        );
     }
 
 };
