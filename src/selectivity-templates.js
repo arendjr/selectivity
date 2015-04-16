@@ -107,7 +107,7 @@ Selectivity.Templates = {
      */
     multipleSelectInput: function(options) {
         return (
-            '<div class="selectivity-container selectivity-multiple-input-container">' +
+            '<div class="selectivity-multiple-input-container">' +
                 (options.enabled ? '<input type="text" autocomplete="off" autocorrect="off" ' +
                                           'autocapitalize="off" ' +
                                           'class="selectivity-multiple-input">' +
@@ -229,7 +229,7 @@ Selectivity.Templates = {
      * the placeholder.
      */
     singleSelectInput: (
-        '<div class="selectivity-container selectivity-single-select">' +
+        '<div class="selectivity-single-select">' +
             '<input type="text" class="selectivity-single-select-input">' +
             '<div class="selectivity-single-result-container"></div>' +
             '<i class="fa fa-sort-desc selectivity-caret"></i>' +
