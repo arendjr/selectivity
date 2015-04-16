@@ -16,8 +16,8 @@ function SingleSelectivity(options) {
 
     this.$el.html(this.template('singleSelectInput', this.options));
 
-    var selectName;
-    if (selectName = this.$el.attr('data-name')) {
+    var selectName = this.$el.attr('data-name');
+    if (selectName) {
         this.$el.append(this.template('singleSelectCompliance', selectName));
         this.$el.removeAttr('data-name');
     }

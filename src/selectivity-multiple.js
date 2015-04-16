@@ -22,8 +22,8 @@ function MultipleSelectivity(options) {
 
     this._highlightedItemId = null;
 
-    var selectName;
-    if (selectName = this.$el.attr('data-name')) {
+    var selectName = this.$el.attr('data-name');
+    if (selectName) {
         this.$el.append(this.template('multipleSelectCompliance', selectName));
         this.$el.removeAttr('data-name');
     }
