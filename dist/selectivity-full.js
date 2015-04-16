@@ -4433,7 +4433,7 @@ Selectivity.Templates = {
     selectOptionCompliance: function(options) {
         return (
             '<option value="' + escape(options.id) + '" selected>' +
-              escape(options.text) +
+                escape(options.text) +
             '</option>'
         );
     }
