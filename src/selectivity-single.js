@@ -236,7 +236,7 @@ var callSuper = Selectivity.inherits(SingleSelectivity, {
                       .on('click', this._itemRemoveClicked.bind(this));
 
             if ($select.length) {
-              $select.html(this.template('selectOptionCompliance', options));
+                $select.html(this.template('selectOptionCompliance', options));
             }
         } else {
             $container.html(
@@ -244,7 +244,7 @@ var callSuper = Selectivity.inherits(SingleSelectivity, {
             );
 
             if ($select.length) {
-              $select.html('');
+                $select.html('');
             }
         }
     },
