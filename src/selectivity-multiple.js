@@ -445,10 +445,17 @@ var callSuper = Selectivity.inherits(MultipleSelectivity, {
 
     _renderSelectedItem: function(item) {
 
-        this.$searchInput.before(this.template('multipleSelectedItem', $.extend({
+        var options = $.extend({
             highlighted: (item.id === this._highlightedItemId),
             removable: !this.options.readOnly
-        }, item)));
+        }, item);
+
+        this.$searchInput.before(this.template('multipleSelectedItem', options));
+
+        var $select = this.$('select');
+        if ($select.length) {
+            $select.append(this.template('selectOptionCompliance', options));
+        }
 
         var quotedId = Selectivity.quoteCssAttr(item.id);
         this.$('.selectivity-multiple-selected-item[data-item-id=' + quotedId + ']')
@@ -461,6 +468,8 @@ var callSuper = Selectivity.inherits(MultipleSelectivity, {
      */
     _rerenderSelection: function(event) {
 
+        var $select = this.$('select');
+
         event = event || {};
 
         if (event.added) {
@@ -470,6 +479,9 @@ var callSuper = Selectivity.inherits(MultipleSelectivity, {
         } else if (event.removed) {
             var quotedId = Selectivity.quoteCssAttr(event.removed.id);
             this.$('.selectivity-multiple-selected-item[data-item-id=' + quotedId + ']').remove();
+            if ($select.length) {
+                $select.find('[value=' + quotedId + ']').remove();
+            }
         } else {
             this.$('.selectivity-multiple-selected-item').remove();
 
