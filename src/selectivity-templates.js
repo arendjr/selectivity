@@ -278,7 +278,7 @@ Selectivity.Templates = {
      *                mode - Mode in which select exists, single or multiple.
      */
     selectCompliance: function(options) {
-        return ('<select name="' + options.name + '"' + (options.mode == 'multiple' ? ' multiple' : '') + '></select>');
+        return ('<select name="' + options.name + '"' + (options.mode === 'multiple' ? ' multiple' : '') + '></select>');
     },
 
     /**
