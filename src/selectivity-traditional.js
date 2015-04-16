@@ -40,9 +40,14 @@ function replaceSelectElement($el, options) {
 
     options.value = value;
 
+    var classes = ($el.attr('class') || 'selectivity-input').split(' ');
+    if (classes.indexOf('selectivity-input') === -1) {
+        classes.push('selectivity-input');
+    }
+
     var $div = $('<div>').attr({
         'id': $el.attr('id'),
-        'class': $el.attr('class'),
+        'class': classes.join(' '),
         'style': $el.attr('style'),
         'data-name': $el.attr('name')
     });
