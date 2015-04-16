@@ -64,8 +64,7 @@ function bindTraditionalSelectEvents(selectivity) {
             $el.append(selectivity.template('selectCompliance', {name: $el.attr('data-name'), mode: mode}))
               .removeAttr('data-name');
         })
-        .on('change', function(event) {
-
+        .on('selectivity-init change', function(event) {
             var data = selectivity._data;
             var $select = $el.find('select');
 
