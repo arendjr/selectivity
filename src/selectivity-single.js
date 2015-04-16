@@ -18,7 +18,7 @@ function SingleSelectivity(options) {
 
     var selectName = this.$el.attr('data-name');
     if (selectName) {
-        this.$el.append(this.template('singleSelectCompliance', selectName));
+        this.$el.append(this.template('selectCompliance', selectName));
         this.$el.removeAttr('data-name');
     }
 
@@ -244,7 +244,7 @@ var callSuper = Selectivity.inherits(SingleSelectivity, {
             );
 
             if ($select.length) {
-                $select.html('');
+                $select.empty();
             }
         }
     },

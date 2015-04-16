@@ -24,7 +24,7 @@ function MultipleSelectivity(options) {
 
     var selectName = this.$el.attr('data-name');
     if (selectName) {
-        this.$el.append(this.template('multipleSelectCompliance', selectName));
+        this.$el.append(this.template('selectCompliance', selectName, true));
         this.$el.removeAttr('data-name');
     }
 
@@ -468,8 +468,6 @@ var callSuper = Selectivity.inherits(MultipleSelectivity, {
      */
     _rerenderSelection: function(event) {
 
-        var $select = this.$('select');
-
         event = event || {};
 
         if (event.added) {
@@ -479,6 +477,8 @@ var callSuper = Selectivity.inherits(MultipleSelectivity, {
         } else if (event.removed) {
             var quotedId = Selectivity.quoteCssAttr(event.removed.id);
             this.$('.selectivity-multiple-selected-item[data-item-id=' + quotedId + ']').remove();
+
+            var $select = this.$('select');
             if ($select.length) {
                 $select.find('[value=' + quotedId + ']').remove();
             }

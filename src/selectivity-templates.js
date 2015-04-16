@@ -151,15 +151,6 @@ Selectivity.Templates = {
     },
 
     /**
-     * Renders select-box inside single-select input that was initialized on
-     * traditional <select> element.
-     *
-     */
-    multipleSelectCompliance: function(name) {
-      return ('<select name="' + name + '" multiple></select>');
-    },
-
-    /**
      * Renders a message there are no results for the given query.
      *
      * @param options Options object containing the following property:
@@ -237,15 +228,6 @@ Selectivity.Templates = {
     ),
 
     /**
-     * Renders select-box inside single-select input that was initialized on
-     * traditional <select> element.
-     *
-     */
-    singleSelectCompliance: function(name) {
-      return ('<select name="' + name + '"></select>');
-    },
-
-    /**
      * Renders the placeholder for single-select input boxes.
      *
      * The template is expected to have a top-level element with the class
@@ -285,6 +267,16 @@ Selectivity.Templates = {
                 escape(options.text) +
             '</span>'
         );
+    },
+
+    /**
+     * Renders select-box inside single-select input that was initialized on
+     * traditional <select> element.
+     *
+     */
+    selectCompliance: function(name, isMultiple) {
+        isMultiple = isMultiple || false;
+        return ('<select name="' + name + '"' + (isMultiple ? ' multiple' : '') + '></select>');
     },
 
     /**
