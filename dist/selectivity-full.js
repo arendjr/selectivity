@@ -4463,7 +4463,7 @@ Selectivity.Templates = {
         return (
             '<option value="' + escape(options.id) + '" selected>' +
               escape(options.text) +
-            '</option'
+            '</option>'
         );
     }
 
