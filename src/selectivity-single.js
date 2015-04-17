@@ -14,7 +14,8 @@ function SingleSelectivity(options) {
 
     Selectivity.call(this, options);
 
-    this.$el.html(this.template('singleSelectInput', this.options));
+    this.$el.html(this.template('singleSelectInput', this.options))
+            .trigger('selectivity-init', 'single');
 
     this._rerenderSelection();
 

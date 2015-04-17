@@ -40,14 +40,48 @@ function replaceSelectElement($el, options) {
 
     options.value = value;
 
+    var classes = ($el.attr('class') || 'selectivity-input').split(' ');
+    if (classes.indexOf('selectivity-input') === -1) {
+        classes.push('selectivity-input');
+    }
+
     var $div = $('<div>').attr({
-        'class': $el.attr('class'),
         'id': $el.attr('id'),
-        'name': $el.attr('name'),
-        'style': $el.attr('style')
+        'class': classes.join(' '),
+        'style': $el.attr('style'),
+        'data-name': $el.attr('name')
     });
     $el.replaceWith($div);
     return $div;
+}
+
+function bindTraditionalSelectEvents(selectivity) {
+
+    var $el = selectivity.$el;
+
+    $el.on('selectivity-init', function(event, mode) {
+
+            $el.append(selectivity.template('selectCompliance', {name: $el.attr('data-name'), mode: mode}))
+              .removeAttr('data-name');
+        })
+        .on('selectivity-init change', function() {
+            var data = selectivity._data;
+            var $select = $el.find('select');
+
+            if (data instanceof Array) {
+                $select.empty();
+
+                data.forEach(function(item) {
+                    $select.append(selectivity.template('selectOptionCompliance', item));
+                });
+            } else {
+                if (data) {
+                    $select.html(selectivity.template('selectOptionCompliance', data));
+                } else {
+                    $select.empty();
+                }
+            }
+        });
 }
 
 /**
@@ -66,5 +100,7 @@ Selectivity.OptionListeners.push(function(selectivity, options) {
 
         selectivity.$el = replaceSelectElement($el, options);
         selectivity.$el[0].selectivity = selectivity;
+
+        bindTraditionalSelectEvents(selectivity);
     }
 });

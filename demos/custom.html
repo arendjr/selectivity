@@ -222,7 +222,7 @@
         <h2>Enter one or more email addresses</h2>
         <p><span id="emails-input" class="selectivity-input"></span></p>
         <h2>Select a single city (initialized from a traditional &lt;select&gt; box)</h2>
-        <select id="single-select-box" class="selectivity-input" data-placeholder="No city selected">
+        <select id="single-select-box" class="selectivity-input" data-placeholder="No city selected" name="traditional[single]">
             <option>Amsterdam</option>
             <option>Antwerp</option>
             <option>Athens</option>
@@ -285,7 +285,7 @@
         </select>
         <h2>Select multiple cities by country (initialized from a traditional &lt;select&gt; box)</h2>
         <form method="post" action="#">
-            <select id="multiple-select-box" class="selectivity-input" data-placeholder="Type to search cities" multiple>
+            <select id="multiple-select-box" class="selectivity-input" data-placeholder="Type to search cities" name="traditional[multiple]" multiple>
                 <optgroup label="Austria">
                     <option value="54" data-timezone="+01:00">Vienna</option>
                 </optgroup>

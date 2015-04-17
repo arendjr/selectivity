@@ -18,7 +18,8 @@ function MultipleSelectivity(options) {
 
     Selectivity.call(this, options);
 
-    this.$el.html(this.template('multipleSelectInput', { enabled: this.enabled }));
+    this.$el.html(this.template('multipleSelectInput', { enabled: this.enabled }))
+            .trigger('selectivity-init', 'multiple');
 
     this._highlightedItemId = null;
 

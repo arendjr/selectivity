@@ -267,6 +267,33 @@ Selectivity.Templates = {
                 escape(options.text) +
             '</span>'
         );
+    },
+
+    /**
+     * Renders select-box inside single-select input that was initialized on
+     * traditional <select> element.
+     *
+     * @param options Options object containing the following properties:
+     *                name - Name of the <select> element.
+     *                mode - Mode in which select exists, single or multiple.
+     */
+    selectCompliance: function(options) {
+        return ('<select name="' + options.name + '"' + (options.mode === 'multiple' ? ' multiple' : '') + '></select>');
+    },
+
+    /**
+     * Renders the selected item in compliance <select> element as <option>.
+     *
+     * @param options Options object containing the following properties
+     *                id - Identifier for the item.
+     *                text - Text label which the user sees.
+     */
+    selectOptionCompliance: function(options) {
+        return (
+            '<option value="' + escape(options.id) + '" selected>' +
+                escape(options.text) +
+            '</option>'
+        );
     }
 
 };
