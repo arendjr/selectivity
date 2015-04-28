@@ -20,6 +20,22 @@ exports.testInitializationSingle = DomUtil.createDomTest(
     }
 );
 
+exports.testInitializationSingleWithCustomQuery = DomUtil.createDomTest(
+    ['single', 'templates', 'traditional'],
+    { indexResource: 'testcase-traditional.html' },
+    function(test, $input) {
+        $input.selectivity({
+            query: function() {}
+        });
+
+        test.deepEqual($input.selectivity('data'), { id: 3, text: 'Three' });
+
+        test.equal($input.selectivity('value'), 3);
+
+        test.equal($input[0].selectivity.items, null);
+    }
+);
+
 exports.testInitializationMultiple = DomUtil.createDomTest(
     ['multiple', 'templates', 'traditional'],
     { indexResource: 'testcase-traditional-multiple.html' },
