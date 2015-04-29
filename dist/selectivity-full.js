@@ -2964,6 +2964,9 @@ var KEY_UP_ARROW = 38;
  */
 function listener(selectivity, $input) {
 
+    var keydownCanceled = false;
+    var closeSubmenu = null;
+
     /**
      * Moves a dropdown's highlight to the next or previous result item.
      *
@@ -3037,7 +3040,20 @@ function listener(selectivity, $input) {
 
         var dropdown = selectivity.dropdown;
         if (dropdown) {
-            if (event.keyCode === KEY_DOWN_ARROW) {
+            if (event.keyCode === KEY_BACKSPACE) {
+                if (!$input.val()) {
+                    if (dropdown.submenu) {
+                        var submenu = dropdown.submenu;
+                        while (submenu.submenu) {
+                            submenu = submenu.submenu;
+                        }
+                        closeSubmenu = submenu;
+                    }
+
+                    event.preventDefault();
+                    keydownCanceled = true;
+                }
+            } else if (event.keyCode === KEY_DOWN_ARROW) {
                 moveHighlight(dropdown, 1);
             } else if (event.keyCode === KEY_UP_ARROW) {
                 moveHighlight(dropdown, -1);
@@ -3058,18 +3074,13 @@ function listener(selectivity, $input) {
         }
 
         var dropdown = selectivity.dropdown;
-        if (event.keyCode === KEY_BACKSPACE) {
-            if (!$input.val()) {
-                if (dropdown && dropdown.submenu) {
-                    var submenu = dropdown.submenu;
-                    while (submenu.submenu) {
-                        submenu = submenu.submenu;
-                    }
-                    submenu.close();
-                    selectivity.focus();
-                }
+        if (keydownCanceled) {
+            event.preventDefault();
+            keydownCanceled = false;
 
-                event.preventDefault();
+            if (closeSubmenu) {
+                closeSubmenu.close();
+                closeSubmenu = null;
             }
         } else if (event.keyCode === KEY_ENTER && !event.ctrlKey) {
             if (dropdown) {
@@ -4283,11 +4294,11 @@ Selectivity.Templates = {
         return (
             '<span class="selectivity-multiple-selected-item' + extraClass + '" ' +
                   'data-item-id="' + escape(options.id) + '">' +
-                escape(options.text) +
                 (options.removable ? '<a class="selectivity-multiple-selected-item-remove">' +
                                          '<i class="fa fa-remove"></i>' +
                                      '</a>'
                                    : '') +
+                escape(options.text) +
             '</span>'
         );
     },
@@ -4516,23 +4527,25 @@ var Selectivity = _dereq_(7);
 
 function replaceSelectElement($el, options) {
 
-    var value = (options.multiple ? [] : null);
+    var data = (options.multiple ? [] : null);
 
     var mapOptions = function() {
         var $this = $(this);
         if ($this.is('option')) {
-            var id = $this.attr('value') || $this.text();
+            var text = $this.text();
+            var id = $this.attr('value') || text;
             if ($this.prop('selected')) {
+                var item = { id: id, text: text };
                 if (options.multiple) {
-                    value.push(id);
+                    data.push(item);
                 } else {
-                    value = id;
+                    data = item;
                 }
             }
 
             return {
                 id: id,
-                text: $this.attr('label') || $this.text()
+                text: $this.attr('label') || text
             };
         } else {
             return {
@@ -4544,11 +4557,12 @@ function replaceSelectElement($el, options) {
 
     options.allowClear = ('allowClear' in options ? options.allowClear : !$el.prop('required'));
 
-    options.items = $el.children('option,optgroup').map(mapOptions).get();
+    var items = $el.children('option,optgroup').map(mapOptions).get();
+    options.items = (options.query ? null : items);
 
     options.placeholder = options.placeholder || $el.data('placeholder') || '';
 
-    options.value = value;
+    options.data = data;
 
     var classes = ($el.attr('class') || 'selectivity-input').split(' ');
     if (classes.indexOf('selectivity-input') === -1) {
