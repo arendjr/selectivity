@@ -141,11 +141,11 @@ Selectivity.Templates = {
         return (
             '<span class="selectivity-multiple-selected-item' + extraClass + '" ' +
                   'data-item-id="' + escape(options.id) + '">' +
-                escape(options.text) +
                 (options.removable ? '<a class="selectivity-multiple-selected-item-remove">' +
                                          '<i class="fa fa-remove"></i>' +
                                      '</a>'
                                    : '') +
+                escape(options.text) +
             '</span>'
         );
     },
