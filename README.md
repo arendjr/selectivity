@@ -82,6 +82,10 @@ And in your code:
     var $ = require('jquery');
     require('selectivity');
 
+### Ruby on Rails
+
+Detailed information for `selectivity-rails`, including [Installation and usage](https://github.com/msx2/selectivity-rails#installation-and-usage) are provided in the [gem's repository](https://github.com/msx2/selectivity-rails).
+
 Browser Support
 ---------------
 
