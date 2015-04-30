@@ -278,7 +278,7 @@ Selectivity.Templates = {
      *                mode - Mode in which select exists, single or multiple.
      */
     selectCompliance: function(options) {
-        if (options.mode === 'multiple' && options.name.slice(-1) !== '[]') {
+        if (options.mode === 'multiple' && options.name.slice(-2) !== '[]') {
             options.name += '[]';
         }
         return ('<select name="' + options.name + '"' + (options.mode === 'multiple' ? ' multiple' : '') + '></select>');
