@@ -6,23 +6,25 @@ var Selectivity = require('./selectivity-base');
 
 function replaceSelectElement($el, options) {
 
-    var value = (options.multiple ? [] : null);
+    var data = (options.multiple ? [] : null);
 
     var mapOptions = function() {
         var $this = $(this);
         if ($this.is('option')) {
-            var id = $this.attr('value') || $this.text();
+            var text = $this.text();
+            var id = $this.attr('value') || text;
             if ($this.prop('selected')) {
+                var item = { id: id, text: text };
                 if (options.multiple) {
-                    value.push(id);
+                    data.push(item);
                 } else {
-                    value = id;
+                    data = item;
                 }
             }
 
             return {
                 id: id,
-                text: $this.attr('label') || $this.text()
+                text: $this.attr('label') || text
             };
         } else {
             return {
@@ -34,11 +36,12 @@ function replaceSelectElement($el, options) {
 
     options.allowClear = ('allowClear' in options ? options.allowClear : !$el.prop('required'));
 
-    options.items = $el.children('option,optgroup').map(mapOptions).get();
+    var items = $el.children('option,optgroup').map(mapOptions).get();
+    options.items = (options.query ? null : items);
 
     options.placeholder = options.placeholder || $el.data('placeholder') || '';
 
-    options.value = value;
+    options.data = data;
 
     var classes = ($el.attr('class') || 'selectivity-input').split(' ');
     if (classes.indexOf('selectivity-input') === -1) {

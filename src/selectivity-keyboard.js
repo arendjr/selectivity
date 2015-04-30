@@ -14,6 +14,9 @@ var KEY_UP_ARROW = 38;
  */
 function listener(selectivity, $input) {
 
+    var keydownCanceled = false;
+    var closeSubmenu = null;
+
     /**
      * Moves a dropdown's highlight to the next or previous result item.
      *
@@ -87,7 +90,20 @@ function listener(selectivity, $input) {
 
         var dropdown = selectivity.dropdown;
         if (dropdown) {
-            if (event.keyCode === KEY_DOWN_ARROW) {
+            if (event.keyCode === KEY_BACKSPACE) {
+                if (!$input.val()) {
+                    if (dropdown.submenu) {
+                        var submenu = dropdown.submenu;
+                        while (submenu.submenu) {
+                            submenu = submenu.submenu;
+                        }
+                        closeSubmenu = submenu;
+                    }
+
+                    event.preventDefault();
+                    keydownCanceled = true;
+                }
+            } else if (event.keyCode === KEY_DOWN_ARROW) {
                 moveHighlight(dropdown, 1);
             } else if (event.keyCode === KEY_UP_ARROW) {
                 moveHighlight(dropdown, -1);
@@ -108,18 +124,13 @@ function listener(selectivity, $input) {
         }
 
         var dropdown = selectivity.dropdown;
-        if (event.keyCode === KEY_BACKSPACE) {
-            if (!$input.val()) {
-                if (dropdown && dropdown.submenu) {
-                    var submenu = dropdown.submenu;
-                    while (submenu.submenu) {
-                        submenu = submenu.submenu;
-                    }
-                    submenu.close();
-                    selectivity.focus();
-                }
+        if (keydownCanceled) {
+            event.preventDefault();
+            keydownCanceled = false;
 
-                event.preventDefault();
+            if (closeSubmenu) {
+                closeSubmenu.close();
+                closeSubmenu = null;
             }
         } else if (event.keyCode === KEY_ENTER && !event.ctrlKey) {
             if (dropdown) {

@@ -2,6 +2,8 @@ dist/selectivity-custom.*
 src/selectivity-custom.js
 styles/selectivity-custom.sass
 
+.sass-cache
+bower_components
 node_modules
 
 # OS X mess
