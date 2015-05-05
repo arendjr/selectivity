@@ -2688,8 +2688,8 @@ $.extend(SelectivityDropdown.prototype, EventDelegator.prototype, {
      */
     _loadMoreHovered: function(event) {
 
-        if (event.screenX !== this._lastMousePosition.x ||
-            event.screenY !== this._lastMousePosition.y) {
+        if (event.screenX === undefined || event.screenX !== this._lastMousePosition.x ||
+            event.screenY === undefined || event.screenY !== this._lastMousePosition.y) {
             this.highlightLoadMore();
 
             this._recordMousePosition(event);
@@ -2719,8 +2719,8 @@ $.extend(SelectivityDropdown.prototype, EventDelegator.prototype, {
      */
     _resultHovered: function(event) {
 
-        if (event.screenX !== this._lastMousePosition.x ||
-            event.screenY !== this._lastMousePosition.y) {
+        if (event.screenX === undefined || event.screenX !== this._lastMousePosition.x ||
+            event.screenY === undefined || event.screenY !== this._lastMousePosition.y) {
             var id = this.selectivity._getItemId(event);
             var item = Selectivity.findNestedById(this.results, id);
             if (item) {

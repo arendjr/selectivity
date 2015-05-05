@@ -32,7 +32,10 @@ module.exports = {
                     var $ = require('../vendor/jquery')(window);
                     var proxyquire = require('proxyquire').noCallThru();
 
-                    proxyquire('../src/selectivity-base', { 'jquery': $ });
+                    var EventDelegator = proxyquire('../src/event-delegator', { 'jquery': $ });
+
+                    var stubs = { 'jquery': $, './event-delegator': EventDelegator };
+                    proxyquire('../src/selectivity-base', stubs);
 
                     // I wish this could be solved without hard-coding the dependenies here...
                     var dependencies = {
@@ -71,8 +74,6 @@ module.exports = {
                     }
 
                     modules.forEach(insertDependencies);
-
-                    var stubs = { 'jquery': $ };
 
                     orderedModules.forEach(function(module) {
                         var selectivityModule = proxyquire('../src/selectivity-' + module, stubs);
