@@ -28,16 +28,21 @@ function MultipleSelectivity(options) {
     this._rerenderSelection();
 
     if (!options.positionDropdown) {
+        // dropdowns for multiple-value inputs should open below the select box,
+        // unless there is not enough space below, but there is space enough above, then it should
+        // open upwards
         this.options.positionDropdown = function($el, $selectEl) {
-            var offset = $selectEl.offset(),
-                elHeight = $el.height(),
+            var position = $selectEl.position(),
+                dropdownHeight = $el.height(),
                 selectHeight = $selectEl.height(),
-                bottom = $selectEl[0].getBoundingClientRect().top + selectHeight + elHeight;
+                top = $selectEl[0].getBoundingClientRect().top,
+                bottom = top + selectHeight + dropdownHeight,
+                openUpwards = (typeof window !== 'undefined' && bottom > $(window).height() &&
+                               top - dropdownHeight > 0);
 
             $el.css({
-                left: offset.left + 'px',
-                top: offset.top + (typeof window !== 'undefined' &&
-                                   bottom > $(window).height() ? -elHeight : selectHeight) + 'px'
+                left: position.left + 'px',
+                top: position.top + (openUpwards ? -dropdownHeight : selectHeight) + 'px'
             }).width($selectEl.width());
         };
     }

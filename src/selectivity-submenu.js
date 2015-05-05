@@ -162,11 +162,11 @@ var callSuper = Selectivity.inherits(SelectivitySubmenu, SelectivityDropdown, {
                 this.submenu = new Dropdown({
                     parentMenu: this,
                     position: item.submenu.positionDropdown || function($el) {
-                        var offset = $item.offset();
+                        var dropdownPosition = $dropdownEl.position();
                         var width = $dropdownEl.width();
                         $el.css({
-                            left: offset.left + width + 'px',
-                            top: offset.top + 'px'
+                            left: dropdownPosition.left + width + 'px',
+                            top: $item.position().top + dropdownPosition.top + 'px'
                         }).width(width);
                     },
                     restoreOptions: {

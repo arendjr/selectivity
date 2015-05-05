@@ -13,6 +13,10 @@
             .dev-instructions {
                 display: none;
             }
+
+            .relative {
+                position: relative;
+            }
         </style>
         <script src="../vendor/zepto.js"></script>
         <script src="../dist/selectivity-custom.js"></script>
@@ -214,9 +218,9 @@
         <h2>Select a single city by country</h2>
         <p><span id="single-input-with-labels" class="selectivity-input"></span></p>
         <h2>Select a single city by timezone</h2>
-        <p><span id="single-input-with-submenus" class="selectivity-input"></span></p>
+        <p class="relative"><span id="single-input-with-submenus" class="selectivity-input"></span></p>
         <h2>Select multiple cities</h2>
-        <p><span id="multiple-input" class="selectivity-input"></span></p>
+        <p class="relative"><span id="multiple-input" class="selectivity-input"></span></p>
         <h2>Select one or more tags</h2>
         <p><span id="tags-input" class="selectivity-input"></span></p>
         <h2>Enter one or more email addresses</h2>
