@@ -80,7 +80,7 @@ function listener(selectivity, $input) {
             var result = Selectivity.findNestedById(results,
                                                     selectivity._getItemId($results[index]));
             if (result) {
-                dropdown.highlight(result);
+                dropdown.highlight(result, { delay: !!result.submenu });
                 scrollToHighlight();
             }
         }
@@ -130,7 +130,12 @@ function listener(selectivity, $input) {
 
             if (closeSubmenu) {
                 closeSubmenu.close();
+                selectivity.focus();
                 closeSubmenu = null;
+            }
+        } else if (event.keyCode === KEY_BACKSPACE) {
+            if (!dropdown && selectivity.options.allowClear) {
+                selectivity.clear();
             }
         } else if (event.keyCode === KEY_ENTER && !event.ctrlKey) {
             if (dropdown) {

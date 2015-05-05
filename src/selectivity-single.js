@@ -84,8 +84,13 @@ var callSuper = Selectivity.inherits(SingleSelectivity, {
 
         callSuper(this, 'close');
 
+        var $input = this.$('.selectivity-single-select-input');
+        if (!this.$searchInput) {
+            this.initSearchInput($input, { noSearch: true });
+        }
+
         if (!options || options.keepFocus !== false) {
-            this.$('.selectivity-single-select-input').focus();
+            $input.focus();
         }
 
         this._closing = false;
