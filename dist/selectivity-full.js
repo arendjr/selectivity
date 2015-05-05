@@ -3065,7 +3065,7 @@ function listener(selectivity, $input) {
             var result = Selectivity.findNestedById(results,
                                                     selectivity._getItemId($results[index]));
             if (result) {
-                dropdown.highlight(result);
+                dropdown.highlight(result, { delay: !!result.submenu });
                 scrollToHighlight();
             }
         }
@@ -3115,7 +3115,12 @@ function listener(selectivity, $input) {
 
             if (closeSubmenu) {
                 closeSubmenu.close();
+                selectivity.focus();
                 closeSubmenu = null;
+            }
+        } else if (event.keyCode === KEY_BACKSPACE) {
+            if (!dropdown && selectivity.options.allowClear) {
+                selectivity.clear();
             }
         } else if (event.keyCode === KEY_ENTER && !event.ctrlKey) {
             if (dropdown) {
@@ -3810,8 +3815,13 @@ var callSuper = Selectivity.inherits(SingleSelectivity, {
 
         callSuper(this, 'close');
 
+        var $input = this.$('.selectivity-single-select-input');
+        if (!this.$searchInput) {
+            this.initSearchInput($input, { noSearch: true });
+        }
+
         if (!options || options.keepFocus !== false) {
-            this.$('.selectivity-single-select-input').focus();
+            $input.focus();
         }
 
         this._closing = false;
@@ -3998,6 +4008,8 @@ function SelectivitySubmenu(options) {
     SelectivityDropdown.call(this, options);
 
     this._closeSubmenuTimeout = 0;
+
+    this._openSubmenuTimeout = 0;
 }
 
 var callSuper = Selectivity.inherits(SelectivitySubmenu, SelectivityDropdown, {
@@ -4024,31 +4036,42 @@ var callSuper = Selectivity.inherits(SelectivitySubmenu, SelectivityDropdown, {
             this.parentMenu.submenu = null;
             this.parentMenu = null;
         }
+
+        clearTimeout(this._closeSubmenuTimeout);
+        clearTimeout(this._openSubmenuTimeout);
     },
 
     /**
      * @inherit
+     *
+     * @param options Optional options object. May contain the following property:
+     *                delay - If true, indicates any submenu should not be opened until after some
+     *                        delay.
      */
-    highlight: function(item) {
+    highlight: function(item, options) {
 
-        if (this.submenu) {
-            if (!this.highlightedResult || this.highlightedResult.id !== item.id) {
-                if (this._closeSubmenuTimeout) {
-                    clearTimeout(this._closeSubmenuTimeout);
-                }
+        if (options && options.delay) {
+            callSuper(this, 'highlight', item);
+
+            clearTimeout(this._openSubmenuTimeout);
+            this._openSubmenuTimeout = setTimeout(this._doHighlight.bind(this, item), 300);
+        } else if (this.submenu) {
+            if (this.highlightedResult && this.highlightedResult.id === item.id) {
+                this._doHighlight(item);
+            } else {
+                clearTimeout(this._closeSubmenuTimeout);
                 this._closeSubmenuTimeout = setTimeout(
                     this._closeSubmenuAndHighlight.bind(this, item), 100
                 );
-                return;
             }
         } else {
             if (this.parentMenu && this.parentMenu._closeSubmenuTimeout) {
                 clearTimeout(this.parentMenu._closeSubmenuTimeout);
                 this.parentMenu._closeSubmenuTimeout = 0;
             }
-        }
 
-        this._doHighlight(item);
+            this._doHighlight(item);
+        }
     },
 
     /**
