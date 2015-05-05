@@ -66,6 +66,8 @@ function SelectivityDropdown(options) {
         selectivity.$el.on('selectivity-selecting', this._closeProxy);
     }
 
+    this._lastMousePosition = {};
+
     this.addToDom();
     this.position();
     this.setupCloseHandler();
@@ -138,8 +140,9 @@ $.extend(SelectivityDropdown.prototype, EventDelegator.prototype, {
     events: {
         'click .selectivity-load-more': '_loadMoreClicked',
         'click .selectivity-result-item': '_resultClicked',
-        'mouseenter .selectivity-load-more': 'highlightLoadMore',
-        'mouseenter .selectivity-result-item': '_resultHovered'
+        'mouseenter .selectivity-load-more': '_loadMoreHovered',
+        'mouseenter .selectivity-result-item': '_resultHovered',
+        'mousemove': '_recordMousePosition'
     },
 
     /**
@@ -402,6 +405,27 @@ $.extend(SelectivityDropdown.prototype, EventDelegator.prototype, {
     /**
      * @private
      */
+    _loadMoreHovered: function(event) {
+
+        if (event.screenX !== this._lastMousePosition.x ||
+            event.screenY !== this._lastMousePosition.y) {
+            this.highlightLoadMore();
+
+            this._recordMousePosition(event);
+        }
+    },
+
+    /**
+     * @private
+     */
+    _recordMousePosition: function(event) {
+
+        this._lastMousePosition = { x: event.screenX, y: event.screenY };
+    },
+
+    /**
+     * @private
+     */
     _resultClicked: function(event) {
 
         this.selectItem(this.selectivity._getItemId(event));
@@ -414,10 +438,15 @@ $.extend(SelectivityDropdown.prototype, EventDelegator.prototype, {
      */
     _resultHovered: function(event) {
 
-        var id = this.selectivity._getItemId(event);
-        var item = Selectivity.findNestedById(this.results, id);
-        if (item) {
-            this.highlight(item);
+        if (event.screenX !== this._lastMousePosition.x ||
+            event.screenY !== this._lastMousePosition.y) {
+            var id = this.selectivity._getItemId(event);
+            var item = Selectivity.findNestedById(this.results, id);
+            if (item) {
+                this.highlight(item);
+            }
+
+            this._recordMousePosition(event);
         }
     },
 
