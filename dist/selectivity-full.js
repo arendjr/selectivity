@@ -1,6 +1,79 @@
 !function(e){if("object"==typeof exports&&"undefined"!=typeof module)module.exports=e();else if("function"==typeof define&&define.amd)define([],e);else{var f;"undefined"!=typeof window?f=window:"undefined"!=typeof global?f=global:"undefined"!=typeof self&&(f=self),f.selectivity=e()}}(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(_dereq_,module,exports){
-_dereq_(4);_dereq_(5);_dereq_(6);_dereq_(8);_dereq_(9);_dereq_(10);_dereq_(11);_dereq_(12);_dereq_(13);_dereq_(14);_dereq_(15);_dereq_(16);_dereq_(17);_dereq_(18);module.exports=_dereq_(7);
-},{"10":10,"11":11,"12":12,"13":13,"14":14,"15":15,"16":16,"17":17,"18":18,"4":4,"5":5,"6":6,"7":7,"8":8,"9":9}],2:[function(_dereq_,module,exports){
+_dereq_(5);_dereq_(6);_dereq_(7);_dereq_(9);_dereq_(10);_dereq_(11);_dereq_(12);_dereq_(13);_dereq_(14);_dereq_(15);_dereq_(16);_dereq_(17);_dereq_(18);_dereq_(19);module.exports=_dereq_(8);
+},{"10":10,"11":11,"12":12,"13":13,"14":14,"15":15,"16":16,"17":17,"18":18,"19":19,"5":5,"6":6,"7":7,"8":8,"9":9}],2:[function(_dereq_,module,exports){
+'use strict';
+
+var $ = window.jQuery || window.Zepto;
+
+/**
+ * Event Delegator Constructor.
+ */
+function EventDelegator() {
+
+    this._events = [];
+
+    this.delegateEvents();
+}
+
+/**
+ * Methods.
+ */
+$.extend(EventDelegator.prototype, {
+
+    /**
+     * Attaches all listeners from the events map to the instance's element.
+     *
+     * Normally, you should not have to call this method yourself as it's called automatically in
+     * the constructor.
+     */
+    delegateEvents: function() {
+
+        this.undelegateEvents();
+
+        $.each(this.events, function(event, listener) {
+            var selector, index = event.indexOf(' ');
+            if (index > -1) {
+                selector = event.slice(index + 1);
+                event = event.slice(0, index);
+            }
+
+            if ($.type(listener) === 'string') {
+                listener = this[listener];
+            }
+
+            listener = listener.bind(this);
+
+            if (selector) {
+                this.$el.on(event, selector, listener);
+            } else {
+                this.$el.on(event, listener);
+            }
+
+            this._events.push({ event: event, selector: selector, listener: listener });
+        }.bind(this));
+    },
+
+    /**
+     * Detaches all listeners from the events map from the instance's element.
+     */
+    undelegateEvents: function() {
+
+        this._events.forEach(function(event) {
+            if (event.selector) {
+                this.$el.off(event.event, event.selector, event.listener);
+            } else {
+                this.$el.off(event.event, event.listener);
+            }
+        }, this);
+
+        this._events = [];
+    }
+
+});
+
+module.exports = EventDelegator;
+
+},{"jquery":"jquery"}],3:[function(_dereq_,module,exports){
 'use strict';
 
 /**
@@ -88,7 +161,7 @@ function debounce(func, wait) {
 
 module.exports = debounce;
 
-},{}],3:[function(_dereq_,module,exports){
+},{}],4:[function(_dereq_,module,exports){
 'use strict';
 
 /**
@@ -141,16 +214,16 @@ function escape(string) {
 
 module.exports = escape;
 
-},{}],4:[function(_dereq_,module,exports){
+},{}],5:[function(_dereq_,module,exports){
 'use strict';
 
 var $ = window.jQuery || window.Zepto;
 
-var debounce = _dereq_(2);
+var debounce = _dereq_(3);
 
-var Selectivity = _dereq_(7);
+var Selectivity = _dereq_(8);
 
-_dereq_(12);
+_dereq_(13);
 
 /**
  * Option listener that implements a convenience query function for performing AJAX requests.
@@ -216,10 +289,10 @@ Selectivity.OptionListeners.unshift(function(selectivity, options) {
     }
 });
 
-},{"12":12,"2":2,"7":7,"jquery":"jquery"}],5:[function(_dereq_,module,exports){
+},{"13":13,"3":3,"8":8,"jquery":"jquery"}],6:[function(_dereq_,module,exports){
 'use strict';
 
-var Selectivity = _dereq_(7);
+var Selectivity = _dereq_(8);
 
 var latestQueryNum = 0;
 
@@ -252,12 +325,12 @@ Selectivity.OptionListeners.push(function(selectivity, options) {
     }
 });
 
-},{"7":7}],6:[function(_dereq_,module,exports){
+},{"8":8}],7:[function(_dereq_,module,exports){
 'use strict';
 
 var $ = window.jQuery || window.Zepto;
 
-var SelectivityDropdown = _dereq_(9);
+var SelectivityDropdown = _dereq_(10);
 
 /**
  * Methods.
@@ -296,10 +369,12 @@ $.extend(SelectivityDropdown.prototype, {
 
 });
 
-},{"9":9,"jquery":"jquery"}],7:[function(_dereq_,module,exports){
+},{"10":10,"jquery":"jquery"}],8:[function(_dereq_,module,exports){
 'use strict';
 
 var $ = window.jQuery || window.Zepto;
+
+var EventDelegator = _dereq_(2);
 
 /**
  * Create a new Selectivity instance or invoke a method on an instance.
@@ -487,19 +562,17 @@ function Selectivity(options) {
         this.data(options.data || null, { triggerChange: false });
     }
 
-    this._events = [];
-
     this._$searchInputs = [];
 
     this.$el.on('selectivity-close', this._closed.bind(this));
 
-    this.delegateEvents();
+    EventDelegator.call(this);
 }
 
 /**
  * Methods.
  */
-$.extend(Selectivity.prototype, {
+$.extend(Selectivity.prototype, EventDelegator.prototype, {
 
     /**
      * Convenience shortcut for this.$el.find(selector).
@@ -550,39 +623,6 @@ $.extend(Selectivity.prototype, {
                 this.triggerChange();
             }
         }
-    },
-
-    /**
-     * Attaches all listeners from the events map to the instance's element.
-     *
-     * Normally, you should not have to call this method yourself as it's called automatically in
-     * the constructor.
-     */
-    delegateEvents: function() {
-
-        this.undelegateEvents();
-
-        $.each(this.events, function(event, listener) {
-            var selector, index = event.indexOf(' ');
-            if (index > -1) {
-                selector = event.slice(index + 1);
-                event = event.slice(0, index);
-            }
-
-            if ($.type(listener) === 'string') {
-                listener = this[listener];
-            }
-
-            listener = listener.bind(this);
-
-            if (selector) {
-                this.$el.on(event, selector, listener);
-            } else {
-                this.$el.on(event, listener);
-            }
-
-            this._events.push({ event: event, selector: selector, listener: listener });
-        }.bind(this));
     },
 
     /**
@@ -969,25 +1009,6 @@ $.extend(Selectivity.prototype, {
         var event = $.Event(eventName, data || {});
         this.$el.trigger(event);
         return !event.isDefaultPrevented();
-    },
-
-    /**
-     * Detaches all listeners from the events map from the instance's element.
-     *
-     * Normally, you should not have to call this method yourself as it's called automatically in
-     * the destroy() method.
-     */
-    undelegateEvents: function() {
-
-        this._events.forEach(function(event) {
-            if (event.selector) {
-                this.$el.off(event.event, event.selector, event.listener);
-            } else {
-                this.$el.off(event.event, event.listener);
-            }
-        }, this);
-
-        this._events = [];
     },
 
     /**
@@ -1393,7 +1414,7 @@ Selectivity.transformText = function(string) {
 
 module.exports = $.fn.selectivity = Selectivity;
 
-},{"jquery":"jquery"}],8:[function(_dereq_,module,exports){
+},{"2":2,"jquery":"jquery"}],9:[function(_dereq_,module,exports){
 'use strict';
 
 var DIACRITICS = {
@@ -2238,7 +2259,7 @@ var DIACRITICS = {
     '\u03C2': '\u03C3'
 };
 
-var Selectivity = _dereq_(7);
+var Selectivity = _dereq_(8);
 var previousTransform = Selectivity.transformText;
 
 /**
@@ -2257,14 +2278,16 @@ Selectivity.transformText = function(string) {
     return previousTransform(result);
 };
 
-},{"7":7}],9:[function(_dereq_,module,exports){
+},{"8":8}],10:[function(_dereq_,module,exports){
 'use strict';
 
 var $ = window.jQuery || window.Zepto;
 
-var debounce = _dereq_(2);
+var debounce = _dereq_(3);
 
-var Selectivity = _dereq_(7);
+var EventDelegator = _dereq_(2);
+
+var Selectivity = _dereq_(8);
 
 /**
  * selectivity Dropdown Constructor.
@@ -2324,6 +2347,8 @@ function SelectivityDropdown(options) {
         selectivity.$el.on('selectivity-selecting', this._closeProxy);
     }
 
+    this._lastMousePosition = {};
+
     this.addToDom();
     this.position();
     this.setupCloseHandler();
@@ -2337,7 +2362,7 @@ function SelectivityDropdown(options) {
         selectivity.focus();
     }
 
-    this._delegateEvents();
+    EventDelegator.call(this);
 
     this.showLoading();
 
@@ -2347,7 +2372,7 @@ function SelectivityDropdown(options) {
 /**
  * Methods.
  */
-$.extend(SelectivityDropdown.prototype, {
+$.extend(SelectivityDropdown.prototype, EventDelegator.prototype, {
 
     /**
      * Convenience shortcut for this.$el.find(selector).
@@ -2362,7 +2387,12 @@ $.extend(SelectivityDropdown.prototype, {
      */
     addToDom: function() {
 
-        this.$el.appendTo(this.selectivity.$el[0].ownerDocument.body);
+        var $next;
+        var $anchor = this.selectivity.$el;
+        while (($next = $anchor.next('.selectivity-dropdown')).length) {
+            $anchor = $next;
+        }
+        this.$el.insertAfter($anchor);
     },
 
     /**
@@ -2391,8 +2421,9 @@ $.extend(SelectivityDropdown.prototype, {
     events: {
         'click .selectivity-load-more': '_loadMoreClicked',
         'click .selectivity-result-item': '_resultClicked',
-        'mouseenter .selectivity-load-more': 'highlightLoadMore',
-        'mouseenter .selectivity-result-item': '_resultHovered'
+        'mouseenter .selectivity-load-more': '_loadMoreHovered',
+        'mouseenter .selectivity-result-item': '_resultHovered',
+        'mousemove': '_recordMousePosition'
     },
 
     /**
@@ -2613,28 +2644,6 @@ $.extend(SelectivityDropdown.prototype, {
     /**
      * @private
      */
-    _delegateEvents: function() {
-
-        $.each(this.events, function(event, listener) {
-            var index = event.indexOf(' ');
-            var selector = event.slice(index + 1);
-            event = event.slice(0, index);
-
-            if ($.type(listener) === 'string') {
-                listener = this[listener];
-            }
-
-            listener = listener.bind(this);
-
-            this.$el.on(event, selector, listener);
-        }.bind(this));
-
-        this.$results.on('scroll touchmove touchend', this._scrolledProxy);
-    },
-
-    /**
-     * @private
-     */
     _highlightFirstItem: function(results) {
 
         function findFirstItem(results) {
@@ -2677,6 +2686,27 @@ $.extend(SelectivityDropdown.prototype, {
     /**
      * @private
      */
+    _loadMoreHovered: function(event) {
+
+        if (event.screenX !== this._lastMousePosition.x ||
+            event.screenY !== this._lastMousePosition.y) {
+            this.highlightLoadMore();
+
+            this._recordMousePosition(event);
+        }
+    },
+
+    /**
+     * @private
+     */
+    _recordMousePosition: function(event) {
+
+        this._lastMousePosition = { x: event.screenX, y: event.screenY };
+    },
+
+    /**
+     * @private
+     */
     _resultClicked: function(event) {
 
         this.selectItem(this.selectivity._getItemId(event));
@@ -2689,10 +2719,15 @@ $.extend(SelectivityDropdown.prototype, {
      */
     _resultHovered: function(event) {
 
-        var id = this.selectivity._getItemId(event);
-        var item = Selectivity.findNestedById(this.results, id);
-        if (item) {
-            this.highlight(item);
+        if (event.screenX !== this._lastMousePosition.x ||
+            event.screenY !== this._lastMousePosition.y) {
+            var id = this.selectivity._getItemId(event);
+            var item = Selectivity.findNestedById(this.results, id);
+            if (item) {
+                this.highlight(item);
+            }
+
+            this._recordMousePosition(event);
         }
     },
 
@@ -2782,13 +2817,13 @@ $.extend(SelectivityDropdown.prototype, {
 
 module.exports = Selectivity.Dropdown = SelectivityDropdown;
 
-},{"2":2,"7":7,"jquery":"jquery"}],10:[function(_dereq_,module,exports){
+},{"2":2,"3":3,"8":8,"jquery":"jquery"}],11:[function(_dereq_,module,exports){
 'use strict';
 
 var $ = window.jQuery || window.Zepto;
 
-var Selectivity = _dereq_(7);
-var MultipleSelectivity = _dereq_(13);
+var Selectivity = _dereq_(8);
+var MultipleSelectivity = _dereq_(14);
 
 function isValidEmail(email) {
 
@@ -2947,10 +2982,10 @@ var callSuper = Selectivity.inherits(Emailselectivity, MultipleSelectivity, {
 
 module.exports = Selectivity.InputTypes.Email = Emailselectivity;
 
-},{"13":13,"7":7,"jquery":"jquery"}],11:[function(_dereq_,module,exports){
+},{"14":14,"8":8,"jquery":"jquery"}],12:[function(_dereq_,module,exports){
 'use strict';
 
-var Selectivity = _dereq_(7);
+var Selectivity = _dereq_(8);
 
 var KEY_BACKSPACE = 8;
 var KEY_DOWN_ARROW = 40;
@@ -3111,11 +3146,11 @@ function listener(selectivity, $input) {
 
 Selectivity.SearchInputListeners.push(listener);
 
-},{"7":7}],12:[function(_dereq_,module,exports){
+},{"8":8}],13:[function(_dereq_,module,exports){
 'use strict';
 
-var escape = _dereq_(3);
-var Selectivity = _dereq_(7);
+var escape = _dereq_(4);
+var Selectivity = _dereq_(8);
 
 /**
  * Localizable elements of the Selectivity Templates.
@@ -3136,12 +3171,12 @@ Selectivity.Locale = {
 
 };
 
-},{"3":3,"7":7}],13:[function(_dereq_,module,exports){
+},{"4":4,"8":8}],14:[function(_dereq_,module,exports){
 'use strict';
 
 var $ = window.jQuery || window.Zepto;
 
-var Selectivity = _dereq_(7);
+var Selectivity = _dereq_(8);
 
 var KEY_BACKSPACE = 8;
 var KEY_DELETE = 46;
@@ -3167,16 +3202,21 @@ function MultipleSelectivity(options) {
     this._rerenderSelection();
 
     if (!options.positionDropdown) {
+        // dropdowns for multiple-value inputs should open below the select box,
+        // unless there is not enough space below, but there is space enough above, then it should
+        // open upwards
         this.options.positionDropdown = function($el, $selectEl) {
-            var offset = $selectEl.offset(),
-                elHeight = $el.height(),
+            var position = $selectEl.position(),
+                dropdownHeight = $el.height(),
                 selectHeight = $selectEl.height(),
-                bottom = $selectEl[0].getBoundingClientRect().top + selectHeight + elHeight;
+                top = $selectEl[0].getBoundingClientRect().top,
+                bottom = top + selectHeight + dropdownHeight,
+                openUpwards = (typeof window !== 'undefined' && bottom > $(window).height() &&
+                               top - dropdownHeight > 0);
 
             $el.css({
-                left: offset.left + 'px',
-                top: offset.top + (typeof window !== 'undefined' &&
-                                   bottom > $(window).height() ? -elHeight : selectHeight) + 'px'
+                left: position.left + 'px',
+                top: position.top + (openUpwards ? -dropdownHeight : selectHeight) + 'px'
             }).width($selectEl.width());
         };
     }
@@ -3683,12 +3723,12 @@ var callSuper = Selectivity.inherits(MultipleSelectivity, {
 
 module.exports = Selectivity.InputTypes.Multiple = MultipleSelectivity;
 
-},{"7":7,"jquery":"jquery"}],14:[function(_dereq_,module,exports){
+},{"8":8,"jquery":"jquery"}],15:[function(_dereq_,module,exports){
 'use strict';
 
 var $ = window.jQuery || window.Zepto;
 
-var Selectivity = _dereq_(7);
+var Selectivity = _dereq_(8);
 
 /**
  * SingleSelectivity Constructor.
@@ -3706,21 +3746,25 @@ function SingleSelectivity(options) {
     this._rerenderSelection();
 
     if (!options.positionDropdown) {
+        // dropdowns for single-value inputs should open below the select box,
+        // unless there is not enough space below, in which case the dropdown should be moved up
+        // just enough so it fits in the window, but never so much that it reaches above the top
         this.options.positionDropdown = function($el, $selectEl) {
-            var offset = $selectEl.offset(),
-                top = offset.top + $selectEl.height();
+            var position = $selectEl.position(),
+                dropdownHeight = $el.height(),
+                selectHeight = $selectEl.height(),
+                top = $selectEl[0].getBoundingClientRect().top,
+                bottom = top + selectHeight + dropdownHeight,
+                deltaUp = 0;
 
             if (typeof window !== 'undefined') {
-                var fixedOffset = $selectEl[0].getBoundingClientRect(),
-                    elHeight = $el.height(),
-                    windowHeight = $(window).height();
-
-                if (fixedOffset.top + elHeight > windowHeight) {
-                    top = Math.max(windowHeight - elHeight + offset.top - fixedOffset.top, 0);
-                }
+                deltaUp = Math.min(Math.max(bottom - $(window).height(), 0), top + selectHeight);
             }
 
-            $el.css({ left: offset.left + 'px', top: top + 'px' }).width($selectEl.width());
+            $el.css({
+                left: position.left + 'px',
+                top: (position.top + selectHeight - deltaUp) + 'px'
+            }).width($selectEl.width());
         };
     }
 
@@ -3935,11 +3979,11 @@ var callSuper = Selectivity.inherits(SingleSelectivity, {
 
 module.exports = Selectivity.InputTypes.Single = SingleSelectivity;
 
-},{"7":7,"jquery":"jquery"}],15:[function(_dereq_,module,exports){
+},{"8":8,"jquery":"jquery"}],16:[function(_dereq_,module,exports){
 'use strict';
 
-var Selectivity = _dereq_(7);
-var SelectivityDropdown = _dereq_(9);
+var Selectivity = _dereq_(8);
+var SelectivityDropdown = _dereq_(10);
 
 /**
  * Extended dropdown that supports submenus.
@@ -4100,11 +4144,11 @@ var callSuper = Selectivity.inherits(SelectivitySubmenu, SelectivityDropdown, {
                 this.submenu = new Dropdown({
                     parentMenu: this,
                     position: item.submenu.positionDropdown || function($el) {
-                        var offset = $item.offset();
+                        var dropdownPosition = $dropdownEl.position();
                         var width = $dropdownEl.width();
                         $el.css({
-                            left: offset.left + width + 'px',
-                            top: offset.top + 'px'
+                            left: dropdownPosition.left + width + 'px',
+                            top: $item.position().top + dropdownPosition.top + 'px'
                         }).width(width);
                     },
                     restoreOptions: {
@@ -4150,14 +4194,14 @@ Selectivity.findNestedById = function(array, id) {
 
 module.exports = SelectivitySubmenu;
 
-},{"7":7,"9":9}],16:[function(_dereq_,module,exports){
+},{"10":10,"8":8}],17:[function(_dereq_,module,exports){
 'use strict';
 
-var escape = _dereq_(3);
+var escape = _dereq_(4);
 
-var Selectivity = _dereq_(7);
+var Selectivity = _dereq_(8);
 
-_dereq_(12);
+_dereq_(13);
 
 /**
  * Default set of templates to use with Selectivity.js.
@@ -4454,12 +4498,12 @@ Selectivity.Templates = {
 
 };
 
-},{"12":12,"3":3,"7":7}],17:[function(_dereq_,module,exports){
+},{"13":13,"4":4,"8":8}],18:[function(_dereq_,module,exports){
 'use strict';
 
 var $ = window.jQuery || window.Zepto;
 
-var Selectivity = _dereq_(7);
+var Selectivity = _dereq_(8);
 
 function defaultTokenizer(input, selection, createToken, options) {
 
@@ -4521,12 +4565,12 @@ Selectivity.OptionListeners.push(function(selectivity, options) {
     }
 });
 
-},{"7":7,"jquery":"jquery"}],18:[function(_dereq_,module,exports){
+},{"8":8,"jquery":"jquery"}],19:[function(_dereq_,module,exports){
 'use strict';
 
 var $ = window.jQuery || window.Zepto;
 
-var Selectivity = _dereq_(7);
+var Selectivity = _dereq_(8);
 
 function replaceSelectElement($el, options) {
 
@@ -4632,5 +4676,5 @@ Selectivity.OptionListeners.push(function(selectivity, options) {
     }
 });
 
-},{"7":7,"jquery":"jquery"}]},{},[1])(1)
+},{"8":8,"jquery":"jquery"}]},{},[1])(1)
 });
