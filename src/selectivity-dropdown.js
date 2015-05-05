@@ -4,6 +4,8 @@ var $ = require('jquery');
 
 var debounce = require('./lodash/debounce');
 
+var EventDelegator = require('./event-delegator');
+
 var Selectivity = require('./selectivity-base');
 
 /**
@@ -77,7 +79,7 @@ function SelectivityDropdown(options) {
         selectivity.focus();
     }
 
-    this._delegateEvents();
+    EventDelegator.call(this);
 
     this.showLoading();
 
@@ -87,7 +89,7 @@ function SelectivityDropdown(options) {
 /**
  * Methods.
  */
-$.extend(SelectivityDropdown.prototype, {
+$.extend(SelectivityDropdown.prototype, EventDelegator.prototype, {
 
     /**
      * Convenience shortcut for this.$el.find(selector).
@@ -353,28 +355,6 @@ $.extend(SelectivityDropdown.prototype, {
     triggerOpen: function() {
 
         this.selectivity.$el.trigger('selectivity-open');
-    },
-
-    /**
-     * @private
-     */
-    _delegateEvents: function() {
-
-        $.each(this.events, function(event, listener) {
-            var index = event.indexOf(' ');
-            var selector = event.slice(index + 1);
-            event = event.slice(0, index);
-
-            if ($.type(listener) === 'string') {
-                listener = this[listener];
-            }
-
-            listener = listener.bind(this);
-
-            this.$el.on(event, selector, listener);
-        }.bind(this));
-
-        this.$results.on('scroll touchmove touchend', this._scrolledProxy);
     },
 
     /**

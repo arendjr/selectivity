@@ -2,6 +2,8 @@
 
 var $ = require('jquery');
 
+var EventDelegator = require('./event-delegator');
+
 /**
  * Create a new Selectivity instance or invoke a method on an instance.
  *
@@ -188,19 +190,17 @@ function Selectivity(options) {
         this.data(options.data || null, { triggerChange: false });
     }
 
-    this._events = [];
-
     this._$searchInputs = [];
 
     this.$el.on('selectivity-close', this._closed.bind(this));
 
-    this.delegateEvents();
+    EventDelegator.call(this);
 }
 
 /**
  * Methods.
  */
-$.extend(Selectivity.prototype, {
+$.extend(Selectivity.prototype, EventDelegator.prototype, {
 
     /**
      * Convenience shortcut for this.$el.find(selector).
@@ -251,39 +251,6 @@ $.extend(Selectivity.prototype, {
                 this.triggerChange();
             }
         }
-    },
-
-    /**
-     * Attaches all listeners from the events map to the instance's element.
-     *
-     * Normally, you should not have to call this method yourself as it's called automatically in
-     * the constructor.
-     */
-    delegateEvents: function() {
-
-        this.undelegateEvents();
-
-        $.each(this.events, function(event, listener) {
-            var selector, index = event.indexOf(' ');
-            if (index > -1) {
-                selector = event.slice(index + 1);
-                event = event.slice(0, index);
-            }
-
-            if ($.type(listener) === 'string') {
-                listener = this[listener];
-            }
-
-            listener = listener.bind(this);
-
-            if (selector) {
-                this.$el.on(event, selector, listener);
-            } else {
-                this.$el.on(event, listener);
-            }
-
-            this._events.push({ event: event, selector: selector, listener: listener });
-        }.bind(this));
     },
 
     /**
@@ -670,25 +637,6 @@ $.extend(Selectivity.prototype, {
         var event = $.Event(eventName, data || {});
         this.$el.trigger(event);
         return !event.isDefaultPrevented();
-    },
-
-    /**
-     * Detaches all listeners from the events map from the instance's element.
-     *
-     * Normally, you should not have to call this method yourself as it's called automatically in
-     * the destroy() method.
-     */
-    undelegateEvents: function() {
-
-        this._events.forEach(function(event) {
-            if (event.selector) {
-                this.$el.off(event.event, event.selector, event.listener);
-            } else {
-                this.$el.off(event.event, event.listener);
-            }
-        }, this);
-
-        this._events = [];
     },
 
     /**
