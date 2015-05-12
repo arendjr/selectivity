@@ -35,10 +35,11 @@ function SingleSelectivity(options) {
                 deltaUp = Math.min(Math.max(bottom - $(window).height(), 0), top + selectHeight);
             }
 
+            var width = window.jQuery ? $selectEl.outerWidth() : $selectEl.width();
             $el.css({
                 left: position.left + 'px',
                 top: (position.top + selectHeight - deltaUp) + 'px'
-            }).width($selectEl.width());
+            }).width(width);
         };
     }
 

@@ -40,10 +40,11 @@ function MultipleSelectivity(options) {
                 openUpwards = (typeof window !== 'undefined' && bottom > $(window).height() &&
                                top - dropdownHeight > 0);
 
+            var width = window.jQuery ? $selectEl.outerWidth() : $selectEl.width();
             $el.css({
                 left: position.left + 'px',
                 top: position.top + (openUpwards ? -dropdownHeight : selectHeight) + 'px'
-            }).width($selectEl.width());
+            }).width(width);
         };
     }
 }
