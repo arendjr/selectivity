@@ -3219,10 +3219,11 @@ function MultipleSelectivity(options) {
                 openUpwards = (typeof window !== 'undefined' && bottom > $(window).height() &&
                                top - dropdownHeight > 0);
 
+            var width = $selectEl.outerWidth ? $selectEl.outerWidth() : $selectEl.width();
             $el.css({
                 left: position.left + 'px',
                 top: position.top + (openUpwards ? -dropdownHeight : selectHeight) + 'px'
-            }).width($selectEl.width());
+            }).width(width);
         };
     }
 }
@@ -3766,10 +3767,11 @@ function SingleSelectivity(options) {
                 deltaUp = Math.min(Math.max(bottom - $(window).height(), 0), top + selectHeight);
             }
 
+            var width = $selectEl.outerWidth ? $selectEl.outerWidth() : $selectEl.width();
             $el.css({
                 left: position.left + 'px',
                 top: (position.top + selectHeight - deltaUp) + 'px'
-            }).width($selectEl.width());
+            }).width(width);
         };
     }
 
