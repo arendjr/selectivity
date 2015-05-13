@@ -40,7 +40,7 @@ function MultipleSelectivity(options) {
                 openUpwards = (typeof window !== 'undefined' && bottom > $(window).height() &&
                                top - dropdownHeight > 0);
 
-            var width = (typeof $selectEl.outerWidth !== 'undefined') ? $selectEl.outerWidth() : $selectEl.width();
+            var width = $selectEl.outerWidth ? $selectEl.outerWidth() : $selectEl.width();
             $el.css({
                 left: position.left + 'px',
                 top: position.top + (openUpwards ? -dropdownHeight : selectHeight) + 'px'
