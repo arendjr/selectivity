@@ -72,7 +72,7 @@ In your `component.json`:
     {
         "dependencies": {
             ...
-            "arendjr/selectivity": "^1.0.0"
+            "arendjr/selectivity": "^1.1.0"
             ...
         }
     }
