@@ -72,8 +72,6 @@ function SelectivityDropdown(options) {
     this.position();
     this.setupCloseHandler();
 
-    this._scrolledProxy = debounce(this._scrolled.bind(this), 50);
-
     this._suppressMouseWheel();
 
     if (options.showSearchInput) {
@@ -82,6 +80,8 @@ function SelectivityDropdown(options) {
     }
 
     EventDelegator.call(this);
+
+    this.$results.on('scroll touchmove touchend', debounce(this._scrolled.bind(this), 50));
 
     this.showLoading();
 
