@@ -2353,8 +2353,6 @@ function SelectivityDropdown(options) {
     this.position();
     this.setupCloseHandler();
 
-    this._scrolledProxy = debounce(this._scrolled.bind(this), 50);
-
     this._suppressMouseWheel();
 
     if (options.showSearchInput) {
@@ -2363,6 +2361,8 @@ function SelectivityDropdown(options) {
     }
 
     EventDelegator.call(this);
+
+    this.$results.on('scroll touchmove touchend', debounce(this._scrolled.bind(this), 50));
 
     this.showLoading();
 
@@ -2747,29 +2747,6 @@ $.extend(SelectivityDropdown.prototype, EventDelegator.prototype, {
     /**
      * @private
      */
-    _scrollToHighlight: function(options) {
-
-        var el;
-        if (this.highlightedResult) {
-            var quotedId = Selectivity.quoteCssAttr(this.highlightedResult.id);
-            el = this.$('.selectivity-result-item[data-item-id=' + quotedId + ']')[0];
-        } else if (this.loadMoreHighlighted) {
-            el = this.$('.selectivity-load-more')[0];
-        } else {
-            return; // no highlight to scroll to
-        }
-
-        var rect = el.getBoundingClientRect(),
-            containerRect = this.$results[0].getBoundingClientRect();
-
-        if (rect.top < containerRect.top || rect.bottom > containerRect.bottom) {
-            el.scrollIntoView(options.alignToTop);
-        }
-    },
-
-    /**
-     * @private
-     */
     _suppressMouseWheel: function() {
 
         var suppressMouseWheelSelector = this.selectivity.options.suppressMouseWheelSelector;
@@ -3019,21 +2996,27 @@ function listener(selectivity, $input) {
         }
 
         function scrollToHighlight() {
-            var el;
+            var $el;
             if (dropdown.highlightedResult) {
                 var quotedId = Selectivity.quoteCssAttr(dropdown.highlightedResult.id);
-                el = dropdown.$('.selectivity-result-item[data-item-id=' + quotedId + ']')[0];
+                $el = dropdown.$('.selectivity-result-item[data-item-id=' + quotedId + ']');
             } else if (dropdown.loadMoreHighlighted) {
-                el = dropdown.$('.selectivity-load-more')[0];
+                $el = dropdown.$('.selectivity-load-more');
             } else {
                 return; // no highlight to scroll to
             }
 
-            var rect = el.getBoundingClientRect(),
-                containerRect = dropdown.$results[0].getBoundingClientRect();
+            var position = $el.position();
+            if (!position) {
+                return;
+            }
 
-            if (rect.top < containerRect.top || rect.bottom > containerRect.bottom) {
-                el.scrollIntoView(delta < 0);
+            var top = position.top;
+            var elHeight = $el.height();
+            var resultsHeight = dropdown.$results.height();
+            if (top < 0 || top > resultsHeight - elHeight) {
+                top += dropdown.$results.scrollTop();
+                dropdown.$results.scrollTop(delta < 0 ? top : top - resultsHeight + elHeight);
             }
         }
 

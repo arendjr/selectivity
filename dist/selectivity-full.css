@@ -53,7 +53,8 @@
 
 .selectivity-results-container {
   max-height: 28em;
-  overflow: auto; }
+  overflow: auto;
+  position: relative; }
 
 .selectivity-load-more,
 .selectivity-result-item {
