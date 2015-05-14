@@ -34,21 +34,27 @@ function listener(selectivity, $input) {
         }
 
         function scrollToHighlight() {
-            var el;
+            var $el;
             if (dropdown.highlightedResult) {
                 var quotedId = Selectivity.quoteCssAttr(dropdown.highlightedResult.id);
-                el = dropdown.$('.selectivity-result-item[data-item-id=' + quotedId + ']')[0];
+                $el = dropdown.$('.selectivity-result-item[data-item-id=' + quotedId + ']');
             } else if (dropdown.loadMoreHighlighted) {
-                el = dropdown.$('.selectivity-load-more')[0];
+                $el = dropdown.$('.selectivity-load-more');
             } else {
                 return; // no highlight to scroll to
             }
 
-            var rect = el.getBoundingClientRect(),
-                containerRect = dropdown.$results[0].getBoundingClientRect();
+            var position = $el.position();
+            if (!position) {
+                return;
+            }
 
-            if (rect.top < containerRect.top || rect.bottom > containerRect.bottom) {
-                el.scrollIntoView(delta < 0);
+            var top = position.top;
+            var elHeight = $el.height();
+            var resultsHeight = dropdown.$results.height();
+            if (top < 0 || top > resultsHeight - elHeight) {
+                top += dropdown.$results.scrollTop();
+                dropdown.$results.scrollTop(delta < 0 ? top : top - resultsHeight + elHeight);
             }
         }
 

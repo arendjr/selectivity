@@ -466,29 +466,6 @@ $.extend(SelectivityDropdown.prototype, EventDelegator.prototype, {
     /**
      * @private
      */
-    _scrollToHighlight: function(options) {
-
-        var el;
-        if (this.highlightedResult) {
-            var quotedId = Selectivity.quoteCssAttr(this.highlightedResult.id);
-            el = this.$('.selectivity-result-item[data-item-id=' + quotedId + ']')[0];
-        } else if (this.loadMoreHighlighted) {
-            el = this.$('.selectivity-load-more')[0];
-        } else {
-            return; // no highlight to scroll to
-        }
-
-        var rect = el.getBoundingClientRect(),
-            containerRect = this.$results[0].getBoundingClientRect();
-
-        if (rect.top < containerRect.top || rect.bottom > containerRect.bottom) {
-            el.scrollIntoView(options.alignToTop);
-        }
-    },
-
-    /**
-     * @private
-     */
     _suppressMouseWheel: function() {
 
         var suppressMouseWheelSelector = this.selectivity.options.suppressMouseWheelSelector;
