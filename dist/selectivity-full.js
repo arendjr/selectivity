@@ -3012,8 +3012,8 @@ function listener(selectivity, $input) {
             }
 
             var top = position.top;
-            var elHeight = $el.height();
             var resultsHeight = dropdown.$results.height();
+            var elHeight = ($el.outerHeight ? $el.outerHeight() : $el.height());
             if (top < 0 || top > resultsHeight - elHeight) {
                 top += dropdown.$results.scrollTop();
                 dropdown.$results.scrollTop(delta < 0 ? top : top - resultsHeight + elHeight);
