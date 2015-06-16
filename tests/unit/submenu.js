@@ -79,3 +79,37 @@ exports.testSetValue = DomUtil.createDomTest(
         test.equal($input.selectivity('value'), '3-1');
     }
 );
+
+exports.testSearchInputInSubmenuInMultiSelectInput = DomUtil.createDomTest(
+    ['multiple', 'dropdown', 'submenu', 'templates'],
+    function(test, $input, $) {
+        $input.selectivity({
+            items: [{
+                id: 1,
+                text: 'First Item',
+                submenu: {
+                    items: [{
+                        id: 2,
+                        text: "First subitem"
+                    }, {
+                        id: 3,
+                        text: "Second subitem"
+                    }],
+                    showSearchInput: true
+                }
+            }],
+            multiple: true
+        });
+
+        $input.click();
+
+        $('.selectivity-result-item[data-item-id="1"]').mouseover();
+
+        test.equal($('.selectivity-dropdown').length, 2);
+
+        $('.selectivity-result-item[data-item-id="2"]').click();
+
+        test.equal($('.selectivity-dropdown').length, 0);
+        test.deepEqual($input.selectivity('value'), [2]);
+    }
+);
