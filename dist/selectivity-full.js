@@ -2343,6 +2343,8 @@ function SelectivityDropdown(options) {
      */
     this.selectivity = selectivity;
 
+    this._closed = false;
+
     this._closeProxy = this.close.bind(this);
     if (selectivity.options.closeOnSelect !== false) {
         selectivity.$el.on('selectivity-selecting', this._closeProxy);
@@ -2401,17 +2403,21 @@ $.extend(SelectivityDropdown.prototype, EventDelegator.prototype, {
      */
     close: function() {
 
-        if (this.options.showSearchInput) {
-            this.selectivity.removeSearchInput();
+        if (!this._closed) {
+            this._closed = true;
+
+            if (this.options.showSearchInput) {
+                this.selectivity.removeSearchInput();
+            }
+
+            this.$el.remove();
+
+            this.removeCloseHandler();
+
+            this.selectivity.$el.off('selectivity-selecting', this._closeProxy);
+
+            this.triggerClose();
         }
-
-        this.$el.remove();
-
-        this.removeCloseHandler();
-
-        this.selectivity.$el.off('selectivity-selecting', this._closeProxy);
-
-        this.triggerClose();
     },
 
     /**
