@@ -303,7 +303,7 @@ var latestQueryNum = 0;
 Selectivity.OptionListeners.push(function(selectivity, options) {
 
     var query = options.query;
-    if (query) {
+    if (query && !query._async) {
         options.query = function(queryOptions) {
             latestQueryNum++;
             var queryNum = latestQueryNum;
@@ -322,6 +322,7 @@ Selectivity.OptionListeners.push(function(selectivity, options) {
             };
             query(queryOptions);
         };
+        options.query._async = true;
     }
 });
 
