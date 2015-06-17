@@ -2429,8 +2429,7 @@ $.extend(SelectivityDropdown.prototype, EventDelegator.prototype, {
         'click .selectivity-load-more': '_loadMoreClicked',
         'click .selectivity-result-item': '_resultClicked',
         'mouseenter .selectivity-load-more': '_loadMoreHovered',
-        'mouseenter .selectivity-result-item': '_resultHovered',
-        'mousemove': '_recordMousePosition'
+        'mouseenter .selectivity-result-item': '_resultHovered'
     },
 
     /**
