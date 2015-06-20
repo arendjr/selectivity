@@ -31,7 +31,8 @@ $.extend(SelectivityDropdown.prototype, {
         } else {
             $backdrop = $('<div>').addClass('selectivity-backdrop');
 
-            $('body').append($backdrop);
+            this.$el.prepend($backdrop);
+            this.$el.children().not('.selectivity-backdrop').css('z-index',9999);
         }
 
         $backdrop.on('click', this.close.bind(this));
