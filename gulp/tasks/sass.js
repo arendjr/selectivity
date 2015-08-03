@@ -21,11 +21,11 @@ module.exports = function() {
     sassModules.unshift('variables', 'base');
 
     fs.writeFileSync('styles/selectivity-custom.sass', sassModules.map(function(module) {
-      if (fs.existsSync('styles/selectivity/' + module + '.sass')) {
-        return "@import 'selectivity/" + module + "'\n";
-      } else {
-        return '';
-      }
+        if (fs.existsSync('styles/selectivity/' + module + '.sass')) {
+            return "@import 'selectivity/" + module + "'\n";
+        } else {
+            return '';
+        }
     }).join(''));
 
     return sass('styles/selectivity-custom.sass')
