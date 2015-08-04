@@ -335,7 +335,7 @@ $.extend(SelectivityDropdown.prototype, EventDelegator.prototype, {
                 },
                 error: self.showError.bind(self),
                 offset: 0,
-                selectivity: self,
+                selectivity: self.selectivity,
                 term: term
             });
         }
