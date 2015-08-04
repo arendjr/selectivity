@@ -159,11 +159,6 @@ function Selectivity(options) {
     this.options = {};
 
     /**
-     * Results from a search query.
-     */
-    this.results = [];
-
-    /**
      * Array of search input listeners.
      *
      * Custom listeners can be specified in the options object.
@@ -189,8 +184,6 @@ function Selectivity(options) {
     } else {
         this.data(options.data || null, { triggerChange: false });
     }
-
-    this._$searchInputs = [];
 
     this.$el.on('selectivity-close', this._closed.bind(this));
 
@@ -288,6 +281,8 @@ $.extend(Selectivity.prototype, EventDelegator.prototype, {
 
         if (this.$searchInput) {
             this.$searchInput.focus();
+        } else if (this.dropdown) {
+            this.dropdown.focus();
         }
     },
 
@@ -317,59 +312,29 @@ $.extend(Selectivity.prototype, EventDelegator.prototype, {
      * action of searching when something is typed.
      *
      * @param $input jQuery container for the input element.
-     * @param options Optional options object. May contain the following property:
-     *                noSearch - If false, no event handlers are setup to initiate searching when
-     *                           the user types in the input field. This is useful if you want to
-     *                           use the input only to handle keyboard support.
      */
-    initSearchInput: function($input, options) {
+    initSearchInput: function($input) {
 
-        this._$searchInputs.push($input);
         this.$searchInput = $input;
 
         this.searchInputListeners.forEach(function(listener) {
             listener(this, $input);
         }.bind(this));
 
-        if (!options || options.noSearch !== false) {
-            $input.on('keyup', function(event) {
-                if (!event.isDefaultPrevented()) {
-                    this.search();
-                }
-            }.bind(this));
-        }
-    },
-
-    /**
-     * Loads a follow-up page with results after a search.
-     *
-     * This method should only be called after a call to search() when the callback has indicated
-     * more results are available.
-     */
-    loadMore: function() {
-
-        this.options.query({
-            callback: function(response) {
-                if (response && response.results) {
-                    this._addResults(
-                        Selectivity.processItems(response.results),
-                        { hasMore: !!response.more }
-                    );
-                } else {
-                    throw new Error('callback must be passed a response object');
-                }
-            }.bind(this),
-            error: this._addResults.bind(this, []),
-            offset: this.results.length,
-            selectivity: this,
-            term: this.term
-        });
+        $input.on('keyup', function(event) {
+            if (!event.isDefaultPrevented()) {
+                this.search();
+            }
+        }.bind(this));
     },
 
     /**
      * Opens the dropdown.
      *
      * @param options Optional options object. May contain the following property:
+     *                search - Boolean whether the dropdown should be initialized by performing a
+     *                         search for the empty string (ie. display all results). Default is
+     *                         true.
      *                showSearchInput - Boolean whether a search input should be shown in the
      *                                  dropdown. Default is false.
      */
@@ -382,13 +347,17 @@ $.extend(Selectivity.prototype, EventDelegator.prototype, {
                 var Dropdown = this.options.dropdown || Selectivity.Dropdown;
                 if (Dropdown) {
                     this.dropdown = new Dropdown({
+                        items: this.items,
                         position: this.options.positionDropdown,
+                        query: this.options.query,
                         selectivity: this,
                         showSearchInput: options.showSearchInput
                     });
                 }
 
-                this.search('');
+                if (options.search !== false) {
+                    this.search('');
+                }
             }
         }
     },
@@ -404,17 +373,7 @@ $.extend(Selectivity.prototype, EventDelegator.prototype, {
     },
 
     /**
-     * Removes the search input last initialized with initSearchInput().
-     */
-    removeSearchInput: function() {
-
-        this._$searchInputs.pop();
-
-        this.$searchInput = this._$searchInputs[this._$searchInputs.length - 1] || null;
-    },
-
-    /**
-     * Searches for results based on the term entered in the search input.
+     * Searches for results based on the term given or the term entered in the search input.
      *
      * If an items array has been passed with the options to the Selectivity instance, a local
      * search will be performed among those items. Otherwise, the query function specified in the
@@ -425,47 +384,15 @@ $.extend(Selectivity.prototype, EventDelegator.prototype, {
      */
     search: function(term) {
 
-        var self = this;
-        function setResults(results, resultOptions) {
-            self._setResults(results, $.extend({ term: term }, resultOptions));
-        }
-
         if (term === undefined) {
-            if (!self.$searchInput) {
-                return;
-            }
-
-            term = self.$searchInput.val();
+            term = (this.$searchInput ? this.$searchInput.val() : '');
         }
 
-        if (self.items) {
-            term = Selectivity.transformText(term);
-            var matcher = self.matcher;
-            setResults(self.items.map(function(item) {
-                return matcher(item, term);
-            }).filter(function(item) {
-                return !!item;
-            }));
-        } else if (self.options.query) {
-            self.options.query({
-                callback: function(response) {
-                    if (response && response.results) {
-                        setResults(
-                            Selectivity.processItems(response.results),
-                            { hasMore: !!response.more }
-                        );
-                    } else {
-                        throw new Error('callback must be passed a response object');
-                    }
-                },
-                error: self._showError.bind(self),
-                offset: 0,
-                selectivity: self,
-                term: term
-            });
-        }
+        this.open({ search: false });
 
-        self.term = term;
+        if (this.dropdown) {
+            this.dropdown.search(term);
+        }
     },
 
     /**
@@ -716,21 +643,6 @@ $.extend(Selectivity.prototype, EventDelegator.prototype, {
     /**
      * @private
      */
-    _addResults: function(results, options) {
-
-        this.results = this.results.concat(results);
-
-        if (this.dropdown) {
-            this.dropdown.showResults(
-                this.filterResults(results),
-                $.extend({ add: true }, options)
-            );
-        }
-    },
-
-    /**
-     * @private
-     */
     _closed: function() {
 
         this.dropdown = null;
@@ -763,36 +675,19 @@ $.extend(Selectivity.prototype, EventDelegator.prototype, {
         if ($.type(id) === 'string') {
             return id;
         } else {
-            if (Selectivity.findById(this._data || [], id) ||
-                Selectivity.findNestedById(this.results, id)) {
+            if (Selectivity.findById(this._data || [], id)) {
                 return id;
             } else {
+                var dropdown = this.dropdown;
+                while (dropdown) {
+                    if (Selectivity.findNestedById(dropdown.results, id)) {
+                        return id;
+                    }
+                    // FIXME: reference to submenu doesn't belong in base module
+                    dropdown = dropdown.submenu;
+                }
                 return '' + id;
             }
-        }
-    },
-
-    /**
-     * @private
-     */
-    _setResults: function(results, options) {
-
-        this.results = results;
-
-        if (this.dropdown) {
-            this.dropdown.showResults(this.filterResults(results), options || {});
-        }
-    },
-
-    /**
-     * @private
-     */
-    _showError: function(error, options) {
-
-        this.results = [];
-
-        if (this.dropdown) {
-            this.dropdown.showError(error, options);
         }
     }
 

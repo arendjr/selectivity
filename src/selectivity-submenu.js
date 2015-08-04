@@ -27,13 +27,6 @@ var callSuper = Selectivity.inherits(SelectivitySubmenu, SelectivityDropdown, {
      */
     close: function() {
 
-        if (this.options.restoreOptions) {
-            this.selectivity.setOptions(this.options.restoreOptions);
-        }
-        if (this.options.restoreResults) {
-            this.selectivity.results = this.options.restoreResults;
-        }
-
         if (this.submenu) {
             this.submenu.close();
         }
@@ -99,12 +92,11 @@ var callSuper = Selectivity.inherits(SelectivitySubmenu, SelectivityDropdown, {
      */
     selectItem: function(id) {
 
-        var selectivity = this.selectivity;
-        var item = Selectivity.findNestedById(selectivity.results, id);
+        var item = Selectivity.findNestedById(this.results, id);
         if (item && !item.submenu) {
             var options = { id: id, item: item };
-            if (selectivity.triggerEvent('selectivity-selecting', options)) {
-                selectivity.triggerEvent('selectivity-selected', options);
+            if (this.selectivity.triggerEvent('selectivity-selecting', options)) {
+                this.selectivity.triggerEvent('selectivity-selected', options);
             }
         }
     },
@@ -173,6 +165,7 @@ var callSuper = Selectivity.inherits(SelectivitySubmenu, SelectivityDropdown, {
                 var $dropdownEl = this.$el;
 
                 this.submenu = new Dropdown({
+                    items: item.submenu.items || null,
                     parentMenu: this,
                     position: item.submenu.positionDropdown || function($el) {
                         var dropdownPosition = $dropdownEl.position();
@@ -182,21 +175,12 @@ var callSuper = Selectivity.inherits(SelectivitySubmenu, SelectivityDropdown, {
                             top: $item.position().top + dropdownPosition.top + 'px'
                         }).width(width);
                     },
-                    restoreOptions: {
-                        items: selectivity.items,
-                        query: selectivity.options.query || null
-                    },
-                    restoreResults: selectivity.results,
+                    query: item.submenu.query || null,
                     selectivity: selectivity,
                     showSearchInput: item.submenu.showSearchInput
                 });
 
-                selectivity.setOptions({
-                    items: item.submenu.items || null,
-                    query: item.submenu.query || null
-                });
-
-                selectivity.search('');
+                this.submenu.search('');
             }
         }
     }

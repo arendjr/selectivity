@@ -44,7 +44,7 @@ function SingleSelectivity(options) {
     }
 
     if (options.showSearchInputInDropdown === false) {
-        this.initSearchInput(this.$('.selectivity-single-select-input'), { noSearch: true });
+        this.initSearchInput(this.$('.selectivity-single-select-input'));
     }
 }
 
@@ -85,13 +85,8 @@ var callSuper = Selectivity.inherits(SingleSelectivity, {
 
         callSuper(this, 'close');
 
-        var $input = this.$('.selectivity-single-select-input');
-        if (!this.$searchInput) {
-            this.initSearchInput($input, { noSearch: true });
-        }
-
         if (!options || options.keepFocus !== false) {
-            $input.focus();
+            this.$searchInput.focus();
         }
 
         this._closing = false;
@@ -128,6 +123,8 @@ var callSuper = Selectivity.inherits(SingleSelectivity, {
      */
     open: function(options) {
 
+        this._opening = true;
+
         var showSearchInput = (this.options.showSearchInputInDropdown !== false);
 
         callSuper(this, 'open', $.extend({ showSearchInput: showSearchInput }, options));
@@ -135,6 +132,8 @@ var callSuper = Selectivity.inherits(SingleSelectivity, {
         if (!showSearchInput) {
             this.focus();
         }
+
+        this._opening = false;
     },
 
     /**
@@ -208,7 +207,8 @@ var callSuper = Selectivity.inherits(SingleSelectivity, {
      */
     _focused: function() {
 
-        if (this.enabled && !this._closing && this.options.showDropdown !== false) {
+        if (this.enabled && !this._closing && !this._opening &&
+            this.options.showDropdown !== false) {
             this.open();
         }
     },

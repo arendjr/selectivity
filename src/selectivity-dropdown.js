@@ -31,6 +31,13 @@ function SelectivityDropdown(options) {
     this.$results = this.$('.selectivity-results-container');
 
     /**
+     * jQuery container for the search input.
+     *
+     * May be null as long as there is no visible search input. It is set by initSearchInput().
+     */
+    this.$searchInput = null;
+
+    /**
      * Boolean indicating whether more results are available than currently displayed in the
      * dropdown.
      */
@@ -124,10 +131,6 @@ $.extend(SelectivityDropdown.prototype, EventDelegator.prototype, {
         if (!this._closed) {
             this._closed = true;
 
-            if (this.options.showSearchInput) {
-                this.selectivity.removeSearchInput();
-            }
-
             this.$el.remove();
 
             this.removeCloseHandler();
@@ -148,6 +151,16 @@ $.extend(SelectivityDropdown.prototype, EventDelegator.prototype, {
         'click .selectivity-result-item': '_resultClicked',
         'mouseenter .selectivity-load-more': '_loadMoreHovered',
         'mouseenter .selectivity-result-item': '_resultHovered'
+    },
+
+    /**
+     * Applies focus to the input.
+     */
+    focus: function() {
+
+        if (this.$searchInput) {
+            this.$searchInput.focus();
+        }
     },
 
     /**
@@ -184,6 +197,57 @@ $.extend(SelectivityDropdown.prototype, EventDelegator.prototype, {
 
         this.highlightedResult = null;
         this.loadMoreHighlighted = true;
+    },
+
+    /**
+     * Initializes the search input element.
+     *
+     * Sets the $searchInput property, invokes all search input listeners and attaches the default
+     * action of searching when something is typed.
+     *
+     * @param $input jQuery container for the input element.
+     */
+    initSearchInput: function($input) {
+
+        this.$searchInput = $input;
+
+        this.selectivity.searchInputListeners.forEach(function(listener) {
+            listener(this, $input);
+        }.bind(this));
+
+        $input.on('keyup', function(event) {
+            if (!event.isDefaultPrevented()) {
+                this.search();
+            }
+        }.bind(this));
+    },
+
+    /**
+     * Loads a follow-up page with results after a search.
+     *
+     * This method should only be called after a call to search() when the callback has indicated
+     * more results are available.
+     */
+    loadMore: function() {
+
+        this.options.query({
+            callback: function(response) {
+                if (response && response.results) {
+                    this._showResults(
+                        Selectivity.processItems(response.results),
+                        { add: true, hasMore: !!response.more }
+                    );
+                } else {
+                    throw new Error('callback must be passed a response object');
+                }
+            }.bind(this),
+            error: function() {
+                this._showResults([], { add: true });
+            }.bind(this),
+            offset: this.results.length,
+            selectivity: this.selectivity,
+            term: this.term
+        });
     },
 
     /**
@@ -229,6 +293,57 @@ $.extend(SelectivityDropdown.prototype, EventDelegator.prototype, {
     },
 
     /**
+     * Searches for results based on the term given or the term entered in the search input.
+     *
+     * If an items array has been passed with the options to the Selectivity instance, a local
+     * search will be performed among those items. Otherwise, the query function specified in the
+     * options will be used to perform the search. If neither is defined, nothing happens.
+     *
+     * @param term Optional term to search for. If ommitted, the value of the search input element
+     *             is used as term.
+     */
+    search: function(term) {
+
+        var self = this;
+        function setResults(results, resultOptions) {
+            self._showResults(results, $.extend({ term: term }, resultOptions));
+        }
+
+        if (term === undefined) {
+            term = (self.$searchInput ? self.$searchInput.val() : '');
+        }
+
+        if (self.options.items) {
+            term = Selectivity.transformText(term);
+            var matcher = self.selectivity.matcher;
+            setResults(self.options.items.map(function(item) {
+                return matcher(item, term);
+            }).filter(function(item) {
+                return !!item;
+            }));
+        } else if (self.options.query) {
+            self.options.query({
+                callback: function(response) {
+                    if (response && response.results) {
+                        setResults(
+                            Selectivity.processItems(response.results),
+                            { hasMore: !!response.more }
+                        );
+                    } else {
+                        throw new Error('callback must be passed a response object');
+                    }
+                },
+                error: self.showError.bind(self),
+                offset: 0,
+                selectivity: self,
+                term: term
+            });
+        }
+
+        self.term = term;
+    },
+
+    /**
      * Selects the highlighted item.
      */
     selectHighlight: function() {
@@ -247,12 +362,11 @@ $.extend(SelectivityDropdown.prototype, EventDelegator.prototype, {
      */
     selectItem: function(id) {
 
-        var selectivity = this.selectivity;
-        var item = Selectivity.findNestedById(selectivity.results, id);
+        var item = Selectivity.findNestedById(this.results, id);
         if (item) {
             var options = { id: id, item: item };
-            if (selectivity.triggerEvent('selectivity-selecting', options)) {
-                selectivity.triggerEvent('selectivity-selected', options);
+            if (this.selectivity.triggerEvent('selectivity-selecting', options)) {
+                this.selectivity.triggerEvent('selectivity-selected', options);
             }
         }
     },
@@ -400,7 +514,7 @@ $.extend(SelectivityDropdown.prototype, EventDelegator.prototype, {
 
         this.$('.selectivity-load-more').replaceWith(this.selectivity.template('loading'));
 
-        this.selectivity.loadMore();
+        this.loadMore();
 
         this.selectivity.focus();
 
@@ -466,6 +580,14 @@ $.extend(SelectivityDropdown.prototype, EventDelegator.prototype, {
                 this._loadMoreClicked();
             }
         }
+    },
+
+    /**
+     * @private
+     */
+    _showResults: function(results, options) {
+
+        this.showResults(this.selectivity.filterResults(results), options || {});
     },
 
     /**

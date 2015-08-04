@@ -134,7 +134,7 @@ var callSuper = Selectivity.inherits(MultipleSelectivity, {
      */
     getDataForValue: function(value) {
 
-        return value.map(this.getItemForId.bind(this)).filter(function(item) { return !!item; });
+        return value.map(this.getItemForId, this).filter(function(item) { return !!item; });
     },
 
     /**
@@ -268,7 +268,7 @@ var callSuper = Selectivity.inherits(MultipleSelectivity, {
         if (data === null) {
             return [];
         } else if ($.type(data) === 'array') {
-            return data.map(this.validateItem.bind(this));
+            return data.map(this.validateItem, this);
         } else {
             throw new Error('Data for MultiSelectivity instance should be array');
         }
