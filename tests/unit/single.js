@@ -287,3 +287,23 @@ exports.testSetValueWithoutItems = DomUtil.createDomTest(
         test.deepEqual($input.selectivity('value'), 'Antwerp');
     }
 );
+
+exports.testMouseOver = DomUtil.createDomTest(
+  ['single', 'templates'],
+  function(test, $input, $)
+  {
+    $input.selectivity({
+      value: 'Amsterdam'
+    });
+
+    $('.selectivity-single-select')
+      .trigger('mouseover');
+
+    test.equal($('.selectivity-single-select').attr('class'), 'selectivity-single-select hover');
+
+    $('.selectivity-single-select')
+      .trigger('mouseleave');
+
+    test.equal($('.selectivity-single-select').attr('class'), 'selectivity-single-select');
+  }
+);
