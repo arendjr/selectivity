@@ -62,6 +62,8 @@ var callSuper = Selectivity.inherits(SingleSelectivity, {
         'change': '_rerenderSelection',
         'click': '_clicked',
         'focus .selectivity-single-select-input': '_focused',
+        'mouseover .selectivity-single-select': '_mouseover',
+        'mouseleave .selectivity-single-select': '_mouseout',
         'selectivity-selected': '_resultSelected'
     },
 
@@ -214,6 +216,22 @@ var callSuper = Selectivity.inherits(SingleSelectivity, {
     },
 
     /**
+     * @private
+     */
+    _mouseover: function() {
+
+      this.$('.selectivity-single-select').toggleClass("hover", true);
+    },
+
+    /**
+     * @private
+     */
+    _mouseout: function() {
+
+      this.$('.selectivity-single-select').toggleClass("hover", false);
+    },
+
+  /**
      * @private
      */
     _itemRemoveClicked: function() {
