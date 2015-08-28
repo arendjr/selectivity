@@ -337,6 +337,7 @@ var callSuper = Selectivity.inherits(MultipleSelectivity, {
         if (term && createTokenItem) {
             var item = createTokenItem(term);
             if (item) {
+                this.items.push(item);
                 this.add(item);
             }
         }
@@ -481,7 +482,7 @@ var callSuper = Selectivity.inherits(MultipleSelectivity, {
 
         if (event.added || event.removed) {
             if (this.dropdown) {
-                this.dropdown.showResults(this.filterResults(this.results), {
+                this.dropdown.showResults(this.filterResults(this.items), {
                     hasMore: this.dropdown.hasMore
                 });
             }
