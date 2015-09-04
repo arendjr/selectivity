@@ -3666,7 +3666,7 @@ var callSuper = Selectivity.inherits(MultipleSelectivity, {
 
         if (event.added || event.removed) {
             if (this.dropdown) {
-                this.dropdown.showResults(this.filterResults(this.results), {
+                this.dropdown.showResults(this.filterResults(this.dropdown.results), {
                     hasMore: this.dropdown.hasMore
                 });
             }
