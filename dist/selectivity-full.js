@@ -383,10 +383,11 @@ var EventDelegator = _dereq_(2);
  * @param methodName Optional name of a method to call. If omitted, a Selectivity instance is
  *                   created for each element in the set of matched elements. If an element in the
  *                   set already has a Selectivity instance, the result is the same as if the
- *                   setOptions() method is called.
- * @param options Optional options object to pass to the given method or the constructor. See the
- *                documentation for the respective methods to see which options they accept. In case
- *                a new instance is being created, the following property is used:
+ *                   setOptions() method is called. If a method name is given, the options
+ *                   parameter is ignored and any additional parameters are passed to the given
+ *                   method.
+ * @param options Options object to pass to the constructor or the setOptions() method. In case
+ *                a new instance is being created, the following properties are used:
  *                inputType - The input type to use. Default input types include 'Multiple' and
  *                            'Single', but you can add custom input types to the InputTypes map or
  *                            just specify one here as a function. The default value is 'Single',
@@ -401,6 +402,7 @@ var EventDelegator = _dereq_(2);
 function selectivity(methodName, options) {
     /* jshint validthis: true */
 
+    var methodArgs = Array.prototype.slice.call(arguments, 1);
     var result;
 
     this.each(function() {
@@ -408,13 +410,13 @@ function selectivity(methodName, options) {
 
         if (instance) {
             if ($.type(methodName) !== 'string') {
-                options = methodName;
+                methodArgs = [methodName];
                 methodName = 'setOptions';
             }
 
             if ($.type(instance[methodName]) === 'function') {
                 if (result === undefined) {
-                    result = instance[methodName].call(instance, options);
+                    result = instance[methodName].apply(instance, methodArgs);
                 }
             } else {
                 throw new Error('Unknown method: ' + methodName);
