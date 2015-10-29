@@ -117,6 +117,8 @@ function listener(selectivity, $input) {
                 setTimeout(function() {
                     selectivity.close({ keepFocus: false });
                 }, 1);
+            } else if (event.keyCode === KEY_ENTER ) {
+                event.preventDefault(); // don't submit forms on keydown
             }
         }
     }
