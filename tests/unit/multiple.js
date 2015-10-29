@@ -68,6 +68,31 @@ exports.testClickAfterSearch = DomUtil.createDomTest(
     }
 );
 
+exports.testFilterSelectedItems = DomUtil.createDomTest(
+    ['multiple', 'dropdown', 'templates'],
+    function(test, $input, $) {
+        $input.selectivity({
+            items: ['Amsterdam', 'Antwerp', 'Athens'],
+            multiple: true,
+            value: ['Amsterdam', 'Athens']
+        });
+
+        $input.click();
+
+        test.equal($('.selectivity-dropdown').length, 1);
+        test.equal($('.selectivity-result-item').length, 1);
+        test.equal($('.selectivity-result-item').text(), 'Antwerp');
+
+        $input.selectivity('close');
+        $input.selectivity('value', ['Athens']);
+        $input.selectivity('open');
+
+        test.equal($('.selectivity-result-item').length, 2);
+        test.equal($('.selectivity-result-item').first().text(), 'Amsterdam');
+        test.equal($('.selectivity-result-item').last().text(), 'Antwerp');
+    }
+);
+
 exports.testInitialData = DomUtil.createDomTest(
     ['multiple', 'templates'],
     function(test, $input) {
