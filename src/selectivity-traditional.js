@@ -63,28 +63,28 @@ function bindTraditionalSelectEvents(selectivity) {
     var $el = selectivity.$el;
 
     $el.on('selectivity-init', function(event, mode) {
+        $el.append(selectivity.template('selectCompliance', {
+            mode: mode,
+            name: $el.attr('data-name')
+        })).removeAttr('data-name');
+    }).on('selectivity-init change', function() {
+        var data = selectivity._data;
+        var $select = $el.find('select');
 
-            $el.append(selectivity.template('selectCompliance', {name: $el.attr('data-name'), mode: mode}))
-              .removeAttr('data-name');
-        })
-        .on('selectivity-init change', function() {
-            var data = selectivity._data;
-            var $select = $el.find('select');
+        if (data instanceof Array) {
+            $select.empty();
 
-            if (data instanceof Array) {
-                $select.empty();
-
-                data.forEach(function(item) {
-                    $select.append(selectivity.template('selectOptionCompliance', item));
-                });
+            data.forEach(function(item) {
+                $select.append(selectivity.template('selectOptionCompliance', item));
+            });
+        } else {
+            if (data) {
+                $select.html(selectivity.template('selectOptionCompliance', data));
             } else {
-                if (data) {
-                    $select.html(selectivity.template('selectOptionCompliance', data));
-                } else {
-                    $select.empty();
-                }
+                $select.empty();
             }
-        });
+        }
+    });
 }
 
 /**
