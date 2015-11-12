@@ -254,7 +254,7 @@ Selectivity.OptionListeners.unshift(function(selectivity, options) {
             } else {
                 selectivity.dropdown.showLoading();
 
-                var url = (ajax.url instanceof Function ? ajax.url() : ajax.url);
+                var url = (ajax.url instanceof Function ? ajax.url(queryOptions) : ajax.url);
                 if (params) {
                     url += (url.indexOf('?') > -1 ? '&' : '?') + $.param(params(term, offset));
                 }
@@ -3104,6 +3104,8 @@ function listener(selectivity, $input) {
                 setTimeout(function() {
                     selectivity.close({ keepFocus: false });
                 }, 1);
+            } else if (event.keyCode === KEY_ENTER) {
+                event.preventDefault(); // don't submit forms on keydown
             }
         }
     }
@@ -4648,28 +4650,28 @@ function bindTraditionalSelectEvents(selectivity) {
     var $el = selectivity.$el;
 
     $el.on('selectivity-init', function(event, mode) {
+        $el.append(selectivity.template('selectCompliance', {
+            mode: mode,
+            name: $el.attr('data-name')
+        })).removeAttr('data-name');
+    }).on('selectivity-init change', function() {
+        var data = selectivity._data;
+        var $select = $el.find('select');
 
-            $el.append(selectivity.template('selectCompliance', {name: $el.attr('data-name'), mode: mode}))
-              .removeAttr('data-name');
-        })
-        .on('selectivity-init change', function() {
-            var data = selectivity._data;
-            var $select = $el.find('select');
+        if (data instanceof Array) {
+            $select.empty();
 
-            if (data instanceof Array) {
-                $select.empty();
-
-                data.forEach(function(item) {
-                    $select.append(selectivity.template('selectOptionCompliance', item));
-                });
+            data.forEach(function(item) {
+                $select.append(selectivity.template('selectOptionCompliance', item));
+            });
+        } else {
+            if (data) {
+                $select.html(selectivity.template('selectOptionCompliance', data));
             } else {
-                if (data) {
-                    $select.html(selectivity.template('selectOptionCompliance', data));
-                } else {
-                    $select.empty();
-                }
+                $select.empty();
             }
-        });
+        }
+    });
 }
 
 /**
