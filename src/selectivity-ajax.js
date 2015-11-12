@@ -37,7 +37,7 @@ Selectivity.OptionListeners.unshift(function(selectivity, options) {
             } else {
                 selectivity.dropdown.showLoading();
 
-                var url = (ajax.url instanceof Function ? ajax.url() : ajax.url);
+                var url = (ajax.url instanceof Function ? ajax.url(queryOptions) : ajax.url);
                 if (params) {
                     url += (url.indexOf('?') > -1 ? '&' : '?') + $.param(params(term, offset));
                 }
