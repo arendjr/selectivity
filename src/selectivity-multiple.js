@@ -107,10 +107,13 @@ var callSuper = Selectivity.inherits(MultipleSelectivity, {
         'change .selectivity-multiple-input': function() { return false; },
         'click': '_clicked',
         'click .selectivity-multiple-selected-item': '_itemClicked',
+        'mouseover .selectivity-multiple-input-container': '_mouseover',
+        'mouseleave .selectivity-multiple-input-container': '_mouseout',
         'keydown .selectivity-multiple-input': '_keyHeld',
         'keyup .selectivity-multiple-input': '_keyReleased',
         'paste .selectivity-multiple-input': '_onPaste',
-        'selectivity-selected': '_resultSelected'
+        'selectivity-selected': '_resultSelected',
+        'selectivity-close' : '_close'
     },
 
     /**
@@ -329,6 +332,13 @@ var callSuper = Selectivity.inherits(MultipleSelectivity, {
     /**
      * @private
      */
+    _close: function() {
+        this.$('.selectivity-multiple-input-container').toggleClass("open", false);
+    },
+
+    /**
+     * @private
+     */
     _createToken: function() {
 
         var term = this.$searchInput.val();
@@ -423,6 +433,22 @@ var callSuper = Selectivity.inherits(MultipleSelectivity, {
     /**
      * @private
      */
+    _mouseover: function() {
+
+        this.$('.selectivity-multiple-input-container').toggleClass("hover", true);
+    },
+
+    /**
+     * @private
+     */
+    _mouseout: function() {
+
+        this.$('.selectivity-multiple-input-container').toggleClass("hover", false);
+    },
+
+    /**
+     * @private
+     */
     _onPaste: function() {
 
         setTimeout(function() {
@@ -441,6 +467,7 @@ var callSuper = Selectivity.inherits(MultipleSelectivity, {
 
         if (this.options.showDropdown !== false) {
             this.open();
+            this.$('.selectivity-multiple-input-container').toggleClass("open", true);
         }
     },
 

@@ -287,3 +287,62 @@ exports.testSetValueWithoutItems = DomUtil.createDomTest(
         test.deepEqual($input.selectivity('value'), 'Antwerp');
     }
 );
+
+exports.testMouseOver = DomUtil.createDomTest(
+  ['single', 'templates'],
+  function(test, $input, $)
+  {
+    $input.selectivity({
+      value: 'Amsterdam'
+    });
+
+    $('.selectivity-single-select')
+      .trigger('mouseover');
+
+    test.equal($('.selectivity-single-select').attr('class'), 'selectivity-single-select hover');
+
+    $('.selectivity-single-select')
+      .trigger('mouseleave');
+
+    test.equal($('.selectivity-single-select').attr('class'), 'selectivity-single-select');
+  }
+);
+
+exports.testClickAndMouseOver = DomUtil.createDomTest(
+  ['single', 'dropdown', 'templates'],
+  function(test, $input, $)
+  {
+    $input.selectivity({
+      value: 'Amsterdam'
+    });
+
+    $('.selectivity-single-select').click();
+
+    test.equal($('.selectivity-single-select').attr('class'), 'selectivity-single-select open');
+
+    $('.selectivity-single-select')
+      .trigger('mouseover');
+
+    test.equal($('.selectivity-single-select').attr('class'), 'selectivity-single-select open hover');
+    $input.selectivity('close');
+
+    test.equal($('.selectivity-single-select').attr('class'), 'selectivity-single-select hover');
+  }
+);
+
+exports.testClickOnPageAfterOpeningSingleSelect = DomUtil.createDomTest(
+  ['single', 'dropdown', 'templates'],
+  function(test, $input, $)
+  {
+    $input.selectivity({
+      value: 'Amsterdam'
+    });
+
+    $('.selectivity-single-select').click();
+
+    test.equal($('.selectivity-single-select').attr('class'), 'selectivity-single-select open');
+
+    $('body').trigger('click');
+    test.equal($('.selectivity-single-select').attr('class'), 'selectivity-single-select');
+  }
+);

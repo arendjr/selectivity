@@ -2,7 +2,7 @@
 
 var $ = require('jquery');
 
-var debounce = require('./lodash/debounce');
+var _ = require('lodash');
 
 var Selectivity = require('./selectivity-base');
 
@@ -24,7 +24,7 @@ Selectivity.OptionListeners.unshift(function(selectivity, options) {
         var transport = ajax.transport || $.ajax;
 
         if (quietMillis) {
-            transport = debounce(transport, quietMillis);
+            transport = _.debounce(transport, quietMillis);
         }
 
         options.query = function(queryOptions) {
