@@ -62,14 +62,16 @@ var callSuper = Selectivity.inherits(SingleSelectivity, {
         'change': '_rerenderSelection',
         'click': '_clicked',
         'focus .selectivity-single-select-input': '_focused',
-        'selectivity-selected': '_resultSelected'
+        'mouseover .selectivity-single-select': '_mouseover',
+        'mouseleave .selectivity-single-select': '_mouseout',
+        'selectivity-selected': '_resultSelected',
+        'selectivity-close' : 'close'
     },
 
     /**
      * Clears the data and value.
      */
     clear: function() {
-
         this.data(null);
     },
 
@@ -88,6 +90,8 @@ var callSuper = Selectivity.inherits(SingleSelectivity, {
         if (!options || options.keepFocus !== false) {
             this.$searchInput.focus();
         }
+
+        this.$('.selectivity-single-select').toggleClass("open", false)
 
         this._closing = false;
     },
@@ -132,6 +136,8 @@ var callSuper = Selectivity.inherits(SingleSelectivity, {
         if (!showSearchInput) {
             this.focus();
         }
+
+        this.$('.selectivity-single-select').toggleClass("open", true)
 
         this._opening = false;
     },
@@ -214,6 +220,22 @@ var callSuper = Selectivity.inherits(SingleSelectivity, {
     },
 
     /**
+     * @private
+     */
+    _mouseover: function() {
+
+      this.$('.selectivity-single-select').toggleClass("hover", true);
+    },
+
+    /**
+     * @private
+     */
+    _mouseout: function() {
+
+      this.$('.selectivity-single-select').toggleClass("hover", false);
+    },
+
+  /**
      * @private
      */
     _itemRemoveClicked: function() {
