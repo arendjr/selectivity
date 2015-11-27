@@ -112,7 +112,8 @@ var callSuper = Selectivity.inherits(MultipleSelectivity, {
         'keydown .selectivity-multiple-input': '_keyHeld',
         'keyup .selectivity-multiple-input': '_keyReleased',
         'paste .selectivity-multiple-input': '_onPaste',
-        'selectivity-selected': '_resultSelected'
+        'selectivity-selected': '_resultSelected',
+        'selectivity-close' : '_close'
     },
 
     /**
@@ -331,6 +332,13 @@ var callSuper = Selectivity.inherits(MultipleSelectivity, {
     /**
      * @private
      */
+    _close: function() {
+        this.$('.selectivity-multiple-input-container').toggleClass("open", false);
+    },
+
+    /**
+     * @private
+     */
     _createToken: function() {
 
         var term = this.$searchInput.val();
@@ -459,6 +467,7 @@ var callSuper = Selectivity.inherits(MultipleSelectivity, {
 
         if (this.options.showDropdown !== false) {
             this.open();
+            this.$('.selectivity-multiple-input-container').toggleClass("open", true);
         }
     },
 
