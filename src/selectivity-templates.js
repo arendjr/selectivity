@@ -1,6 +1,6 @@
 'use strict';
 
-var escape = require('./lodash/escape');
+var _ = require('lodash')
 
 var Selectivity = require('./selectivity-base');
 
@@ -39,7 +39,7 @@ Selectivity.Templates = {
             searchInput = (
                 '<div class="selectivity-search-input-container">' +
                     '<input type="text" class="selectivity-search-input"' +
-                            (placeholder ? ' placeholder="' + escape(placeholder) + '"'
+                            (placeholder ? ' placeholder="' + _.escape(placeholder) + '"'
                                          : '') + '>' +
                 '</div>'
             );
@@ -62,7 +62,7 @@ Selectivity.Templates = {
     error: function(options) {
         return (
             '<div class="selectivity-error">' +
-                (options.escape ? escape(options.message) : options.message) +
+                (options.escape ? _.escape(options.message) : options.message) +
             '</div>'
         );
     },
@@ -140,12 +140,12 @@ Selectivity.Templates = {
         var extraClass = (options.highlighted ? ' highlighted' : '');
         return (
             '<span class="selectivity-multiple-selected-item' + extraClass + '" ' +
-                  'data-item-id="' + escape(options.id) + '">' +
+                  'data-item-id="' + _.escape(options.id) + '">' +
                 (options.removable ? '<a class="selectivity-multiple-selected-item-remove">' +
                                          '<i class="fa fa-remove"></i>' +
                                      '</a>'
                                    : '') +
-                escape(options.text) +
+                _.escape(options.text) +
             '</span>'
         );
     },
@@ -191,8 +191,8 @@ Selectivity.Templates = {
      */
     resultItem: function(options) {
         return (
-            '<div class="selectivity-result-item" data-item-id="' + escape(options.id) + '">' +
-                escape(options.text) +
+            '<div class="selectivity-result-item" data-item-id="' + _.escape(options.id) + '">' +
+                _.escape(options.text) +
                 (options.submenu ? '<i class="selectivity-submenu-icon fa fa-chevron-right"></i>'
                                  : '') +
             '</div>'
@@ -209,7 +209,7 @@ Selectivity.Templates = {
      *                text - Text label.
      */
     resultLabel: function(options) {
-        return '<div class="selectivity-result-label">' + escape(options.text) + '</div>';
+        return '<div class="selectivity-result-label">' + _.escape(options.text) + '</div>';
     },
 
     /**
@@ -239,7 +239,7 @@ Selectivity.Templates = {
     singleSelectPlaceholder: function(options) {
         return (
             '<div class="selectivity-placeholder">' +
-                escape(options.placeholder) +
+                _.escape(options.placeholder) +
             '</div>'
         );
     },
@@ -259,12 +259,12 @@ Selectivity.Templates = {
     singleSelectedItem: function(options) {
         return (
             '<span class="selectivity-single-selected-item" ' +
-                  'data-item-id="' + escape(options.id) + '">' +
+                  'data-item-id="' + _.escape(options.id) + '">' +
                 (options.removable ? '<a class="selectivity-single-selected-item-remove">' +
                                          '<i class="fa fa-remove"></i>' +
                                      '</a>'
                                    : '') +
-                escape(options.text) +
+                _.escape(options.text) +
             '</span>'
         );
     },
@@ -293,8 +293,8 @@ Selectivity.Templates = {
      */
     selectOptionCompliance: function(options) {
         return (
-            '<option value="' + escape(options.id) + '" selected>' +
-                escape(options.text) +
+            '<option value="' + _.escape(options.id) + '" selected>' +
+                _.escape(options.text) +
             '</option>'
         );
     }
