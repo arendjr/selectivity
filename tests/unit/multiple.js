@@ -289,3 +289,45 @@ exports.testMouseOver = DomUtil.createDomTest(
     test.equal($('.selectivity-multiple-input-container').attr('class'), 'selectivity-multiple-input-container');
   }
 );
+
+exports.testClickAndMouseOver = DomUtil.createDomTest(
+  ['multiple', 'dropdown', 'templates'],
+  function(test, $input, $)
+  {
+    $input.selectivity({
+      multiple: true,
+      value: ['Amsterdam']
+    });
+
+    $('.selectivity-multiple-input-container').click()
+
+    test.equal($('.selectivity-multiple-input-container').attr('class'), 'selectivity-multiple-input-container open');
+
+    $('.selectivity-multiple-input')
+      .trigger('mouseover');
+
+    test.equal($('.selectivity-multiple-input-container').attr('class'), 'selectivity-multiple-input-container open hover');
+    $input.selectivity('close');
+
+    test.equal($('.selectivity-multiple-input-container').attr('class'), 'selectivity-multiple-input-container hover');
+  }
+);
+
+exports.testClickOnPageAfterOpeningMultipleSelect = DomUtil.createDomTest(
+  ['multiple', 'dropdown', 'templates'],
+  function(test, $input, $)
+  {
+    $input.selectivity({
+      multiple: true,
+      value: ['Amsterdam']
+    });
+
+    $('.selectivity-multiple-input-container').click()
+
+    test.equal($('.selectivity-multiple-input-container').attr('class'), 'selectivity-multiple-input-container open');
+
+    $('body').trigger('click');
+    test.equal($('.selectivity-multiple-input-container').attr('class'), 'selectivity-multiple-input-container');
+  }
+);
+
