@@ -2,7 +2,8 @@
 
 var $ = require('jquery');
 
-var debounce = require('./lodash/debounce');
+
+var _ = require('lodash')
 
 var EventDelegator = require('./event-delegator');
 
@@ -90,7 +91,7 @@ function SelectivityDropdown(options) {
 
     EventDelegator.call(this);
 
-    this.$results.on('scroll touchmove touchend', debounce(this._scrolled.bind(this), 50));
+    this.$results.on('scroll touchmove touchend', _.debounce(this._scrolled.bind(this), 50));
 
     this.showLoading();
 
