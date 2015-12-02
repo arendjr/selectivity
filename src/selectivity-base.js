@@ -603,9 +603,9 @@ $.extend(Selectivity.prototype, EventDelegator.prototype, {
      * case it will assume the text is equal to the ID. This is useful if you're working with tags,
      * or selecting e-mail addresses for instance, but may not always be what you want.
      *
-     * @param newValue Optional new value to set. For a MultipleSelectivity instance the value must be
-     *                 an array of IDs, for a SingleSelectivity instance the value must be a single ID
-     *                 (a string or a number) or null to indicate no item is selected.
+     * @param newValue Optional new value to set. For a MultipleSelectivity instance the value must
+     *                 be an array of IDs, for a SingleSelectivity instance the value must be a
+     *                 single ID (a string or a number) or null to indicate no item is selected.
      * @param options Optional options object. May contain the following property:
      *                triggerChange - Set to false to suppress the "change" event being triggered.
      *

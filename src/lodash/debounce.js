@@ -29,7 +29,8 @@ var now = Date.now;
  * Creates a function that delays invoking `func` until after `wait` milliseconds
  * have elapsed since the last time it was invoked.
  *
- * See [David Corbacho's article](http://drupalmotion.com/article/debounce-and-throttle-visual-explanation)
+ * See [David Corbacho's article]
+ *                        (http://drupalmotion.com/article/debounce-and-throttle-visual-explanation)
  * for details over the differences between `_.debounce` and `_.throttle`.
  *
  * @static
