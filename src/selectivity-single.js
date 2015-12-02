@@ -92,8 +92,6 @@ var callSuper = Selectivity.inherits(SingleSelectivity, {
             this.$searchInput.focus();
         }
 
-        this.$('.selectivity-single-select').toggleClass("open", false)
-
         this._closing = false;
     },
 
@@ -137,8 +135,6 @@ var callSuper = Selectivity.inherits(SingleSelectivity, {
         if (!showSearchInput) {
             this.focus();
         }
-
-        this.$('.selectivity-single-select').toggleClass("open", true)
 
         this._opening = false;
     },

@@ -333,7 +333,7 @@ var callSuper = Selectivity.inherits(MultipleSelectivity, {
      * @private
      */
     _close: function() {
-        this.$('.selectivity-multiple-input-container').toggleClass("open", false);
+        this.close();
     },
 
     /**
@@ -430,7 +430,6 @@ var callSuper = Selectivity.inherits(MultipleSelectivity, {
         this._updateInputWidth();
     },
 
-
     /**
      * @private
      */
@@ -452,7 +451,6 @@ var callSuper = Selectivity.inherits(MultipleSelectivity, {
 
         if (this.options.showDropdown !== false) {
             this.open();
-            this.$('.selectivity-multiple-input-container').toggleClass("open", true);
         }
     },
 

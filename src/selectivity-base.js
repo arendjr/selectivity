@@ -213,6 +213,7 @@ $.extend(Selectivity.prototype, EventDelegator.prototype, {
         if (this.dropdown) {
             this.dropdown.close();
         }
+        this.$el.children().toggleClass('open', false);
     },
 
     /**
@@ -371,6 +372,8 @@ $.extend(Selectivity.prototype, EventDelegator.prototype, {
                     this.search('');
                 }
             }
+
+            this.$el.children().toggleClass('open', true);
         }
     },
 
