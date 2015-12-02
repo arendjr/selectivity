@@ -3,6 +3,8 @@ Selectivity.js
 
 Modular and light-weight selection library for jQuery and Zepto.js.
 
+[![Build Status](https://travis-ci.org/arendjr/selectivity.svg?branch=master)](https://travis-ci.org/arendjr/selectivity)
+
 Motivation
 ----------
 
