@@ -270,64 +270,64 @@ exports.testSetValueWithoutItems = DomUtil.createDomTest(
 );
 
 exports.testMouseOver = DomUtil.createDomTest(
-  ['multiple', 'templates'],
-  function(test, $input, $)
-  {
-    $input.selectivity({
-      multiple: true,
-      value: ['Amsterdam']
-    });
+    ['multiple', 'templates'],
+    function(test, $input, $)
+    {
+        $input.selectivity({
+            multiple: true,
+            value: ['Amsterdam']
+        });
 
-    $('.selectivity-multiple-input')
-      .trigger('mouseover');
+        $('.selectivity-multiple-input')
+            .trigger('mouseover');
 
-    test.equal($('.selectivity-multiple-input-container').attr('class'), 'selectivity-multiple-input-container hover');
+        test.equal($('.selectivity-multiple-input-container').attr('class'), 'selectivity-multiple-input-container hover');
 
-    $('.selectivity-multiple-input')
-      .trigger('mouseleave');
+        $('.selectivity-multiple-input')
+            .trigger('mouseleave');
 
-    test.equal($('.selectivity-multiple-input-container').attr('class'), 'selectivity-multiple-input-container');
-  }
+        test.equal($('.selectivity-multiple-input-container').attr('class'), 'selectivity-multiple-input-container');
+    }
 );
 
 exports.testClickAndMouseOver = DomUtil.createDomTest(
-  ['multiple', 'dropdown', 'templates'],
-  function(test, $input, $)
-  {
-    $input.selectivity({
-      multiple: true,
-      value: ['Amsterdam']
-    });
+    ['multiple', 'dropdown', 'templates'],
+    function(test, $input, $)
+    {
+        $input.selectivity({
+            multiple: true,
+            value: ['Amsterdam']
+        });
 
-    $('.selectivity-multiple-input-container').click()
+        $('.selectivity-multiple-input-container').click()
 
-    test.equal($('.selectivity-multiple-input-container').attr('class'), 'selectivity-multiple-input-container open');
+        test.equal($('.selectivity-multiple-input-container').attr('class'), 'selectivity-multiple-input-container open');
 
-    $('.selectivity-multiple-input')
-      .trigger('mouseover');
+        $('.selectivity-multiple-input')
+            .trigger('mouseover');
 
-    test.equal($('.selectivity-multiple-input-container').attr('class'), 'selectivity-multiple-input-container open hover');
-    $input.selectivity('close');
+        test.equal($('.selectivity-multiple-input-container').attr('class'), 'selectivity-multiple-input-container open hover');
+        $input.selectivity('close');
 
-    test.equal($('.selectivity-multiple-input-container').attr('class'), 'selectivity-multiple-input-container hover');
-  }
+        test.equal($('.selectivity-multiple-input-container').attr('class'), 'selectivity-multiple-input-container hover');
+    }
 );
 
 exports.testClickOnPageAfterOpeningMultipleSelect = DomUtil.createDomTest(
-  ['multiple', 'dropdown', 'templates'],
-  function(test, $input, $)
-  {
-    $input.selectivity({
-      multiple: true,
-      value: ['Amsterdam']
-    });
+    ['multiple', 'dropdown', 'templates'],
+    function(test, $input, $)
+    {
+        $input.selectivity({
+            multiple: true,
+            value: ['Amsterdam']
+        });
 
-    $('.selectivity-multiple-input-container').click()
+        $('.selectivity-multiple-input-container').click();
 
-    test.equal($('.selectivity-multiple-input-container').attr('class'), 'selectivity-multiple-input-container open');
+        test.equal($('.selectivity-multiple-input-container').attr('class'), 'selectivity-multiple-input-container open');
 
-    $('body').trigger('click');
-    test.equal($('.selectivity-multiple-input-container').attr('class'), 'selectivity-multiple-input-container');
-  }
+        $('body').trigger('click');
+        test.equal($('.selectivity-multiple-input-container').attr('class'), 'selectivity-multiple-input-container');
+    }
 );
 
