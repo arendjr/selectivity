@@ -330,6 +330,16 @@ $.extend(Selectivity.prototype, EventDelegator.prototype, {
         }.bind(this));
     },
 
+    mouseout: function() {
+
+        this.$el.children().toggleClass('hover', false);
+    },
+
+    mouseover: function() {
+
+        this.$el.children().toggleClass('hover', true);
+    },
+
     /**
      * Opens the dropdown.
      *

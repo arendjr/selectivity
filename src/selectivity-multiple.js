@@ -107,8 +107,8 @@ var callSuper = Selectivity.inherits(MultipleSelectivity, {
         'change .selectivity-multiple-input': function() { return false; },
         'click': '_clicked',
         'click .selectivity-multiple-selected-item': '_itemClicked',
-        'mouseover .selectivity-multiple-input-container': '_mouseover',
-        'mouseleave .selectivity-multiple-input-container': '_mouseout',
+        'mouseover .selectivity-multiple-input-container': 'mouseover',
+        'mouseleave .selectivity-multiple-input-container': 'mouseout',
         'keydown .selectivity-multiple-input': '_keyHeld',
         'keyup .selectivity-multiple-input': '_keyReleased',
         'paste .selectivity-multiple-input': '_onPaste',
@@ -430,21 +430,6 @@ var callSuper = Selectivity.inherits(MultipleSelectivity, {
         this._updateInputWidth();
     },
 
-    /**
-     * @private
-     */
-    _mouseover: function() {
-
-        this.$('.selectivity-multiple-input-container').toggleClass("hover", true);
-    },
-
-    /**
-     * @private
-     */
-    _mouseout: function() {
-
-        this.$('.selectivity-multiple-input-container').toggleClass("hover", false);
-    },
 
     /**
      * @private

@@ -62,8 +62,8 @@ var callSuper = Selectivity.inherits(SingleSelectivity, {
         'change': '_rerenderSelection',
         'click': '_clicked',
         'focus .selectivity-single-select-input': '_focused',
-        'mouseover .selectivity-single-select': '_mouseover',
-        'mouseleave .selectivity-single-select': '_mouseout',
+        'mouseover .selectivity-single-select': 'mouseover',
+        'mouseleave .selectivity-single-select': 'mouseout',
         'selectivity-selected': '_resultSelected',
         'selectivity-close' : 'close'
     },
@@ -72,6 +72,7 @@ var callSuper = Selectivity.inherits(SingleSelectivity, {
      * Clears the data and value.
      */
     clear: function() {
+
         this.data(null);
     },
 
@@ -220,22 +221,6 @@ var callSuper = Selectivity.inherits(SingleSelectivity, {
     },
 
     /**
-     * @private
-     */
-    _mouseover: function() {
-
-      this.$('.selectivity-single-select').toggleClass("hover", true);
-    },
-
-    /**
-     * @private
-     */
-    _mouseout: function() {
-
-      this.$('.selectivity-single-select').toggleClass("hover", false);
-    },
-
-  /**
      * @private
      */
     _itemRemoveClicked: function() {
