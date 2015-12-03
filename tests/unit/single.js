@@ -299,7 +299,8 @@ exports.testMouseOver = DomUtil.createDomTest(
         $('.selectivity-single-select')
             .trigger('mouseover');
 
-        test.equal($('.selectivity-single-select').attr('class'), 'selectivity-single-select hover');
+        test.equal($('.selectivity-single-select').attr('class'),
+          'selectivity-single-select hover');
 
         $('.selectivity-single-select')
             .trigger('mouseleave');
@@ -323,10 +324,12 @@ exports.testClickAndMouseOver = DomUtil.createDomTest(
         $('.selectivity-single-select')
             .trigger('mouseover');
 
-        test.equal($('.selectivity-single-select').attr('class'), 'selectivity-single-select open hover');
+        test.equal($('.selectivity-single-select').attr('class'),
+          'selectivity-single-select open hover');
         $input.selectivity('close');
 
-        test.equal($('.selectivity-single-select').attr('class'), 'selectivity-single-select hover');
+        test.equal($('.selectivity-single-select').attr('class'),
+          'selectivity-single-select hover');
     }
 );
 
