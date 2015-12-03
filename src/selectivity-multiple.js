@@ -113,7 +113,7 @@ var callSuper = Selectivity.inherits(MultipleSelectivity, {
         'keyup .selectivity-multiple-input': '_keyReleased',
         'paste .selectivity-multiple-input': '_onPaste',
         'selectivity-selected': '_resultSelected',
-        'selectivity-close' : '_close'
+        'selectivity-close' : 'close'
     },
 
     /**
@@ -327,13 +327,6 @@ var callSuper = Selectivity.inherits(MultipleSelectivity, {
 
             return false;
         }
-    },
-
-    /**
-     * @private
-     */
-    _close: function() {
-        this.close();
     },
 
     /**
