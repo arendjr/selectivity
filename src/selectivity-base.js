@@ -331,13 +331,22 @@ $.extend(Selectivity.prototype, EventDelegator.prototype, {
         }.bind(this));
     },
 
+    /**
+     * Handles generic behavior when the mouse is leaves the instance.
+     *
+     * Removes the 'hover' class.
+     */
     mouseout: function() {
 
         this.$el.children().toggleClass('hover', false);
     },
 
+    /**
+     * Handles generic behavior when the mouse is hovered over the instance.
+     *
+     * Adds the 'hover' class.
+     */
     mouseover: function() {
-
         this.$el.children().toggleClass('hover', true);
     },
 
