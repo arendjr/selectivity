@@ -213,6 +213,7 @@ $.extend(Selectivity.prototype, EventDelegator.prototype, {
         if (this.dropdown) {
             this.dropdown.close();
         }
+        this.$el.children().toggleClass('open', false);
     },
 
     /**
@@ -331,6 +332,25 @@ $.extend(Selectivity.prototype, EventDelegator.prototype, {
     },
 
     /**
+     * Handles generic behavior when the mouse is leaves the instance.
+     *
+     * Removes the 'hover' class.
+     */
+    mouseout: function() {
+
+        this.$el.children().toggleClass('hover', false);
+    },
+
+    /**
+     * Handles generic behavior when the mouse is hovered over the instance.
+     *
+     * Adds the 'hover' class.
+     */
+    mouseover: function() {
+        this.$el.children().toggleClass('hover', true);
+    },
+
+    /**
      * Opens the dropdown.
      *
      * @param options Optional options object. May contain the following property:
@@ -361,6 +381,8 @@ $.extend(Selectivity.prototype, EventDelegator.prototype, {
                     this.search('');
                 }
             }
+
+            this.$el.children().toggleClass('open', true);
         }
     },
 

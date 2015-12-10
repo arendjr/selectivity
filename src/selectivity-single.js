@@ -62,7 +62,10 @@ var callSuper = Selectivity.inherits(SingleSelectivity, {
         'change': '_rerenderSelection',
         'click': '_clicked',
         'focus .selectivity-single-select-input': '_focused',
-        'selectivity-selected': '_resultSelected'
+        'mouseover' : 'mouseover',
+        'mouseleave': 'mouseout',
+        'selectivity-selected': '_resultSelected',
+        'selectivity-close' : 'close'
     },
 
     /**
