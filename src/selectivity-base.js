@@ -187,6 +187,8 @@ function Selectivity(options) {
         this.data(options.data || null, { triggerChange: false });
     }
 
+    this.$el.on('mouseover', this._mouseover.bind(this));
+    this.$el.on('mouseleave', this._mouseout.bind(this));
     this.$el.on('selectivity-close', this._closed.bind(this));
 
     EventDelegator.call(this);
@@ -213,7 +215,6 @@ $.extend(Selectivity.prototype, EventDelegator.prototype, {
         if (this.dropdown) {
             this.dropdown.close();
         }
-        this.$el.children().toggleClass('open', false);
     },
 
     /**
@@ -260,6 +261,15 @@ $.extend(Selectivity.prototype, EventDelegator.prototype, {
         $el.children().remove();
         $el[0].selectivity = null;
         $el = null;
+    },
+
+    /**
+     * Events map.
+     *
+     * Follows the same format as Backbone: http://backbonejs.org/#View-delegateEvents
+     */
+    events: {
+
     },
 
     /**
@@ -329,25 +339,6 @@ $.extend(Selectivity.prototype, EventDelegator.prototype, {
                 this.search();
             }
         }.bind(this));
-    },
-
-    /**
-     * Handles generic behavior when the mouse is leaves the instance.
-     *
-     * Removes the 'hover' class.
-     */
-    mouseout: function() {
-
-        this.$el.children().toggleClass('hover', false);
-    },
-
-    /**
-     * Handles generic behavior when the mouse is hovered over the instance.
-     *
-     * Adds the 'hover' class.
-     */
-    mouseover: function() {
-        this.$el.children().toggleClass('hover', true);
     },
 
     /**
@@ -670,6 +661,8 @@ $.extend(Selectivity.prototype, EventDelegator.prototype, {
     _closed: function() {
 
         this.dropdown = null;
+
+        this.$el.children().toggleClass('open', false);
     },
 
     /**
@@ -713,6 +706,22 @@ $.extend(Selectivity.prototype, EventDelegator.prototype, {
                 return '' + id;
             }
         }
+    },
+
+    /**
+     * @private
+     */
+    _mouseout: function() {
+
+        this.$el.children().toggleClass('hover', false);
+    },
+
+    /**
+     * @private
+     */
+    _mouseover: function() {
+
+        this.$el.children().toggleClass('hover', true);
     }
 
 });

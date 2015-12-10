@@ -107,13 +107,10 @@ var callSuper = Selectivity.inherits(MultipleSelectivity, {
         'change .selectivity-multiple-input': function() { return false; },
         'click': '_clicked',
         'click .selectivity-multiple-selected-item': '_itemClicked',
-        'mouseover': 'mouseover',
-        'mouseleave': 'mouseout',
         'keydown .selectivity-multiple-input': '_keyHeld',
         'keyup .selectivity-multiple-input': '_keyReleased',
         'paste .selectivity-multiple-input': '_onPaste',
-        'selectivity-selected': '_resultSelected',
-        'selectivity-close' : 'close'
+        'selectivity-selected': '_resultSelected'
     },
 
     /**
