@@ -44,7 +44,7 @@ function SingleSelectivity(options) {
     }
 
     if (options.showSearchInputInDropdown === false) {
-        this.initSearchInput(this.$('.selectivity-single-select-input'));
+        this.initSearchInput(this.$('.selectivity-single-select-input'), { noSearch: true });
     }
 }
 

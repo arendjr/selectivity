@@ -659,8 +659,6 @@ $.extend(Selectivity.prototype, EventDelegator.prototype, {
 
         if (this.$searchInput) {
             this.$searchInput.focus();
-        } else if (this.dropdown) {
-            this.dropdown.focus();
         }
     },
 
@@ -690,8 +688,12 @@ $.extend(Selectivity.prototype, EventDelegator.prototype, {
      * action of searching when something is typed.
      *
      * @param $input jQuery container for the input element.
+     * @param options Optional options object. May contain the following property:
+     *                noSearch - If true, no event handlers are setup to initiate searching when
+     *                           the user types in the input field. This is useful if you want to
+     *                           use the input only to handle keyboard support.
      */
-    initSearchInput: function($input) {
+    initSearchInput: function($input, options) {
 
         this.$searchInput = $input;
 
@@ -699,11 +701,13 @@ $.extend(Selectivity.prototype, EventDelegator.prototype, {
             listener(this, $input);
         }.bind(this));
 
-        $input.on('keyup', function(event) {
-            if (!event.isDefaultPrevented()) {
-                this.search();
-            }
-        }.bind(this));
+        if (!options || !options.noSearch) {
+            $input.on('keyup', function(event) {
+                if (!event.isDefaultPrevented()) {
+                    this.search();
+                }
+            }.bind(this));
+        }
     },
 
     /**
@@ -2233,13 +2237,6 @@ function SelectivityDropdown(options) {
     this.$results = this.$('.selectivity-results-container');
 
     /**
-     * jQuery container for the search input.
-     *
-     * May be null as long as there is no visible search input. It is set by initSearchInput().
-     */
-    this.$searchInput = null;
-
-    /**
      * Boolean indicating whether more results are available than currently displayed in the
      * dropdown.
      */
@@ -2356,16 +2353,6 @@ $.extend(SelectivityDropdown.prototype, EventDelegator.prototype, {
     },
 
     /**
-     * Applies focus to the input.
-     */
-    focus: function() {
-
-        if (this.$searchInput) {
-            this.$searchInput.focus();
-        }
-    },
-
-    /**
      * Highlights a result item.
      *
      * @param item The item to highlight.
@@ -2399,29 +2386,6 @@ $.extend(SelectivityDropdown.prototype, EventDelegator.prototype, {
 
         this.highlightedResult = null;
         this.loadMoreHighlighted = true;
-    },
-
-    /**
-     * Initializes the search input element.
-     *
-     * Sets the $searchInput property, invokes all search input listeners and attaches the default
-     * action of searching when something is typed.
-     *
-     * @param $input jQuery container for the input element.
-     */
-    initSearchInput: function($input) {
-
-        this.$searchInput = $input;
-
-        this.selectivity.searchInputListeners.forEach(function(listener) {
-            listener(this, $input);
-        }.bind(this));
-
-        $input.on('keyup', function(event) {
-            if (!event.isDefaultPrevented()) {
-                this.search();
-            }
-        }.bind(this));
     },
 
     /**
@@ -2501,8 +2465,7 @@ $.extend(SelectivityDropdown.prototype, EventDelegator.prototype, {
      * search will be performed among those items. Otherwise, the query function specified in the
      * options will be used to perform the search. If neither is defined, nothing happens.
      *
-     * @param term Optional term to search for. If ommitted, the value of the search input element
-     *             is used as term.
+     * @param term Term to search for.
      */
     search: function(term) {
 
@@ -2511,9 +2474,7 @@ $.extend(SelectivityDropdown.prototype, EventDelegator.prototype, {
             self._showResults(results, $.extend({ term: term }, resultOptions));
         }
 
-        if (term === undefined) {
-            term = (self.$searchInput ? self.$searchInput.val() : '');
-        }
+        term = term || '';
 
         if (self.options.items) {
             term = Selectivity.transformText(term);
@@ -3807,7 +3768,7 @@ function SingleSelectivity(options) {
     }
 
     if (options.showSearchInputInDropdown === false) {
-        this.initSearchInput(this.$('.selectivity-single-select-input'));
+        this.initSearchInput(this.$('.selectivity-single-select-input'), { noSearch: true });
     }
 }
 
