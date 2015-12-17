@@ -192,10 +192,8 @@ var callSuper = Selectivity.inherits(MultipleSelectivity, {
         if (this.options.tokenizer) {
             term = this.options.tokenizer(term, this._data, this.add.bind(this), this.options);
 
-            if ($.type(term) === 'string') {
+            if ($.type(term) === 'string' && term !== this.$searchInput.val()) {
                 this.$searchInput.val(term);
-            } else {
-                term = '';
             }
         }
 
