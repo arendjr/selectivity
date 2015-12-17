@@ -264,15 +264,6 @@ $.extend(Selectivity.prototype, EventDelegator.prototype, {
     },
 
     /**
-     * Events map.
-     *
-     * Follows the same format as Backbone: http://backbonejs.org/#View-delegateEvents
-     */
-    events: {
-
-    },
-
-    /**
      * Filters the results to be displayed in the dropdown.
      *
      * The default implementation simply returns the results unfiltered, but the MultipleSelectivity
