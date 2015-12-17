@@ -105,7 +105,8 @@ var now = Date.now;
  * Creates a function that delays invoking `func` until after `wait` milliseconds
  * have elapsed since the last time it was invoked.
  *
- * See [David Corbacho's article](http://drupalmotion.com/article/debounce-and-throttle-visual-explanation)
+ * See [David Corbacho's article]
+ *                        (http://drupalmotion.com/article/debounce-and-throttle-visual-explanation)
  * for details over the differences between `_.debounce` and `_.throttle`.
  *
  * @static
@@ -560,6 +561,8 @@ function Selectivity(options) {
         this.data(options.data || null, { triggerChange: false });
     }
 
+    this.$el.on('mouseover', this._mouseover.bind(this));
+    this.$el.on('mouseleave', this._mouseout.bind(this));
     this.$el.on('selectivity-close', this._closed.bind(this));
 
     EventDelegator.call(this);
@@ -632,6 +635,15 @@ $.extend(Selectivity.prototype, EventDelegator.prototype, {
         $el.children().remove();
         $el[0].selectivity = null;
         $el = null;
+    },
+
+    /**
+     * Events map.
+     *
+     * Follows the same format as Backbone: http://backbonejs.org/#View-delegateEvents
+     */
+    events: {
+
     },
 
     /**
@@ -734,6 +746,8 @@ $.extend(Selectivity.prototype, EventDelegator.prototype, {
                     this.search('');
                 }
             }
+
+            this.$el.children().toggleClass('open', true);
         }
     },
 
@@ -976,9 +990,9 @@ $.extend(Selectivity.prototype, EventDelegator.prototype, {
      * case it will assume the text is equal to the ID. This is useful if you're working with tags,
      * or selecting e-mail addresses for instance, but may not always be what you want.
      *
-     * @param newValue Optional new value to set. For a MultipleSelectivity instance the value must be
-     *                 an array of IDs, for a SingleSelectivity instance the value must be a single ID
-     *                 (a string or a number) or null to indicate no item is selected.
+     * @param newValue Optional new value to set. For a MultipleSelectivity instance the value must
+     *                 be an array of IDs, for a SingleSelectivity instance the value must be a
+     *                 single ID (a string or a number) or null to indicate no item is selected.
      * @param options Optional options object. May contain the following property:
      *                triggerChange - Set to false to suppress the "change" event being triggered.
      *
@@ -1021,6 +1035,8 @@ $.extend(Selectivity.prototype, EventDelegator.prototype, {
     _closed: function() {
 
         this.dropdown = null;
+
+        this.$el.children().toggleClass('open', false);
     },
 
     /**
@@ -1064,6 +1080,22 @@ $.extend(Selectivity.prototype, EventDelegator.prototype, {
                 return '' + id;
             }
         }
+    },
+
+    /**
+     * @private
+     */
+    _mouseout: function() {
+
+        this.$el.children().toggleClass('hover', false);
+    },
+
+    /**
+     * @private
+     */
+    _mouseover: function() {
+
+        this.$el.children().toggleClass('hover', true);
     }
 
 });
@@ -3381,10 +3413,8 @@ var callSuper = Selectivity.inherits(MultipleSelectivity, {
         if (this.options.tokenizer) {
             term = this.options.tokenizer(term, this._data, this.add.bind(this), this.options);
 
-            if ($.type(term) === 'string') {
+            if ($.type(term) === 'string' && term !== this.$searchInput.val()) {
                 this.$searchInput.val(term);
-            } else {
-                term = '';
             }
         }
 
@@ -4494,10 +4524,14 @@ Selectivity.Templates = {
      *                mode - Mode in which select exists, single or multiple.
      */
     selectCompliance: function(options) {
-        if (options.mode === 'multiple' && options.name.slice(-2) !== '[]') {
-            options.name += '[]';
+        var mode = options.mode;
+        var name = options.name;
+        if (mode === 'multiple' && name.slice(-2) !== '[]') {
+            name += '[]';
         }
-        return ('<select name="' + options.name + '"' + (options.mode === 'multiple' ? ' multiple' : '') + '></select>');
+        return (
+            '<select name="' + name + '"' + (mode === 'multiple' ? ' multiple' : '') + '></select>'
+        );
     },
 
     /**
