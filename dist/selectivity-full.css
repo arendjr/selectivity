@@ -116,7 +116,7 @@ input[type='text'].selectivity-multiple-input {
   background-color: transparent;
   border: none;
   float: left;
-  font-size: inherit;
+  font: inherit;
   height: -webkit-calc(2em + 4px);
   height: calc(2em + 4px);
   max-width: 100%;
