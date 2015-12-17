@@ -7,13 +7,13 @@ var argv = yargs
     .usage('Usage: gulp [tasks] [options]')
     .option('bundle-name', {
         default: 'custom',
-        describe: 'Name of the bundle to create. Default is "custom".',
+        describe: 'Name of the bundle to create.',
         type: 'string'
     })
     .option('common-js', {
         default: false,
-        describe: 'Use CommonJS require() for loading dependencies rather than expecting their ' +
-                  'globals on the window object.',
+        describe: 'Use CommonJS require() calls for loading dependencies rather than expecting ' +
+                  'their globals on the window object.',
         type: 'boolean'
     })
     .option('derequire', {
