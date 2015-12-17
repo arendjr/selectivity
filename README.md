@@ -163,7 +163,7 @@ problems for you, you can pass the `--derequire` parameter to rename those calls
 you're using Browserify in your own project you may even decide to skip the whole build process and
 just copy the relevant modules from the `src/` directory straight into your project.
 
-To display any other options available for custom builds, run `gulp help`.
+To display any other options available for custom builds, run `gulp --help`.
 
 ### Development server
 

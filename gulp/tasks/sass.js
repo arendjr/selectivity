@@ -8,18 +8,12 @@ var gulpif = require('gulp-if');
 var sass = require('gulp-ruby-sass');
 var autoprefixer = require('gulp-autoprefixer');
 var gutil = require('gulp-util');
-var argv = require('yargs').argv;
 
-var CustomBuildUtil = require('../custom-build-util');
+var argv = require('../argv');
 
 module.exports = function() {
 
-    CustomBuildUtil.checkOptions(argv);
-
-    // Config files!
-    var sassModules = argv.modules.slice();
-    sassModules.unshift('variables', 'base');
-
+    var sassModules = ['variables', 'base'].concat(argv.modules);
     fs.writeFileSync('styles/selectivity-custom.sass', sassModules.map(function(module) {
         if (fs.existsSync('styles/selectivity/' + module + '.sass')) {
             return "@import 'selectivity/" + module + "'\n";
