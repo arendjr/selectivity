@@ -296,16 +296,13 @@ exports.testMouseOver = DomUtil.createDomTest(
             value: 'Amsterdam'
         });
 
-        $('.selectivity-single-select')
-            .trigger('mouseover');
+        $('.selectivity-single-select').trigger('mouseover');
 
-        test.equal($('.selectivity-single-select').attr('class'),
-          'selectivity-single-select hover');
+        test.ok($('#selectivity-input').hasClass('hover'));
 
-        $('.selectivity-single-select')
-            .trigger('mouseleave');
+        $('#selectivity-input').trigger('mouseleave');
 
-        test.equal($('.selectivity-single-select').attr('class'), 'selectivity-single-select');
+        test.equal($('#selectivity-input').hasClass('hover'), false);
     }
 );
 
@@ -319,17 +316,15 @@ exports.testClickAndMouseOver = DomUtil.createDomTest(
 
         $('.selectivity-single-select').click();
 
-        test.equal($('.selectivity-single-select').attr('class'), 'selectivity-single-select open');
+        test.equal($('#selectivity-input').attr('class'), 'open');
 
-        $('.selectivity-single-select')
-            .trigger('mouseover');
+        $('.selectivity-single-select').trigger('mouseover');
 
-        test.equal($('.selectivity-single-select').attr('class'),
-          'selectivity-single-select open hover');
+        test.equal($('#selectivity-input').attr('class'),'open hover');
+
         $input.selectivity('close');
 
-        test.equal($('.selectivity-single-select').attr('class'),
-          'selectivity-single-select hover');
+        test.equal($('#selectivity-input').attr('class'), 'hover');
     }
 );
 
@@ -341,11 +336,12 @@ exports.testClickOnPageAfterOpeningSingleSelect = DomUtil.createDomTest(
             value: 'Amsterdam'
         });
 
-        $('.selectivity-single-select').click();
+        $('.selectivity-single-select').parent().click();
 
-        test.equal($('.selectivity-single-select').attr('class'), 'selectivity-single-select open');
+        test.ok($('#selectivity-input').hasClass('open'));
 
         $('body').trigger('click');
-        test.equal($('.selectivity-single-select').attr('class'), 'selectivity-single-select');
+
+        test.equal($('#selectivity-input').hasClass('open'), false);
     }
 );
