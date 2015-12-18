@@ -465,9 +465,7 @@ $.extend(SelectivityDropdown.prototype, EventDelegator.prototype, {
         this.$('.selectivity-load-more').replaceWith(this.selectivity.template('loading'));
 
         this.loadMore();
-
-        this.selectivity.focus();
-
+        
         return false;
     },
 
