@@ -217,7 +217,7 @@ exports.testSelectNestedItemByKeyboard = DomUtil.createDomTest(
             ]
         });
 
-        $input.click();
+        $input.find('.selectivity-single-select').click();
         $('.selectivity-search-input').val('belg')
                                       .trigger('keyup')
                                       .trigger(new $.Event('keyup', { keyCode: 13 }));
@@ -336,7 +336,7 @@ exports.testClickOnPageAfterOpeningSingleSelect = DomUtil.createDomTest(
             value: 'Amsterdam'
         });
 
-        $('.selectivity-single-select').parent().click();
+        $('.selectivity-single-select').click();
 
         test.ok($('#selectivity-input').hasClass('open'));
 
