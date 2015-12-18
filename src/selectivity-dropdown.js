@@ -64,6 +64,7 @@ function SelectivityDropdown(options) {
     this._closed = false;
 
     this._closeProxy = this.close.bind(this);
+    this._blurCloseProxy = this.blurClose.bind(this);
     if (selectivity.options.closeOnSelect !== false) {
         selectivity.$el.on('selectivity-selecting', this._closeProxy);
     }
@@ -78,6 +79,9 @@ function SelectivityDropdown(options) {
 
     if (options.showSearchInput) {
         selectivity.initSearchInput(this.$('.selectivity-search-input'));
+
+        this.$('.selectivity-search-input').blur(this._blurCloseProxy);
+
         selectivity.focus();
     }
 
@@ -132,6 +136,13 @@ $.extend(SelectivityDropdown.prototype, EventDelegator.prototype, {
             this.selectivity.$el.off('selectivity-selecting', this._closeProxy);
 
             this.triggerClose();
+        }
+    },
+
+    blurClose: function() {
+
+        if(!this.$el.hasClass('hover') && !this._opening) {
+            this.selectivity.triggerEvent('selectivity-blur');
         }
     },
 

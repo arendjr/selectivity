@@ -328,7 +328,7 @@ exports.testClickAndMouseOver = DomUtil.createDomTest(
     }
 );
 
-exports.testClickOnPageAfterOpeningMultipleSelect = DomUtil.createDomTest(
+exports.testBlurEventAfterOpeningMultipleSelect = DomUtil.createDomTest(
     ['multiple', 'dropdown', 'templates'],
     function(test, $input, $)
     {
@@ -341,7 +341,7 @@ exports.testClickOnPageAfterOpeningMultipleSelect = DomUtil.createDomTest(
 
       test.ok($('#selectivity-input').hasClass('open'));
 
-      $('body').trigger('click');
+      $('#selectivity-input').trigger('blur');
 
       test.equal($('#selectivity-input').hasClass('open'), false);
     }

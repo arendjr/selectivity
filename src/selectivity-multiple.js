@@ -365,8 +365,6 @@ var callSuper = Selectivity.inherits(MultipleSelectivity, {
     _clicked: function() {
 
         if (this.enabled) {
-            this.focus();
-
             this._open();
 
             return false;

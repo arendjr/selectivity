@@ -47,6 +47,7 @@ exports.testSearchInputInSubmenuInMultiSelectInput = DomUtil.createDomTest(
         test.equal($('.selectivity-dropdown').length, 0);
         test.deepEqual($input.selectivity('value'), [2]);
     }
+
 );
 
 exports.testSearchInSubmenuInSingleSelectInput = DomUtil.createDomTest(

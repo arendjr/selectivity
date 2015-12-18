@@ -328,19 +328,20 @@ exports.testClickAndMouseOver = DomUtil.createDomTest(
     }
 );
 
-exports.testClickOnPageAfterOpeningSingleSelect = DomUtil.createDomTest(
+exports.testBlurEventAfterOpeningSingleSelect = DomUtil.createDomTest(
     ['single', 'dropdown', 'templates'],
     function(test, $input, $)
     {
         $input.selectivity({
-            value: 'Amsterdam'
+            value: 'Amsterdam',
+            showSearchInputInDropdown: false
         });
 
         $('.selectivity-single-select').click();
 
         test.ok($('#selectivity-input').hasClass('open'));
 
-        $('body').trigger('click');
+        $('#selectivity-input').trigger('blur');
 
         test.equal($('#selectivity-input').hasClass('open'), false);
     }
