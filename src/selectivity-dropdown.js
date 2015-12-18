@@ -227,7 +227,6 @@ $.extend(SelectivityDropdown.prototype, EventDelegator.prototype, {
      */
     removeCloseHandler: function() {
 
-        $('body').off('click', this._closeProxy);
     },
 
     /**
@@ -329,7 +328,6 @@ $.extend(SelectivityDropdown.prototype, EventDelegator.prototype, {
      */
     setupCloseHandler: function() {
 
-        $('body').on('click', this._closeProxy);
     },
 
     /**
