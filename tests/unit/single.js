@@ -346,3 +346,22 @@ exports.testBlurEventAfterOpeningSingleSelect = DomUtil.createDomTest(
         test.equal($('#selectivity-input').hasClass('open'), false);
     }
 );
+
+exports.testDoNotCloseWhenHoveringAndBlurEventOccurs = DomUtil.createDomTest(
+  ['single', 'dropdown', 'templates'],
+  function(test, $input, $)
+  {
+    $input.selectivity({
+      value: 'Amsterdam',
+      showSearchInputInDropdown: false
+    });
+
+    $('.selectivity-single-select').click();
+
+    $('.selectivity-single-select').trigger('mouseover');
+
+    $('#selectivity-input').trigger('blur');
+
+    test.equal($('#selectivity-input').hasClass('open'), true);
+  }
+);
