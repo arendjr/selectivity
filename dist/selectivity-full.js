@@ -2475,6 +2475,7 @@ $.extend(SelectivityDropdown.prototype, EventDelegator.prototype, {
         }
 
         term = term || '';
+        self.term = term;
 
         if (self.options.items) {
             term = Selectivity.transformText(term);
@@ -2502,8 +2503,6 @@ $.extend(SelectivityDropdown.prototype, EventDelegator.prototype, {
                 term: term
             });
         }
-
-        self.term = term;
     },
 
     /**
