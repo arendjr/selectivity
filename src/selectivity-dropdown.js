@@ -319,7 +319,7 @@ $.extend(SelectivityDropdown.prototype, EventDelegator.prototype, {
     selectItem: function(id) {
 
         var item = Selectivity.findNestedById(this.results, id);
-        if (item) {
+        if (item && !item.disabled) {
             var options = { id: id, item: item };
             if (this.selectivity.triggerEvent('selectivity-selecting', options)) {
                 this.selectivity.triggerEvent('selectivity-selected', options);
@@ -517,7 +517,7 @@ $.extend(SelectivityDropdown.prototype, EventDelegator.prototype, {
             event.screenY === undefined || event.screenY !== this._lastMousePosition.y) {
             var id = this.selectivity._getItemId(event);
             var item = Selectivity.findNestedById(this.results, id);
-            if (item) {
+            if (item && !item.disabled) {
                 this.highlight(item);
             }
 

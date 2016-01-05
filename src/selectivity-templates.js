@@ -187,11 +187,13 @@ Selectivity.Templates = {
      * @param options Options object containing the following properties:
      *                id - Identifier for the item.
      *                text - Text label which the user sees.
+     *                disabled - Truthy if the item should be disabled.
      *                submenu - Truthy if the result item has a menu with subresults.
      */
     resultItem: function(options) {
         return (
-            '<div class="selectivity-result-item" data-item-id="' + escape(options.id) + '">' +
+            '<div class="selectivity-result-item' + (options.disabled ? ' disabled' : '') + '"' +
+                ' data-item-id="' + escape(options.id) + '">' +
                 escape(options.text) +
                 (options.submenu ? '<i class="selectivity-submenu-icon fa fa-chevron-right"></i>'
                                  : '') +
