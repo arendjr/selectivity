@@ -69,6 +69,10 @@
   background: #4484c7;
   color: #fff; }
 
+.selectivity-result-item.disabled {
+  cursor: default;
+  color: #999; }
+
 .selectivity-result-item:first-child {
   border-radius: 4px 4px 0 0; }
 

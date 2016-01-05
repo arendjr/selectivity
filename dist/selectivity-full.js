@@ -1,3 +1,10 @@
+/**
+ * @license
+ * Selectivity.js 2.0.0 <https://arendjr.github.io/selectivity/>
+ * Copyright (c) 2014-2016 Arend van Beelen jr.
+ *           (c) 2016 Speakap BV
+ * Available under MIT license <https://github.com/arendjr/selectivity/blob/master/LICENSE>
+ */
 !function(e){if("object"==typeof exports&&"undefined"!=typeof module)module.exports=e();else if("function"==typeof define&&define.amd)define([],e);else{var f;"undefined"!=typeof window?f=window:"undefined"!=typeof global?f=global:"undefined"!=typeof self&&(f=self),f.selectivity=e()}}(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(_dereq_,module,exports){
 _dereq_(5);_dereq_(6);_dereq_(7);_dereq_(9);_dereq_(10);_dereq_(11);_dereq_(12);_dereq_(13);_dereq_(14);_dereq_(15);_dereq_(16);_dereq_(17);_dereq_(18);_dereq_(19);module.exports=_dereq_(8);
 },{"10":10,"11":11,"12":12,"13":13,"14":14,"15":15,"16":16,"17":17,"18":18,"19":19,"5":5,"6":6,"7":7,"8":8,"9":9}],2:[function(_dereq_,module,exports){
@@ -2525,7 +2532,7 @@ $.extend(SelectivityDropdown.prototype, EventDelegator.prototype, {
     selectItem: function(id) {
 
         var item = Selectivity.findNestedById(this.results, id);
-        if (item) {
+        if (item && !item.disabled) {
             var options = { id: id, item: item };
             if (this.selectivity.triggerEvent('selectivity-selecting', options)) {
                 this.selectivity.triggerEvent('selectivity-selected', options);
@@ -2723,7 +2730,7 @@ $.extend(SelectivityDropdown.prototype, EventDelegator.prototype, {
             event.screenY === undefined || event.screenY !== this._lastMousePosition.y) {
             var id = this.selectivity._getItemId(event);
             var item = Selectivity.findNestedById(this.results, id);
-            if (item) {
+            if (item && !item.disabled) {
                 this.highlight(item);
             }
 
@@ -4384,11 +4391,13 @@ Selectivity.Templates = {
      * @param options Options object containing the following properties:
      *                id - Identifier for the item.
      *                text - Text label which the user sees.
+     *                disabled - Truthy if the item should be disabled.
      *                submenu - Truthy if the result item has a menu with subresults.
      */
     resultItem: function(options) {
         return (
-            '<div class="selectivity-result-item" data-item-id="' + escape(options.id) + '">' +
+            '<div class="selectivity-result-item' + (options.disabled ? ' disabled' : '') + '"' +
+                ' data-item-id="' + escape(options.id) + '">' +
                 escape(options.text) +
                 (options.submenu ? '<i class="selectivity-submenu-icon fa fa-chevron-right"></i>'
                                  : '') +

@@ -1,17 +1,18 @@
 'use strict';
 
 var browserify = require('browserify');
+var buffer = require('vinyl-buffer');
 var collapse = require('bundle-collapser/plugin');
+var derequire = require('gulp-derequire');
 var fs = require('fs');
 var glob = require('glob');
 var gulp = require('gulp');
-var derequire = require('gulp-derequire');
-var replace = require('gulp-replace');
-var uglify = require('gulp-uglify');
 var gutil = require('gulp-util');
+var header = require('gulp-header');
 var path = require('path');
-var buffer = require('vinyl-buffer');
+var replace = require('gulp-replace');
 var source = require('vinyl-source-stream');
+var uglify = require('gulp-uglify');
 
 var argv = require('../argv');
 
@@ -72,6 +73,34 @@ module.exports = function() {
 
     if (argv.minify) {
         stream = stream.pipe(uglify());
+    } else {
+        var buildCommand;
+        if (argv.bundleName !== 'full') {
+            buildCommand = ['gulp'].concat(process.argv.slice(2)).join(' ');
+        }
+
+        var copyrightLines = fs.readFileSync('LICENSE', 'utf-8').split('\n').filter(function(line) {
+            return line.indexOf('(c)') > -1;
+        }).map(function(line) {
+            return ' * ' + line + '\n';
+        }).join('');
+
+        stream = stream.pipe(header(
+            '/**\n' +
+            ' * @license\n' +
+            ' * Selectivity.js ${version}${buildDescription} <${projectUrl}>\n' +
+            (buildCommand ? ' * Build: `${buildCommand}`\n' : '') +
+            copyrightLines +
+            ' * Available under MIT license <${licenseUrl}>\n' +
+            ' */\n',
+            {
+                buildCommand: buildCommand,
+                buildDescription: (argv.bundleName === 'full' ? '' : ' (Custom Build)'),
+                licenseUrl: 'https://github.com/arendjr/selectivity/blob/master/LICENSE',
+                projectUrl: 'https://arendjr.github.io/selectivity/',
+                version: JSON.parse(fs.readFileSync('package.json', 'utf-8')).version
+            }
+        ));
     }
 
     return stream.pipe(gulp.dest('dist/'));

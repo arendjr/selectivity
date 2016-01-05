@@ -22,6 +22,7 @@
     "gulp-concat": "^2.4.3",
     "gulp-csso": "^1.0.0",
     "gulp-derequire": "^2.0.0",
+    "gulp-header": "^1.7.1",
     "gulp-if": "^1.2.5",
     "gulp-jshint": "^2.0.0",
     "gulp-nodeunit": "0.0.5",
