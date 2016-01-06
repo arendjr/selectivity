@@ -260,8 +260,6 @@ Selectivity.OptionListeners.unshift(function(selectivity, options) {
                     Selectivity.Locale.needMoreCharacters(minimumInputLength - term.length)
                 );
             } else {
-                selectivity.dropdown.showLoading();
-
                 var url = (ajax.url instanceof Function ? ajax.url(queryOptions) : ajax.url);
                 if (params) {
                     url += (url.indexOf('?') > -1 ? '&' : '?') + $.param(params(term, offset));
@@ -610,6 +608,9 @@ $.extend(Selectivity.prototype, EventDelegator.prototype, {
      *                selected.
      * @param options Optional options object. May contain the following property:
      *                triggerChange - Set to false to suppress the "change" event being triggered.
+     *                                Note this will also cause the UI to not update automatically;
+     *                                so you may want to call rerenderSelection() manually when
+     *                                using this option.
      *
      * @return If newData is omitted, this method returns the current data.
      */
@@ -997,6 +998,9 @@ $.extend(Selectivity.prototype, EventDelegator.prototype, {
      *                 single ID (a string or a number) or null to indicate no item is selected.
      * @param options Optional options object. May contain the following property:
      *                triggerChange - Set to false to suppress the "change" event being triggered.
+     *                                Note this will also cause the UI to not update automatically;
+     *                                so you may want to call rerenderSelection() manually when
+     *                                using this option.
      *
      * @return If newValue is omitted, this method returns the current value.
      */
@@ -2414,9 +2418,7 @@ $.extend(SelectivityDropdown.prototype, EventDelegator.prototype, {
                     throw new Error('callback must be passed a response object');
                 }
             }.bind(this),
-            error: function() {
-                this._showResults([], { add: true });
-            }.bind(this),
+            error: this._showResults.bind(this, [], { add: true }),
             offset: this.results.length,
             selectivity: this.selectivity,
             term: this.term
@@ -2477,9 +2479,6 @@ $.extend(SelectivityDropdown.prototype, EventDelegator.prototype, {
     search: function(term) {
 
         var self = this;
-        function setResults(results, resultOptions) {
-            self._showResults(results, $.extend({ term: term }, resultOptions));
-        }
 
         term = term || '';
         self.term = term;
@@ -2487,18 +2486,18 @@ $.extend(SelectivityDropdown.prototype, EventDelegator.prototype, {
         if (self.options.items) {
             term = Selectivity.transformText(term);
             var matcher = self.selectivity.matcher;
-            setResults(self.options.items.map(function(item) {
+            self._showResults(self.options.items.map(function(item) {
                 return matcher(item, term);
             }).filter(function(item) {
                 return !!item;
-            }));
+            }), { term: term });
         } else if (self.options.query) {
             self.options.query({
                 callback: function(response) {
                     if (response && response.results) {
-                        setResults(
+                        self._showResults(
                             Selectivity.processItems(response.results),
-                            { hasMore: !!response.more }
+                            { hasMore: !!response.more, term: term }
                         );
                     } else {
                         throw new Error('callback must be passed a response object');
@@ -2756,7 +2755,7 @@ $.extend(SelectivityDropdown.prototype, EventDelegator.prototype, {
      */
     _showResults: function(results, options) {
 
-        this.showResults(this.selectivity.filterResults(results), options || {});
+        this.showResults(this.selectivity.filterResults(results), options);
     },
 
     /**
@@ -3204,7 +3203,7 @@ function MultipleSelectivity(options) {
 
     this.initSearchInput(this.$('.selectivity-multiple-input:not(.selectivity-width-detector)'));
 
-    this._rerenderSelection();
+    this.rerenderSelection();
 
     if (!options.positionDropdown) {
         // dropdowns for multiple-value inputs should open below the select box,
@@ -3282,7 +3281,7 @@ var callSuper = Selectivity.inherits(MultipleSelectivity, {
      * Follows the same format as Backbone: http://backbonejs.org/#View-delegateEvents
      */
     events: {
-        'change': '_rerenderSelection',
+        'change': 'rerenderSelection',
         'change .selectivity-multiple-input': function() { return false; },
         'click': '_clicked',
         'click .selectivity-multiple-selected-item': '_itemClicked',
@@ -3362,6 +3361,49 @@ var callSuper = Selectivity.inherits(MultipleSelectivity, {
     },
 
     /**
+     * Re-renders the selection.
+     *
+     * Normally the UI is automatically updated whenever the selection changes, but you may want to
+     * call this method explicitly if you've updated the selection with the triggerChange option set
+     * to false.
+     */
+    rerenderSelection: function(event) {
+
+        event = event || {};
+
+        if (event.added) {
+            this._renderSelectedItem(event.added);
+
+            this._scrollToBottom();
+        } else if (event.removed) {
+            var quotedId = Selectivity.quoteCssAttr(event.removed.id);
+            this.$('.selectivity-multiple-selected-item[data-item-id=' + quotedId + ']').remove();
+        } else {
+            this.$('.selectivity-multiple-selected-item').remove();
+
+            this._data.forEach(this._renderSelectedItem, this);
+
+            this._updateInputWidth();
+        }
+
+        if (event.added || event.removed) {
+            if (this.dropdown) {
+                this.dropdown.showResults(this.filterResults(this.dropdown.results), {
+                    hasMore: this.dropdown.hasMore
+                });
+            }
+
+            if (this.hasKeyboard) {
+                this.focus();
+            }
+        }
+
+        this.positionDropdown();
+
+        this._updatePlaceholder();
+    },
+
+    /**
      * @inherit
      */
     search: function() {
@@ -3429,7 +3471,13 @@ var callSuper = Selectivity.inherits(MultipleSelectivity, {
         options.allowedTypes = options.allowedTypes || {};
         options.allowedTypes[backspaceHighlightsBeforeDelete] = 'boolean';
 
+        var wasEnabled = this.enabled;
+
         callSuper(this, 'setOptions', options);
+
+        if (wasEnabled !== this.enabled) {
+            this.$el.html(this.template('multipleSelectInput', { enabled: this.enabled }));
+        }
     },
 
     /**
@@ -3637,45 +3685,6 @@ var callSuper = Selectivity.inherits(MultipleSelectivity, {
     /**
      * @private
      */
-    _rerenderSelection: function(event) {
-
-        event = event || {};
-
-        if (event.added) {
-            this._renderSelectedItem(event.added);
-
-            this._scrollToBottom();
-        } else if (event.removed) {
-            var quotedId = Selectivity.quoteCssAttr(event.removed.id);
-            this.$('.selectivity-multiple-selected-item[data-item-id=' + quotedId + ']').remove();
-        } else {
-            this.$('.selectivity-multiple-selected-item').remove();
-
-            this._data.forEach(this._renderSelectedItem, this);
-
-            this._updateInputWidth();
-        }
-
-        if (event.added || event.removed) {
-            if (this.dropdown) {
-                this.dropdown.showResults(this.filterResults(this.dropdown.results), {
-                    hasMore: this.dropdown.hasMore
-                });
-            }
-
-            if (this.hasKeyboard) {
-                this.focus();
-            }
-        }
-
-        this.positionDropdown();
-
-        this._updatePlaceholder();
-    },
-
-    /**
-     * @private
-     */
     _resultSelected: function(event) {
 
         if (this._value.indexOf(event.id) === -1) {
@@ -3747,7 +3756,7 @@ function SingleSelectivity(options) {
     this.$el.html(this.template('singleSelectInput', this.options))
             .trigger('selectivity-init', 'single');
 
-    this._rerenderSelection();
+    this.rerenderSelection();
 
     if (!options.positionDropdown) {
         // dropdowns for single-value inputs should open below the select box,
@@ -3789,7 +3798,7 @@ var callSuper = Selectivity.inherits(SingleSelectivity, {
      * Follows the same format as Backbone: http://backbonejs.org/#View-delegateEvents
      */
     events: {
-        'change': '_rerenderSelection',
+        'change': 'rerenderSelection',
         'click': '_clicked',
         'focus .selectivity-single-select-input': '_focused',
         'selectivity-selected': '_resultSelected'
@@ -3864,6 +3873,32 @@ var callSuper = Selectivity.inherits(SingleSelectivity, {
         }
 
         this._opening = false;
+    },
+
+    /**
+     * Re-renders the selection.
+     *
+     * Normally the UI is automatically updated whenever the selection changes, but you may want to
+     * call this method explicitly if you've updated the selection with the triggerChange option set
+     * to false.
+     */
+    rerenderSelection: function() {
+
+        var $container = this.$('.selectivity-single-result-container');
+        if (this._data) {
+            $container.html(
+                this.template('singleSelectedItem', $.extend({
+                    removable: this.options.allowClear && !this.options.readOnly
+                }, this._data))
+            );
+
+            $container.find('.selectivity-single-selected-item-remove')
+                      .on('click', this._itemRemoveClicked.bind(this));
+        } else {
+            $container.html(
+                this.template('singleSelectPlaceholder', { placeholder: this.options.placeholder })
+            );
+        }
     },
 
     /**
@@ -3951,28 +3986,6 @@ var callSuper = Selectivity.inherits(SingleSelectivity, {
         this.data(null);
 
         return false;
-    },
-
-    /**
-     * @private
-     */
-    _rerenderSelection: function() {
-
-        var $container = this.$('.selectivity-single-result-container');
-        if (this._data) {
-            $container.html(
-                this.template('singleSelectedItem', $.extend({
-                    removable: this.options.allowClear && !this.options.readOnly
-                }, this._data))
-            );
-
-            $container.find('.selectivity-single-selected-item-remove')
-                      .on('click', this._itemRemoveClicked.bind(this));
-        } else {
-            $container.html(
-                this.template('singleSelectPlaceholder', { placeholder: this.options.placeholder })
-            );
-        }
     },
 
     /**
@@ -4070,6 +4083,18 @@ var callSuper = Selectivity.inherits(SelectivitySubmenu, SelectivityDropdown, {
     /**
      * @inherit
      */
+    search: function(term) {
+
+        if (this.submenu) {
+            this.submenu.search(term);
+        } else {
+            callSuper(this, 'search', term);
+        }
+    },
+
+    /**
+     * @inherit
+     */
     selectHighlight: function() {
 
         if (this.submenu) {
@@ -4085,7 +4110,7 @@ var callSuper = Selectivity.inherits(SelectivitySubmenu, SelectivityDropdown, {
     selectItem: function(id) {
 
         var item = Selectivity.findNestedById(this.results, id);
-        if (item && !item.submenu) {
+        if (item && !item.disabled && !item.submenu) {
             var options = { id: id, item: item };
             if (this.selectivity.triggerEvent('selectivity-selecting', options)) {
                 this.selectivity.triggerEvent('selectivity-selected', options);
