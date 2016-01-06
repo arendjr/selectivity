@@ -1,6 +1,6 @@
 /**
  * @license
- * Selectivity.js 2.0.0 <https://arendjr.github.io/selectivity/>
+ * Selectivity.js 2.1.0 <https://arendjr.github.io/selectivity/>
  * Copyright (c) 2014-2016 Arend van Beelen jr.
  *           (c) 2016 Speakap BV
  * Available under MIT license <https://github.com/arendjr/selectivity/blob/master/LICENSE>

@@ -74,7 +74,7 @@ In your `component.json`:
     {
         "dependencies": {
             ...
-            "arendjr/selectivity": "^2.0.0"
+            "arendjr/selectivity": "^2.1.0"
             ...
         }
     }
@@ -86,7 +86,9 @@ And in your code:
 
 ### Ruby on Rails
 
-Detailed information for `selectivity-rails`, including [Installation and usage](https://github.com/msx2/selectivity-rails#installation-and-usage) are provided in the [gem's repository](https://github.com/msx2/selectivity-rails).
+Detailed information for `selectivity-rails`, including
+[Installation and usage](https://github.com/msx2/selectivity-rails#installation-and-usage) are
+provided in the [gem's repository](https://github.com/msx2/selectivity-rails).
 
 Browser Support
 ---------------
