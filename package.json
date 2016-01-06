@@ -1,5 +1,5 @@
 {
-  "name": "Selectivity.js",
+  "name": "selectivity",
   "desc": "Modular and light-weight selection library for jQuery and Zepto.js",
   "version": "2.1.0",
   "repository": {
