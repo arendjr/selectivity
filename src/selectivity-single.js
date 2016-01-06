@@ -17,7 +17,7 @@ function SingleSelectivity(options) {
     this.$el.html(this.template('singleSelectInput', this.options))
             .trigger('selectivity-init', 'single');
 
-    this._rerenderSelection();
+    this.rerenderSelection();
 
     if (!options.positionDropdown) {
         // dropdowns for single-value inputs should open below the select box,
@@ -59,7 +59,7 @@ var callSuper = Selectivity.inherits(SingleSelectivity, {
      * Follows the same format as Backbone: http://backbonejs.org/#View-delegateEvents
      */
     events: {
-        'change': '_rerenderSelection',
+        'change': 'rerenderSelection',
         'click': '_clicked',
         'focus .selectivity-single-select-input': '_focused',
         'selectivity-selected': '_resultSelected'
@@ -134,6 +134,32 @@ var callSuper = Selectivity.inherits(SingleSelectivity, {
         }
 
         this._opening = false;
+    },
+
+    /**
+     * Re-renders the selection.
+     *
+     * Normally the UI is automatically updated whenever the selection changes, but you may want to
+     * call this method explicitly if you've updated the selection with the triggerChange option set
+     * to false.
+     */
+    rerenderSelection: function() {
+
+        var $container = this.$('.selectivity-single-result-container');
+        if (this._data) {
+            $container.html(
+                this.template('singleSelectedItem', $.extend({
+                    removable: this.options.allowClear && !this.options.readOnly
+                }, this._data))
+            );
+
+            $container.find('.selectivity-single-selected-item-remove')
+                      .on('click', this._itemRemoveClicked.bind(this));
+        } else {
+            $container.html(
+                this.template('singleSelectPlaceholder', { placeholder: this.options.placeholder })
+            );
+        }
     },
 
     /**
@@ -221,28 +247,6 @@ var callSuper = Selectivity.inherits(SingleSelectivity, {
         this.data(null);
 
         return false;
-    },
-
-    /**
-     * @private
-     */
-    _rerenderSelection: function() {
-
-        var $container = this.$('.selectivity-single-result-container');
-        if (this._data) {
-            $container.html(
-                this.template('singleSelectedItem', $.extend({
-                    removable: this.options.allowClear && !this.options.readOnly
-                }, this._data))
-            );
-
-            $container.find('.selectivity-single-selected-item-remove')
-                      .on('click', this._itemRemoveClicked.bind(this));
-        } else {
-            $container.html(
-                this.template('singleSelectPlaceholder', { placeholder: this.options.placeholder })
-            );
-        }
     },
 
     /**

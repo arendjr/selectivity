@@ -229,6 +229,9 @@ $.extend(Selectivity.prototype, EventDelegator.prototype, {
      *                selected.
      * @param options Optional options object. May contain the following property:
      *                triggerChange - Set to false to suppress the "change" event being triggered.
+     *                                Note this will also cause the UI to not update automatically;
+     *                                so you may want to call rerenderSelection() manually when
+     *                                using this option.
      *
      * @return If newData is omitted, this method returns the current data.
      */
@@ -616,6 +619,9 @@ $.extend(Selectivity.prototype, EventDelegator.prototype, {
      *                 single ID (a string or a number) or null to indicate no item is selected.
      * @param options Optional options object. May contain the following property:
      *                triggerChange - Set to false to suppress the "change" event being triggered.
+     *                                Note this will also cause the UI to not update automatically;
+     *                                so you may want to call rerenderSelection() manually when
+     *                                using this option.
      *
      * @return If newValue is omitted, this method returns the current value.
      */

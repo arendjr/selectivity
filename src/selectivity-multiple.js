@@ -25,7 +25,7 @@ function MultipleSelectivity(options) {
 
     this.initSearchInput(this.$('.selectivity-multiple-input:not(.selectivity-width-detector)'));
 
-    this._rerenderSelection();
+    this.rerenderSelection();
 
     if (!options.positionDropdown) {
         // dropdowns for multiple-value inputs should open below the select box,
@@ -103,7 +103,7 @@ var callSuper = Selectivity.inherits(MultipleSelectivity, {
      * Follows the same format as Backbone: http://backbonejs.org/#View-delegateEvents
      */
     events: {
-        'change': '_rerenderSelection',
+        'change': 'rerenderSelection',
         'change .selectivity-multiple-input': function() { return false; },
         'click': '_clicked',
         'click .selectivity-multiple-selected-item': '_itemClicked',
@@ -180,6 +180,49 @@ var callSuper = Selectivity.inherits(MultipleSelectivity, {
         if (id === this._highlightedItemId) {
             this._highlightedItemId = null;
         }
+    },
+
+    /**
+     * Re-renders the selection.
+     *
+     * Normally the UI is automatically updated whenever the selection changes, but you may want to
+     * call this method explicitly if you've updated the selection with the triggerChange option set
+     * to false.
+     */
+    rerenderSelection: function(event) {
+
+        event = event || {};
+
+        if (event.added) {
+            this._renderSelectedItem(event.added);
+
+            this._scrollToBottom();
+        } else if (event.removed) {
+            var quotedId = Selectivity.quoteCssAttr(event.removed.id);
+            this.$('.selectivity-multiple-selected-item[data-item-id=' + quotedId + ']').remove();
+        } else {
+            this.$('.selectivity-multiple-selected-item').remove();
+
+            this._data.forEach(this._renderSelectedItem, this);
+
+            this._updateInputWidth();
+        }
+
+        if (event.added || event.removed) {
+            if (this.dropdown) {
+                this.dropdown.showResults(this.filterResults(this.dropdown.results), {
+                    hasMore: this.dropdown.hasMore
+                });
+            }
+
+            if (this.hasKeyboard) {
+                this.focus();
+            }
+        }
+
+        this.positionDropdown();
+
+        this._updatePlaceholder();
     },
 
     /**
@@ -453,45 +496,6 @@ var callSuper = Selectivity.inherits(MultipleSelectivity, {
         this.$('.selectivity-multiple-selected-item[data-item-id=' + quotedId + ']')
             .find('.selectivity-multiple-selected-item-remove')
             .on('click', this._itemRemoveClicked.bind(this));
-    },
-
-    /**
-     * @private
-     */
-    _rerenderSelection: function(event) {
-
-        event = event || {};
-
-        if (event.added) {
-            this._renderSelectedItem(event.added);
-
-            this._scrollToBottom();
-        } else if (event.removed) {
-            var quotedId = Selectivity.quoteCssAttr(event.removed.id);
-            this.$('.selectivity-multiple-selected-item[data-item-id=' + quotedId + ']').remove();
-        } else {
-            this.$('.selectivity-multiple-selected-item').remove();
-
-            this._data.forEach(this._renderSelectedItem, this);
-
-            this._updateInputWidth();
-        }
-
-        if (event.added || event.removed) {
-            if (this.dropdown) {
-                this.dropdown.showResults(this.filterResults(this.dropdown.results), {
-                    hasMore: this.dropdown.hasMore
-                });
-            }
-
-            if (this.hasKeyboard) {
-                this.focus();
-            }
-        }
-
-        this.positionDropdown();
-
-        this._updatePlaceholder();
     },
 
     /**
