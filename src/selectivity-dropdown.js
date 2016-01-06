@@ -201,9 +201,7 @@ $.extend(SelectivityDropdown.prototype, EventDelegator.prototype, {
                     throw new Error('callback must be passed a response object');
                 }
             }.bind(this),
-            error: function() {
-                this._showResults([], { add: true });
-            }.bind(this),
+            error: this._showResults.bind(this, [], { add: true }),
             offset: this.results.length,
             selectivity: this.selectivity,
             term: this.term
@@ -264,9 +262,6 @@ $.extend(SelectivityDropdown.prototype, EventDelegator.prototype, {
     search: function(term) {
 
         var self = this;
-        function setResults(results, resultOptions) {
-            self._showResults(results, $.extend({ term: term }, resultOptions));
-        }
 
         term = term || '';
         self.term = term;
@@ -274,18 +269,18 @@ $.extend(SelectivityDropdown.prototype, EventDelegator.prototype, {
         if (self.options.items) {
             term = Selectivity.transformText(term);
             var matcher = self.selectivity.matcher;
-            setResults(self.options.items.map(function(item) {
+            self._showResults(self.options.items.map(function(item) {
                 return matcher(item, term);
             }).filter(function(item) {
                 return !!item;
-            }));
+            }), { term: term });
         } else if (self.options.query) {
             self.options.query({
                 callback: function(response) {
                     if (response && response.results) {
-                        setResults(
+                        self._showResults(
                             Selectivity.processItems(response.results),
-                            { hasMore: !!response.more }
+                            { hasMore: !!response.more, term: term }
                         );
                     } else {
                         throw new Error('callback must be passed a response object');
@@ -543,7 +538,7 @@ $.extend(SelectivityDropdown.prototype, EventDelegator.prototype, {
      */
     _showResults: function(results, options) {
 
-        this.showResults(this.selectivity.filterResults(results), options || {});
+        this.showResults(this.selectivity.filterResults(results), options);
     },
 
     /**

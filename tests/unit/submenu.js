@@ -15,6 +15,80 @@ var items = [
     ] } }
 ];
 
+exports.testSearchInputInSubmenuInMultiSelectInput = DomUtil.createDomTest(
+    ['multiple', 'dropdown', 'submenu', 'templates'],
+    function(test, $input, $) {
+        $input.selectivity({
+            items: [{
+                id: 1,
+                text: 'First Item',
+                submenu: {
+                    items: [{
+                        id: 2,
+                        text: "First subitem"
+                    }, {
+                        id: 3,
+                        text: "Second subitem"
+                    }],
+                    showSearchInput: true
+                }
+            }],
+            multiple: true
+        });
+
+        $input.click();
+
+        $('.selectivity-result-item[data-item-id="1"]').mouseover();
+
+        test.equal($('.selectivity-dropdown').length, 2);
+
+        $('.selectivity-result-item[data-item-id="2"]').click();
+
+        test.equal($('.selectivity-dropdown').length, 0);
+        test.deepEqual($input.selectivity('value'), [2]);
+    }
+);
+
+exports.testSearchInSubmenuInSingleSelectInput = DomUtil.createDomTest(
+    ['single', 'dropdown', 'submenu', 'templates'],
+    function(test, $input, $) {
+        $input.selectivity({
+            items: [{
+                id: 1,
+                text: 'First Item',
+                submenu: {
+                    items: [{
+                        id: 2,
+                        text: "First subitem"
+                    }, {
+                        id: 3,
+                        text: "Second subitem"
+                    }],
+                    showSearchInput: true
+                }
+            }]
+        });
+
+        $input.click();
+        test.equal($('.selectivity-result-item').length, 3);
+
+        $('.selectivity-result-item[data-item-id="1"]').mouseover();
+
+        test.equal($('.selectivity-dropdown').length, 2);
+        test.equal($('.selectivity-result-item').length, 3);
+
+        $('.selectivity-search-input').val('Second').trigger('keyup');
+
+        test.equal($('.selectivity-dropdown').length, 2);
+        test.equal($('.selectivity-result-item').length, 2);
+
+        $('.selectivity-search-input').val('').trigger('keyup');
+
+        test.equal($('.selectivity-dropdown').length, 2);
+        test.equal($('.selectivity-result-item').length, 3);
+    }
+);
+
 exports.testSelectItemAfterOpeningSubmenu = DomUtil.createDomTest(
     ['single', 'dropdown', 'submenu', 'templates'],
     { async: true },
@@ -77,39 +151,5 @@ exports.testSetValue = DomUtil.createDomTest(
 
         test.deepEqual($input.selectivity('data'), { id: '3-1', text: 'Third Item' });
         test.equal($input.selectivity('value'), '3-1');
-    }
-);
-
-exports.testSearchInputInSubmenuInMultiSelectInput = DomUtil.createDomTest(
-    ['multiple', 'dropdown', 'submenu', 'templates'],
-    function(test, $input, $) {
-        $input.selectivity({
-            items: [{
-                id: 1,
-                text: 'First Item',
-                submenu: {
-                    items: [{
-                        id: 2,
-                        text: "First subitem"
-                    }, {
-                        id: 3,
-                        text: "Second subitem"
-                    }],
-                    showSearchInput: true
-                }
-            }],
-            multiple: true
-        });
-
-        $input.click();
-
-        $('.selectivity-result-item[data-item-id="1"]').mouseover();
-
-        test.equal($('.selectivity-dropdown').length, 2);
-
-        $('.selectivity-result-item[data-item-id="2"]').click();
-
-        test.equal($('.selectivity-dropdown').length, 0);
-        test.deepEqual($input.selectivity('value'), [2]);
     }
 );

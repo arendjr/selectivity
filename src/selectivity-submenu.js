@@ -78,6 +78,18 @@ var callSuper = Selectivity.inherits(SelectivitySubmenu, SelectivityDropdown, {
     /**
      * @inherit
      */
+    search: function(term) {
+
+        if (this.submenu) {
+            this.submenu.search(term);
+        } else {
+            callSuper(this, 'search', term);
+        }
+    },
+
+    /**
+     * @inherit
+     */
     selectHighlight: function() {
 
         if (this.submenu) {
