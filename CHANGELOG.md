@@ -1,7 +1,7 @@
 CHANGELOG
 =========
 
-# 2.1.0
+## 2.1.0
 
 - Implemented `disabled` property on items. When an item is disabled it cannot
   be selected and by default is rendered with grey text.
@@ -16,4 +16,4 @@ CHANGELOG
   tokenizer.
 - Miscellaneous smaller fixes and styling tweaks.
 
-# 2.0.0
+## 2.0.0
