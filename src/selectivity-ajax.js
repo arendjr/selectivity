@@ -35,8 +35,6 @@ Selectivity.OptionListeners.unshift(function(selectivity, options) {
                     Selectivity.Locale.needMoreCharacters(minimumInputLength - term.length)
                 );
             } else {
-                selectivity.dropdown.showLoading();
-
                 var url = (ajax.url instanceof Function ? ajax.url(queryOptions) : ajax.url);
                 if (params) {
                     url += (url.indexOf('?') > -1 ? '&' : '?') + $.param(params(term, offset));
