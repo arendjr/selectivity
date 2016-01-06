@@ -293,7 +293,13 @@ var callSuper = Selectivity.inherits(MultipleSelectivity, {
         options.allowedTypes = options.allowedTypes || {};
         options.allowedTypes[backspaceHighlightsBeforeDelete] = 'boolean';
 
+        var wasEnabled = this.enabled;
+
         callSuper(this, 'setOptions', options);
+
+        if (wasEnabled !== this.enabled) {
+            this.$el.html(this.template('multipleSelectInput', { enabled: this.enabled }));
+        }
     },
 
     /**

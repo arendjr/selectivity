@@ -195,6 +195,24 @@ exports.testNoData = DomUtil.createDomTest(
     }
 );
 
+exports.testRemoveOnly = DomUtil.createDomTest(
+    ['multiple', 'templates'],
+    function(test, $input) {
+        $input.selectivity({
+            items: [
+                { id: 1, text: 'Amsterdam' },
+                { id: 2, text: 'Antwerp' },
+                { id: 3, text: 'Athens' }
+            ],
+            multiple: true
+        }).selectivity('setOptions', {
+            removeOnly: true
+        });
+
+        test.equal($input.find('input').length, 0);
+    }
+);
+
 exports.testSetValue = DomUtil.createDomTest(
     ['multiple', 'templates'],
     function(test, $input) {
