@@ -64,7 +64,7 @@ function SelectivityDropdown(options) {
     this._closed = false;
 
     this._closeProxy = this.close.bind(this);
-    this._blurCloseProxy = this.blurClose.bind(this);
+    this._blurProxy = this._blur.bind(this);
     if (selectivity.options.closeOnSelect !== false) {
         selectivity.$el.on('selectivity-selecting', this._closeProxy);
     }
@@ -80,7 +80,7 @@ function SelectivityDropdown(options) {
     if (options.showSearchInput) {
         selectivity.initSearchInput(this.$('.selectivity-search-input'));
 
-        this.$('.selectivity-search-input').on("blur", this._blurCloseProxy);
+        this.$('.selectivity-search-input').on("blur", this._blurProxy);
 
         selectivity.focus();
     }
