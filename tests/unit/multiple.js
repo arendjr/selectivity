@@ -298,11 +298,11 @@ exports.testMouseOver = DomUtil.createDomTest(
 
         $('.selectivity-multiple-input').trigger('mouseover');
 
-        test.ok($('#selectivity-input').hasClass('hover'));
+        test.ok($input.hasClass('hover'));
 
         $('.selectivity-multiple-input').trigger('mouseleave');
 
-        test.equal($('#selectivity-input').hasClass('hover'), false);
+        test.equal($input.hasClass('hover'), false);
     }
 );
 
@@ -317,14 +317,14 @@ exports.testClickAndMouseOver = DomUtil.createDomTest(
 
         $('.selectivity-multiple-input-container').click();
 
-        test.equal($('#selectivity-input').attr('class'), 'open');
+        test.equal($input.attr('class'), 'open');
 
         $('.selectivity-multiple-input').trigger('mouseover');
 
-        test.equal($('#selectivity-input').attr('class'), 'open hover');
+        test.equal($input.attr('class'), 'open hover');
         $input.selectivity('close');
 
-        test.equal($('#selectivity-input').attr('class'), 'hover');
+        test.equal($input.attr('class'), 'hover');
     }
 );
 
@@ -337,13 +337,13 @@ exports.testBlurEventAfterOpeningMultipleSelect = DomUtil.createDomTest(
             value: ['Amsterdam']
         });
 
-      $('.selectivity-multiple-input-container').click();
+        $('.selectivity-multiple-input-container').click();
 
-      test.ok($('#selectivity-input').hasClass('open'));
+        test.ok($input.hasClass('open'));
 
-      $('#selectivity-input').trigger('blur');
+        $input.trigger('blur');
 
-      test.equal($('#selectivity-input').hasClass('open'), false);
+        test.equal($input.hasClass('open'), false);
     }
 );
 
