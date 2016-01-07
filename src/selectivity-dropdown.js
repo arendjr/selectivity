@@ -80,7 +80,7 @@ function SelectivityDropdown(options) {
     if (options.showSearchInput) {
         selectivity.initSearchInput(this.$('.selectivity-search-input'));
 
-        this.$('.selectivity-search-input').blur(this._blurCloseProxy);
+        this.$('.selectivity-search-input').on("blur", this._blurCloseProxy);
 
         selectivity.focus();
     }
