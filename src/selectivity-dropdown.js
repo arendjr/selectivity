@@ -438,7 +438,7 @@ $.extend(SelectivityDropdown.prototype, EventDelegator.prototype, {
      */
     _blur: function() {
 
-        if (!this.$el.hasClass('hover') && !this._opening) {
+        if (!this.$el.hasClass('hover')) {
             this.selectivity.triggerEvent('selectivity-blur');
         }
     },
