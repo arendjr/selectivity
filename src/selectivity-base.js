@@ -192,8 +192,8 @@ function Selectivity(options) {
     this.$el.on('mouseover', this._mouseover.bind(this));
     this.$el.on('mouseleave', this._mouseout.bind(this));
     this.$el.on('selectivity-close', this._closed.bind(this));
-    this.$el.on('selectivity-blur', this._blurClose.bind(this));
-    this.$el.on('blur', this._blurClose.bind(this));
+    this.$el.on('selectivity-blur', this._blur.bind(this));
+    this.$el.on('blur', this._blur.bind(this));
 
     EventDelegator.call(this);
 }
@@ -211,12 +211,6 @@ $.extend(Selectivity.prototype, EventDelegator.prototype, {
         return this.$el.find(selector);
     },
 
-    _blurClose: function() {
-
-        if(!this.$el.hasClass('hover') && !this._opening) {
-            this.close();
-        }
-    },
     /**
      * Closes the dropdown.
      */
@@ -663,6 +657,16 @@ $.extend(Selectivity.prototype, EventDelegator.prototype, {
                     this.triggerChange();
                 }
             }
+        }
+    },
+
+    /**
+     * @private
+     */
+    _blur: function() {
+
+        if (!this.$el.hasClass('hover') && !this._opening) {
+            this.close();
         }
     },
 

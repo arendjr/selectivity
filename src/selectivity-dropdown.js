@@ -139,13 +139,6 @@ $.extend(SelectivityDropdown.prototype, EventDelegator.prototype, {
         }
     },
 
-    blurClose: function() {
-
-        if(!this.$el.hasClass('hover') && !this._opening) {
-            this.selectivity.triggerEvent('selectivity-blur');
-        }
-    },
-
     /**
      * Events map.
      *
@@ -438,6 +431,16 @@ $.extend(SelectivityDropdown.prototype, EventDelegator.prototype, {
     triggerOpen: function() {
 
         this.selectivity.$el.trigger('selectivity-open');
+    },
+
+    /**
+     * @private
+     */
+    _blur: function() {
+
+        if (!this.$el.hasClass('hover') && !this._opening) {
+            this.selectivity.triggerEvent('selectivity-blur');
+        }
     },
 
     /**
