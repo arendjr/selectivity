@@ -365,3 +365,30 @@ exports.testDoNotCloseWhenHoveringAndBlurEventOccurs = DomUtil.createDomTest(
         test.equal($input.hasClass('open'), true);
     }
 );
+
+exports.testDefaultTabindex = DomUtil.createDomTest(
+    ['single', 'dropdown', 'templates'],
+    function(test, $input)
+    {
+        $input.selectivity({
+            value: 'Amsterdam',
+            showSearchInputInDropdown: false
+        });
+
+        test.equal($input.attr('tabindex'), 1);
+    }
+);
+
+exports.testTabindexCanBeGivenThroughParameter = DomUtil.createDomTest(
+    ['single', 'dropdown', 'templates'],
+    function(test, $input)
+    {
+        $input.selectivity({
+            value: 'Amsterdam',
+            showSearchInputInDropdown: false,
+            tabindex: 2
+        });
+
+        test.equal($input.attr('tabindex'), 2);
+    }
+);
