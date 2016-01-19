@@ -88,7 +88,7 @@ exports.testNestedData = DomUtil.createDomTest(
                     text: 'Austria',
                     children: [
                         { id: 54, text: 'Vienna' }
-                     ]
+                    ]
                 },
                 {
                     text: 'Belgium',
@@ -122,7 +122,7 @@ exports.testNestedValue = DomUtil.createDomTest(
                     text: 'Austria',
                     children: [
                         { id: 54, text: 'Vienna' }
-                     ]
+                    ]
                 },
                 {
                     text: 'Belgium',
@@ -199,7 +199,7 @@ exports.testSelectNestedItemByKeyboard = DomUtil.createDomTest(
                     text: 'Austria',
                     children: [
                         { id: 54, text: 'Vienna' }
-                     ]
+                    ]
                 },
                 {
                     text: 'Belgium',
