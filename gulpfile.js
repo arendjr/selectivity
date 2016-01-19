@@ -4,7 +4,6 @@ var gulp = require('./gulp')([
     'browserify',
     'browser-sync',
     'sass',
-    'jshint',
     'eslint',
     'qt-creator',
     'unit-tests',
