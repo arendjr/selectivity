@@ -10,7 +10,7 @@
     "build-min": "gulp --bundle-name=full --minify",
     "build-source": "gulp --bundle-name=full --derequire",
     "build": "npm run build-source && npm run build-min",
-    "test": "gulp jshint && gulp unit-tests"
+    "test": "gulp eslint && gulp unit-tests"
   },
   "devDependencies": {
     "browser-sync": "^2.10.0",
