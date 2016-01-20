@@ -232,10 +232,10 @@ In the absence of a formal style guide, please take the following into considera
 - Prefer single quotes.
 - No lines longer than 100 characters.
 
-Also make sure you don't check-in any JSHint violations.
+Also make sure you don't check-in any ESLint violations.
 
 In order to validate your code before pushing, please run the following script:
 
     $ tools/install-git-hooks.sh
 
-This will install a Git pre-push hook that will run JSHint and all unit tests before pushing.
+This will install a Git pre-push hook that will run Eslint and all unit tests before pushing.

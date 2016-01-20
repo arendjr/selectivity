@@ -64,7 +64,7 @@ function emailTokenizer(input, selection, createToken) {
                     }
                     break;
                 case '"':
-                    do { i++; } while(i < length && input[i] !== '"');
+                    do { i++; } while (i < length && input[i] !== '"');
                     break;
                 default:
                     continue;
@@ -88,7 +88,7 @@ function emailTokenizer(input, selection, createToken) {
                 }
                 break;
             case '"':
-                do { i++; } while(i < length && input[i] !== '"');
+                do { i++; } while (i < length && input[i] !== '"');
                 break;
             default:
                 continue;

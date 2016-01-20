@@ -25,10 +25,10 @@ exports.testSearchInputInSubmenuInMultiSelectInput = DomUtil.createDomTest(
                 submenu: {
                     items: [{
                         id: 2,
-                        text: "First subitem"
+                        text: 'First subitem'
                     }, {
                         id: 3,
-                        text: "Second subitem"
+                        text: 'Second subitem'
                     }],
                     showSearchInput: true
                 }
@@ -59,10 +59,10 @@ exports.testSearchInSubmenuInSingleSelectInput = DomUtil.createDomTest(
                 submenu: {
                     items: [{
                         id: 2,
-                        text: "First subitem"
+                        text: 'irst subitem'
                     }, {
                         id: 3,
-                        text: "Second subitem"
+                        text: 'Second subitem'
                     }],
                     showSearchInput: true
                 }

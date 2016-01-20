@@ -27,7 +27,6 @@ var EventDelegator = require('./event-delegator');
  *         executed on the first element in the set of matched elements.
  */
 function selectivity(methodName, options) {
-    /* jshint validthis: true */
 
     var methodArgs = Array.prototype.slice.call(arguments, 1);
     var result;
