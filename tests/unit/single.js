@@ -375,7 +375,7 @@ exports.testDefaultTabindex = DomUtil.createDomTest(
             showSearchInputInDropdown: false
         });
 
-        test.equal($input.attr('tabindex'), 1);
+        test.equal($input.attr('tabindex'), 0);
     }
 );
 
