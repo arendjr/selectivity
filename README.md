@@ -133,7 +133,6 @@ Module          | Description
 ----------------|------------
 **ajax**        | Convenience module for performing AJAX requests. All options passed into the `ajax` object are provided by this module.
 **async**       | Blocks the query function from calling its callback functions if another query has been issued since. This prevents out-of-order replies from remote sources to display incorrect results. This module is only needed if you use the query function and call its callbacks asynchronously.
-**backdrop**    | This module provides the backdrop feature which is used by the dropdown. The backdrop is used to guarantee that when the dropdown is open and the user clicks outside the Selectivity area, the dropdown will close. If you omit this module, a simpler implementation is used which will still attempt to close the dropdown when the user clicks outside the area, but which may fail when the user clicks on some element that has a custom click handler which prevents the event from bubbling.
 **base**        | The Selectivity base module which is pulled in automatically into every build.
 **diacritics**  | Diacritics support. This will make sure that `"Łódź"` will match when the user searches for `"Lodz"`, for example. However, if you always query a server when searching for results, you may want to solve matching of diacritics server-side, in which case this module can be ommitted.
 **dropdown**    | Module that implements the dropdown. You will most likely want to include this, unless you only want to use Selectivity without any dropdown or you provide a completely custom implementation instead.
@@ -155,9 +154,9 @@ Example:
     $ gulp --modules=multiple,dropdown
 
 This will create a custom build with support for selecting multiple values and a dropdown. The build
-will be saved in `dist/selectivity-custom.js`. The dropdown will not feature a backdrop, there will
-be no diacritics support, you will have to provide your own templates with their localizable
-content, and you cannot use this build for creating a single-select input.
+will be saved in `dist/selectivity-custom.js`. There will be no diacritics support, you will have to
+provide your own templates with their localizable content, and you cannot use this build for
+creating a single-select input.
 
 Note that because Selectivity uses Browserify internally, the build will contain various `require()`
 calls, which may sometimes interfere with build systems that scan for those calls. If this gives

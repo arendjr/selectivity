@@ -180,7 +180,7 @@ function Selectivity(options) {
 
     this.setOptions(options);
 
-    this.$el.attr('tabindex', options.tabindex || 1);
+    this.$el.attr('tabindex', options.tabindex || 0);
 
     if (options.value) {
         this.value(options.value, { triggerChange: false });

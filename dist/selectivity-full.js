@@ -6,8 +6,8 @@
  * Available under MIT license <https://github.com/arendjr/selectivity/blob/master/LICENSE>
  */
 !function(e){if("object"==typeof exports&&"undefined"!=typeof module)module.exports=e();else if("function"==typeof define&&define.amd)define([],e);else{var f;"undefined"!=typeof window?f=window:"undefined"!=typeof global?f=global:"undefined"!=typeof self&&(f=self),f.selectivity=e()}}(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(_dereq_,module,exports){
-_dereq_(5);_dereq_(6);_dereq_(7);_dereq_(9);_dereq_(10);_dereq_(11);_dereq_(12);_dereq_(13);_dereq_(14);_dereq_(15);_dereq_(16);_dereq_(17);_dereq_(18);_dereq_(19);module.exports=_dereq_(8);
-},{"10":10,"11":11,"12":12,"13":13,"14":14,"15":15,"16":16,"17":17,"18":18,"19":19,"5":5,"6":6,"7":7,"8":8,"9":9}],2:[function(_dereq_,module,exports){
+_dereq_(5);_dereq_(6);_dereq_(8);_dereq_(9);_dereq_(10);_dereq_(11);_dereq_(12);_dereq_(13);_dereq_(14);_dereq_(15);_dereq_(16);_dereq_(17);_dereq_(18);module.exports=_dereq_(7);
+},{"10":10,"11":11,"12":12,"13":13,"14":14,"15":15,"16":16,"17":17,"18":18,"5":5,"6":6,"7":7,"8":8,"9":9}],2:[function(_dereq_,module,exports){
 'use strict';
 
 var $ = window.jQuery || window.Zepto;
@@ -229,9 +229,9 @@ var $ = window.jQuery || window.Zepto;
 
 var debounce = _dereq_(3);
 
-var Selectivity = _dereq_(8);
+var Selectivity = _dereq_(7);
 
-_dereq_(13);
+_dereq_(12);
 
 /**
  * Option listener that implements a convenience query function for performing AJAX requests.
@@ -295,10 +295,10 @@ Selectivity.OptionListeners.unshift(function(selectivity, options) {
     }
 });
 
-},{"13":13,"3":3,"8":8,"jquery":"jquery"}],6:[function(_dereq_,module,exports){
+},{"12":12,"3":3,"7":7,"jquery":"jquery"}],6:[function(_dereq_,module,exports){
 'use strict';
 
-var Selectivity = _dereq_(8);
+var Selectivity = _dereq_(7);
 
 var latestQueryNum = 0;
 
@@ -332,51 +332,7 @@ Selectivity.OptionListeners.push(function(selectivity, options) {
     }
 });
 
-},{"8":8}],7:[function(_dereq_,module,exports){
-'use strict';
-
-var $ = window.jQuery || window.Zepto;
-
-var SelectivityDropdown = _dereq_(10);
-
-/**
- * Methods.
- */
-$.extend(SelectivityDropdown.prototype, {
-
-    /**
-     * @inherit
-     */
-    removeCloseHandler: function() {
-
-        if (this._$backdrop && !this.parentMenu) {
-            this._$backdrop.remove();
-            this._$backdrop = null;
-        }
-    },
-
-    /**
-     * @inherit
-     */
-    setupCloseHandler: function() {
-
-        var $backdrop;
-        if (this.parentMenu) {
-            $backdrop = this.parentMenu._$backdrop;
-        } else {
-            $backdrop = $('<div>').addClass('selectivity-backdrop');
-
-            $('body').append($backdrop);
-        }
-
-        $backdrop.on('click', this.close.bind(this));
-
-        this._$backdrop = $backdrop;
-    }
-
-});
-
-},{"10":10,"jquery":"jquery"}],8:[function(_dereq_,module,exports){
+},{"7":7}],7:[function(_dereq_,module,exports){
 'use strict';
 
 var $ = window.jQuery || window.Zepto;
@@ -406,7 +362,6 @@ var EventDelegator = _dereq_(2);
  *         executed on the first element in the set of matched elements.
  */
 function selectivity(methodName, options) {
-    /* jshint validthis: true */
 
     var methodArgs = Array.prototype.slice.call(arguments, 1);
     var result;
@@ -560,6 +515,8 @@ function Selectivity(options) {
 
     this.setOptions(options);
 
+    this.$el.attr('tabindex', options.tabindex || 0);
+
     if (options.value) {
         this.value(options.value, { triggerChange: false });
     } else {
@@ -569,6 +526,8 @@ function Selectivity(options) {
     this.$el.on('mouseover', this._mouseover.bind(this));
     this.$el.on('mouseleave', this._mouseout.bind(this));
     this.$el.on('selectivity-close', this._closed.bind(this));
+    this.$el.on('selectivity-blur', this._blur.bind(this));
+    this.$el.on('blur', this._blur.bind(this));
 
     EventDelegator.call(this);
 }
@@ -750,7 +709,7 @@ $.extend(Selectivity.prototype, EventDelegator.prototype, {
                 }
             }
 
-            this.$el.children().toggleClass('open', true);
+            this.$el.toggleClass('open', true);
         }
     },
 
@@ -1038,11 +997,21 @@ $.extend(Selectivity.prototype, EventDelegator.prototype, {
     /**
      * @private
      */
+    _blur: function() {
+
+        if (!this.$el.hasClass('hover')) {
+            this.close();
+        }
+    },
+
+    /**
+     * @private
+     */
     _closed: function() {
 
         this.dropdown = null;
 
-        this.$el.children().toggleClass('open', false);
+        this.$el.toggleClass('open', false);
     },
 
     /**
@@ -1093,7 +1062,7 @@ $.extend(Selectivity.prototype, EventDelegator.prototype, {
      */
     _mouseout: function() {
 
-        this.$el.children().toggleClass('hover', false);
+        this.$el.toggleClass('hover', false);
     },
 
     /**
@@ -1101,7 +1070,7 @@ $.extend(Selectivity.prototype, EventDelegator.prototype, {
      */
     _mouseover: function() {
 
-        this.$el.children().toggleClass('hover', true);
+        this.$el.toggleClass('hover', true);
     }
 
 });
@@ -1350,7 +1319,7 @@ Selectivity.transformText = function(string) {
 
 module.exports = $.fn.selectivity = Selectivity;
 
-},{"2":2,"jquery":"jquery"}],9:[function(_dereq_,module,exports){
+},{"2":2,"jquery":"jquery"}],8:[function(_dereq_,module,exports){
 'use strict';
 
 var DIACRITICS = {
@@ -2195,7 +2164,7 @@ var DIACRITICS = {
     '\u03C2': '\u03C3'
 };
 
-var Selectivity = _dereq_(8);
+var Selectivity = _dereq_(7);
 var previousTransform = Selectivity.transformText;
 
 /**
@@ -2214,7 +2183,7 @@ Selectivity.transformText = function(string) {
     return previousTransform(result);
 };
 
-},{"8":8}],10:[function(_dereq_,module,exports){
+},{"7":7}],9:[function(_dereq_,module,exports){
 'use strict';
 
 var $ = window.jQuery || window.Zepto;
@@ -2223,7 +2192,7 @@ var debounce = _dereq_(3);
 
 var EventDelegator = _dereq_(2);
 
-var Selectivity = _dereq_(8);
+var Selectivity = _dereq_(7);
 
 /**
  * selectivity Dropdown Constructor.
@@ -2281,6 +2250,7 @@ function SelectivityDropdown(options) {
     this._closed = false;
 
     this._closeProxy = this.close.bind(this);
+    this._blurProxy = this._blur.bind(this);
     if (selectivity.options.closeOnSelect !== false) {
         selectivity.$el.on('selectivity-selecting', this._closeProxy);
     }
@@ -2295,6 +2265,9 @@ function SelectivityDropdown(options) {
 
     if (options.showSearchInput) {
         selectivity.initSearchInput(this.$('.selectivity-search-input'));
+
+        this.$('.selectivity-search-input').on("blur", this._blurProxy);
+
         selectivity.focus();
     }
 
@@ -2330,7 +2303,8 @@ $.extend(SelectivityDropdown.prototype, EventDelegator.prototype, {
         while (($next = $anchor.next('.selectivity-dropdown')).length) {
             $anchor = $next;
         }
-        this.$el.insertAfter($anchor);
+
+        $anchor.append(this.$el);
     },
 
     /**
@@ -2443,7 +2417,6 @@ $.extend(SelectivityDropdown.prototype, EventDelegator.prototype, {
      */
     removeCloseHandler: function() {
 
-        $('body').off('click', this._closeProxy);
     },
 
     /**
@@ -2545,7 +2518,6 @@ $.extend(SelectivityDropdown.prototype, EventDelegator.prototype, {
      */
     setupCloseHandler: function() {
 
-        $('body').on('click', this._closeProxy);
     },
 
     /**
@@ -2650,6 +2622,16 @@ $.extend(SelectivityDropdown.prototype, EventDelegator.prototype, {
     /**
      * @private
      */
+    _blur: function() {
+
+        if (!this.$el.hasClass('hover')) {
+            this.selectivity.triggerEvent('selectivity-blur');
+        }
+    },
+
+    /**
+     * @private
+     */
     _highlightFirstItem: function(results) {
 
         function findFirstItem(results) {
@@ -2683,8 +2665,6 @@ $.extend(SelectivityDropdown.prototype, EventDelegator.prototype, {
         this.$('.selectivity-load-more').replaceWith(this.selectivity.template('loading'));
 
         this.loadMore();
-
-        this.selectivity.focus();
 
         return false;
     },
@@ -2808,13 +2788,13 @@ $.extend(SelectivityDropdown.prototype, EventDelegator.prototype, {
 
 module.exports = Selectivity.Dropdown = SelectivityDropdown;
 
-},{"2":2,"3":3,"8":8,"jquery":"jquery"}],11:[function(_dereq_,module,exports){
+},{"2":2,"3":3,"7":7,"jquery":"jquery"}],10:[function(_dereq_,module,exports){
 'use strict';
 
 var $ = window.jQuery || window.Zepto;
 
-var Selectivity = _dereq_(8);
-var MultipleSelectivity = _dereq_(14);
+var Selectivity = _dereq_(7);
+var MultipleSelectivity = _dereq_(13);
 
 function isValidEmail(email) {
 
@@ -2875,7 +2855,7 @@ function emailTokenizer(input, selection, createToken) {
                     }
                     break;
                 case '"':
-                    do { i++; } while(i < length && input[i] !== '"');
+                    do { i++; } while (i < length && input[i] !== '"');
                     break;
                 default:
                     continue;
@@ -2899,7 +2879,7 @@ function emailTokenizer(input, selection, createToken) {
                 }
                 break;
             case '"':
-                do { i++; } while(i < length && input[i] !== '"');
+                do { i++; } while (i < length && input[i] !== '"');
                 break;
             default:
                 continue;
@@ -2973,10 +2953,10 @@ var callSuper = Selectivity.inherits(Emailselectivity, MultipleSelectivity, {
 
 module.exports = Selectivity.InputTypes.Email = Emailselectivity;
 
-},{"14":14,"8":8,"jquery":"jquery"}],12:[function(_dereq_,module,exports){
+},{"13":13,"7":7,"jquery":"jquery"}],11:[function(_dereq_,module,exports){
 'use strict';
 
-var Selectivity = _dereq_(8);
+var Selectivity = _dereq_(7);
 
 var KEY_BACKSPACE = 8;
 var KEY_DOWN_ARROW = 40;
@@ -3150,11 +3130,11 @@ function listener(selectivity, $input) {
 
 Selectivity.SearchInputListeners.push(listener);
 
-},{"8":8}],13:[function(_dereq_,module,exports){
+},{"7":7}],12:[function(_dereq_,module,exports){
 'use strict';
 
 var escape = _dereq_(4);
-var Selectivity = _dereq_(8);
+var Selectivity = _dereq_(7);
 
 /**
  * Localizable elements of the Selectivity Templates.
@@ -3175,12 +3155,12 @@ Selectivity.Locale = {
 
 };
 
-},{"4":4,"8":8}],14:[function(_dereq_,module,exports){
+},{"4":4,"7":7}],13:[function(_dereq_,module,exports){
 'use strict';
 
 var $ = window.jQuery || window.Zepto;
 
-var Selectivity = _dereq_(8);
+var Selectivity = _dereq_(7);
 
 var KEY_BACKSPACE = 8;
 var KEY_DELETE = 46;
@@ -3543,8 +3523,6 @@ var callSuper = Selectivity.inherits(MultipleSelectivity, {
     _clicked: function() {
 
         if (this.enabled) {
-            this.focus();
-
             this._open();
 
             return false;
@@ -3736,12 +3714,12 @@ var callSuper = Selectivity.inherits(MultipleSelectivity, {
 
 module.exports = Selectivity.InputTypes.Multiple = MultipleSelectivity;
 
-},{"8":8,"jquery":"jquery"}],15:[function(_dereq_,module,exports){
+},{"7":7,"jquery":"jquery"}],14:[function(_dereq_,module,exports){
 'use strict';
 
 var $ = window.jQuery || window.Zepto;
 
-var Selectivity = _dereq_(8);
+var Selectivity = _dereq_(7);
 
 /**
  * SingleSelectivity Constructor.
@@ -3867,10 +3845,6 @@ var callSuper = Selectivity.inherits(SingleSelectivity, {
         var showSearchInput = (this.options.showSearchInputInDropdown !== false);
 
         callSuper(this, 'open', $.extend({ showSearchInput: showSearchInput }, options));
-
-        if (!showSearchInput) {
-            this.focus();
-        }
 
         this._opening = false;
     },
@@ -4002,11 +3976,11 @@ var callSuper = Selectivity.inherits(SingleSelectivity, {
 
 module.exports = Selectivity.InputTypes.Single = SingleSelectivity;
 
-},{"8":8,"jquery":"jquery"}],16:[function(_dereq_,module,exports){
+},{"7":7,"jquery":"jquery"}],15:[function(_dereq_,module,exports){
 'use strict';
 
-var Selectivity = _dereq_(8);
-var SelectivityDropdown = _dereq_(10);
+var Selectivity = _dereq_(7);
+var SelectivityDropdown = _dereq_(9);
 
 /**
  * Extended dropdown that supports submenus.
@@ -4226,14 +4200,14 @@ Selectivity.findNestedById = function(array, id) {
 
 module.exports = SelectivitySubmenu;
 
-},{"10":10,"8":8}],17:[function(_dereq_,module,exports){
+},{"7":7,"9":9}],16:[function(_dereq_,module,exports){
 'use strict';
 
 var escape = _dereq_(4);
 
-var Selectivity = _dereq_(8);
+var Selectivity = _dereq_(7);
 
-_dereq_(13);
+_dereq_(12);
 
 /**
  * Default set of templates to use with Selectivity.js.
@@ -4536,12 +4510,12 @@ Selectivity.Templates = {
 
 };
 
-},{"13":13,"4":4,"8":8}],18:[function(_dereq_,module,exports){
+},{"12":12,"4":4,"7":7}],17:[function(_dereq_,module,exports){
 'use strict';
 
 var $ = window.jQuery || window.Zepto;
 
-var Selectivity = _dereq_(8);
+var Selectivity = _dereq_(7);
 
 function defaultTokenizer(input, selection, createToken, options) {
 
@@ -4603,12 +4577,12 @@ Selectivity.OptionListeners.push(function(selectivity, options) {
     }
 });
 
-},{"8":8,"jquery":"jquery"}],19:[function(_dereq_,module,exports){
+},{"7":7,"jquery":"jquery"}],18:[function(_dereq_,module,exports){
 'use strict';
 
 var $ = window.jQuery || window.Zepto;
 
-var Selectivity = _dereq_(8);
+var Selectivity = _dereq_(7);
 
 function replaceSelectElement($el, options) {
 
@@ -4714,5 +4688,5 @@ Selectivity.OptionListeners.push(function(selectivity, options) {
     }
 });
 
-},{"8":8,"jquery":"jquery"}]},{},[1])(1)
+},{"7":7,"jquery":"jquery"}]},{},[1])(1)
 });

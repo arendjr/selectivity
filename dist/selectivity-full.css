@@ -21,18 +21,6 @@
   color: #999; }
 
 /**
- * Backdrop
- */
-.selectivity-backdrop {
-  background: transparent;
-  position: fixed;
-  z-index: 1045;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  left: 0; }
-
-/**
  * Dropdown
  */
 .selectivity-dropdown {
