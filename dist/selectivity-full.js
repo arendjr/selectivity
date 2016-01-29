@@ -2266,7 +2266,7 @@ function SelectivityDropdown(options) {
     if (options.showSearchInput) {
         selectivity.initSearchInput(this.$('.selectivity-search-input'));
 
-        this.$('.selectivity-search-input').on("blur", this._blurProxy);
+        this.$('.selectivity-search-input').on('blur', this._blurProxy);
 
         selectivity.focus();
     }
@@ -3802,7 +3802,7 @@ var callSuper = Selectivity.inherits(SingleSelectivity, {
 
         callSuper(this, 'close');
 
-        if (!options || options.keepFocus !== false) {
+        if ((!options || options.keepFocus !== false) && this.$searchInput) {
             this.$searchInput.focus();
         }
 

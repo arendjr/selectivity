@@ -17,6 +17,9 @@
   .selectivity-input select {
     display: none; }
 
+.selectivity-input:focus {
+  outline: none; }
+
 .selectivity-placeholder {
   color: #999; }
 
