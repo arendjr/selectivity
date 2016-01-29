@@ -64,6 +64,7 @@ function SelectivityDropdown(options) {
     this._closed = false;
 
     this._closeProxy = this.close.bind(this);
+    this._blurProxy = this._blur.bind(this);
     if (selectivity.options.closeOnSelect !== false) {
         selectivity.$el.on('selectivity-selecting', this._closeProxy);
     }
@@ -78,6 +79,9 @@ function SelectivityDropdown(options) {
 
     if (options.showSearchInput) {
         selectivity.initSearchInput(this.$('.selectivity-search-input'));
+
+        this.$('.selectivity-search-input').on("blur", this._blurProxy);
+
         selectivity.focus();
     }
 
@@ -113,7 +117,8 @@ $.extend(SelectivityDropdown.prototype, EventDelegator.prototype, {
         while (($next = $anchor.next('.selectivity-dropdown')).length) {
             $anchor = $next;
         }
-        this.$el.insertAfter($anchor);
+
+        $anchor.append(this.$el);
     },
 
     /**
@@ -226,7 +231,6 @@ $.extend(SelectivityDropdown.prototype, EventDelegator.prototype, {
      */
     removeCloseHandler: function() {
 
-        $('body').off('click', this._closeProxy);
     },
 
     /**
@@ -328,7 +332,6 @@ $.extend(SelectivityDropdown.prototype, EventDelegator.prototype, {
      */
     setupCloseHandler: function() {
 
-        $('body').on('click', this._closeProxy);
     },
 
     /**
@@ -433,6 +436,16 @@ $.extend(SelectivityDropdown.prototype, EventDelegator.prototype, {
     /**
      * @private
      */
+    _blur: function() {
+
+        if (!this.$el.hasClass('hover')) {
+            this.selectivity.triggerEvent('selectivity-blur');
+        }
+    },
+
+    /**
+     * @private
+     */
     _highlightFirstItem: function(results) {
 
         function findFirstItem(results) {
@@ -466,8 +479,6 @@ $.extend(SelectivityDropdown.prototype, EventDelegator.prototype, {
         this.$('.selectivity-load-more').replaceWith(this.selectivity.template('loading'));
 
         this.loadMore();
-
-        this.selectivity.focus();
 
         return false;
     },

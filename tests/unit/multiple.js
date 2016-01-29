@@ -296,17 +296,13 @@ exports.testMouseOver = DomUtil.createDomTest(
             value: ['Amsterdam']
         });
 
-        $('.selectivity-multiple-input')
-            .trigger('mouseover');
+        $('.selectivity-multiple-input').trigger('mouseover');
 
-        test.equal($('.selectivity-multiple-input-container').attr('class'),
-          'selectivity-multiple-input-container hover');
+        test.ok($input.hasClass('hover'));
 
-        $('.selectivity-multiple-input')
-            .trigger('mouseleave');
+        $('.selectivity-multiple-input').trigger('mouseleave');
 
-        test.equal($('.selectivity-multiple-input-container').attr('class'),
-          'selectivity-multiple-input-container');
+        test.equal($input.hasClass('hover'), false);
     }
 );
 
@@ -321,22 +317,18 @@ exports.testClickAndMouseOver = DomUtil.createDomTest(
 
         $('.selectivity-multiple-input-container').click();
 
-        test.equal($('.selectivity-multiple-input-container').attr('class'),
-          'selectivity-multiple-input-container open');
+        test.equal($input.attr('class'), 'open');
 
-        $('.selectivity-multiple-input')
-            .trigger('mouseover');
+        $('.selectivity-multiple-input').trigger('mouseover');
 
-        test.equal($('.selectivity-multiple-input-container').attr('class'),
-          'selectivity-multiple-input-container open hover');
+        test.equal($input.attr('class'), 'open hover');
         $input.selectivity('close');
 
-        test.equal($('.selectivity-multiple-input-container').attr('class'),
-          'selectivity-multiple-input-container hover');
+        test.equal($input.attr('class'), 'hover');
     }
 );
 
-exports.testClickOnPageAfterOpeningMultipleSelect = DomUtil.createDomTest(
+exports.testBlurEventAfterOpeningMultipleSelect = DomUtil.createDomTest(
     ['multiple', 'dropdown', 'templates'],
     function(test, $input, $)
     {
@@ -347,12 +339,11 @@ exports.testClickOnPageAfterOpeningMultipleSelect = DomUtil.createDomTest(
 
         $('.selectivity-multiple-input-container').click();
 
-        test.equal($('.selectivity-multiple-input-container').attr('class'),
-          'selectivity-multiple-input-container open');
+        test.ok($input.hasClass('open'));
 
-        $('body').trigger('click');
-        test.equal($('.selectivity-multiple-input-container').attr('class'),
-          'selectivity-multiple-input-container');
+        $input.trigger('blur');
+
+        test.equal($input.hasClass('open'), false);
     }
 );
 

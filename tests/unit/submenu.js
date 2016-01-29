@@ -47,6 +47,7 @@ exports.testSearchInputInSubmenuInMultiSelectInput = DomUtil.createDomTest(
         test.equal($('.selectivity-dropdown').length, 0);
         test.deepEqual($input.selectivity('value'), [2]);
     }
+
 );
 
 exports.testSearchInSubmenuInSingleSelectInput = DomUtil.createDomTest(
@@ -95,7 +96,7 @@ exports.testSelectItemAfterOpeningSubmenu = DomUtil.createDomTest(
     function(test, $input, $) {
         $input.selectivity({ items: items });
 
-        $input.click();
+        $input.find('.selectivity-single-select').click();
 
         test.equal($('.selectivity-dropdown').length, 1);
 
@@ -125,7 +126,7 @@ exports.testSelectItemInSubmenu = DomUtil.createDomTest(
     function(test, $input, $) {
         $input.selectivity({ items: items });
 
-        $input.click();
+        $input.find('.selectivity-single-select').click();
 
         test.equal($('.selectivity-dropdown').length, 1);
 

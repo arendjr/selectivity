@@ -217,7 +217,7 @@ exports.testSelectNestedItemByKeyboard = DomUtil.createDomTest(
             ]
         });
 
-        $input.click();
+        $input.find('.selectivity-single-select').click();
         $('.selectivity-search-input').val('belg')
                                       .trigger('keyup')
                                       .trigger(new $.Event('keyup', { keyCode: 13 }));
@@ -296,16 +296,13 @@ exports.testMouseOver = DomUtil.createDomTest(
             value: 'Amsterdam'
         });
 
-        $('.selectivity-single-select')
-            .trigger('mouseover');
+        $('.selectivity-single-select').trigger('mouseover');
 
-        test.equal($('.selectivity-single-select').attr('class'),
-          'selectivity-single-select hover');
+        test.ok($input.hasClass('hover'));
 
-        $('.selectivity-single-select')
-            .trigger('mouseleave');
+        $input.trigger('mouseleave');
 
-        test.equal($('.selectivity-single-select').attr('class'), 'selectivity-single-select');
+        test.equal($input.hasClass('hover'), false);
     }
 );
 
@@ -319,33 +316,79 @@ exports.testClickAndMouseOver = DomUtil.createDomTest(
 
         $('.selectivity-single-select').click();
 
-        test.equal($('.selectivity-single-select').attr('class'), 'selectivity-single-select open');
+        test.equal($input.attr('class'), 'open');
 
-        $('.selectivity-single-select')
-            .trigger('mouseover');
+        $('.selectivity-single-select').trigger('mouseover');
 
-        test.equal($('.selectivity-single-select').attr('class'),
-          'selectivity-single-select open hover');
+        test.equal($input.attr('class'),'open hover');
+
         $input.selectivity('close');
 
-        test.equal($('.selectivity-single-select').attr('class'),
-          'selectivity-single-select hover');
+        test.equal($input.attr('class'), 'hover');
     }
 );
 
-exports.testClickOnPageAfterOpeningSingleSelect = DomUtil.createDomTest(
+exports.testBlurEventAfterOpeningSingleSelect = DomUtil.createDomTest(
     ['single', 'dropdown', 'templates'],
     function(test, $input, $)
     {
         $input.selectivity({
-            value: 'Amsterdam'
+            value: 'Amsterdam',
+            showSearchInputInDropdown: false
         });
 
         $('.selectivity-single-select').click();
 
-        test.equal($('.selectivity-single-select').attr('class'), 'selectivity-single-select open');
+        test.ok($input.hasClass('open'));
 
-        $('body').trigger('click');
-        test.equal($('.selectivity-single-select').attr('class'), 'selectivity-single-select');
+        $input.trigger('blur');
+
+        test.equal($('#selectivity-input').hasClass('open'), false);
+    }
+);
+
+exports.testDoNotCloseWhenHoveringAndBlurEventOccurs = DomUtil.createDomTest(
+    ['single', 'dropdown', 'templates'],
+    function(test, $input, $)
+    {
+        $input.selectivity({
+            value: 'Amsterdam',
+            showSearchInputInDropdown: false
+        });
+
+        $('.selectivity-single-select').click();
+
+        $('.selectivity-single-select').trigger('mouseover');
+
+        $input.trigger('blur');
+
+        test.equal($input.hasClass('open'), true);
+    }
+);
+
+exports.testDefaultTabindex = DomUtil.createDomTest(
+    ['single', 'dropdown', 'templates'],
+    function(test, $input)
+    {
+        $input.selectivity({
+            value: 'Amsterdam',
+            showSearchInputInDropdown: false
+        });
+
+        test.equal($input.attr('tabindex'), 1);
+    }
+);
+
+exports.testTabindexCanBeGivenThroughParameter = DomUtil.createDomTest(
+    ['single', 'dropdown', 'templates'],
+    function(test, $input)
+    {
+        $input.selectivity({
+            value: 'Amsterdam',
+            showSearchInputInDropdown: false,
+            tabindex: 2
+        });
+
+        test.equal($input.attr('tabindex'), 2);
     }
 );

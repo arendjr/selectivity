@@ -180,6 +180,8 @@ function Selectivity(options) {
 
     this.setOptions(options);
 
+    this.$el.attr('tabindex', options.tabindex || 1);
+
     if (options.value) {
         this.value(options.value, { triggerChange: false });
     } else {
@@ -189,6 +191,8 @@ function Selectivity(options) {
     this.$el.on('mouseover', this._mouseover.bind(this));
     this.$el.on('mouseleave', this._mouseout.bind(this));
     this.$el.on('selectivity-close', this._closed.bind(this));
+    this.$el.on('selectivity-blur', this._blur.bind(this));
+    this.$el.on('blur', this._blur.bind(this));
 
     EventDelegator.call(this);
 }
@@ -370,7 +374,7 @@ $.extend(Selectivity.prototype, EventDelegator.prototype, {
                 }
             }
 
-            this.$el.children().toggleClass('open', true);
+            this.$el.toggleClass('open', true);
         }
     },
 
@@ -658,11 +662,21 @@ $.extend(Selectivity.prototype, EventDelegator.prototype, {
     /**
      * @private
      */
+    _blur: function() {
+
+        if (!this.$el.hasClass('hover')) {
+            this.close();
+        }
+    },
+
+    /**
+     * @private
+     */
     _closed: function() {
 
         this.dropdown = null;
 
-        this.$el.children().toggleClass('open', false);
+        this.$el.toggleClass('open', false);
     },
 
     /**
@@ -713,7 +727,7 @@ $.extend(Selectivity.prototype, EventDelegator.prototype, {
      */
     _mouseout: function() {
 
-        this.$el.children().toggleClass('hover', false);
+        this.$el.toggleClass('hover', false);
     },
 
     /**
@@ -721,7 +735,7 @@ $.extend(Selectivity.prototype, EventDelegator.prototype, {
      */
     _mouseover: function() {
 
-        this.$el.children().toggleClass('hover', true);
+        this.$el.toggleClass('hover', true);
     }
 
 });

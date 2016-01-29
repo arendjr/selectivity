@@ -54,7 +54,7 @@ exports.testAsync = DomUtil.createDomTest(
     function(test, $input, $) {
         $input.selectivity({ query: query() });
 
-        $input.click();
+        $input.find('.selectivity-single-select').click();
         $input.selectivity('search', 'am');
         $input.selectivity('search', 'dam');
 
@@ -77,7 +77,7 @@ exports.testWithoutAsync = DomUtil.createDomTest(
     function(test, $input, $) {
         $input.selectivity({ query: query() });
 
-        $input.click();
+        $input.find('.selectivity-single-select').click();
         $input.selectivity('search', 'am');
         $input.selectivity('search', 'dam');
 

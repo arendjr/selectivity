@@ -148,7 +148,7 @@ exports.testLoadMore = DomUtil.createDomTest(
         test.equal($('.selectivity-result-item').length, 0);
         test.equal($('.selectivity-load-more').length, 0);
 
-        $input.click();
+        $input.find('.selectivity-single-select').click();
 
         test.equal($('.selectivity-dropdown').length, 1);
         test.equal($('.selectivity-result-item').length, 10);
@@ -179,7 +179,7 @@ exports.testSearch = DomUtil.createDomTest(
     function(test, $input, $) {
         $input.selectivity({ query: query });
 
-        $input.click();
+        $input.find('.selectivity-single-select').click();
 
         test.equal($('.selectivity-dropdown').length, 1);
         test.equal($('.selectivity-result-item').length, 10);

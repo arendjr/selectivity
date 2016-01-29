@@ -129,10 +129,6 @@ var callSuper = Selectivity.inherits(SingleSelectivity, {
 
         callSuper(this, 'open', $.extend({ showSearchInput: showSearchInput }, options));
 
-        if (!showSearchInput) {
-            this.focus();
-        }
-
         this._opening = false;
     },
 
