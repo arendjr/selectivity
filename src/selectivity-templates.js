@@ -157,10 +157,15 @@ Selectivity.Templates = {
      *                term - Search term the user is searching for.
      */
     noResults: function(options) {
-        var Locale = Selectivity.Locale;
+        var Locale = Selectivity.Locale,
+            term = escape( options.term );
         return (
             '<div class="selectivity-error">' +
-                (options.term ? Locale.noResultsForTerm.replace( '%s', '<b>' + escape( options.term ) + '</b>' ) : Locale.noResults) +
+                (options.term
+                    ? Locale.noResultsForTerm.replace(
+                        '%s', '<b>' + term + '</b>'
+                    )
+                    : Locale.noResults) +
             '</div>'
         );
     },

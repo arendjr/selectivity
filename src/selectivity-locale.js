@@ -10,11 +10,11 @@ var Selectivity = require('./selectivity-base');
  */
 Selectivity.Locale = {
 
-	ajaxError: 'Failed to fetch results for %s',
-	loading: 'Loading...',
-	loadMore: 'Load more...',
-	needMoreCharacters: 'Enter %s more characters to search',
-	noResults: 'No results found',
-	noResultsForTerm: 'No results for %s',
+    ajaxError: 'Failed to fetch results for %s',
+    loading: 'Loading...',
+    loadMore: 'Load more...',
+    needMoreCharacters: 'Enter %s more characters to search',
+    noResults: 'No results found',
+    noResultsForTerm: 'No results for %s'
 
 };
