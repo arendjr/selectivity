@@ -160,7 +160,7 @@ Selectivity.Templates = {
         var Locale = Selectivity.Locale;
         return (
             '<div class="selectivity-error">' +
-                (options.term ? Locale.noResultsForTerm(options.term) : Locale.noResults) +
+                (options.term ? Locale.noResultsForTerm.replace( '%s', '<b>' + escape( options.term ) + '</b>' ) : Locale.noResults) +
             '</div>'
         );
     },

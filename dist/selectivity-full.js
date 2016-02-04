@@ -257,7 +257,7 @@ Selectivity.OptionListeners.unshift(function(selectivity, options) {
             var term = queryOptions.term;
             if (term.length < minimumInputLength) {
                 queryOptions.error(
-                    Selectivity.Locale.needMoreCharacters(minimumInputLength - term.length)
+                    Selectivity.Locale.needMoreCharacters.replace( '%s', minimumInputLength - term.length )
                 );
             } else {
                 var url = (ajax.url instanceof Function ? ajax.url(queryOptions) : ajax.url);
@@ -285,7 +285,7 @@ Selectivity.OptionListeners.unshift(function(selectivity, options) {
                         }
 
                         queryOptions.error(
-                            formatError(term, jqXHR, textStatus, errorThrown),
+                            formatError.replace( '%s', '<b>' + escape( term ) + '</b>' ),
                             { escape: false }
                         );
                     }
@@ -3144,14 +3144,12 @@ var Selectivity = _dereq_(7);
  */
 Selectivity.Locale = {
 
-    ajaxError: function(term) { return 'Failed to fetch results for <b>' + escape(term) + '</b>'; },
-    loading: 'Loading...',
-    loadMore: 'Load more...',
-    needMoreCharacters: function(numCharacters) {
-        return 'Enter ' + numCharacters + ' more characters to search';
-    },
-    noResults: 'No results found',
-    noResultsForTerm: function(term) { return 'No results for <b>' + escape(term) + '</b>'; }
+	ajaxError: 'Failed to fetch results for %s',
+	loading: 'Loading...',
+	loadMore: 'Load more...',
+	needMoreCharacters: 'Enter %s more characters to search',
+	noResults: 'No results found',
+	noResultsForTerm: 'No results for %s',
 
 };
 
@@ -4363,7 +4361,7 @@ Selectivity.Templates = {
         var Locale = Selectivity.Locale;
         return (
             '<div class="selectivity-error">' +
-                (options.term ? Locale.noResultsForTerm(options.term) : Locale.noResults) +
+                (options.term ? Locale.noResultsForTerm.replace( '%s', '<b>' + escape( options.term ) + '</b>' ) : Locale.noResults) +
             '</div>'
         );
     },
