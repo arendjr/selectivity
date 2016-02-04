@@ -1,6 +1,5 @@
 'use strict';
 
-var escape = require('./lodash/escape');
 var Selectivity = require('./selectivity-base');
 
 /**
