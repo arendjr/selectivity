@@ -3133,7 +3133,6 @@ Selectivity.SearchInputListeners.push(listener);
 },{"7":7}],12:[function(_dereq_,module,exports){
 'use strict';
 
-var escape = _dereq_(4);
 var Selectivity = _dereq_(7);
 
 /**
@@ -3153,7 +3152,7 @@ Selectivity.Locale = {
 
 };
 
-},{"4":4,"7":7}],13:[function(_dereq_,module,exports){
+},{"7":7}],13:[function(_dereq_,module,exports){
 'use strict';
 
 var $ = window.jQuery || window.Zepto;
