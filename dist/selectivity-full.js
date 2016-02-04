@@ -257,7 +257,9 @@ Selectivity.OptionListeners.unshift(function(selectivity, options) {
             var term = queryOptions.term;
             if (term.length < minimumInputLength) {
                 queryOptions.error(
-                    Selectivity.Locale.needMoreCharacters.replace( '%s', minimumInputLength - term.length )
+                    Selectivity.Locale.needMoreCharacters.replace(
+                        '%s', minimumInputLength - term.length
+                    )
                 );
             } else {
                 var url = (ajax.url instanceof Function ? ajax.url(queryOptions) : ajax.url);
@@ -285,7 +287,9 @@ Selectivity.OptionListeners.unshift(function(selectivity, options) {
                         }
 
                         queryOptions.error(
-                            formatError.replace( '%s', '<b>' + escape( term ) + '</b>' ),
+                            formatError.replace(
+                                '%s', '<b>' + escape( term ) + '</b>'
+                                ),
                             { escape: false }
                         );
                     }
@@ -3143,12 +3147,12 @@ var Selectivity = _dereq_(7);
  */
 Selectivity.Locale = {
 
-	ajaxError: 'Failed to fetch results for %s',
-	loading: 'Loading...',
-	loadMore: 'Load more...',
-	needMoreCharacters: 'Enter %s more characters to search',
-	noResults: 'No results found',
-	noResultsForTerm: 'No results for %s',
+    ajaxError: 'Failed to fetch results for %s',
+    loading: 'Loading...',
+    loadMore: 'Load more...',
+    needMoreCharacters: 'Enter %s more characters to search',
+    noResults: 'No results found',
+    noResultsForTerm: 'No results for %s'
 
 };
 
@@ -4357,10 +4361,15 @@ Selectivity.Templates = {
      *                term - Search term the user is searching for.
      */
     noResults: function(options) {
-        var Locale = Selectivity.Locale;
+        var Locale = Selectivity.Locale,
+            term = escape( options.term );
         return (
             '<div class="selectivity-error">' +
-                (options.term ? Locale.noResultsForTerm.replace( '%s', '<b>' + escape( options.term ) + '</b>' ) : Locale.noResults) +
+                (options.term
+                    ? Locale.noResultsForTerm.replace(
+                        '%s', '<b>' + term + '</b>'
+                    )
+                    : Locale.noResults) +
             '</div>'
         );
     },
