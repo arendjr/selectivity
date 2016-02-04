@@ -38,5 +38,6 @@
     "vinyl-source-stream": "^1.0.0",
     "yargs": "^3.30.0"
   },
-  "license": "MIT"
+  "license": "MIT",
+  "main": "dist/selectivity-full"
 }
