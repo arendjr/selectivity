@@ -39,7 +39,7 @@ module.exports = {
 
                     // I wish this could be solved without hard-coding the dependenies here...
                     var dependencies = {
-                    	'ajax': ['base', 'locale'],
+                        'ajax': ['base', 'locale'],
                         'async': ['base'],
                         'base': [],
                         'diacritics': ['base'],
