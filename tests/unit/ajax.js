@@ -32,9 +32,9 @@ exports.testResponseAsArray = DomUtil.createDomTest(
             }
         });
 
-        $input.click(); // launch array
+        $input.click();
 
-        test.equal( $('.selectivity-results-container')[0].outerHTML, expectedDOM );
+        test.equal($('.selectivity-results-container')[0].outerHTML, expectedDOM);
     }
 );
 
@@ -62,9 +62,9 @@ exports.testResponseAsObject = DomUtil.createDomTest(
             }
         });
 
-        $input.click(); // launch array
+        $input.click();
 
-        test.equal( $('.selectivity-results-container')[0].outerHTML, expectedDOM );
+        test.equal($('.selectivity-results-container')[0].outerHTML, expectedDOM);
 
     }
 );
@@ -102,8 +102,8 @@ exports.testResponseAsNestedObject = DomUtil.createDomTest(
             }
         });
 
-        $input.click(); // launch array
+        $input.click();
 
-        test.equal( $('.selectivity-results-container')[0].outerHTML, expectedDOM );
+        test.equal($('.selectivity-results-container')[0].outerHTML, expectedDOM);
     }
 );
