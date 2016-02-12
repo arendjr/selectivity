@@ -57,3 +57,24 @@ exports.testInitializationMultiple = DomUtil.createDomTest(
         test.equal($options.last().val(), '4');
     }
 );
+
+exports.testSingleTraditionalChangeEvents = DomUtil.createDomTest(
+    ['single', 'templates', 'traditional'],
+    { indexResource: 'testcase-traditional.html' },
+    function(test, $input, $) {
+        var changeEvents = 0;
+        $input.selectivity({
+            query: function() {}
+        });
+
+        $input.on('change', function() {
+            changeEvents++;
+        });
+
+        $('.selectivity-single-select').trigger({type: 'selectivity-selected',
+            item: {id: 1, text: 'foo bar'}});
+
+        test.equal(changeEvents, 1);
+        test.equal($input.val(), "1");
+    }
+);
