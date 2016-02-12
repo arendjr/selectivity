@@ -75,6 +75,33 @@ exports.testSingleTraditionalChangeEvents = DomUtil.createDomTest(
             item: {id: 1, text: 'foo bar'}});
 
         test.equal(changeEvents, 1);
-        test.equal($input.val(), "1");
+        test.equal($input.val(), '1');
+    }
+);
+
+exports.testMultipeTraditionalChangeEvents = DomUtil.createDomTest(
+    ['multiple', 'templates', 'traditional'],
+    { indexResource: 'testcase-traditional-multiple.html' },
+    function(test, $input, $) {
+        var changeEvents = 0;
+        $input.selectivity({
+            query: function() {}
+        });
+
+        $input.on('change', function() {
+            changeEvents++;
+        });
+
+        $('.selectivity-multiple-input-container').trigger({type: 'selectivity-selected',
+            item: {id: 1, text: 'foo bar'}});
+
+        test.equal(changeEvents, 1);
+        test.deepEqual($input.val(), ['1', '3', '4']);
+
+        $('.selectivity-multiple-input-container').trigger({type: 'selectivity-selected',
+            item: {id: 2, text: 'foo bar'}});
+
+        test.equal(changeEvents, 2);
+        test.deepEqual($input.val(), ['1', '2', '3', '4']);
     }
 );

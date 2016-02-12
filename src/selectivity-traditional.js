@@ -62,7 +62,18 @@ function createSelectivityNextToSelectElement($el, options) {
 function bindTraditionalSelectEvents(selectivity) {
     var $el = selectivity.$el;
     $el.on('selectivity-selected', function(event) {
-        $el.prev('select').val(event.item.id).change();
+        var data = selectivity._data;
+        if (data instanceof Array) {
+            var ids = [event.item.id];
+
+            data.forEach(function(item) {
+                ids.push(item.id);
+            });
+
+            $el.prev('select').val(ids).change();
+        } else {
+            $el.prev('select').val(event.item.id).change();
+        }
     });
 }
 
