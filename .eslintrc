@@ -32,6 +32,7 @@
         "no-unused-vars": 2,
         "semi": [2, "always"],
         "space-after-keywords": 2,
+        "space-in-parens": [2, "never"],
         "strict": [2, "global"],
         "quotes" : [2, "single"]
     },
