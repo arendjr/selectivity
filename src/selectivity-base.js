@@ -188,7 +188,7 @@ function Selectivity(options) {
         this.data(options.data || null, { triggerChange: false });
     }
 
-    this.$el.on('mouseover', this._mouseover.bind(this));
+    this.$el.on('mouseenter', this._mouseover.bind(this));
     this.$el.on('mouseleave', this._mouseout.bind(this));
     this.$el.on('selectivity-close', this._closed.bind(this));
     this.$el.on('selectivity-blur', this._blur.bind(this));
