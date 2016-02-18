@@ -188,8 +188,8 @@ function Selectivity(options) {
         this.data(options.data || null, { triggerChange: false });
     }
 
-    this.$el.on('mouseover', this._mouseover.bind(this));
-    this.$el.on('mouseleave', this._mouseout.bind(this));
+    this.$el.on('mouseenter', this._mouseenter.bind(this));
+    this.$el.on('mouseleave', this._mouseleave.bind(this));
     this.$el.on('selectivity-close', this._closed.bind(this));
     this.$el.on('selectivity-blur', this._blur.bind(this));
     this.$el.on('blur', this._blur.bind(this));
@@ -725,7 +725,7 @@ $.extend(Selectivity.prototype, EventDelegator.prototype, {
     /**
      * @private
      */
-    _mouseout: function() {
+    _mouseleave: function() {
 
         this.$el.toggleClass('hover', false);
     },
@@ -733,7 +733,7 @@ $.extend(Selectivity.prototype, EventDelegator.prototype, {
     /**
      * @private
      */
-    _mouseover: function() {
+    _mouseenter: function() {
 
         this.$el.toggleClass('hover', true);
     }
