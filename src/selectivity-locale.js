@@ -1,6 +1,5 @@
 'use strict';
 
-var escape = require('./lodash/escape');
 var Selectivity = require('./selectivity-base');
 
 /**
@@ -11,13 +10,11 @@ var Selectivity = require('./selectivity-base');
  */
 Selectivity.Locale = {
 
-    ajaxError: function(term) { return 'Failed to fetch results for <b>' + escape(term) + '</b>'; },
+    ajaxError: 'Failed to fetch results for %s',
     loading: 'Loading...',
     loadMore: 'Load more...',
-    needMoreCharacters: function(numCharacters) {
-        return 'Enter ' + numCharacters + ' more characters to search';
-    },
+    needMoreCharacters: 'Enter %s more characters to search',
     noResults: 'No results found',
-    noResultsForTerm: function(term) { return 'No results for <b>' + escape(term) + '</b>'; }
+    noResultsForTerm: 'No results for %s'
 
 };

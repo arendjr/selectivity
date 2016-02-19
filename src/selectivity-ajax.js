@@ -32,7 +32,9 @@ Selectivity.OptionListeners.unshift(function(selectivity, options) {
             var term = queryOptions.term;
             if (term.length < minimumInputLength) {
                 queryOptions.error(
-                    Selectivity.Locale.needMoreCharacters(minimumInputLength - term.length)
+                    Selectivity.Locale.needMoreCharacters.replace(
+                        '%s', minimumInputLength - term.length
+                    )
                 );
             } else {
                 var url = (ajax.url instanceof Function ? ajax.url(queryOptions) : ajax.url);
@@ -60,7 +62,9 @@ Selectivity.OptionListeners.unshift(function(selectivity, options) {
                         }
 
                         queryOptions.error(
-                            formatError(term, jqXHR, textStatus, errorThrown),
+                            formatError.replace(
+                                '%s', '<b>' + escape( term ) + '</b>'
+                                ),
                             { escape: false }
                         );
                     }

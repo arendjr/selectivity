@@ -257,7 +257,9 @@ Selectivity.OptionListeners.unshift(function(selectivity, options) {
             var term = queryOptions.term;
             if (term.length < minimumInputLength) {
                 queryOptions.error(
-                    Selectivity.Locale.needMoreCharacters(minimumInputLength - term.length)
+                    Selectivity.Locale.needMoreCharacters.replace(
+                        '%s', minimumInputLength - term.length
+                    )
                 );
             } else {
                 var url = (ajax.url instanceof Function ? ajax.url(queryOptions) : ajax.url);
@@ -285,7 +287,9 @@ Selectivity.OptionListeners.unshift(function(selectivity, options) {
                         }
 
                         queryOptions.error(
-                            formatError(term, jqXHR, textStatus, errorThrown),
+                            formatError.replace(
+                                '%s', '<b>' + escape( term ) + '</b>'
+                                ),
                             { escape: false }
                         );
                     }
@@ -3133,7 +3137,6 @@ Selectivity.SearchInputListeners.push(listener);
 },{"7":7}],12:[function(_dereq_,module,exports){
 'use strict';
 
-var escape = _dereq_(4);
 var Selectivity = _dereq_(7);
 
 /**
@@ -3144,18 +3147,16 @@ var Selectivity = _dereq_(7);
  */
 Selectivity.Locale = {
 
-    ajaxError: function(term) { return 'Failed to fetch results for <b>' + escape(term) + '</b>'; },
+    ajaxError: 'Failed to fetch results for %s',
     loading: 'Loading...',
     loadMore: 'Load more...',
-    needMoreCharacters: function(numCharacters) {
-        return 'Enter ' + numCharacters + ' more characters to search';
-    },
+    needMoreCharacters: 'Enter %s more characters to search',
     noResults: 'No results found',
-    noResultsForTerm: function(term) { return 'No results for <b>' + escape(term) + '</b>'; }
+    noResultsForTerm: 'No results for %s'
 
 };
 
-},{"4":4,"7":7}],13:[function(_dereq_,module,exports){
+},{"7":7}],13:[function(_dereq_,module,exports){
 'use strict';
 
 var $ = window.jQuery || window.Zepto;
@@ -4360,10 +4361,15 @@ Selectivity.Templates = {
      *                term - Search term the user is searching for.
      */
     noResults: function(options) {
-        var Locale = Selectivity.Locale;
+        var Locale = Selectivity.Locale,
+            term = escape( options.term );
         return (
             '<div class="selectivity-error">' +
-                (options.term ? Locale.noResultsForTerm(options.term) : Locale.noResults) +
+                (options.term
+                    ? Locale.noResultsForTerm.replace(
+                        '%s', '<b>' + term + '</b>'
+                    )
+                    : Locale.noResults) +
             '</div>'
         );
     },
