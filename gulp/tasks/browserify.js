@@ -1,5 +1,6 @@
 'use strict';
 
+var _ = require('lodash');
 var browserify = require('browserify');
 var buffer = require('vinyl-buffer');
 var collapse = require('bundle-collapser/plugin');
@@ -43,12 +44,16 @@ module.exports = function() {
             this.end();
         })
         .pipe(source('selectivity-' + argv.bundleName + (argv.minify ? '.min' : '') + '.js'))
-        .pipe(buffer())
-        .pipe(replace(/require\(['"]jquery['"]\)/g, 'window.jQuery || window.Zepto'));
+        .pipe(buffer());
 
     if (argv.lodash) {
         stream = stream.pipe(replace(/require\(['"]lodash\/(\w+)['"]\)/g, 'window._.$1'));
+    } else {
+        stream = stream.pipe(replace(/require\(['"]lodash\/extend['"]\)/g,
+                                     'require("jquery").extend'));
     }
+
+    stream = stream.pipe(replace(/require\(['"]jquery['"]\)/g, '(window.jQuery || window.Zepto)'));
 
     if (argv.commonJs || argv.derequire) {
         stream = stream.pipe(derequire());

@@ -1,11 +1,8 @@
 'use strict';
 
-var each = require('lodash/each');
 var extend = require('lodash/extend');
-var isString = require('lodash/isString');
-var isFunction = require('lodash/isFunction');
 
-var EventDelegator = require('./event-delegator');
+var getType = require('./helpers/get-type');
 
 /**
  * Selectivity Base Constructor.
@@ -103,14 +100,12 @@ function Selectivity(options) {
     this.el.addEventListener('selectivity-close', this._closed.bind(this));
     this.el.addEventListener('selectivity-blur', this._blur.bind(this));
     this.el.addEventListener('blur', this._blur.bind(this));
-
-    EventDelegator.call(this);
 }
 
 /**
  * Methods.
  */
-extend(Selectivity.prototype, EventDelegator.prototype, {
+extend(Selectivity.prototype, {
 
     /**
      * Convenience shortcut for this.el.querySelector(selector).
@@ -173,10 +168,11 @@ extend(Selectivity.prototype, EventDelegator.prototype, {
 
         this.undelegateEvents();
 
-        var $el = this.$el;
-        $el.children().remove();
-        $el[0].selectivity = null;
-        $el = null;
+        var el = this.el;
+        while (el.firstChild) {
+            el.removeChild(el.firstChild);
+        }
+        el.selectivity = null;
     },
 
     /**
@@ -199,8 +195,8 @@ extend(Selectivity.prototype, EventDelegator.prototype, {
      */
     focus: function() {
 
-        if (this.$searchInput) {
-            this.$searchInput.focus();
+        if (this.searchInput) {
+            this.searchInput.focus();
         }
     },
 
@@ -226,25 +222,25 @@ extend(Selectivity.prototype, EventDelegator.prototype, {
     /**
      * Initializes the search input element.
      *
-     * Sets the $searchInput property, invokes all search input listeners and attaches the default
+     * Sets the searchInput property, invokes all search input listeners and attaches the default
      * action of searching when something is typed.
      *
-     * @param $input jQuery container for the input element.
+     * @param input Input element.
      * @param options Optional options object. May contain the following property:
      *                noSearch - If true, no event handlers are setup to initiate searching when
      *                           the user types in the input field. This is useful if you want to
      *                           use the input only to handle keyboard support.
      */
-    initSearchInput: function($input, options) {
+    initSearchInput: function(input, options) {
 
-        this.$searchInput = $input;
+        this.searchInput = input;
 
         this.searchInputListeners.forEach(function(listener) {
-            listener(this, $input);
+            listener(this, input);
         }.bind(this));
 
         if (!options || !options.noSearch) {
-            $input.on('keyup', function(event) {
+            input.addEventListener('keyup', function(event) {
                 if (!event.isDefaultPrevented()) {
                     this.search();
                 }
@@ -284,7 +280,7 @@ extend(Selectivity.prototype, EventDelegator.prototype, {
                 }
             }
 
-            this.$el.toggleClass('open', true);
+            this.el.toggleClass.add('open');
         }
     },
 
@@ -311,7 +307,7 @@ extend(Selectivity.prototype, EventDelegator.prototype, {
     search: function(term) {
 
         if (term === undefined) {
-            term = (this.$searchInput ? this.$searchInput.val() : '');
+            term = (this.searchInput ? this.searchInput.value : '');
         }
 
         this.open({ search: false });
@@ -357,9 +353,9 @@ extend(Selectivity.prototype, EventDelegator.prototype, {
      *                placeholder - Placeholder text to display when the element has no focus and
      *                              no selected items.
      *                positionDropdown - Function to position the dropdown. Receives two arguments:
-     *                                   $dropdownEl - The element to be positioned.
-     *                                   $selectEl - The element of the Selectivity instance, that
-     *                                               you can position the dropdown to.
+     *                                   dropdownEl - The element to be positioned.
+     *                                   selectEl - The element of the Selectivity instance, that
+     *                                              you can position the dropdown to.
      *                                   The default implementation positions the dropdown element
      *                                   under the Selectivity's element and gives it the same
      *                                   width.
@@ -397,9 +393,9 @@ extend(Selectivity.prototype, EventDelegator.prototype, {
             listener(this, options);
         }.bind(this));
 
-        $.extend(this.options, options);
+        extend(this.options, options);
 
-        var allowedTypes = $.extend({
+        var allowedTypes = extend({
             closeOnSelect: 'boolean',
             dropdown: 'function|null',
             initSelection: 'function|null',
@@ -414,7 +410,7 @@ extend(Selectivity.prototype, EventDelegator.prototype, {
 
         $.each(options, function(key, value) {
             var type = allowedTypes[key];
-            if (type && !type.split('|').some(function(type) { return $.type(value) === type; })) {
+            if (type && !type.split('|').some(function(type) { return getType(value) === type; })) {
                 throw new Error(key + ' must be of type ' + type);
             }
 
@@ -432,7 +428,7 @@ extend(Selectivity.prototype, EventDelegator.prototype, {
                 break;
 
             case 'templates':
-                $.extend(this.templates, value);
+                extend(this.templates, value);
                 break;
             }
         }.bind(this));

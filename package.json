@@ -39,5 +39,8 @@
     "yargs": "^4.3.2"
   },
   "license": "MIT",
-  "main": "dist/selectivity-full"
+  "main": "dist/selectivity-full",
+  "dependencies": {
+    "delegate": "^3.0.1"
+  }
 }
