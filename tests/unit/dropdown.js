@@ -139,6 +139,32 @@ exports.testDisabledItemsWithSubmenu = DomUtil.createDomTest(
     }
 );
 
+exports.testInitialHighlights = DomUtil.createDomTest(
+    ['single', 'dropdown', 'templates'],
+    function(test, $input, $)
+    {
+        $input.selectivity({
+            items: [ 'Amsterdam', 'Antwerp', 'Athens' ]
+        });
+
+        test.equal($input.selectivity('val'), null);
+
+        $input.click();
+
+        // first item should be highlighted when there is no selection yet
+        test.equal($('.selectivity-result-item.highlight').text(), 'Amsterdam');
+
+        $('.selectivity-result-item[data-item-id="Athens"]').click();
+
+        test.equal($input.selectivity('val'), 'Athens');
+
+        $input.click();
+
+        // selected item should be highlighted once there is a selection
+        test.equal($('.selectivity-result-item.highlight').text(), 'Athens');
+    }
+);
+
 exports.testLoadMore = DomUtil.createDomTest(
     ['single', 'dropdown', 'templates'],
     function(test, $input, $) {
