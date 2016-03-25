@@ -1,8 +1,7 @@
 'use strict';
 
 var $ = require('jquery');
-
-var debounce = require('./lodash/debounce');
+var debounce = require('lodash/debounce');
 
 var Selectivity = require('./selectivity-base');
 

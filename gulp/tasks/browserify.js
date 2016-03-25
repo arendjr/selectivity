@@ -31,13 +31,8 @@ module.exports = function() {
         b.external(basename);
     });
 
-    var lodashMethods = glob.sync('src/lodash/*.js').map(function(file) {
-        return path.basename(file, '.js');
-    });
     if (argv.lodash) {
-        lodashMethods.forEach(function(method) {
-            b.external('./lodash/' + method);
-        });
+        b.external('lodash');
     }
 
     b.plugin(collapse);
@@ -52,10 +47,7 @@ module.exports = function() {
         .pipe(replace(/require\(['"]jquery['"]\)/g, 'window.jQuery || window.Zepto'));
 
     if (argv.lodash) {
-        lodashMethods.forEach(function(method) {
-            var regExp = new RegExp('require\\([\'"]\\./lodash/' + method + '[\'"]\\)', 'g');
-            stream = stream.pipe(replace(regExp, 'window._.' + method));
-        });
+        stream = stream.pipe(replace(/require\(['"]lodash\/(\w+)['"]\)/g, 'window._.$1'));
     }
 
     if (argv.commonJs || argv.derequire) {
