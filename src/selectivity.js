@@ -1,84 +1,11 @@
 'use strict';
 
-var $ = require('jquery');
+var each = require('lodash/each');
+var extend = require('lodash/extend');
+var isString = require('lodash/isString');
+var isFunction = require('lodash/isFunction');
 
 var EventDelegator = require('./event-delegator');
-
-/**
- * Create a new Selectivity instance or invoke a method on an instance.
- *
- * @param methodName Optional name of a method to call. If omitted, a Selectivity instance is
- *                   created for each element in the set of matched elements. If an element in the
- *                   set already has a Selectivity instance, the result is the same as if the
- *                   setOptions() method is called. If a method name is given, the options
- *                   parameter is ignored and any additional parameters are passed to the given
- *                   method.
- * @param options Options object to pass to the constructor or the setOptions() method. In case
- *                a new instance is being created, the following properties are used:
- *                inputType - The input type to use. Default input types include 'Multiple' and
- *                            'Single', but you can add custom input types to the InputTypes map or
- *                            just specify one here as a function. The default value is 'Single',
- *                            unless multiple is true in which case it is 'Multiple'.
- *                multiple - Boolean determining whether multiple items may be selected
- *                           (default: false). If true, a MultipleSelectivity instance is created,
- *                           otherwise a SingleSelectivity instance is created.
- *
- * @return If the given method returns a value, this method returns the value of that method
- *         executed on the first element in the set of matched elements.
- */
-function selectivity(methodName, options) {
-
-    var methodArgs = Array.prototype.slice.call(arguments, 1);
-    var result;
-
-    this.each(function() {
-        var instance = this.selectivity;
-
-        if (instance) {
-            if ($.type(methodName) !== 'string') {
-                methodArgs = [methodName];
-                methodName = 'setOptions';
-            }
-
-            if ($.type(instance[methodName]) === 'function') {
-                if (result === undefined) {
-                    result = instance[methodName].apply(instance, methodArgs);
-                }
-            } else {
-                throw new Error('Unknown method: ' + methodName);
-            }
-        } else {
-            if ($.type(methodName) === 'string') {
-                if (methodName !== 'destroy') {
-                    throw new Error('Cannot call method on element without Selectivity instance');
-                }
-            } else {
-                options = $.extend({}, methodName, { element: this });
-
-                // this is a one-time hack to facilitate the selectivity-traditional module, because
-                // the module is not able to hook this early into creation of the instance
-                var $this = $(this);
-                if ($this.is('select') && $this.prop('multiple')) {
-                    options.multiple = true;
-                }
-
-                var InputTypes = Selectivity.InputTypes;
-                var InputType = (options.inputType || (options.multiple ? 'Multiple' : 'Single'));
-                if ($.type(InputType) !== 'function') {
-                    if (InputTypes[InputType]) {
-                        InputType = InputTypes[InputType];
-                    } else {
-                        throw new Error('Unknown Selectivity input type: ' + InputType);
-                    }
-                }
-
-                this.selectivity = new InputType(options);
-            }
-        }
-    });
-
-    return (result === undefined ? this : result);
-}
 
 /**
  * Selectivity Base Constructor.
@@ -92,27 +19,11 @@ function selectivity(methodName, options) {
  *                data - Initial selection data to set. This should be an array of objects with 'id'
  *                       and 'text' properties. This option is mutually exclusive with 'value'.
  *                element - The DOM element to which to attach the Selectivity instance. This
- *                          property is set automatically by the $.fn.selectivity() function.
+ *                          property is set by the API wrapper.
  *                value - Initial value to set. This should be an array of IDs. This property is
  *                        mutually exclusive with 'data'.
  */
 function Selectivity(options) {
-
-    if (!(this instanceof Selectivity)) {
-        return selectivity.apply(this, arguments);
-    }
-
-    /**
-     * jQuery container for the element to which this instance is attached.
-     */
-    this.$el = $(options.element);
-
-    /**
-     * jQuery container for the search input.
-     *
-     * May be null as long as there is no visible search input. It is set by initSearchInput().
-     */
-    this.$searchInput = null;
 
     /**
      * Reference to the currently open dropdown.
@@ -120,24 +31,16 @@ function Selectivity(options) {
     this.dropdown = null;
 
     /**
+     * DOM element to which this instance is attached.
+     */
+    this.el = options.element;
+
+    /**
      * Whether the input is enabled.
      *
      * This is false when the option readOnly is false or the option removeOnly is false.
      */
     this.enabled = true;
-
-    /**
-     * Boolean whether the browser has touch input.
-     */
-    this.hasTouch = (typeof window !== 'undefined' && 'ontouchstart' in window);
-
-    /**
-     * Boolean whether the browser has a physical keyboard attached to it.
-     *
-     * Given that there is no way for JavaScript to reliably detect this yet, we just assume it's
-     * the opposite of hasTouch for now.
-     */
-    this.hasKeyboard = !this.hasTouch;
 
     /**
      * Array of items from which to select. If set, this will be an array of objects with 'id' and
@@ -160,6 +63,13 @@ function Selectivity(options) {
     this.options = {};
 
     /**
+     * DOM element for the search input.
+     *
+     * May be null as long as there is no visible search input. It is set by initSearchInput().
+     */
+    this.searchInput = null;
+
+    /**
      * Array of search input listeners.
      *
      * Custom listeners can be specified in the options object.
@@ -171,7 +81,7 @@ function Selectivity(options) {
      *
      * Custom templates can be specified in the options object.
      */
-    this.templates = $.extend({}, Selectivity.Templates);
+    this.templates = extend({}, Selectivity.Templates);
 
     /**
      * The last used search term.
@@ -180,7 +90,7 @@ function Selectivity(options) {
 
     this.setOptions(options);
 
-    this.$el.attr('tabindex', options.tabindex || 0);
+    this.el.setAttribute('tabindex', options.tabindex || 0);
 
     if (options.value) {
         this.value(options.value, { triggerChange: false });
@@ -188,11 +98,11 @@ function Selectivity(options) {
         this.data(options.data || null, { triggerChange: false });
     }
 
-    this.$el.on('mouseenter', this._mouseenter.bind(this));
-    this.$el.on('mouseleave', this._mouseleave.bind(this));
-    this.$el.on('selectivity-close', this._closed.bind(this));
-    this.$el.on('selectivity-blur', this._blur.bind(this));
-    this.$el.on('blur', this._blur.bind(this));
+    this.el.addEventListener('mouseenter', this._mouseenter.bind(this));
+    this.el.addEventListener('mouseleave', this._mouseleave.bind(this));
+    this.el.addEventListener('selectivity-close', this._closed.bind(this));
+    this.el.addEventListener('selectivity-blur', this._blur.bind(this));
+    this.el.addEventListener('blur', this._blur.bind(this));
 
     EventDelegator.call(this);
 }
@@ -200,14 +110,14 @@ function Selectivity(options) {
 /**
  * Methods.
  */
-$.extend(Selectivity.prototype, EventDelegator.prototype, {
+extend(Selectivity.prototype, EventDelegator.prototype, {
 
     /**
-     * Convenience shortcut for this.$el.find(selector).
+     * Convenience shortcut for this.el.querySelector(selector).
      */
     $: function(selector) {
 
-        return this.$el.find(selector);
+        return this.el.querySelector(selector);
     },
 
     /**

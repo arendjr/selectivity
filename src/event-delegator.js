@@ -1,6 +1,8 @@
 'use strict';
 
-var $ = require('jquery');
+var each = require('lodash/each');
+var extend = require('lodash/extend');
+var isString = require('lodash/isString');
 
 /**
  * Event Delegator Constructor.
@@ -15,7 +17,7 @@ function EventDelegator() {
 /**
  * Methods.
  */
-$.extend(EventDelegator.prototype, {
+extend(EventDelegator.prototype, {
 
     /**
      * Attaches all listeners from the events map to the instance's element.
@@ -27,23 +29,23 @@ $.extend(EventDelegator.prototype, {
 
         this.undelegateEvents();
 
-        $.each(this.events, function(event, listener) {
+        each(this.events, function(event, listener) {
             var selector, index = event.indexOf(' ');
             if (index > -1) {
                 selector = event.slice(index + 1);
                 event = event.slice(0, index);
             }
 
-            if ($.type(listener) === 'string') {
+            if (isString(listener)) {
                 listener = this[listener];
             }
 
             listener = listener.bind(this);
 
             if (selector) {
-                this.$el.on(event, selector, listener);
+                this.el.addEventListener(event, selector, listener);
             } else {
-                this.$el.on(event, listener);
+                this.el.addEventListener(event, listener);
             }
 
             this._events.push({ event: event, selector: selector, listener: listener });
@@ -59,7 +61,7 @@ $.extend(EventDelegator.prototype, {
             if (event.selector) {
                 this.$el.off(event.event, event.selector, event.listener);
             } else {
-                this.$el.off(event.event, event.listener);
+                this.el.removeEventListener(event.event, event.listener);
             }
         }, this);
 

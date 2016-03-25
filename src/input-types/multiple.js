@@ -2,11 +2,13 @@
 
 var $ = require('jquery');
 
-var Selectivity = require('./selectivity-base');
+var Selectivity = require('../selectivity');
 
 var KEY_BACKSPACE = 8;
 var KEY_DELETE = 46;
 var KEY_ENTER = 13;
+
+var hasTouch = (typeof window !== 'undefined' && 'ontouchstart' in window);
 
 /**
  * MultipleSelectivity Constructor.
@@ -215,7 +217,7 @@ var callSuper = Selectivity.inherits(MultipleSelectivity, {
                 });
             }
 
-            if (this.hasKeyboard) {
+            if (!hasTouch) {
                 this.focus();
             }
         }
@@ -287,7 +289,7 @@ var callSuper = Selectivity.inherits(MultipleSelectivity, {
 
         var backspaceHighlightsBeforeDelete = 'backspaceHighlightsBeforeDelete';
         if (options[backspaceHighlightsBeforeDelete] === undefined) {
-            options[backspaceHighlightsBeforeDelete] = this.hasTouch;
+            options[backspaceHighlightsBeforeDelete] = hasTouch;
         }
 
         options.allowedTypes = options.allowedTypes || {};
@@ -406,7 +408,7 @@ var callSuper = Selectivity.inherits(MultipleSelectivity, {
         this.$('.selectivity-multiple-selected-item').removeClass('highlighted')
             .filter('[data-item-id=' + Selectivity.quoteCssAttr(id) + ']').addClass('highlighted');
 
-        if (this.hasKeyboard) {
+        if (!hasTouch) {
             this.focus();
         }
     },
