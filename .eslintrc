@@ -34,6 +34,7 @@
         "no-undef": 2,
         "no-undef-init": 2,
         "no-unused-vars": 2,
+        "object-curly-spacing": [2, "always"],
         "semi": [2, "always"],
         "space-in-parens": [2, "never"],
         "strict": [2, "global"],
