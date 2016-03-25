@@ -12,7 +12,10 @@ function createSelectivityNextToSelectElement($el, options) {
         var $this = $(this);
         if ($this.is('option')) {
             var text = $this.text();
-            var id = $this.attr('value') || text;
+            var id = $this.attr('value');
+            if (id === undefined) {
+                id = text;
+            }
             if ($this.prop('selected')) {
                 var item = { id: id, text: text };
                 if (options.multiple) {

@@ -36,6 +36,18 @@ exports.testInitializationSingleWithCustomQuery = DomUtil.createDomTest(
     }
 );
 
+exports.testInitializationSingleWithEmptyValue = DomUtil.createDomTest(
+    ['single', 'templates', 'traditional'],
+    { indexResource: 'testcase-traditional-empty-value.html' },
+    function(test, $input) {
+        $input.selectivity();
+
+        test.deepEqual($input.selectivity('data'), { id: '', text: 'Select one' });
+
+        test.equal($input.selectivity('value'), '');
+    }
+);
+
 exports.testInitializationMultiple = DomUtil.createDomTest(
     ['multiple', 'templates', 'traditional'],
     { indexResource: 'testcase-traditional-multiple.html' },
