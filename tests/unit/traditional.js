@@ -108,7 +108,7 @@ exports.testMultipeTraditionalChangeEvents = DomUtil.createDomTest(
 
         $('.selectivity-multiple-input-container').trigger({
             type: 'selectivity-selected',
-            item: { id: 1, text: 'foo bar' }
+            item: { id: '1', text: 'foo bar' }
         });
 
         test.equal(changeEvents, 1);
@@ -116,7 +116,7 @@ exports.testMultipeTraditionalChangeEvents = DomUtil.createDomTest(
 
         $('.selectivity-multiple-input-container').trigger({
             type: 'selectivity-selected',
-            item: { id: 2, text: 'foo bar' }
+            item: { id: '2', text: 'foo bar' }
         });
 
         test.equal(changeEvents, 2);
