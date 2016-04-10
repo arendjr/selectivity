@@ -3,6 +3,7 @@
 var $ = require('jquery');
 
 var Selectivity = require('../selectivity');
+var quoteCssAttr = require('../util/quote-css-attr');
 
 var KEY_BACKSPACE = 8;
 var KEY_DELETE = 46;
@@ -54,7 +55,7 @@ function MultipleSelectivity(options) {
 /**
  * Methods.
  */
-var callSuper = Selectivity.inherits(MultipleSelectivity, {
+var callSuper = Selectivity.inherits(MultipleSelectivity, Selectivity, {
 
     /**
      * Adds an item to the selection, if it's not selected yet.
@@ -200,7 +201,7 @@ var callSuper = Selectivity.inherits(MultipleSelectivity, {
 
             this._scrollToBottom();
         } else if (event.removed) {
-            var quotedId = Selectivity.quoteCssAttr(event.removed.id);
+            var quotedId = quoteCssAttr(event.removed.id);
             this.$('.selectivity-multiple-selected-item[data-item-id=' + quotedId + ']').remove();
         } else {
             this.$('.selectivity-multiple-selected-item').remove();
@@ -406,7 +407,7 @@ var callSuper = Selectivity.inherits(MultipleSelectivity, {
 
         this._highlightedItemId = id;
         this.$('.selectivity-multiple-selected-item').removeClass('highlighted')
-            .filter('[data-item-id=' + Selectivity.quoteCssAttr(id) + ']').addClass('highlighted');
+            .filter('[data-item-id=' + quoteCssAttr(id) + ']').addClass('highlighted');
 
         if (!hasTouch) {
             this.focus();
@@ -419,7 +420,7 @@ var callSuper = Selectivity.inherits(MultipleSelectivity, {
     _itemClicked: function(event) {
 
         if (this.enabled) {
-            this._highlightItem(this._getItemId(event));
+            this._highlightItem(this.getRelatedItemId(event));
         }
     },
 
@@ -428,7 +429,7 @@ var callSuper = Selectivity.inherits(MultipleSelectivity, {
      */
     _itemRemoveClicked: function(event) {
 
-        this.remove(this._getItemId(event));
+        this.remove(this.getRelatedItemId(event));
 
         this._updateInputWidth();
 
@@ -498,7 +499,7 @@ var callSuper = Selectivity.inherits(MultipleSelectivity, {
             removable: !this.options.readOnly
         }, item)));
 
-        var quotedId = Selectivity.quoteCssAttr(item.id);
+        var quotedId = quoteCssAttr(item.id);
         this.$('.selectivity-multiple-selected-item[data-item-id=' + quotedId + ']')
             .find('.selectivity-multiple-selected-item-remove')
             .on('click', this._itemRemoveClicked.bind(this));

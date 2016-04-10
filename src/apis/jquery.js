@@ -35,19 +35,19 @@ function selectivity(methodName, options) {
         var instance = this.selectivity;
 
         if (instance) {
-            if ($.type(methodName) !== 'string') {
+            if (typeof methodName !== 'string') {
                 methodArgs = [methodName];
                 methodName = 'setOptions';
             }
 
-            if ($.type(instance[methodName]) === 'function') {
+            if (typeof instance[methodName] === 'function') {
                 if (result === undefined) {
                     result = instance[methodName].apply(instance, methodArgs);
                 }
             } else {
                 throw new Error('Unknown method: ' + methodName);
             }
-        } else if ($.type(methodName) === 'string') {
+        } else if (typeof methodName === 'string') {
             if (methodName !== 'destroy') {
                 throw new Error('Cannot call method on element without Selectivity instance');
             }
@@ -63,7 +63,7 @@ function selectivity(methodName, options) {
 
             var InputTypes = Selectivity.InputTypes;
             var InputType = (options.inputType || (options.multiple ? 'Multiple' : 'Single'));
-            if ($.type(InputType) !== 'function') {
+            if (typeof InputType !== 'function') {
                 if (InputTypes[InputType]) {
                     InputType = InputTypes[InputType];
                 } else {

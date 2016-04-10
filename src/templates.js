@@ -9,9 +9,11 @@ require('./selectivity-locale');
 /**
  * Default set of templates to use with Selectivity.js.
  *
- * Note that every template can be defined as either a string, a function returning a string (like
- * Handlebars templates, for instance) or as an object containing a render function (like Hogan.js
- * templates, for instance).
+ * Template can be defined as either a string, a function returning a string (like Handlebars
+ * templates, for instance), an object containing a render function (like Hogan.js templates, fo
+ * instance) or as a function returning a DOM element.
+ *
+ * Every template must return a single root element.
  */
 Selectivity.Templates = {
 

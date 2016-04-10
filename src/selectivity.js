@@ -2,8 +2,6 @@
 
 var extend = require('lodash/extend');
 
-var getType = require('./helpers/get-type');
-
 /**
  * Selectivity Base Constructor.
  *
@@ -95,11 +93,11 @@ function Selectivity(options) {
         this.data(options.data || null, { triggerChange: false });
     }
 
-    this.el.addEventListener('mouseenter', this._mouseenter.bind(this));
-    this.el.addEventListener('mouseleave', this._mouseleave.bind(this));
-    this.el.addEventListener('selectivity-close', this._closed.bind(this));
-    this.el.addEventListener('selectivity-blur', this._blur.bind(this));
-    this.el.addEventListener('blur', this._blur.bind(this));
+    this.on('mouseenter', this._mouseenter);
+    this.on('mouseleave', this._mouseleave);
+    this.on('selectivity-close', this._closed);
+    this.on('selectivity-blur', this._blur);
+    this.on('blur', this._blur);
 }
 
 /**
@@ -220,6 +218,47 @@ extend(Selectivity.prototype, {
     },
 
     /**
+     * Returns the item ID related to an element or event target.
+     *
+     * @param elementOrEvent The DOM element or event to get the item ID for.
+     *
+     * @return Item ID or null if no ID could be found.
+     */
+    getRelatedItemId: function(elementOrEvent) {
+
+        var el = elementOrEvent.target || elementOrEvent;
+        while (el) {
+            if (el.hasAttribute('data-item-id')) {
+                break;
+            }
+            el = el.parentNode;
+        }
+
+        if (!el) {
+            return null;
+        }
+
+        var id = el.getAttribute('data-item-id');
+
+        // IDs can be either numbers or strings, but attribute values are always strings, so we
+        // will have to find out whether the item ID ought to be a number or string ourselves.
+        if (Selectivity.findById(this._data || [], id)) {
+            return id;
+        } else {
+            var dropdown = this.dropdown;
+            while (dropdown) {
+                if (Selectivity.findNestedById(dropdown.results, id)) {
+                    return id;
+                }
+                // FIXME: reference to submenu plugin doesn't belong in base
+                dropdown = dropdown.submenu;
+            }
+            var number = parseInt(id, 10);
+            return ('' + number === id ? number : id);
+        }
+    },
+
+    /**
      * Initializes the search input element.
      *
      * Sets the searchInput property, invokes all search input listeners and attaches the default
@@ -292,6 +331,38 @@ extend(Selectivity.prototype, {
         if (this.dropdown) {
             this.dropdown.position();
         }
+    },
+
+    /**
+     * Renders a template.
+     *
+     * @param templateName Name of the template to render.
+     * @param options Options to pass to the template.
+     *
+     * @return DOM element containing the rendered template.
+     */
+    renderTemplate: function(templateName, options) {
+
+        var template = this.templates[templateName];
+        if (!template) {
+            throw new Error('Unknown template: ' + templateName);
+        }
+
+        var html;
+        if (typeof template === 'function') {
+            html = template(options);
+            if (html instanceof HTMLElement) {
+                return html;
+            }
+        } else if (template.render) {
+            html = template.render(options);
+        } else {
+            html = template.toString();
+        }
+
+        var div = document.createElement('div');
+        div.innerHTML = html;
+        return div.firstChild;
     },
 
     /**
@@ -408,9 +479,22 @@ extend(Selectivity.prototype, {
             searchInputListeners: 'array'
         }, options.allowedTypes);
 
-        $.each(options, function(key, value) {
+        for (var key in options) {
+            if (!options.hasOwnProperty(key)) {
+                return false;
+            }
+
+            var value = options[key];
             var type = allowedTypes[key];
-            if (type && !type.split('|').some(function(type) { return getType(value) === type; })) {
+            if (type && !type.split('|').some(function(type) {
+                if (type === 'null') {
+                    return value === null;
+                } else if (type === 'array') {
+                    return value instanceof Array;
+                } else {
+                    return typeof value === type;
+                }
+            })) {
                 throw new Error(key + ' must be of type ' + type);
             }
 
@@ -431,33 +515,9 @@ extend(Selectivity.prototype, {
                 extend(this.templates, value);
                 break;
             }
-        }.bind(this));
+        }
 
         this.enabled = (!this.options.readOnly && !this.options.removeOnly);
-    },
-
-    /**
-     * Returns the result of the given template.
-     *
-     * @param templateName Name of the template to process.
-     * @param options Options to pass to the template.
-     *
-     * @return String containing HTML.
-     */
-    template: function(templateName, options) {
-
-        var template = this.templates[templateName];
-        if (template) {
-            if ($.type(template) === 'function') {
-                return template(options);
-            } else if (template.render) {
-                return template.render(options);
-            } else {
-                return template.toString();
-            }
-        } else {
-            throw new Error('Unknown template: ' + templateName);
-        }
     },
 
     /**
@@ -470,22 +530,25 @@ extend(Selectivity.prototype, {
      */
     triggerChange: function(options) {
 
-        this.triggerEvent('change', $.extend({ value: this._value }, options));
+        this.triggerEvent('change', extend({ value: this._value }, options));
     },
 
     /**
      * Triggers an event on the instance's element.
      *
-     * @param Optional event data to be added to the event object.
+     * @param eventName Name of the event to trigger.
+     * @param data Optional event data to be added to the event object.
      *
      * @return Whether the default action of the event may be executed, ie. returns false if
      *         preventDefault() has been called.
      */
     triggerEvent: function(eventName, data) {
 
-        var event = $.Event(eventName, data || {});
-        this.$el.trigger(event);
-        return !event.isDefaultPrevented();
+        var event = document.createEvent('Event');
+        event.initEvent(eventName, /* bubbles: */ false, /* cancelable: */ true);
+        extend(event, data);
+        this.el.dispatchEvent(event);
+        return !event.defaultPrevented;
     },
 
     /**
@@ -505,7 +568,7 @@ extend(Selectivity.prototype, {
      */
     validateItem: function(item) {
 
-        if (item && Selectivity.isValidId(item.id) && $.type(item.text) === 'string') {
+        if (item && Selectivity.isValidId(item.id) && typeof item.text === 'string') {
             return item;
         } else {
             throw new Error('Item should have id (number or string) and text (string) properties');
@@ -570,7 +633,7 @@ extend(Selectivity.prototype, {
      */
     _blur: function() {
 
-        if (!this.$el.hasClass('hover')) {
+        if (!this.el.classList.contains('hover')) {
             this.close();
         }
     },
@@ -582,50 +645,7 @@ extend(Selectivity.prototype, {
 
         this.dropdown = null;
 
-        this.$el.toggleClass('open', false);
-    },
-
-    /**
-     * @private
-     */
-    _getItemId: function(elementOrEvent) {
-
-        // returns the item ID related to an element or event target.
-        // IDs can be either numbers or strings, but attribute values are always strings, so we
-        // will have to find out whether the item ID ought to be a number or string ourselves.
-        // $.fn.data() is a bit overzealous for our case, because it returns a number whenever the
-        // attribute value can be parsed as a number. however, it is possible an item had an ID
-        // which is a string but which is parseable as number, in which case we verify if the ID
-        // as number is actually found among the data or results. if it isn't, we assume it was
-        // supposed to be a string after all...
-
-        var $element;
-        if (elementOrEvent.target) {
-            $element = $(elementOrEvent.target).closest('[data-item-id]');
-        } else if (elementOrEvent.length) {
-            $element = elementOrEvent;
-        } else {
-            $element = $(elementOrEvent);
-        }
-
-        var id = $element.data('item-id');
-        if ($.type(id) === 'string') {
-            return id;
-        } else {
-            if (Selectivity.findById(this._data || [], id)) {
-                return id;
-            } else {
-                var dropdown = this.dropdown;
-                while (dropdown) {
-                    if (Selectivity.findNestedById(dropdown.results, id)) {
-                        return id;
-                    }
-                    // FIXME: reference to submenu doesn't belong in base module
-                    dropdown = dropdown.submenu;
-                }
-                return '' + id;
-            }
-        }
+        this.el.classList.remove('open');
     },
 
     /**
@@ -633,7 +653,7 @@ extend(Selectivity.prototype, {
      */
     _mouseleave: function() {
 
-        this.$el.toggleClass('hover', false);
+        this.el.classList.remove('hover');
     },
 
     /**
@@ -641,7 +661,7 @@ extend(Selectivity.prototype, {
      */
     _mouseenter: function() {
 
-        this.$el.toggleClass('hover', true);
+        this.el.classList.add('hover');
     }
 
 });
@@ -731,17 +751,20 @@ Selectivity.findIndexById = function(array, id) {
  *
  * @return The item in the array with the given ID, or null if the item was not found.
  */
-Selectivity.findNestedById = /* hasModule('submenu'): null && */function(array, id) {
+Selectivity.findNestedById = function(array, id) {
 
     for (var i = 0, length = array.length; i < length; i++) {
-        var item = array[i];
+        var item = array[i], result;
         if (item.id === id) {
-            return item;
+            result = item;
         } else if (item.children) {
-            var result = Selectivity.findNestedById(item.children, id);
-            if (result) {
-                return result;
-            }
+            result = Selectivity.findNestedById(item.children, id);
+        } else if (item.submenu && item.submenu.items) {
+            // FIXME: reference to submenu plugin doesn't belong in base
+            result = Selectivity.findNestedById(item.submenu.items, id);
+        }
+        if (result) {
+            return result;
         }
     }
     return null;
@@ -751,8 +774,7 @@ Selectivity.findNestedById = /* hasModule('submenu'): null && */function(array, 
  * Utility method for inheriting another class.
  *
  * @param SubClass Constructor function of the subclass.
- * @param SuperClass Optional constructor function of the superclass. If omitted, Selectivity is
- *                   used as superclass.
+ * @param SuperClass Constructor function of the superclass.
  * @param prototype Object with methods you want to add to the subclass prototype.
  *
  * @return A utility function for calling the methods of the superclass. This function receives two
@@ -761,12 +783,7 @@ Selectivity.findNestedById = /* hasModule('submenu'): null && */function(array, 
  */
 Selectivity.inherits = function(SubClass, SuperClass, prototype) {
 
-    if (arguments.length === 2) {
-        prototype = SuperClass;
-        SuperClass = Selectivity;
-    }
-
-    SubClass.prototype = $.extend(
+    SubClass.prototype = extend(
         Object.create(SuperClass.prototype),
         { constructor: SubClass },
         prototype
@@ -787,7 +804,7 @@ Selectivity.inherits = function(SubClass, SuperClass, prototype) {
  */
 Selectivity.isValidId = function(id) {
 
-    var type = $.type(id);
+    var type = typeof id;
     return type === 'number' || type === 'string';
 };
 
@@ -835,7 +852,7 @@ Selectivity.processItem = function(item) {
         return { id: item, text: '' + item };
     } else if (item &&
                (Selectivity.isValidId(item.id) || item.children) &&
-               $.type(item.text) === 'string') {
+               typeof item.text === 'string') {
         if (item.children) {
             item.children = Selectivity.processItems(item.children);
         }
@@ -855,24 +872,11 @@ Selectivity.processItem = function(item) {
  */
 Selectivity.processItems = function(items) {
 
-    if ($.type(items) === 'array') {
+    if (items instanceof Array) {
         return items.map(Selectivity.processItem);
     } else {
         throw new Error('invalid items');
     }
-};
-
-/**
- * Quotes a string so it can be used in a CSS attribute selector. It adds double quotes to the
- * string and escapes all occurrences of the quote character inside the string.
- *
- * @param string The string to quote.
- *
- * @return The quoted string.
- */
-Selectivity.quoteCssAttr = function(string) {
-
-    return '"' + ('' + string).replace(/\\/g, '\\\\').replace(/"/g, '\\"') + '"';
 };
 
 /**
@@ -888,4 +892,4 @@ Selectivity.transformText = function(string) {
     return string.toLowerCase();
 };
 
-module.exports = $.fn.selectivity = Selectivity;
+module.exports = Selectivity;

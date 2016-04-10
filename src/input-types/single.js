@@ -51,7 +51,7 @@ function SingleSelectivity(options) {
 /**
  * Methods.
  */
-var callSuper = Selectivity.inherits(SingleSelectivity, {
+var callSuper = Selectivity.inherits(SingleSelectivity, Selectivity, {
 
     /**
      * Events map.

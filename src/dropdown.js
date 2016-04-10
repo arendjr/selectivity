@@ -1,9 +1,10 @@
 'use strict';
 
-var $ = require('jquery');
 var debounce = require('lodash/debounce');
+var extend = require('lodash/extend');
 
 var EventDelegator = require('./event-delegator');
+var quoteCssAttr = require('../util/quote-css-attr');
 
 var Selectivity = require('./selectivity-base');
 
@@ -18,16 +19,16 @@ function SelectivityDropdown(options) {
 
     var selectivity = options.selectivity;
 
-    this.$el = $(selectivity.template('dropdown', {
+    this.el = selectivity.renderTemplate('dropdown', {
         dropdownCssClass: selectivity.options.dropdownCssClass,
         searchInputPlaceholder: selectivity.options.searchInputPlaceholder,
         showSearchInput: options.showSearchInput
-    }));
+    });
 
     /**
-     * jQuery container to add the results to.
+     * DOM element to add the results to.
      */
-    this.$results = this.$('.selectivity-results-container');
+    this.results = this.$('.selectivity-results-container');
 
     /**
      * Boolean indicating whether more results are available than currently displayed in the
@@ -95,47 +96,7 @@ function SelectivityDropdown(options) {
 /**
  * Methods.
  */
-$.extend(SelectivityDropdown.prototype, EventDelegator.prototype, {
-
-    /**
-     * Convenience shortcut for this.$el.find(selector).
-     */
-    $: function(selector) {
-
-        return this.$el.find(selector);
-    },
-
-    /**
-     * Adds the dropdown to the DOM.
-     */
-    addToDom: function() {
-
-        var $next;
-        var $anchor = this.selectivity.$el;
-        while (($next = $anchor.next('.selectivity-dropdown')).length) {
-            $anchor = $next;
-        }
-
-        $anchor.append(this.$el);
-    },
-
-    /**
-     * Closes the dropdown.
-     */
-    close: function() {
-
-        if (!this._closed) {
-            this._closed = true;
-
-            this.$el.remove();
-
-            this.removeCloseHandler();
-
-            this.selectivity.$el.off('selectivity-selecting', this._closeProxy);
-
-            this.triggerClose();
-        }
-    },
+extend(SelectivityDropdown.prototype, EventDelegator.prototype, {
 
     /**
      * Events map.
@@ -150,19 +111,54 @@ $.extend(SelectivityDropdown.prototype, EventDelegator.prototype, {
     },
 
     /**
+     * Convenience shortcut for this.el.querySelector(selector).
+     */
+    $: function(selector) {
+
+        return this.el.querySelector(selector);
+    },
+
+    /**
+     * Adds the dropdown to the DOM.
+     */
+    addToDom: function() {
+
+        var next;
+        var anchor = this.selectivity.el;
+        while ((next = anchor.next('.selectivity-dropdown')).length) {
+            anchor = next;
+        }
+
+        anchor.appendChild(this.el);
+    },
+
+    /**
+     * Closes the dropdown.
+     */
+    close: function() {
+
+        if (!this._closed) {
+            this._closed = true;
+
+            this.el.parentNode.removeChild(this.el);
+
+            this.selectivity.el.removeEventListener('selectivity-selecting', this._closeProxy);
+
+            this.triggerClose();
+        }
+    },
+
+    /**
      * Highlights a result item.
      *
      * @param item The item to highlight.
      */
     highlight: function(item) {
 
-        if (this.loadMoreHighlighted) {
-            this.$('.selectivity-load-more').removeClass('highlight');
-        }
+        this.$('.highlight').classList.remove('highlight');
 
-        this.$('.selectivity-result-item').removeClass('highlight')
-            .filter('[data-item-id=' + Selectivity.quoteCssAttr(item.id) + ']')
-            .addClass('highlight');
+        var itemId = quoteCssAttr(item.id);
+        this.$('.selectivity-result-item[data-item-id=' + itemId + ']').classList.add('highlight');
 
         this.highlightedResult = item;
         this.loadMoreHighlighted = false;
@@ -177,9 +173,9 @@ $.extend(SelectivityDropdown.prototype, EventDelegator.prototype, {
      */
     highlightLoadMore: function() {
 
-        this.$('.selectivity-result-item').removeClass('highlight');
+        this.$('.highlight').classList.remove('highlight');
 
-        this.$('.selectivity-load-more').addClass('highlight');
+        this.$('.selectivity-load-more').classList.add('highlight');
 
         this.highlightedResult = null;
         this.loadMoreHighlighted = true;
@@ -222,13 +218,6 @@ $.extend(SelectivityDropdown.prototype, EventDelegator.prototype, {
         }
 
         this._scrolled();
-    },
-
-    /**
-     * Removes the event handler to close the dropdown.
-     */
-    removeCloseHandler: function() {
-
     },
 
     /**
@@ -505,7 +494,7 @@ $.extend(SelectivityDropdown.prototype, EventDelegator.prototype, {
      */
     _resultClicked: function(event) {
 
-        this.selectItem(this.selectivity._getItemId(event));
+        this.selectItem(this.selectivity.getRelatedItemId(event));
 
         return false;
     },
@@ -517,7 +506,7 @@ $.extend(SelectivityDropdown.prototype, EventDelegator.prototype, {
 
         if (event.screenX === undefined || event.screenX !== this._lastMousePosition.x ||
             event.screenY === undefined || event.screenY !== this._lastMousePosition.y) {
-            var id = this.selectivity._getItemId(event);
+            var id = this.selectivity.getRelatedItemId(event);
             var item = Selectivity.findNestedById(this.results, id);
             if (item && !item.disabled) {
                 this.highlight(item);
@@ -532,9 +521,9 @@ $.extend(SelectivityDropdown.prototype, EventDelegator.prototype, {
      */
     _scrolled: function() {
 
-        var $loadMore = this.$('.selectivity-load-more');
-        if ($loadMore.length) {
-            if ($loadMore[0].offsetTop - this.$results[0].scrollTop < this.$el.height()) {
+        var loadMore = this.$('.selectivity-load-more');
+        if (loadMore) {
+            if (loadMore.offsetTop - this.$results[0].scrollTop < this.$el.height()) {
                 this._loadMoreClicked();
             }
         }

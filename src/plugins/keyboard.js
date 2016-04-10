@@ -1,6 +1,7 @@
 'use strict';
 
-var Selectivity = require('./selectivity-base');
+var Selectivity = require('../selectivity');
+var findResultItem = require('../util/find-result-item');
 
 var KEY_BACKSPACE = 8;
 var KEY_DOWN_ARROW = 40;
@@ -12,7 +13,7 @@ var KEY_UP_ARROW = 38;
 /**
  * Search input listener providing keyboard support for navigating the dropdown.
  */
-function listener(selectivity, $input) {
+function listener(selectivity, input) {
 
     var keydownCanceled = false;
     var closeSubmenu = null;
@@ -24,37 +25,23 @@ function listener(selectivity, $input) {
      */
     function moveHighlight(dropdown, delta) {
 
-        function findElementIndex($elements, selector) {
-            for (var i = 0, length = $elements.length; i < length; i++) {
-                if ($elements.eq(i).is(selector)) {
-                    return i;
-                }
-            }
-            return -1;
+        var results = dropdown.results;
+        if (!results.length) {
+            return;
         }
 
+        var resultItems = dropdown.el.querySelectorAll('.selectivity-result-item');
+
         function scrollToHighlight() {
-            var $el;
+            var el;
             if (dropdown.highlightedResult) {
-                var quotedId = Selectivity.quoteCssAttr(dropdown.highlightedResult.id);
-                $el = dropdown.$('.selectivity-result-item[data-item-id=' + quotedId + ']');
+                el = findResultItem(resultItems, dropdown.highlightedResult.id);
             } else if (dropdown.loadMoreHighlighted) {
-                $el = dropdown.$('.selectivity-load-more');
-            } else {
-                return; // no highlight to scroll to
+                el = dropdown.$('.selectivity-load-more');
             }
 
-            var position = $el.position();
-            if (!position) {
-                return;
-            }
-
-            var top = position.top;
-            var resultsHeight = dropdown.$results.height();
-            var elHeight = ($el.outerHeight ? $el.outerHeight() : $el.height());
-            if (top < 0 || top > resultsHeight - elHeight) {
-                top += dropdown.$results.scrollTop();
-                dropdown.$results.scrollTop(delta < 0 ? top : top - resultsHeight + elHeight);
+            if (el) {
+                el.scrollIntoView(delta < 0);
             }
         }
 
@@ -63,32 +50,28 @@ function listener(selectivity, $input) {
             return;
         }
 
-        var results = dropdown.results;
-        if (results.length) {
-            var $results = dropdown.$('.selectivity-result-item');
-            var defaultIndex = (delta > 0 ? 0 : $results.length - 1);
-            var index = defaultIndex;
-            var highlightedResult = dropdown.highlightedResult;
-            if (highlightedResult) {
-                var quotedId = Selectivity.quoteCssAttr(highlightedResult.id);
-                index = findElementIndex($results, '[data-item-id=' + quotedId + ']') + delta;
-                if (delta > 0 ? index >= $results.length : index < 0) {
-                    if (dropdown.hasMore) {
-                        dropdown.highlightLoadMore();
-                        scrollToHighlight();
-                        return;
-                    } else {
-                        index = defaultIndex;
-                    }
+        var defaultIndex = (delta > 0 ? 0 : resultItems.length - 1);
+        var index = defaultIndex;
+        var highlightedResult = dropdown.highlightedResult;
+        if (highlightedResult) {
+            var highlightedResultItem = findResultItem(resultItems, highlightedResult.id);
+            index = resultItems.indexOf(highlightedResultItem) + delta;
+            if (delta > 0 ? index >= resultItems.length : index < 0) {
+                if (dropdown.hasMore) {
+                    dropdown.highlightLoadMore();
+                    scrollToHighlight();
+                    return;
+                } else {
+                    index = defaultIndex;
                 }
             }
+        }
 
-            var result = Selectivity.findNestedById(results,
-                                                    selectivity._getItemId($results[index]));
-            if (result) {
-                dropdown.highlight(result, { delay: !!result.submenu });
-                scrollToHighlight();
-            }
+        var resultItem = resultItems[index];
+        var result = Selectivity.findNestedById(results, selectivity.getRelatedItemId(resultItem));
+        if (result) {
+            dropdown.highlight(result, { delay: !!result.submenu });
+            scrollToHighlight();
         }
     }
 
@@ -97,7 +80,7 @@ function listener(selectivity, $input) {
         var dropdown = selectivity.dropdown;
         if (dropdown) {
             if (event.keyCode === KEY_BACKSPACE) {
-                if (!$input.val()) {
+                if (!input.value) {
                     if (dropdown.submenu) {
                         var submenu = dropdown.submenu;
                         while (submenu.submenu) {
@@ -169,7 +152,8 @@ function listener(selectivity, $input) {
         }
     }
 
-    $input.on('keydown', keyHeld).on('keyup', keyReleased);
+    input.addEventListener('keydown', keyHeld);
+    input.addEventListener('keyup', keyReleased);
 }
 
 Selectivity.SearchInputListeners.push(listener);
