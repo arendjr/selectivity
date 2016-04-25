@@ -64,10 +64,11 @@ function SelectivityDropdown(options) {
 
     this._closed = false;
 
-    this._closeProxy = this.close.bind(this);
-    this._blurProxy = this._blur.bind(this);
+    this.close = this.close.bind(this);
+    this.position = this.position.bind(this);
+
     if (selectivity.options.closeOnSelect !== false) {
-        selectivity.$el.on('selectivity-selecting', this._closeProxy);
+        selectivity.$el.on('selectivity-selecting', this.close);
     }
 
     this._lastMousePosition = {};
@@ -80,7 +81,7 @@ function SelectivityDropdown(options) {
     if (options.showSearchInput) {
         selectivity.initSearchInput(this.$('.selectivity-search-input'));
 
-        this.$('.selectivity-search-input').on('blur', this._blurProxy);
+        this.$('.selectivity-search-input').on('blur', this._blur.bind(this));
 
         selectivity.focus();
     }
@@ -133,7 +134,7 @@ $.extend(SelectivityDropdown.prototype, EventDelegator.prototype, {
 
             this.$el.remove();
 
-            this.selectivity.$el.off('selectivity-selecting', this._closeProxy);
+            this.selectivity.$el.off('selectivity-selecting', this.close);
 
             this.triggerClose();
 
@@ -432,13 +433,12 @@ $.extend(SelectivityDropdown.prototype, EventDelegator.prototype, {
     _attachAncestorScrollListeners: function() {
 
         this._ancestorScrollElements = [];
-        this._ancestorScrollListener = this.position.bind(this);
 
         var el = this.selectivity.$el[0];
         while ((el = el.parentElement)) {
             if (typeof window !== 'undefined' && window.getComputedStyle(el).overflow === 'auto') {
                 for (var i = 0; i < SCROLL_EVENTS.length; i++) {
-                    el.addEventListener(SCROLL_EVENTS[i], this._ancestorScrollListener);
+                    el.addEventListener(SCROLL_EVENTS[i], this.position);
                 }
                 this._ancestorScrollElements.push(el);
             }
@@ -523,7 +523,7 @@ $.extend(SelectivityDropdown.prototype, EventDelegator.prototype, {
 
         this._ancestorScrollElements.forEach(function(el) {
             for (var i = 0; i < SCROLL_EVENTS.length; i++) {
-                el.removeEventListener(SCROLL_EVENTS[i]);
+                el.removeEventListener(SCROLL_EVENTS[i], this.position);
             }
         }, this);
 
