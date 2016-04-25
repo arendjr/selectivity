@@ -7,6 +7,8 @@ var EventDelegator = require('./event-delegator');
 
 var Selectivity = require('./selectivity-base');
 
+var SCROLL_EVENTS = ['scroll', 'touchend', 'touchmove'];
+
 /**
  * selectivity Dropdown Constructor.
  *
@@ -85,7 +87,9 @@ function SelectivityDropdown(options) {
 
     EventDelegator.call(this);
 
-    this.$results.on('scroll touchmove touchend', debounce(this._scrolled.bind(this), 50));
+    this.$results.on(SCROLL_EVENTS.join(' '), debounce(this._scrolled.bind(this), 50));
+
+    this._attachAncestorScrollListeners();
 
     this.showLoading();
 
@@ -129,11 +133,11 @@ $.extend(SelectivityDropdown.prototype, EventDelegator.prototype, {
 
             this.$el.remove();
 
-            this.removeCloseHandler();
-
             this.selectivity.$el.off('selectivity-selecting', this._closeProxy);
 
             this.triggerClose();
+
+            this._removeAncestorScrollListeners();
         }
     },
 
@@ -222,13 +226,6 @@ $.extend(SelectivityDropdown.prototype, EventDelegator.prototype, {
         }
 
         this._scrolled();
-    },
-
-    /**
-     * Removes the event handler to close the dropdown.
-     */
-    removeCloseHandler: function() {
-
     },
 
     /**
@@ -432,6 +429,25 @@ $.extend(SelectivityDropdown.prototype, EventDelegator.prototype, {
     /**
      * @private
      */
+    _attachAncestorScrollListeners: function() {
+
+        this._ancestorScrollElements = [];
+        this._ancestorScrollListener = this.position.bind(this);
+
+        var el = this.selectivity.$el[0];
+        while ((el = el.parentElement)) {
+            if (typeof window !== 'undefined' && window.getComputedStyle(el).overflow === 'auto') {
+                for (var i = 0; i < SCROLL_EVENTS.length; i++) {
+                    el.addEventListener(SCROLL_EVENTS[i], this._ancestorScrollListener);
+                }
+                this._ancestorScrollElements.push(el);
+            }
+        }
+    },
+
+    /**
+     * @private
+     */
     _blur: function() {
 
         if (!this.$el.hasClass('hover')) {
@@ -498,6 +514,20 @@ $.extend(SelectivityDropdown.prototype, EventDelegator.prototype, {
     _recordMousePosition: function(event) {
 
         this._lastMousePosition = { x: event.screenX, y: event.screenY };
+    },
+
+    /**
+     * @private
+     */
+    _removeAncestorScrollListeners: function() {
+
+        this._ancestorScrollElements.forEach(function(el) {
+            for (var i = 0; i < SCROLL_EVENTS.length; i++) {
+                el.removeEventListener(SCROLL_EVENTS[i]);
+            }
+        }, this);
+
+        this._ancestorScrollElements = [];
     },
 
     /**

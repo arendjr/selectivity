@@ -24,22 +24,21 @@ function SingleSelectivity(options) {
         // unless there is not enough space below, in which case the dropdown should be moved up
         // just enough so it fits in the window, but never so much that it reaches above the top
         this.options.positionDropdown = function($el, $selectEl) {
-            var position = $selectEl.position(),
-                dropdownHeight = $el.height(),
-                selectHeight = $selectEl.height(),
-                top = $selectEl[0].getBoundingClientRect().top,
-                bottom = top + selectHeight + dropdownHeight,
-                deltaUp = 0;
+            var rect = $selectEl[0].getBoundingClientRect();
+            var dropdownTop = rect.bottom;
 
+            var deltaUp = 0;
             if (typeof window !== 'undefined') {
-                deltaUp = Math.min(Math.max(bottom - $(window).height(), 0), top + selectHeight);
+                deltaUp = Math.min(
+                    Math.max(dropdownTop + $el.height() - window.innerHeight, 0),
+                    rect.top + rect.height
+                );
             }
 
-            var width = $selectEl.outerWidth ? $selectEl.outerWidth() : $selectEl.width();
             $el.css({
-                left: position.left + 'px',
-                top: (position.top + selectHeight - deltaUp) + 'px'
-            }).width(width);
+                left: rect.left + 'px',
+                top: dropdownTop - deltaUp + 'px'
+            }).width(rect.width);
         };
     }
 

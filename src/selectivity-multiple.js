@@ -32,18 +32,16 @@ function MultipleSelectivity(options) {
         // unless there is not enough space below, but there is space enough above, then it should
         // open upwards
         this.options.positionDropdown = function($el, $selectEl) {
-            var position = $selectEl.position(),
-                dropdownHeight = $el.height(),
-                selectHeight = $selectEl.height(),
-                top = $selectEl[0].getBoundingClientRect().top,
-                bottom = top + selectHeight + dropdownHeight,
-                openUpwards = (typeof window !== 'undefined' && bottom > $(window).height() &&
-                               top - dropdownHeight > 0);
+            var rect = $selectEl[0].getBoundingClientRect();
+            var dropdownHeight = $el.height();
+            var openUpwards = (typeof window !== 'undefined' &&
+                               rect.bottom + dropdownHeight > window.innerHeight &&
+                               rect.top - dropdownHeight > 0);
 
             var width = $selectEl.outerWidth ? $selectEl.outerWidth() : $selectEl.width();
             $el.css({
-                left: position.left + 'px',
-                top: position.top + (openUpwards ? -dropdownHeight : selectHeight) + 'px'
+                left: rect.left + 'px',
+                top: (openUpwards ? rect.top - dropdownHeight : rect.bottom) + 'px'
             }).width(width);
         };
     }
