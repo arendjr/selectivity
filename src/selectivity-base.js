@@ -188,11 +188,13 @@ function Selectivity(options) {
         this.data(options.data || null, { triggerChange: false });
     }
 
+    this._blur = this._blur.bind(this);
+
     this.$el.on('mouseenter', this._mouseenter.bind(this));
     this.$el.on('mouseleave', this._mouseleave.bind(this));
     this.$el.on('selectivity-close', this._closed.bind(this));
-    this.$el.on('selectivity-blur', this._blur.bind(this));
-    this.$el.on('blur', this._blur.bind(this));
+    this.$el.on('selectivity-blur', this._blur);
+    this.$el.on('blur', this._blur);
 
     EventDelegator.call(this);
 }
@@ -332,6 +334,8 @@ $.extend(Selectivity.prototype, EventDelegator.prototype, {
         this.searchInputListeners.forEach(function(listener) {
             listener(this, $input);
         }.bind(this));
+
+        $input.on('blur', this._blur);
 
         if (!options || !options.noSearch) {
             $input.on('keyup', function(event) {
