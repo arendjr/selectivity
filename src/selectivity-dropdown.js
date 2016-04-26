@@ -80,9 +80,6 @@ function SelectivityDropdown(options) {
 
     if (options.showSearchInput) {
         selectivity.initSearchInput(this.$('.selectivity-search-input'));
-
-        this.$('.selectivity-search-input').on('blur', this._blur.bind(this));
-
         selectivity.focus();
     }
 
@@ -456,16 +453,6 @@ $.extend(SelectivityDropdown.prototype, EventDelegator.prototype, {
         }
 
         this._ancestorScrollElements = scrollElements;
-    },
-
-    /**
-     * @private
-     */
-    _blur: function() {
-
-        if (!this.$el.hasClass('hover')) {
-            this.selectivity.triggerEvent('selectivity-blur');
-        }
     },
 
     /**

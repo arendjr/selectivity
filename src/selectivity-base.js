@@ -193,7 +193,6 @@ function Selectivity(options) {
     this.$el.on('mouseenter', this._mouseenter.bind(this));
     this.$el.on('mouseleave', this._mouseleave.bind(this));
     this.$el.on('selectivity-close', this._closed.bind(this));
-    this.$el.on('selectivity-blur', this._blur);
     this.$el.on('blur', this._blur);
 
     EventDelegator.call(this);
