@@ -4394,7 +4394,11 @@ var callSuper = Selectivity.inherits(SingleSelectivity, {
     /**
      * @private
      */
-    _clicked: function() {
+    _clicked: function(event) {
+
+        if ($(event.target).closest('.selectivity-search-input').length) {
+            return true;
+        }
 
         if (this.enabled) {
             if (this.dropdown) {
