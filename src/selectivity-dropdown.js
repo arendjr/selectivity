@@ -432,17 +432,29 @@ $.extend(SelectivityDropdown.prototype, EventDelegator.prototype, {
      */
     _attachAncestorScrollListeners: function() {
 
-        this._ancestorScrollElements = [];
+        var scrollElements = [];
 
-        var el = this.selectivity.$el[0];
-        while ((el = el.parentElement)) {
-            if (typeof window !== 'undefined' && window.getComputedStyle(el).overflow === 'auto') {
-                for (var i = 0; i < SCROLL_EVENTS.length; i++) {
-                    el.addEventListener(SCROLL_EVENTS[i], this.position);
-                }
-                this._ancestorScrollElements.push(el);
+        function attach(el) {
+            for (var i = 0; i < SCROLL_EVENTS.length; i++) {
+                el.addEventListener(SCROLL_EVENTS[i], this.position);
             }
+            scrollElements.push(el);
         }
+
+        if (typeof window !== 'undefined') {
+            var el = this.selectivity.$el[0];
+            while ((el = el.parentElement)) {
+                var style = window.getComputedStyle(el);
+                if (style.overflowX === 'auto' || style.overflowX === 'scroll' ||
+                    style.overflowY === 'auto' || style.overflowY === 'scroll') {
+                    attach(el);
+                }
+            }
+
+            attach(window);
+        }
+
+        this._ancestorScrollElements = scrollElements;
     },
 
     /**
