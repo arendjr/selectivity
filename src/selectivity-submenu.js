@@ -180,12 +180,11 @@ var callSuper = Selectivity.inherits(SelectivitySubmenu, SelectivityDropdown, {
                     items: item.submenu.items || null,
                     parentMenu: this,
                     position: item.submenu.positionDropdown || function($el) {
-                        var dropdownPosition = $dropdownEl.position();
-                        var width = $dropdownEl.width();
+                        var rect = $dropdownEl[0].getBoundingClientRect();
                         $el.css({
-                            left: dropdownPosition.left + width + 'px',
-                            top: $item.position().top + dropdownPosition.top + 'px'
-                        }).width(width);
+                            left: rect.right + 'px',
+                            top: $item.position().top + rect.top + 'px'
+                        }).width(rect.width);
                     },
                     query: item.submenu.query || null,
                     selectivity: selectivity,
