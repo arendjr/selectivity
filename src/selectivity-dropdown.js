@@ -432,11 +432,12 @@ $.extend(SelectivityDropdown.prototype, EventDelegator.prototype, {
      */
     _attachAncestorScrollListeners: function() {
 
+        var position = this.position;
         var scrollElements = [];
 
         function attach(el) {
             for (var i = 0; i < SCROLL_EVENTS.length; i++) {
-                el.addEventListener(SCROLL_EVENTS[i], this.position);
+                el.addEventListener(SCROLL_EVENTS[i], position);
             }
             scrollElements.push(el);
         }
