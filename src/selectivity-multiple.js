@@ -362,8 +362,8 @@ var callSuper = Selectivity.inherits(MultipleSelectivity, {
      */
     _clicked: function() {
 
-        if (this.enabled) {
-            this._open();
+        if (this.enabled && this.options.showDropdown !== false) {
+            this.open();
 
             return false;
         }
@@ -475,16 +475,6 @@ var callSuper = Selectivity.inherits(MultipleSelectivity, {
                 this._createToken();
             }
         }.bind(this), 10);
-    },
-
-    /**
-     * @private
-     */
-    _open: function() {
-
-        if (this.options.showDropdown !== false) {
-            this.open();
-        }
     },
 
     _renderSelectedItem: function(item) {

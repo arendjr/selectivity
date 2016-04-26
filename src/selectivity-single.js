@@ -76,7 +76,7 @@ var callSuper = Selectivity.inherits(SingleSelectivity, {
      * @inherit
      *
      * @param options Optional options object. May contain the following property:
-     *                keepFocus - If false, the focus won't remain on the input.
+     *                keepFocus - If true, the focus will remain on the input.
      */
     close: function(options) {
 
@@ -84,7 +84,7 @@ var callSuper = Selectivity.inherits(SingleSelectivity, {
 
         callSuper(this, 'close');
 
-        if ((!options || options.keepFocus !== false) && this.$searchInput) {
+        if (options && options.keepFocus && this.$searchInput) {
             this.$searchInput.focus();
         }
 
@@ -214,7 +214,7 @@ var callSuper = Selectivity.inherits(SingleSelectivity, {
 
         if (this.enabled) {
             if (this.dropdown) {
-                this.close();
+                this.close({ keepFocus: true });
             } else if (this.options.showDropdown !== false) {
                 this.open();
             }
@@ -251,7 +251,7 @@ var callSuper = Selectivity.inherits(SingleSelectivity, {
 
         this.data(event.item);
 
-        this.close();
+        this.close({ keepFocus: true });
     }
 
 });

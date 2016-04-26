@@ -115,7 +115,7 @@ function listener(selectivity, $input) {
                 moveHighlight(dropdown, -1);
             } else if (event.keyCode === KEY_TAB) {
                 setTimeout(function() {
-                    selectivity.close({ keepFocus: false });
+                    selectivity.close();
                 }, 1);
             } else if (event.keyCode === KEY_ENTER) {
                 event.preventDefault(); // don't submit forms on keydown

@@ -357,28 +357,30 @@ $.extend(Selectivity.prototype, EventDelegator.prototype, {
      */
     open: function(options) {
 
+        if (this.dropdown || !this.triggerEvent('selectivity-opening')) {
+            return;
+        }
+
         options = options || {};
 
-        if (!this.dropdown) {
-            if (this.triggerEvent('selectivity-opening')) {
-                var Dropdown = this.options.dropdown || Selectivity.Dropdown;
-                if (Dropdown) {
-                    this.dropdown = new Dropdown({
-                        items: this.items,
-                        position: this.options.positionDropdown,
-                        query: this.options.query,
-                        selectivity: this,
-                        showSearchInput: options.showSearchInput
-                    });
-                }
-
-                if (options.search !== false) {
-                    this.search('');
-                }
-            }
-
-            this.$el.toggleClass('open', true);
+        var Dropdown = this.options.dropdown || Selectivity.Dropdown;
+        if (Dropdown) {
+            this.dropdown = new Dropdown({
+                items: this.items,
+                position: this.options.positionDropdown,
+                query: this.options.query,
+                selectivity: this,
+                showSearchInput: options.showSearchInput
+            });
         }
+
+        if (options.search !== false) {
+            this.search('');
+        }
+
+        this.focus();
+
+        this.$el.toggleClass('open', true);
     },
 
     /**

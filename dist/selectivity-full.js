@@ -968,11 +968,12 @@ function Selectivity(options) {
         this.data(options.data || null, { triggerChange: false });
     }
 
+    this._blur = this._blur.bind(this);
+
     this.$el.on('mouseenter', this._mouseenter.bind(this));
     this.$el.on('mouseleave', this._mouseleave.bind(this));
     this.$el.on('selectivity-close', this._closed.bind(this));
-    this.$el.on('selectivity-blur', this._blur.bind(this));
-    this.$el.on('blur', this._blur.bind(this));
+    this.$el.on('blur', this._blur);
 
     EventDelegator.call(this);
 }
@@ -1113,6 +1114,8 @@ $.extend(Selectivity.prototype, EventDelegator.prototype, {
             listener(this, $input);
         }.bind(this));
 
+        $input.on('blur', this._blur);
+
         if (!options || !options.noSearch) {
             $input.on('keyup', function(event) {
                 if (!event.isDefaultPrevented()) {
@@ -1134,28 +1137,30 @@ $.extend(Selectivity.prototype, EventDelegator.prototype, {
      */
     open: function(options) {
 
+        if (this.dropdown || !this.triggerEvent('selectivity-opening')) {
+            return;
+        }
+
         options = options || {};
 
-        if (!this.dropdown) {
-            if (this.triggerEvent('selectivity-opening')) {
-                var Dropdown = this.options.dropdown || Selectivity.Dropdown;
-                if (Dropdown) {
-                    this.dropdown = new Dropdown({
-                        items: this.items,
-                        position: this.options.positionDropdown,
-                        query: this.options.query,
-                        selectivity: this,
-                        showSearchInput: options.showSearchInput
-                    });
-                }
-
-                if (options.search !== false) {
-                    this.search('');
-                }
-            }
-
-            this.$el.toggleClass('open', true);
+        var Dropdown = this.options.dropdown || Selectivity.Dropdown;
+        if (Dropdown) {
+            this.dropdown = new Dropdown({
+                items: this.items,
+                position: this.options.positionDropdown,
+                query: this.options.query,
+                selectivity: this,
+                showSearchInput: options.showSearchInput
+            });
         }
+
+        if (options.search !== false) {
+            this.search('');
+        }
+
+        this.focus();
+
+        this.$el.toggleClass('open', true);
     },
 
     /**
@@ -2713,9 +2718,6 @@ function SelectivityDropdown(options) {
 
     if (options.showSearchInput) {
         selectivity.initSearchInput(this.$('.selectivity-search-input'));
-
-        this.$('.selectivity-search-input').on('blur', this._blur.bind(this));
-
         selectivity.focus();
     }
 
@@ -3089,16 +3091,6 @@ $.extend(SelectivityDropdown.prototype, EventDelegator.prototype, {
         }
 
         this._ancestorScrollElements = scrollElements;
-    },
-
-    /**
-     * @private
-     */
-    _blur: function() {
-
-        if (!this.$el.hasClass('hover')) {
-            this.selectivity.triggerEvent('selectivity-blur');
-        }
     },
 
     /**
@@ -3557,7 +3549,7 @@ function listener(selectivity, $input) {
                 moveHighlight(dropdown, -1);
             } else if (event.keyCode === KEY_TAB) {
                 setTimeout(function() {
-                    selectivity.close({ keepFocus: false });
+                    selectivity.close();
                 }, 1);
             } else if (event.keyCode === KEY_ENTER) {
                 event.preventDefault(); // don't submit forms on keydown
@@ -4007,8 +3999,8 @@ var callSuper = Selectivity.inherits(MultipleSelectivity, {
      */
     _clicked: function() {
 
-        if (this.enabled) {
-            this._open();
+        if (this.enabled && this.options.showDropdown !== false) {
+            this.open();
 
             return false;
         }
@@ -4120,16 +4112,6 @@ var callSuper = Selectivity.inherits(MultipleSelectivity, {
                 this._createToken();
             }
         }.bind(this), 10);
-    },
-
-    /**
-     * @private
-     */
-    _open: function() {
-
-        if (this.options.showDropdown !== false) {
-            this.open();
-        }
     },
 
     _renderSelectedItem: function(item) {
@@ -4278,7 +4260,7 @@ var callSuper = Selectivity.inherits(SingleSelectivity, {
      * @inherit
      *
      * @param options Optional options object. May contain the following property:
-     *                keepFocus - If false, the focus won't remain on the input.
+     *                keepFocus - If true, the focus will remain on the input.
      */
     close: function(options) {
 
@@ -4286,7 +4268,7 @@ var callSuper = Selectivity.inherits(SingleSelectivity, {
 
         callSuper(this, 'close');
 
-        if ((!options || options.keepFocus !== false) && this.$searchInput) {
+        if (options && options.keepFocus && this.$searchInput) {
             this.$searchInput.focus();
         }
 
@@ -4416,7 +4398,7 @@ var callSuper = Selectivity.inherits(SingleSelectivity, {
 
         if (this.enabled) {
             if (this.dropdown) {
-                this.close();
+                this.close({ keepFocus: true });
             } else if (this.options.showDropdown !== false) {
                 this.open();
             }
@@ -4453,7 +4435,7 @@ var callSuper = Selectivity.inherits(SingleSelectivity, {
 
         this.data(event.item);
 
-        this.close();
+        this.close({ keepFocus: true });
     }
 
 });
@@ -4643,12 +4625,11 @@ var callSuper = Selectivity.inherits(SelectivitySubmenu, SelectivityDropdown, {
                     items: item.submenu.items || null,
                     parentMenu: this,
                     position: item.submenu.positionDropdown || function($el) {
-                        var dropdownPosition = $dropdownEl.position();
-                        var width = $dropdownEl.width();
+                        var rect = $dropdownEl[0].getBoundingClientRect();
                         $el.css({
-                            left: dropdownPosition.left + width + 'px',
-                            top: $item.position().top + dropdownPosition.top + 'px'
-                        }).width(width);
+                            left: rect.right + 'px',
+                            top: $item.position().top + rect.top + 'px'
+                        }).width(rect.width);
                     },
                     query: item.submenu.query || null,
                     selectivity: selectivity,
