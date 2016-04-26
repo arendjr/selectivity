@@ -16,6 +16,8 @@ var uglify = require('gulp-uglify');
 
 var argv = require('../argv');
 
+var LODASH_METHODS = ['debounce', 'escape'];
+
 module.exports = function() {
 
     var b = browserify({ debug: argv['source-map'] === true, standalone: 'selectivity' });
@@ -32,7 +34,7 @@ module.exports = function() {
     });
 
     if (argv.lodash) {
-        b.external('lodash');
+        b.external(LODASH_METHODS.map(function(method) { return 'lodash/' + method; }));
     }
 
     b.plugin(collapse);
