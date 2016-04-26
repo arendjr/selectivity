@@ -16,7 +16,7 @@
     "browser-sync": "^2.10.0",
     "browserify": "^13.0.0",
     "bundle-collapser": "^1.1.0",
-    "eslint": "^2.5.0",
+    "eslint": "^2.8.0",
     "glob": "^7.0.3",
     "gulp": "^3.8.10",
     "gulp-autoprefixer": "^3.1.0",
