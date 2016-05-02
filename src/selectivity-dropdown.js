@@ -13,6 +13,8 @@ var SCROLL_EVENTS = ['scroll', 'touchend', 'touchmove'];
  * selectivity Dropdown Constructor.
  *
  * @param options Options object. Should have the following properties:
+ *                highlightFirstItem - Set to false if you don't want the first item to be
+ *                                     automatically highlighted (optional).
  *                selectivity - Selectivity instance to show the dropdown for.
  *                showSearchInput - Boolean whether a search input should be shown.
  */
@@ -195,6 +197,8 @@ $.extend(SelectivityDropdown.prototype, EventDelegator.prototype, {
      */
     loadMore: function() {
 
+        this.$('.selectivity-load-more').replaceWith(this.selectivity.template('loading'));
+
         this.options.query({
             callback: function(response) {
                 if (response && response.results) {
@@ -299,7 +303,7 @@ $.extend(SelectivityDropdown.prototype, EventDelegator.prototype, {
         if (this.highlightedResult) {
             this.selectItem(this.highlightedResult.id);
         } else if (this.loadMoreHighlighted) {
-            this._loadMoreClicked();
+            this.loadMore();
         }
     },
 
@@ -311,7 +315,7 @@ $.extend(SelectivityDropdown.prototype, EventDelegator.prototype, {
     selectItem: function(id) {
 
         var item = Selectivity.findNestedById(this.results, id);
-        if (item && !item.disabled) {
+        if (item && !item.disabled && item.selectable !== false) {
             var options = { id: id, item: item };
             if (this.selectivity.triggerEvent('selectivity-selecting', options)) {
                 this.selectivity.triggerEvent('selectivity-selected', options);
@@ -401,7 +405,8 @@ $.extend(SelectivityDropdown.prototype, EventDelegator.prototype, {
             if (item) {
                 this.highlight(item);
             }
-        } else if (!options.add || this.loadMoreHighlighted) {
+        } else if (this.options.highlightFirstItem !== false &&
+                   (!options.add || this.loadMoreHighlighted)) {
             this._highlightFirstItem(results);
         }
 
@@ -488,10 +493,7 @@ $.extend(SelectivityDropdown.prototype, EventDelegator.prototype, {
      */
     _loadMoreClicked: function() {
 
-        this.$('.selectivity-load-more').replaceWith(this.selectivity.template('loading'));
-
         this.loadMore();
-
         return false;
     },
 
@@ -565,7 +567,7 @@ $.extend(SelectivityDropdown.prototype, EventDelegator.prototype, {
         var $loadMore = this.$('.selectivity-load-more');
         if ($loadMore.length) {
             if ($loadMore[0].offsetTop - this.$results[0].scrollTop < this.$el.height()) {
-                this._loadMoreClicked();
+                this.loadMore();
             }
         }
     },

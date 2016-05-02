@@ -48,6 +48,8 @@ var callSuper = Selectivity.inherits(SelectivitySubmenu, SelectivityDropdown, {
      * @param options Optional options object. May contain the following property:
      *                delay - If true, indicates any submenu should not be opened until after some
      *                        delay.
+     *                openSubmenu - If false, no submenu will be automatically opened for the
+     *                              highlighted item.
      */
     highlight: function(item, options) {
 
@@ -71,7 +73,11 @@ var callSuper = Selectivity.inherits(SelectivitySubmenu, SelectivityDropdown, {
                 this.parentMenu._closeSubmenuTimeout = 0;
             }
 
-            this._doHighlight(item);
+            if (options && options.openSubmenu === false) {
+                callSuper(this, 'highlight', item);
+            } else {
+                this._doHighlight(item);
+            }
         }
     },
 
@@ -102,25 +108,23 @@ var callSuper = Selectivity.inherits(SelectivitySubmenu, SelectivityDropdown, {
     /**
      * @inherit
      */
-    selectItem: function(id) {
+    showResults: function(results, options) {
 
-        var item = Selectivity.findNestedById(this.results, id);
-        if (item && !item.disabled && !item.submenu) {
-            var options = { id: id, item: item };
-            if (this.selectivity.triggerEvent('selectivity-selecting', options)) {
-                this.selectivity.triggerEvent('selectivity-selected', options);
+        // makes sure any result item with a submenu that's not explicitly
+        // set as selectable becomes unselectable
+        function setSelectable(item) {
+            if (item.children) {
+                item.children.forEach(setSelectable);
+            }
+            if (item.submenu) {
+                item.selectable = !!item.selectable;
             }
         }
-    },
-
-    /**
-     * @inherit
-     */
-    showResults: function(results, options) {
 
         if (this.submenu) {
             this.submenu.showResults(results, options);
         } else {
+            results.forEach(setSelectable);
             callSuper(this, 'showResults', results, options);
         }
     },
@@ -169,14 +173,19 @@ var callSuper = Selectivity.inherits(SelectivitySubmenu, SelectivityDropdown, {
         callSuper(this, 'highlight', item);
 
         if (item.submenu && !this.submenu) {
-            var selectivity = this.selectivity;
-            var Dropdown = selectivity.options.dropdown || Selectivity.Dropdown;
+            var options = this.selectivity.options;
+            if (options.shouldOpenSubmenu && options.shouldOpenSubmenu() === false) {
+                return;
+            }
+
+            var Dropdown = options.dropdown || Selectivity.Dropdown;
             if (Dropdown) {
                 var quotedId = Selectivity.quoteCssAttr(item.id);
                 var $item = this.$('.selectivity-result-item[data-item-id=' + quotedId + ']');
                 var $dropdownEl = this.$el;
 
                 this.submenu = new Dropdown({
+                    highlightFirstItem: !item.selectable,
                     items: item.submenu.items || null,
                     parentMenu: this,
                     position: item.submenu.positionDropdown || function($el) {
@@ -187,7 +196,7 @@ var callSuper = Selectivity.inherits(SelectivitySubmenu, SelectivityDropdown, {
                         }).width(rect.width);
                     },
                     query: item.submenu.query || null,
-                    selectivity: selectivity,
+                    selectivity: this.selectivity,
                     showSearchInput: item.submenu.showSearchInput
                 });
 
