@@ -157,8 +157,11 @@ $.extend(SelectivityDropdown.prototype, EventDelegator.prototype, {
      * Highlights a result item.
      *
      * @param item The item to highlight.
+     * @param options Optional options object that may contain the following property:
+     *                reason - The reason why the result item is being highlighted. Possible values:
+     *                         'current_value', 'first_result', 'hovered'.
      */
-    highlight: function(item) {
+    highlight: function(item, options) {
 
         if (this.loadMoreHighlighted) {
             this.$('.selectivity-load-more').removeClass('highlight');
@@ -171,7 +174,11 @@ $.extend(SelectivityDropdown.prototype, EventDelegator.prototype, {
         this.highlightedResult = item;
         this.loadMoreHighlighted = false;
 
-        this.selectivity.triggerEvent('selectivity-highlight', { item: item, id: item.id });
+        this.selectivity.triggerEvent('selectivity-highlight', {
+            item: item,
+            id: item.id,
+            reason: options && options.reason || 'unspecified'
+        });
     },
 
     /**
@@ -403,7 +410,7 @@ $.extend(SelectivityDropdown.prototype, EventDelegator.prototype, {
         if (value && $.type(value) !== 'array') {
             var item = Selectivity.findNestedById(results, value);
             if (item) {
-                this.highlight(item);
+                this.highlight(item, { reason: 'current_value' });
             }
         } else if (this.options.highlightFirstItem !== false &&
                    (!options.add || this.loadMoreHighlighted)) {
@@ -481,7 +488,7 @@ $.extend(SelectivityDropdown.prototype, EventDelegator.prototype, {
 
         var firstItem = findFirstItem(results);
         if (firstItem) {
-            this.highlight(firstItem);
+            this.highlight(firstItem, { reason: 'first_result' });
         } else {
             this.highlightedResult = null;
             this.loadMoreHighlighted = false;
@@ -552,7 +559,7 @@ $.extend(SelectivityDropdown.prototype, EventDelegator.prototype, {
             var id = this.selectivity._getItemId(event);
             var item = Selectivity.findNestedById(this.results, id);
             if (item && !item.disabled) {
-                this.highlight(item);
+                this.highlight(item, { reason: 'hovered' });
             }
 
             this._recordMousePosition(event);

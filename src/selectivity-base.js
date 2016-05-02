@@ -479,6 +479,11 @@ $.extend(Selectivity.prototype, EventDelegator.prototype, {
      *                             of selected items.
      *                searchInputListeners - Array of search input listeners. By default, the global
      *                                       array Selectivity.SearchInputListeners is used.
+     *                shouldOpenSubmenu - Function to call that will decide whether a submenu should
+     *                                    be opened. Receives two parameters:
+     *                                    item - The currently highlighted result item.
+     *                                    reason - The reason why the item is being highlighted.
+     *                                             See Dropdown#highlight() for possible values.
      *                showDropdown - Set to false if you don't want to use any dropdown (you can
      *                               still open it programmatically using open()).
      *                templates - Object with instance-specific templates to override the global
