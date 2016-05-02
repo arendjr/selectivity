@@ -1,5 +1,8 @@
 'use strict';
 
+var freshy = require('freshy');
+var jsdom = require('jsdom');
+
 module.exports = {
 
     /**
@@ -10,10 +13,11 @@ module.exports = {
      *                indexResource - Filename of the index resource (default: 'testcase.html').
      *                async - Set to true to indicate the test function is asynchronous and calls
      *                        done() itself.
-     * @param fn The actual test function. Receives two arguments:
+     * @param fn The actual test function. Receives three arguments:
      *           test - The nodeunit test instance.
      *           $input - jQuery container for the '#selectivity-input' element defined in
      *                    resources/testcase.html.
+     *           $ - jQuery instance.
      */
     createDomTest: function(modules, options, fn) {
 
@@ -25,66 +29,32 @@ module.exports = {
         var indexResource = options.indexResource || 'testcase.html';
 
         return function(test) {
-            require('jsdom').env('tests/resources/' + indexResource, function(errors, window) {
-                test.strictEqual(errors, null);
-
-                test.doesNotThrow(function() {
-                    var $ = require('../vendor/jquery')(window);
-                    var proxyquire = require('proxyquire').noCallThru();
-
-                    var EventDelegator = proxyquire('../src/event-delegator', { 'jquery': $ });
-
-                    var stubs = { 'jquery': $, './event-delegator': EventDelegator };
-                    proxyquire('../src/selectivity-base', stubs);
-
-                    // I wish this could be solved without hard-coding the dependenies here...
-                    var dependencies = {
-                        'ajax': ['base', 'locale'],
-                        'async': ['base'],
-                        'base': [],
-                        'diacritics': ['base'],
-                        'dropdown': ['base'],
-                        'email': ['base', 'multiple'],
-                        'keyboard': ['base'],
-                        'locale': ['base'],
-                        'multiple': ['base'],
-                        'single': ['base'],
-                        'submenu': ['base', 'dropdown'],
-                        'templates': ['base', 'locale'],
-                        'tokenizer': ['base'],
-                        'traditional': ['base']
+            jsdom.env({
+                file: 'tests/resources/' + indexResource,
+                onload: function(window) {
+                    var done = test.done.bind(test);
+                    test.done = function() {
+                        window.close();
+                        done();
                     };
 
-                    var orderedModules = [];
+                    global.document = window.document;
+                    global.window = window;
 
-                    function insertDependencies(module) {
-                        if (dependencies[module]) {
-                            dependencies[module].forEach(function(dependency) {
-                                insertDependencies(dependency);
-                                if (orderedModules.indexOf(dependency) === -1) {
-                                    orderedModules.push(dependency);
-                                }
-                            });
-                            if (orderedModules.indexOf(module) === -1) {
-                                orderedModules.push(module);
-                            }
-                        } else {
-                            throw new Error('Dependencies for module ' + module + ' not specified');
-                        }
-                    }
+                    window.$ = window.jQuery = freshy.reload('jquery');
 
-                    modules.forEach(insertDependencies);
+                    test.doesNotThrow(function() {
+                        freshy.reload('../src/selectivity-base');
+                        modules.forEach(function(module) {
+                            freshy.reload('../src/selectivity-' + module);
+                        });
 
-                    orderedModules.forEach(function(module) {
-                        var selectivityModule = proxyquire('../src/selectivity-' + module, stubs);
-                        stubs['./selectivity-' + module] = selectivityModule;
+                        fn(test, window.$('#selectivity-input'), window.$);
                     });
 
-                    fn(test, window.$('#selectivity-input'), $);
-                });
-
-                if (!options.async) {
-                    test.done();
+                    if (!options.async) {
+                        test.done();
+                    }
                 }
             });
         };
