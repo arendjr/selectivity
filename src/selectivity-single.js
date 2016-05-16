@@ -122,13 +122,15 @@ var callSuper = Selectivity.inherits(SingleSelectivity, {
      */
     open: function(options) {
 
-        this._opening = true;
+        if (!this._opening) {
+            this._opening = true;
 
-        var showSearchInput = (this.options.showSearchInputInDropdown !== false);
+            var showSearchInput = (this.options.showSearchInputInDropdown !== false);
 
-        callSuper(this, 'open', $.extend({ showSearchInput: showSearchInput }, options));
+            callSuper(this, 'open', $.extend({ showSearchInput: showSearchInput }, options));
 
-        this._opening = false;
+            this._opening = false;
+        }
     },
 
     /**

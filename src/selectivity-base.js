@@ -290,9 +290,13 @@ $.extend(Selectivity.prototype, EventDelegator.prototype, {
      */
     focus: function() {
 
+        this._focusing = true;
+
         if (this.$searchInput) {
             this.$searchInput.focus();
         }
+
+        this._focusing = false;
     },
 
     /**
@@ -380,7 +384,7 @@ $.extend(Selectivity.prototype, EventDelegator.prototype, {
 
         this.focus();
 
-        this.$el.toggleClass('open', true);
+        this.$el.addClass('open');
     },
 
     /**
@@ -674,7 +678,7 @@ $.extend(Selectivity.prototype, EventDelegator.prototype, {
      */
     _blur: function() {
 
-        if (!this.$el.hasClass('hover')) {
+        if (!this._focusing && !this.$el.hasClass('hover')) {
             this.close();
         }
     },
@@ -686,7 +690,7 @@ $.extend(Selectivity.prototype, EventDelegator.prototype, {
 
         this.dropdown = null;
 
-        this.$el.toggleClass('open', false);
+        this.$el.removeClass('open');
     },
 
     /**
@@ -737,7 +741,7 @@ $.extend(Selectivity.prototype, EventDelegator.prototype, {
      */
     _mouseleave: function() {
 
-        this.$el.toggleClass('hover', false);
+        this.$el.removeClass('hover');
     },
 
     /**
@@ -745,7 +749,7 @@ $.extend(Selectivity.prototype, EventDelegator.prototype, {
      */
     _mouseenter: function() {
 
-        this.$el.toggleClass('hover', true);
+        this.$el.addClass('hover');
     }
 
 });

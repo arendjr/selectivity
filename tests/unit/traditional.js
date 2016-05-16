@@ -1,26 +1,28 @@
 'use strict';
 
-var DomUtil = require('../dom-util');
+var DomUtil = require('../test-util');
 
-exports.testInitializationSingle = DomUtil.createDomTest(
+DomUtil.createDomTest(
+    'traditional: test initialization of single select input',
     ['single', 'templates', 'traditional'],
     { indexResource: 'testcase-traditional.html' },
     function(test, $input, $) {
         $input.selectivity();
 
-        test.deepEqual($input.selectivity('data'), { id: 3, text: 'Three' });
+        test.deepEqual($input.selectivity('data'), { id: '3', text: 'Three' });
 
-        test.equal($input.selectivity('value'), 3);
+        test.equal($input.selectivity('value'), '3');
 
-        test.equal($('#selectivity-input').selectivity('value'), 3);
+        test.equal($('#selectivity-input').selectivity('value'), '3');
 
-        var $options = $input.find('select[name="my_select"] option[selected]');
+        var $options = $('select[name="my_select"] option[selected]');
         test.equal($options.length, 1);
         test.equal($options.first().val(), '3');
     }
 );
 
-exports.testInitializationSingleWithCustomQuery = DomUtil.createDomTest(
+DomUtil.createDomTest(
+    'traditional: test initialization of single select input with custom query',
     ['single', 'templates', 'traditional'],
     { indexResource: 'testcase-traditional.html' },
     function(test, $input) {
@@ -28,15 +30,16 @@ exports.testInitializationSingleWithCustomQuery = DomUtil.createDomTest(
             query: function() {}
         });
 
-        test.deepEqual($input.selectivity('data'), { id: 3, text: 'Three' });
+        test.deepEqual($input.selectivity('data'), { id: '3', text: 'Three' });
 
-        test.equal($input.selectivity('value'), 3);
+        test.equal($input.selectivity('value'), '3');
 
         test.equal($input[0].selectivity.items, null);
     }
 );
 
-exports.testInitializationSingleWithEmptyValue = DomUtil.createDomTest(
+DomUtil.createDomTest(
+    'traditional: test initialization of single select input with empty value',
     ['single', 'templates', 'traditional'],
     { indexResource: 'testcase-traditional-empty-value.html' },
     function(test, $input) {
@@ -48,29 +51,31 @@ exports.testInitializationSingleWithEmptyValue = DomUtil.createDomTest(
     }
 );
 
-exports.testInitializationMultiple = DomUtil.createDomTest(
+DomUtil.createDomTest(
+    'traditional: test initialization of multiple select input',
     ['multiple', 'templates', 'traditional'],
     { indexResource: 'testcase-traditional-multiple.html' },
     function(test, $input, $) {
         $input.selectivity();
 
         test.deepEqual($input.selectivity('data'), [
-            { id: 3, text: 'Three' },
-            { id: 4, text: 'Four' }
+            { id: '3', text: 'Three' },
+            { id: '4', text: 'Four' }
         ]);
 
-        test.deepEqual($input.selectivity('value'), [3, 4]);
+        test.deepEqual($input.selectivity('value'), ['3', '4']);
 
-        test.deepEqual($('#selectivity-input').selectivity('value'), [3, 4]);
+        test.deepEqual($('#selectivity-input').selectivity('value'), ['3', '4']);
 
-        var $options = $input.find('select[name="my_select"] option[selected]');
+        var $options = $('select[name="my_select"] option[selected]');
         test.equal($options.length, 2);
         test.equal($options.first().val(), '3');
         test.equal($options.last().val(), '4');
     }
 );
 
-exports.testSingleTraditionalChangeEvents = DomUtil.createDomTest(
+DomUtil.createDomTest(
+    'traditional: test change events of single select input',
     ['single', 'templates', 'traditional'],
     { indexResource: 'testcase-traditional.html' },
     function(test, $input, $) {
@@ -85,7 +90,7 @@ exports.testSingleTraditionalChangeEvents = DomUtil.createDomTest(
 
         $('.selectivity-single-select').trigger({
             type: 'selectivity-selected',
-            item: { id: 1, text: 'foo bar' }
+            item: { id: '1', text: 'foo bar' }
         });
 
         test.equal(changeEvents, 1);
@@ -93,7 +98,8 @@ exports.testSingleTraditionalChangeEvents = DomUtil.createDomTest(
     }
 );
 
-exports.testMultipeTraditionalChangeEvents = DomUtil.createDomTest(
+DomUtil.createDomTest(
+    'traditional: test change events of multiple select input',
     ['multiple', 'templates', 'traditional'],
     { indexResource: 'testcase-traditional-multiple.html' },
     function(test, $input, $) {

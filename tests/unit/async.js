@@ -1,6 +1,6 @@
 'use strict';
 
-var DomUtil = require('../dom-util');
+var TestUtil = require('../test-util');
 
 var items = [
     'Amsterdam',
@@ -48,7 +48,8 @@ function query() {
     };
 }
 
-exports.testAsync = DomUtil.createDomTest(
+TestUtil.createDomTest(
+    'async: test with async',
     ['async', 'single', 'dropdown', 'templates'],
     { async: true },
     function(test, $input, $) {
@@ -66,12 +67,13 @@ exports.testAsync = DomUtil.createDomTest(
         setTimeout(function() {
             test.equal($('.selectivity-result-item').length, 1);
 
-            test.done();
+            test.end();
         }, 25);
     }
-
 );
-exports.testWithoutAsync = DomUtil.createDomTest(
+
+TestUtil.createDomTest(
+    'async: test without async',
     ['single', 'dropdown', 'templates'],
     { async: true },
     function(test, $input, $) {
@@ -87,10 +89,10 @@ exports.testWithoutAsync = DomUtil.createDomTest(
         }, 5);
 
         setTimeout(function() {
+            // without async there would be more results
             test.equal($('.selectivity-result-item').length, 10);
 
-            test.done();
+            test.end();
         }, 25);
     }
-
 );

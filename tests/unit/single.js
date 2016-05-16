@@ -1,8 +1,9 @@
 'use strict';
 
-var DomUtil = require('../dom-util');
+var TestUtil = require('../test-util');
 
-exports.testClear = DomUtil.createDomTest(
+TestUtil.createDomTest(
+    'single: test clear',
     ['single', 'templates'],
     function(test, $input) {
         $input.selectivity({
@@ -22,7 +23,8 @@ exports.testClear = DomUtil.createDomTest(
     }
 );
 
-exports.testDontOpenAfterClear = DomUtil.createDomTest(
+TestUtil.createDomTest(
+    'single: test don\'t open after clear',
     ['single', 'dropdown', 'templates'],
     function(test, $input, $) {
         $input.selectivity({
@@ -46,7 +48,8 @@ exports.testDontOpenAfterClear = DomUtil.createDomTest(
     }
 );
 
-exports.testInitialData = DomUtil.createDomTest(
+TestUtil.createDomTest(
+    'single: test initial data',
     ['single', 'templates'],
     function(test, $input) {
         $input.selectivity({
@@ -64,7 +67,8 @@ exports.testInitialData = DomUtil.createDomTest(
     }
 );
 
-exports.testInitialValue = DomUtil.createDomTest(
+TestUtil.createDomTest(
+    'single: test initial value',
     ['single', 'templates'],
     function(test, $input) {
         $input.selectivity({
@@ -78,32 +82,29 @@ exports.testInitialValue = DomUtil.createDomTest(
     }
 );
 
-exports.testNestedData = DomUtil.createDomTest(
+TestUtil.createDomTest(
+    'single: test nested data',
     ['single', 'templates'],
     function(test, $input) {
         $input.selectivity({
             data: { id: 2, text: 'Antwerp' },
-            items: [
-                {
-                    text: 'Austria',
-                    children: [
-                        { id: 54, text: 'Vienna' }
-                    ]
-                },
-                {
-                    text: 'Belgium',
-                    children: [
-                        { id: 2, text: 'Antwerp' },
-                        { id: 9, text: 'Brussels' }
-                    ]
-                },
-                {
-                    text: 'Bulgaria',
-                    children: [
-                        { id: 48, text: 'Sofia' }
-                    ]
-                }
-            ]
+            items: [{
+                text: 'Austria',
+                children: [
+                    { id: 54, text: 'Vienna' }
+                ]
+            }, {
+                text: 'Belgium',
+                children: [
+                    { id: 2, text: 'Antwerp' },
+                    { id: 9, text: 'Brussels' }
+                ]
+            }, {
+                text: 'Bulgaria',
+                children: [
+                    { id: 48, text: 'Sofia' }
+                ]
+            }]
         });
 
         test.deepEqual($input.selectivity('data'), { id: 2, text: 'Antwerp' });
@@ -112,32 +113,29 @@ exports.testNestedData = DomUtil.createDomTest(
     }
 );
 
-exports.testNestedValue = DomUtil.createDomTest(
+TestUtil.createDomTest(
+    'single: test nested value',
     ['single', 'templates'],
     function(test, $input) {
         $input.selectivity({
             value: 2,
-            items: [
-                {
-                    text: 'Austria',
-                    children: [
-                        { id: 54, text: 'Vienna' }
-                    ]
-                },
-                {
-                    text: 'Belgium',
-                    children: [
-                        { id: 2, text: 'Antwerp' },
-                        { id: 9, text: 'Brussels' }
-                    ]
-                },
-                {
-                    text: 'Bulgaria',
-                    children: [
-                        { id: 48, text: 'Sofia' }
-                    ]
-                }
-            ]
+            items: [{
+                text: 'Austria',
+                children: [
+                    { id: 54, text: 'Vienna' }
+                ]
+            }, {
+                text: 'Belgium',
+                children: [
+                    { id: 2, text: 'Antwerp' },
+                    { id: 9, text: 'Brussels' }
+                ]
+            }, {
+                text: 'Bulgaria',
+                children: [
+                    { id: 48, text: 'Sofia' }
+                ]
+            }]
         });
 
         test.deepEqual($input.selectivity('data'), { id: 2, text: 'Antwerp' });
@@ -146,7 +144,8 @@ exports.testNestedValue = DomUtil.createDomTest(
     }
 );
 
-exports.testNoData = DomUtil.createDomTest(
+TestUtil.createDomTest(
+    'single: test without data',
     ['single', 'templates'],
     function(test, $input) {
         $input.selectivity({
@@ -163,7 +162,8 @@ exports.testNoData = DomUtil.createDomTest(
     }
 );
 
-exports.testNoSearchInput = DomUtil.createDomTest(
+TestUtil.createDomTest(
+    'single: test without search input',
     ['single', 'dropdown', 'templates'],
     function(test, $input, $) {
         $input.selectivity({
@@ -190,43 +190,8 @@ exports.testNoSearchInput = DomUtil.createDomTest(
     }
 );
 
-exports.testSelectNestedItemByKeyboard = DomUtil.createDomTest(
-    ['single', 'dropdown', 'keyboard', 'templates'],
-    function(test, $input, $) {
-        $input.selectivity({
-            items: [
-                {
-                    text: 'Austria',
-                    children: [
-                        { id: 54, text: 'Vienna' }
-                    ]
-                },
-                {
-                    text: 'Belgium',
-                    children: [
-                        { id: 2, text: 'Antwerp' },
-                        { id: 9, text: 'Brussels' }
-                    ]
-                },
-                {
-                    text: 'Bulgaria',
-                    children: [
-                        { id: 48, text: 'Sofia' }
-                    ]
-                }
-            ]
-        });
-
-        $input.find('.selectivity-single-select').click();
-        $('.selectivity-search-input').val('belg')
-                                      .trigger('keyup')
-                                      .trigger(new $.Event('keyup', { keyCode: 13 }));
-
-        test.deepEqual($input.selectivity('value'), 2);
-    }
-);
-
-exports.testSetValue = DomUtil.createDomTest(
+TestUtil.createDomTest(
+    'single: test set value',
     ['single', 'templates'],
     function(test, $input) {
         $input.selectivity({
@@ -244,7 +209,8 @@ exports.testSetValue = DomUtil.createDomTest(
     }
 );
 
-exports.testSetValueWithInitSelection = DomUtil.createDomTest(
+TestUtil.createDomTest(
+    'single: test set value with init selection',
     ['single', 'templates'],
     function(test, $input) {
         $input.selectivity({
@@ -271,7 +237,8 @@ exports.testSetValueWithInitSelection = DomUtil.createDomTest(
     }
 );
 
-exports.testSetValueWithoutItems = DomUtil.createDomTest(
+TestUtil.createDomTest(
+    'single: test set value without items',
     ['single', 'templates'],
     function(test, $input) {
         $input.selectivity({
@@ -288,10 +255,10 @@ exports.testSetValueWithoutItems = DomUtil.createDomTest(
     }
 );
 
-exports.testMouseOver = DomUtil.createDomTest(
+TestUtil.createDomTest(
+    'single: test mouse over',
     ['single', 'templates'],
-    function(test, $input, $)
-    {
+    function(test, $input, $) {
         $input.selectivity({
             value: 'Amsterdam'
         });
@@ -306,10 +273,10 @@ exports.testMouseOver = DomUtil.createDomTest(
     }
 );
 
-exports.testClickAndMouseOver = DomUtil.createDomTest(
+TestUtil.createDomTest(
+    'single: test click and mouse over',
     ['single', 'dropdown', 'templates'],
-    function(test, $input, $)
-    {
+    function(test, $input, $) {
         $input.selectivity({
             value: 'Amsterdam'
         });
@@ -328,10 +295,10 @@ exports.testClickAndMouseOver = DomUtil.createDomTest(
     }
 );
 
-exports.testBlurEventAfterOpeningSingleSelect = DomUtil.createDomTest(
+TestUtil.createDomTest(
+    'single: test blur event after opening single select',
     ['single', 'dropdown', 'templates'],
-    function(test, $input, $)
-    {
+    function(test, $input, $) {
         $input.selectivity({
             value: 'Amsterdam',
             showSearchInputInDropdown: false
@@ -347,10 +314,10 @@ exports.testBlurEventAfterOpeningSingleSelect = DomUtil.createDomTest(
     }
 );
 
-exports.testDoNotCloseWhenHoveringAndBlurEventOccurs = DomUtil.createDomTest(
+TestUtil.createDomTest(
+    'single: test don\'t close when hovering while blur event occurs',
     ['single', 'dropdown', 'templates'],
-    function(test, $input, $)
-    {
+    function(test, $input, $) {
         $input.selectivity({
             value: 'Amsterdam',
             showSearchInputInDropdown: false
@@ -366,29 +333,29 @@ exports.testDoNotCloseWhenHoveringAndBlurEventOccurs = DomUtil.createDomTest(
     }
 );
 
-exports.testDefaultTabindex = DomUtil.createDomTest(
+TestUtil.createDomTest(
+    'single: test default tab index',
     ['single', 'dropdown', 'templates'],
-    function(test, $input)
-    {
+    function(test, $input) {
         $input.selectivity({
             value: 'Amsterdam',
             showSearchInputInDropdown: false
         });
 
-        test.equal($input.attr('tabindex'), 0);
+        test.equal($input.attr('tabindex'), '0');
     }
 );
 
-exports.testTabindexCanBeGivenThroughParameter = DomUtil.createDomTest(
+TestUtil.createDomTest(
+    'single: test tab index option',
     ['single', 'dropdown', 'templates'],
-    function(test, $input)
-    {
+    function(test, $input) {
         $input.selectivity({
             value: 'Amsterdam',
             showSearchInputInDropdown: false,
             tabindex: 2
         });
 
-        test.equal($input.attr('tabindex'), 2);
+        test.equal($input.attr('tabindex'), '2');
     }
 );

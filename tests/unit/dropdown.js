@@ -1,6 +1,6 @@
 'use strict';
 
-var DomUtil = require('../dom-util');
+var TestUtil = require('../test-util');
 
 var items = [
     'Amsterdam',
@@ -41,7 +41,8 @@ function query(options) {
     });
 }
 
-exports.testDisabledItems = DomUtil.createDomTest(
+TestUtil.createDomTest(
+    'dropdown: test disabled items',
     ['single', 'dropdown', 'templates'],
     function(test, $input, $) {
         $input.selectivity({
@@ -90,7 +91,8 @@ exports.testDisabledItems = DomUtil.createDomTest(
     }
 );
 
-exports.testDisabledItemsWithSubmenu = DomUtil.createDomTest(
+TestUtil.createDomTest(
+    'dropdown: test disabled items with submenu',
     ['single', 'dropdown', 'submenu', 'templates'],
     function(test, $input, $) {
         $input.selectivity({
@@ -139,10 +141,10 @@ exports.testDisabledItemsWithSubmenu = DomUtil.createDomTest(
     }
 );
 
-exports.testInitialHighlights = DomUtil.createDomTest(
+TestUtil.createDomTest(
+    'dropdown: test initial highlights',
     ['single', 'dropdown', 'templates'],
-    function(test, $input, $)
-    {
+    function(test, $input, $) {
         $input.selectivity({
             items: [ 'Amsterdam', 'Antwerp', 'Athens' ]
         });
@@ -165,7 +167,8 @@ exports.testInitialHighlights = DomUtil.createDomTest(
     }
 );
 
-exports.testLoadMore = DomUtil.createDomTest(
+TestUtil.createDomTest(
+    'dropdown: test load more',
     ['single', 'dropdown', 'templates'],
     function(test, $input, $) {
         $input.selectivity({ query: query });
@@ -200,7 +203,8 @@ exports.testLoadMore = DomUtil.createDomTest(
     }
 );
 
-exports.testSearch = DomUtil.createDomTest(
+TestUtil.createDomTest(
+    'dropdown: test search',
     ['single', 'dropdown', 'templates'],
     function(test, $input, $) {
         $input.selectivity({ query: query });
@@ -223,5 +227,4 @@ exports.testSearch = DomUtil.createDomTest(
         test.equal($('.selectivity-result-item').length, 10);
         test.equal($('.selectivity-load-more').length, 1);
     }
-
 );
