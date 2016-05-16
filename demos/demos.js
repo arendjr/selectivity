@@ -51,11 +51,16 @@ $(document).ready(function() {
         var offset = query.offset || 0;
         var results;
         if (selectivity.$el.attr('id') === 'single-input-with-submenus') {
-            var timezone = selectivity.dropdown.highlightedResult.id;
-            results = citiesWithTimezone.filter(function(city) {
-                return transformText(city.id).indexOf(transformText(term)) > -1 &&
-                       city.timezone === timezone;
-            }).map(function(city) { return city.id; });
+            if (selectivity.dropdown) {
+                var timezone = selectivity.dropdown.highlightedResult.id;
+                results = citiesWithTimezone.filter(function(city) {
+                    return transformText(city.id).indexOf(transformText(term)) > -1 &&
+                           city.timezone === timezone;
+                }).map(function(city) { return city.id; });
+            } else {
+                query.callback({ more: false, results: [] });
+                return;
+            }
         } else {
             results = cities.filter(function(city) {
                 return transformText(city).indexOf(transformText(term)) > -1;

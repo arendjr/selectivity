@@ -93,11 +93,10 @@ function Selectivity(options) {
         this.data(options.data || null, { triggerChange: false });
     }
 
-    this.on('mouseenter', this._mouseenter);
-    this.on('mouseleave', this._mouseleave);
-    this.on('selectivity-close', this._closed);
-    this.on('selectivity-blur', this._blur);
-    this.on('blur', this._blur);
+    this.el.addEventListener('mouseenter', this._mouseenter.bind(this));
+    this.el.addEventListener('mouseleave', this._mouseleave.bind(this));
+    this.el.addEventListener('selectivity-close', this._closed.bind(this));
+    this.el.addEventListener('blur', this._blur.bind(this));
 }
 
 /**
@@ -193,9 +192,13 @@ extend(Selectivity.prototype, {
      */
     focus: function() {
 
+        this._focusing = true;
+
         if (this.searchInput) {
             this.searchInput.focus();
         }
+
+        this._focusing = false;
     },
 
     /**
@@ -278,6 +281,8 @@ extend(Selectivity.prototype, {
             listener(this, input);
         }.bind(this));
 
+        $input.on('blur', this._blur);
+
         if (!options || !options.noSearch) {
             input.addEventListener('keyup', function(event) {
                 if (!event.isDefaultPrevented()) {
@@ -299,28 +304,30 @@ extend(Selectivity.prototype, {
      */
     open: function(options) {
 
+        if (this.dropdown || !this.triggerEvent('selectivity-opening')) {
+            return;
+        }
+
         options = options || {};
 
-        if (!this.dropdown) {
-            if (this.triggerEvent('selectivity-opening')) {
-                var Dropdown = this.options.dropdown || Selectivity.Dropdown;
-                if (Dropdown) {
-                    this.dropdown = new Dropdown({
-                        items: this.items,
-                        position: this.options.positionDropdown,
-                        query: this.options.query,
-                        selectivity: this,
-                        showSearchInput: options.showSearchInput
-                    });
-                }
-
-                if (options.search !== false) {
-                    this.search('');
-                }
-            }
-
-            this.el.toggleClass.add('open');
+        var Dropdown = this.options.dropdown || Selectivity.Dropdown;
+        if (Dropdown) {
+            this.dropdown = new Dropdown({
+                items: this.items,
+                position: this.options.positionDropdown,
+                query: this.options.query,
+                selectivity: this,
+                showSearchInput: options.showSearchInput
+            });
         }
+
+        if (options.search !== false) {
+            this.search('');
+        }
+
+        this.focus();
+
+        this.el.classList.add('open');
     },
 
     /**
@@ -451,6 +458,11 @@ extend(Selectivity.prototype, {
      *                             of selected items.
      *                searchInputListeners - Array of search input listeners. By default, the global
      *                                       array Selectivity.SearchInputListeners is used.
+     *                shouldOpenSubmenu - Function to call that will decide whether a submenu should
+     *                                    be opened. Receives two parameters:
+     *                                    item - The currently highlighted result item.
+     *                                    reason - The reason why the item is being highlighted.
+     *                                             See Dropdown#highlight() for possible values.
      *                showDropdown - Set to false if you don't want to use any dropdown (you can
      *                               still open it programmatically using open()).
      *                templates - Object with instance-specific templates to override the global
@@ -633,7 +645,7 @@ extend(Selectivity.prototype, {
      */
     _blur: function() {
 
-        if (!this.el.classList.contains('hover')) {
+        if (!this._focusing && !this.el.classList.contains('hover')) {
             this.close();
         }
     },

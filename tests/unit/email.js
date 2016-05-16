@@ -1,8 +1,9 @@
 'use strict';
 
-var DomUtil = require('../dom-util');
+var TestUtil = require('../test-util');
 
-exports.testValueOnEnter = DomUtil.createDomTest(
+TestUtil.createDomTest(
+    'email: test value on enter',
     ['email', 'templates'],
     function(test, $input, $) {
         $input.selectivity({
@@ -16,7 +17,8 @@ exports.testValueOnEnter = DomUtil.createDomTest(
     }
 );
 
-exports.testValueAfterSpaceAndEnter = DomUtil.createDomTest(
+TestUtil.createDomTest(
+    'email: test value after space and enter',
     ['email', 'templates'],
     function(test, $input, $) {
         $input.selectivity({

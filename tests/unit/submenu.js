@@ -1,6 +1,6 @@
 'use strict';
 
-var DomUtil = require('../dom-util');
+var TestUtil = require('../test-util');
 
 var items = [
     { id: '1', text: 'First Item' },
@@ -15,7 +15,8 @@ var items = [
     ] } }
 ];
 
-exports.testSearchInputInSubmenuInMultiSelectInput = DomUtil.createDomTest(
+TestUtil.createDomTest(
+    'submenu: test search input in submenu in multiple select input',
     ['multiple', 'dropdown', 'submenu', 'templates'],
     function(test, $input, $) {
         $input.selectivity({
@@ -47,10 +48,10 @@ exports.testSearchInputInSubmenuInMultiSelectInput = DomUtil.createDomTest(
         test.equal($('.selectivity-dropdown').length, 0);
         test.deepEqual($input.selectivity('value'), [2]);
     }
-
 );
 
-exports.testSearchInSubmenuInSingleSelectInput = DomUtil.createDomTest(
+TestUtil.createDomTest(
+    'submenu: test search in submenu in single select input',
     ['single', 'dropdown', 'submenu', 'templates'],
     function(test, $input, $) {
         $input.selectivity({
@@ -90,7 +91,8 @@ exports.testSearchInSubmenuInSingleSelectInput = DomUtil.createDomTest(
     }
 );
 
-exports.testSelectItemAfterOpeningSubmenu = DomUtil.createDomTest(
+TestUtil.createDomTest(
+    'submenu: test select item after opening submenu',
     ['single', 'dropdown', 'submenu', 'templates'],
     { async: true },
     function(test, $input, $) {
@@ -116,12 +118,13 @@ exports.testSelectItemAfterOpeningSubmenu = DomUtil.createDomTest(
             test.deepEqual($input.selectivity('data'), { id: '2', text: 'Second Item' });
             test.equal($input.selectivity('value'), '2');
 
-            test.done();
+            test.end();
         }, 150);
     }
 );
 
-exports.testSelectItemInSubmenu = DomUtil.createDomTest(
+TestUtil.createDomTest(
+    'submenu: test select item in submenu',
     ['single', 'dropdown', 'submenu', 'templates'],
     function(test, $input, $) {
         $input.selectivity({ items: items });
@@ -143,7 +146,8 @@ exports.testSelectItemInSubmenu = DomUtil.createDomTest(
     }
 );
 
-exports.testSetValue = DomUtil.createDomTest(
+TestUtil.createDomTest(
+    'submenu: test set value',
     ['single', 'dropdown', 'submenu', 'templates'],
     function(test, $input) {
         $input.selectivity({ items: items });

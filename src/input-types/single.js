@@ -24,22 +24,21 @@ function SingleSelectivity(options) {
         // unless there is not enough space below, in which case the dropdown should be moved up
         // just enough so it fits in the window, but never so much that it reaches above the top
         this.options.positionDropdown = function($el, $selectEl) {
-            var position = $selectEl.position(),
-                dropdownHeight = $el.height(),
-                selectHeight = $selectEl.height(),
-                top = $selectEl[0].getBoundingClientRect().top,
-                bottom = top + selectHeight + dropdownHeight,
-                deltaUp = 0;
+            var rect = $selectEl[0].getBoundingClientRect();
+            var dropdownTop = rect.bottom;
 
+            var deltaUp = 0;
             if (typeof window !== 'undefined') {
-                deltaUp = Math.min(Math.max(bottom - $(window).height(), 0), top + selectHeight);
+                deltaUp = Math.min(
+                    Math.max(dropdownTop + $el.height() - window.innerHeight, 0),
+                    rect.top + rect.height
+                );
             }
 
-            var width = $selectEl.outerWidth ? $selectEl.outerWidth() : $selectEl.width();
             $el.css({
-                left: position.left + 'px',
-                top: (position.top + selectHeight - deltaUp) + 'px'
-            }).width(width);
+                left: rect.left + 'px',
+                top: dropdownTop - deltaUp + 'px'
+            }).width(rect.width);
         };
     }
 
@@ -77,7 +76,7 @@ var callSuper = Selectivity.inherits(SingleSelectivity, Selectivity, {
      * @inherit
      *
      * @param options Optional options object. May contain the following property:
-     *                keepFocus - If false, the focus won't remain on the input.
+     *                keepFocus - If true, the focus will remain on the input.
      */
     close: function(options) {
 
@@ -85,7 +84,7 @@ var callSuper = Selectivity.inherits(SingleSelectivity, Selectivity, {
 
         callSuper(this, 'close');
 
-        if ((!options || options.keepFocus !== false) && this.$searchInput) {
+        if (options && options.keepFocus && this.$searchInput) {
             this.$searchInput.focus();
         }
 
@@ -123,13 +122,15 @@ var callSuper = Selectivity.inherits(SingleSelectivity, Selectivity, {
      */
     open: function(options) {
 
-        this._opening = true;
+        if (!this._opening) {
+            this._opening = true;
 
-        var showSearchInput = (this.options.showSearchInputInDropdown !== false);
+            var showSearchInput = (this.options.showSearchInputInDropdown !== false);
 
-        callSuper(this, 'open', $.extend({ showSearchInput: showSearchInput }, options));
+            callSuper(this, 'open', $.extend({ showSearchInput: showSearchInput }, options));
 
-        this._opening = false;
+            this._opening = false;
+        }
     },
 
     /**
@@ -211,11 +212,15 @@ var callSuper = Selectivity.inherits(SingleSelectivity, Selectivity, {
     /**
      * @private
      */
-    _clicked: function() {
+    _clicked: function(event) {
+
+        if ($(event.target).closest('.selectivity-search-input').length) {
+            return true;
+        }
 
         if (this.enabled) {
             if (this.dropdown) {
-                this.close();
+                this.close({ keepFocus: true });
             } else if (this.options.showDropdown !== false) {
                 this.open();
             }
@@ -252,7 +257,7 @@ var callSuper = Selectivity.inherits(SingleSelectivity, Selectivity, {
 
         this.data(event.item);
 
-        this.close();
+        this.close({ keepFocus: true });
     }
 
 });

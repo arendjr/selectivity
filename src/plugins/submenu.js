@@ -4,7 +4,6 @@ var Selectivity = require('./selectivity-base');
 var SelectivityDropdown = require('./selectivity-dropdown');
 
 var findResultItem = require('../util/find-result-item');
-var getPosition = require('../util/get-position');
 
 /**
  * Extended dropdown that supports submenus.
@@ -48,24 +47,31 @@ var callSuper = Selectivity.inherits(SelectivitySubmenu, SelectivityDropdown, {
     /**
      * @inherit
      *
-     * @param options Optional options object. May contain the following property:
+     * @param options Optional options object. May contain the following properties:
      *                delay - If true, indicates any submenu should not be opened until after some
      *                        delay.
+     *                openSubmenu - If false, no submenu will be automatically opened for the
+     *                              highlighted item.
+     *                reason - The reason why the result item is being highlighted. See
+     *                         Dropdown#highlight().
      */
     highlight: function(item, options) {
 
-        if (options && options.delay) {
+        options = options || {};
+        var reason = options.reason || 'unspecified';
+
+        if (options.delay) {
             callSuper(this, 'highlight', item);
 
             clearTimeout(this._openSubmenuTimeout);
-            this._openSubmenuTimeout = setTimeout(this._doHighlight.bind(this, item), 300);
+            this._openSubmenuTimeout = setTimeout(this._doHighlight.bind(this, item, reason), 300);
         } else if (this.submenu) {
             if (this.highlightedResult && this.highlightedResult.id === item.id) {
-                this._doHighlight(item);
+                this._doHighlight(item, reason);
             } else {
                 clearTimeout(this._closeSubmenuTimeout);
                 this._closeSubmenuTimeout = setTimeout(
-                    this._closeSubmenuAndHighlight.bind(this, item), 100
+                    this._closeSubmenuAndHighlight.bind(this, item, reason), 100
                 );
             }
         } else {
@@ -74,7 +80,11 @@ var callSuper = Selectivity.inherits(SelectivitySubmenu, SelectivityDropdown, {
                 this.parentMenu._closeSubmenuTimeout = 0;
             }
 
-            this._doHighlight(item);
+            if (options.openSubmenu === false) {
+                callSuper(this, 'highlight', item);
+            } else {
+                this._doHighlight(item, reason);
+            }
         }
     },
 
@@ -105,25 +115,23 @@ var callSuper = Selectivity.inherits(SelectivitySubmenu, SelectivityDropdown, {
     /**
      * @inherit
      */
-    selectItem: function(id) {
+    showResults: function(results, options) {
 
-        var item = Selectivity.findNestedById(this.results, id);
-        if (item && !item.disabled && !item.submenu) {
-            var options = { id: id, item: item };
-            if (this.selectivity.triggerEvent('selectivity-selecting', options)) {
-                this.selectivity.triggerEvent('selectivity-selected', options);
+        // makes sure any result item with a submenu that's not explicitly
+        // set as selectable becomes unselectable
+        function setSelectable(item) {
+            if (item.children) {
+                item.children.forEach(setSelectable);
+            }
+            if (item.submenu) {
+                item.selectable = !!item.selectable;
             }
         }
-    },
-
-    /**
-     * @inherit
-     */
-    showResults: function(results, options) {
 
         if (this.submenu) {
             this.submenu.showResults(results, options);
         } else {
+            results.forEach(setSelectable);
             callSuper(this, 'showResults', results, options);
         }
     },
@@ -155,42 +163,46 @@ var callSuper = Selectivity.inherits(SelectivitySubmenu, SelectivityDropdown, {
     /**
      * @private
      */
-    _closeSubmenuAndHighlight: function(item) {
+    _closeSubmenuAndHighlight: function(item, reason) {
 
         if (this.submenu) {
             this.submenu.close();
         }
 
-        this._doHighlight(item);
+        this._doHighlight(item, reason);
     },
 
     /**
      * @private
      */
-    _doHighlight: function(item) {
+    _doHighlight: function(item, reason) {
 
         callSuper(this, 'highlight', item);
 
         if (item.submenu && !this.submenu) {
-            var selectivity = this.selectivity;
-            var Dropdown = selectivity.options.dropdown || Selectivity.Dropdown;
+            var options = this.selectivity.options;
+            if (options.shouldOpenSubmenu && options.shouldOpenSubmenu(item, reason) === false) {
+                return;
+            }
+
+            var Dropdown = options.dropdown || Selectivity.Dropdown;
             if (Dropdown) {
                 var resultItems = this.el.querySelectorAll('.selectivity-result-item');
                 var resultItem = findResultItem(resultItems, item.id);
                 var dropdownEl = this.el;
 
                 this.submenu = new Dropdown({
+                    highlightFirstItem: !item.selectable,
                     items: item.submenu.items || null,
                     parentMenu: this,
                     position: item.submenu.positionDropdown || function(el) {
-                        var dropdownPosition = getPosition(dropdownEl);
-                        var width = dropdownEl.clientWidth;
-                        el.style.left = dropdownPosition.left + width + 'px';
-                        el.style.top = getPosition(resultItem).top + dropdownPosition.top + 'px';
-                        el.style.width = width + 'px';
+                        var rect = dropdownEl.getBoundingClientRect();
+                        el.style.left = rect.right + 'px';
+                        el.style.top = resultItem.getBoundingClientRect().top + 'px';
+                        el.style.width = rect + 'px';
                     },
                     query: item.submenu.query || null,
-                    selectivity: selectivity,
+                    selectivity: this.selectivity,
                     showSearchInput: item.submenu.showSearchInput
                 });
 

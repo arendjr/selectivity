@@ -1,34 +1,9 @@
 'use strict';
 
-var DomUtil = require('../dom-util');
+var TestUtil = require('../test-util');
 
-exports.testChangeEvent = DomUtil.createDomTest(
-    ['multiple', 'dropdown', 'keyboard', 'templates'],
-    function(test, $input, $) {
-        var numChangeEvents = 0;
-
-        $input.selectivity({
-            items: ['Amsterdam', 'Antwerp', 'Athens'],
-            multiple: true
-        }).on('change', function(event) {
-            numChangeEvents++;
-
-            test.deepEqual(event.added, { id: 'Amsterdam', text: 'Amsterdam' });
-            test.deepEqual(event.value, ['Amsterdam']);
-        });
-
-        $input.find('.selectivity-multiple-input').val('Amsterdam')
-                                                  .trigger('keyup')
-                                                  .trigger('change')
-                                                  .trigger(new $.Event('keyup', { keyCode: 13 }));
-
-        test.deepEqual($input.selectivity('value'), ['Amsterdam']);
-
-        test.equal(numChangeEvents, 1);
-    }
-);
-
-exports.testClear = DomUtil.createDomTest(
+TestUtil.createDomTest(
+    'multiple: test clear',
     ['multiple', 'templates'],
     function(test, $input) {
         $input.selectivity({
@@ -52,7 +27,8 @@ exports.testClear = DomUtil.createDomTest(
     }
 );
 
-exports.testClickAfterSearch = DomUtil.createDomTest(
+TestUtil.createDomTest(
+    'multiple: test click after search',
     ['multiple', 'dropdown', 'templates'],
     function(test, $input, $) {
         $input.selectivity({
@@ -68,7 +44,8 @@ exports.testClickAfterSearch = DomUtil.createDomTest(
     }
 );
 
-exports.testFilterSelectedItems = DomUtil.createDomTest(
+TestUtil.createDomTest(
+    'multiple: test filter selected items',
     ['multiple', 'dropdown', 'templates'],
     function(test, $input, $) {
         $input.selectivity({
@@ -93,7 +70,8 @@ exports.testFilterSelectedItems = DomUtil.createDomTest(
     }
 );
 
-exports.testInitialData = DomUtil.createDomTest(
+TestUtil.createDomTest(
+    'multiple: test initial data',
     ['multiple', 'templates'],
     function(test, $input) {
         $input.selectivity({
@@ -118,7 +96,8 @@ exports.testInitialData = DomUtil.createDomTest(
     }
 );
 
-exports.testInitialValue = DomUtil.createDomTest(
+TestUtil.createDomTest(
+    'multiple: test initial value',
     ['multiple', 'templates'],
     function(test, $input) {
         $input.selectivity({
@@ -136,7 +115,8 @@ exports.testInitialValue = DomUtil.createDomTest(
     }
 );
 
-exports.testNestedData = DomUtil.createDomTest(
+TestUtil.createDomTest(
+    'multiple: test nested data',
     ['multiple', 'templates'],
     function(test, $input) {
         $input.selectivity({
@@ -144,27 +124,23 @@ exports.testNestedData = DomUtil.createDomTest(
                 { id: 54, text: 'Vienna' },
                 { id: 2, text: 'Antwerp' }
             ],
-            items: [
-                {
-                    text: 'Austria',
-                    children: [
-                        { id: 54, text: 'Vienna' }
-                    ]
-                },
-                {
-                    text: 'Belgium',
-                    children: [
-                        { id: 2, text: 'Antwerp' },
-                        { id: 9, text: 'Brussels' }
-                    ]
-                },
-                {
-                    text: 'Bulgaria',
-                    children: [
-                        { id: 48, text: 'Sofia' }
-                    ]
-                }
-            ],
+            items: [{
+                text: 'Austria',
+                children: [
+                    { id: 54, text: 'Vienna' }
+                ]
+            }, {
+                text: 'Belgium',
+                children: [
+                    { id: 2, text: 'Antwerp' },
+                    { id: 9, text: 'Brussels' }
+                ]
+            }, {
+                text: 'Bulgaria',
+                children: [
+                    { id: 48, text: 'Sofia' }
+                ]
+            }],
             multiple: true
         });
 
@@ -177,7 +153,8 @@ exports.testNestedData = DomUtil.createDomTest(
     }
 );
 
-exports.testNoData = DomUtil.createDomTest(
+TestUtil.createDomTest(
+    'multiple: test without data',
     ['multiple', 'templates'],
     function(test, $input) {
         $input.selectivity({
@@ -195,7 +172,8 @@ exports.testNoData = DomUtil.createDomTest(
     }
 );
 
-exports.testRemoveOnly = DomUtil.createDomTest(
+TestUtil.createDomTest(
+    'multiple: test remove-only',
     ['multiple', 'templates'],
     function(test, $input) {
         $input.selectivity({
@@ -213,7 +191,8 @@ exports.testRemoveOnly = DomUtil.createDomTest(
     }
 );
 
-exports.testSetValue = DomUtil.createDomTest(
+TestUtil.createDomTest(
+    'multiple: test set value',
     ['multiple', 'templates'],
     function(test, $input) {
         $input.selectivity({
@@ -235,7 +214,8 @@ exports.testSetValue = DomUtil.createDomTest(
     }
 );
 
-exports.testSetValueWithInitSelection = DomUtil.createDomTest(
+TestUtil.createDomTest(
+    'multiple: test set value with init selection',
     ['multiple', 'templates'],
     function(test, $input) {
         $input.selectivity({
@@ -266,7 +246,8 @@ exports.testSetValueWithInitSelection = DomUtil.createDomTest(
     }
 );
 
-exports.testSetValueWithoutItems = DomUtil.createDomTest(
+TestUtil.createDomTest(
+    'multiple: test set value without items',
     ['multiple', 'templates'],
     function(test, $input) {
         $input.selectivity({
@@ -287,7 +268,8 @@ exports.testSetValueWithoutItems = DomUtil.createDomTest(
     }
 );
 
-exports.testMouseOver = DomUtil.createDomTest(
+TestUtil.createDomTest(
+    'multiple: test mouse over',
     ['multiple', 'templates'],
     function(test, $input, $)
     {
@@ -306,7 +288,8 @@ exports.testMouseOver = DomUtil.createDomTest(
     }
 );
 
-exports.testClickAndMouseOver = DomUtil.createDomTest(
+TestUtil.createDomTest(
+    'multiple: test click and mouse over',
     ['multiple', 'dropdown', 'templates'],
     function(test, $input, $)
     {
@@ -328,7 +311,8 @@ exports.testClickAndMouseOver = DomUtil.createDomTest(
     }
 );
 
-exports.testBlurEventAfterOpeningMultipleSelect = DomUtil.createDomTest(
+TestUtil.createDomTest(
+    'multiple: test blur event after opening',
     ['multiple', 'dropdown', 'templates'],
     function(test, $input, $)
     {

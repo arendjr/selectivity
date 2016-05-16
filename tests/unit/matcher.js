@@ -1,8 +1,9 @@
 'use strict';
 
-var DomUtil = require('../dom-util');
+var TestUtil = require('../test-util');
 
-exports.testBasic = DomUtil.createDomTest(
+TestUtil.createDomTest(
+    'matcher: test basic matcher',
     [],
     function(test, $input) {
         var Selectivity = $input.selectivity;
@@ -28,7 +29,8 @@ exports.testBasic = DomUtil.createDomTest(
     }
 );
 
-exports.testDiacritics = DomUtil.createDomTest(
+TestUtil.createDomTest(
+    'matcher: test diacritics',
     ['diacritics'],
     function(test, $input) {
         var Selectivity = $input.selectivity;

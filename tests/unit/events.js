@@ -1,8 +1,9 @@
 'use strict';
 
-var DomUtil = require('../dom-util');
+var TestUtil = require('../test-util');
 
-exports.testChangeEvent = DomUtil.createDomTest(
+TestUtil.createDomTest(
+    'events: test change event',
     ['single', 'templates'],
     function(test, $input) {
         var changeEvent = null;
@@ -24,7 +25,8 @@ exports.testChangeEvent = DomUtil.createDomTest(
     }
 );
 
-exports.testSuppressChangeEvent = DomUtil.createDomTest(
+TestUtil.createDomTest(
+    'events: test suppress change event',
     ['single', 'templates'],
     function(test, $input) {
         var changeEvent = null;
