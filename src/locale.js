@@ -2,7 +2,7 @@
 
 var escape = require('lodash/escape');
 
-var Selectivity = require('./selectivity-base');
+var Selectivity = require('./selectivity');
 
 /**
  * Localizable elements of the Selectivity Templates.

@@ -1,9 +1,8 @@
 'use strict';
 
-var debounce = require('lodash/debounce');
 var extend = require('lodash/extend');
 
-var EventDelegator = require('./event-delegator');
+var EventListener = require('./event-listener');
 var quoteCssAttr = require('../util/quote-css-attr');
 
 var Selectivity = require('./selectivity-base');
@@ -71,7 +70,7 @@ function SelectivityDropdown(options) {
     this.position = this.position.bind(this);
 
     if (selectivity.options.closeOnSelect !== false) {
-        selectivity.$el.on('selectivity-selecting', this.close);
+        selectivity.events.on('selectivity-selecting', this.close);
     }
 
     this._lastMousePosition = {};
@@ -86,9 +85,13 @@ function SelectivityDropdown(options) {
         selectivity.focus();
     }
 
-    EventDelegator.call(this);
-
-    this.$results.on(SCROLL_EVENTS.join(' '), debounce(this._scrolled.bind(this), 50));
+    this.events = new EventListener(this.el, this);
+    this.events.on({
+        'click selectivity-load-more': this._loadMoreClicked,
+        'click selectivity-result-item': this._resultClicked,
+        'mouseenter selectivity-load-more': this._loadMoreHovered,
+        'mouseenter selectivity-result-item': this._resultHovered
+    });
 
     this._attachAncestorScrollListeners();
 
@@ -100,19 +103,7 @@ function SelectivityDropdown(options) {
 /**
  * Methods.
  */
-extend(SelectivityDropdown.prototype, EventDelegator.prototype, {
-
-    /**
-     * Events map.
-     *
-     * Follows the same format as Backbone: http://backbonejs.org/#View-delegateEvents
-     */
-    events: {
-        'click .selectivity-load-more': '_loadMoreClicked',
-        'click .selectivity-result-item': '_resultClicked',
-        'mouseenter .selectivity-load-more': '_loadMoreHovered',
-        'mouseenter .selectivity-result-item': '_resultHovered'
-    },
+extend(SelectivityDropdown.prototype, {
 
     /**
      * Convenience shortcut for this.el.querySelector(selector).
@@ -146,7 +137,7 @@ extend(SelectivityDropdown.prototype, EventDelegator.prototype, {
 
             this.el.parentNode.removeChild(this.el);
 
-            this.selectivity.el.removeEventListener('selectivity-selecting', this._closeProxy);
+            this.selectivity.events.off('selectivity-selecting', this.close);
 
             this.triggerClose();
 

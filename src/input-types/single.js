@@ -45,24 +45,19 @@ function SingleSelectivity(options) {
     if (options.showSearchInputInDropdown === false) {
         this.initSearchInput(this.$('.selectivity-single-select-input'), { noSearch: true });
     }
+
+    this.events.on({
+        'change': this.rerenderSelection,
+        'click': this._clicked,
+        'focus selectivity-single-select-input': this._focused,
+        'selectivity-selected': this._resultSelected
+    });
 }
 
 /**
  * Methods.
  */
 var callSuper = Selectivity.inherits(SingleSelectivity, Selectivity, {
-
-    /**
-     * Events map.
-     *
-     * Follows the same format as Backbone: http://backbonejs.org/#View-delegateEvents
-     */
-    events: {
-        'change': 'rerenderSelection',
-        'click': '_clicked',
-        'focus .selectivity-single-select-input': '_focused',
-        'selectivity-selected': '_resultSelected'
-    },
 
     /**
      * Clears the data and value.

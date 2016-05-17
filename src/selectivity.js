@@ -2,6 +2,8 @@
 
 var extend = require('lodash/extend');
 
+var EventListener = require('./event-listener');
+
 /**
  * Selectivity Base Constructor.
  *
@@ -93,10 +95,13 @@ function Selectivity(options) {
         this.data(options.data || null, { triggerChange: false });
     }
 
-    this.el.addEventListener('mouseenter', this._mouseenter.bind(this));
-    this.el.addEventListener('mouseleave', this._mouseleave.bind(this));
-    this.el.addEventListener('selectivity-close', this._closed.bind(this));
-    this.el.addEventListener('blur', this._blur.bind(this));
+    this.events = new EventListener(this.el, this);
+    this.events.on({
+        'blur': this._blur,
+        'mouseenter': this._mouseenter,
+        'mouseleave': this._mouseleave,
+        'selectivity-close': this._closed
+    });
 }
 
 /**
@@ -163,7 +168,7 @@ extend(Selectivity.prototype, {
      */
     destroy: function() {
 
-        this.undelegateEvents();
+        this.events.destruct();
 
         var el = this.el;
         while (el.firstChild) {

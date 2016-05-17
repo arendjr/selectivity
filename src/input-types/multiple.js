@@ -48,6 +48,17 @@ function MultipleSelectivity(options) {
             }).width(width);
         };
     }
+
+    this.events.on({
+        'change': this._rerenderSelection,
+        'change selectivity-multiple-input': function() { return false; },
+        'click': this._clicked,
+        'click selectivity-multiple-selected-item': this._itemClicked,
+        'keydown selectivity-multiple-input': this._keyHeld,
+        'keyup selectivity-multiple-input': this._keyReleased,
+        'paste selectivity-multiple-input': this._onPaste,
+        'selectivity-selected': this._resultSelected
+    });
 }
 
 /**
@@ -96,22 +107,6 @@ var callSuper = Selectivity.inherits(MultipleSelectivity, Selectivity, {
     clear: function() {
 
         this.data([]);
-    },
-
-    /**
-     * Events map.
-     *
-     * Follows the same format as Backbone: http://backbonejs.org/#View-delegateEvents
-     */
-    events: {
-        'change': 'rerenderSelection',
-        'change .selectivity-multiple-input': function() { return false; },
-        'click': '_clicked',
-        'click .selectivity-multiple-selected-item': '_itemClicked',
-        'keydown .selectivity-multiple-input': '_keyHeld',
-        'keyup .selectivity-multiple-input': '_keyReleased',
-        'paste .selectivity-multiple-input': '_onPaste',
-        'selectivity-selected': '_resultSelected'
     },
 
     /**

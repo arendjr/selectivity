@@ -2,9 +2,9 @@
 
 var escape = require('lodash/escape');
 
-var Selectivity = require('./selectivity-base');
+var Selectivity = require('./selectivity');
 
-require('./selectivity-locale');
+require('./locale');
 
 /**
  * Default set of templates to use with Selectivity.js.
