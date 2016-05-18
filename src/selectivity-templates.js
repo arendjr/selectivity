@@ -192,7 +192,7 @@ Selectivity.Templates = {
      */
     resultItem: function(options) {
         return (
-            '<div class="selectivity-result-item' + (options.disabled ? ' disabled' : '') + '"' +
+            '<div class="selectivity-result-item' + (options.disabled ? ' disabled' : '') + (options.currentValue.indexOf(options.id) !== -1 ? ' highlight' : '') +'"' +
                 ' data-item-id="' + escape(options.id) + '">' +
                 escape(options.text) +
                 (options.submenu ? '<i class="selectivity-submenu-icon fa fa-chevron-right"></i>'
