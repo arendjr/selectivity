@@ -248,6 +248,12 @@ $.extend(SelectivityDropdown.prototype, EventDelegator.prototype, {
 
         var selectivity = this.selectivity;
         return items.map(function(item) {
+            var currentValue = selectivity.val();
+            if(typeof (currentValue) !== 'undefined' && currentValue !== null) {
+                item.currentValue = Array.isArray(currentValue) ? currentValue : [currentValue];
+            } else {
+                item.currentValue = [];
+            }
             var result = selectivity.template(item.id ? 'resultItem' : 'resultLabel', item);
             if (item.children) {
                 result += selectivity.template('resultChildren', {
