@@ -1,28 +1,28 @@
 'use strict';
 
-var $ = require('jquery');
+var extend = require('lodash/extend');
+var isString = require('lodash/isString');
 
 var Selectivity = require('../selectivity');
 var quoteCssAttr = require('../util/quote-css-attr');
+var removeElement = require('../util/remove-element');
+var renderElement = require('../util/render-element');
+var stopPropagation = require('../util/stop-propagation');
 
 var KEY_BACKSPACE = 8;
 var KEY_DELETE = 46;
 var KEY_ENTER = 13;
 
-var hasTouch = (typeof window !== 'undefined' && 'ontouchstart' in window);
+var hasTouch = 'ontouchstart' in window;
 
 /**
  * MultipleSelectivity Constructor.
- *
- * @param options Options object. Accepts all options from the Selectivity Base Constructor in
- *                addition to those accepted by MultipleSelectivity.setOptions().
  */
-function MultipleSelectivity(options) {
+function InputTypeMultiple(options) {
 
     Selectivity.call(this, options);
 
-    this.$el.html(this.template('multipleSelectInput', { enabled: this.enabled }))
-            .trigger('selectivity-init', 'multiple');
+    this.el.innerHTML = this.template('multipleSelectInput', { enabled: this.enabled });
 
     this._highlightedItemId = null;
 
@@ -34,26 +34,60 @@ function MultipleSelectivity(options) {
         // dropdowns for multiple-value inputs should open below the select box,
         // unless there is not enough space below, but there is space enough above, then it should
         // open upwards
-        this.options.positionDropdown = function($el, $selectEl) {
-            var rect = $selectEl[0].getBoundingClientRect();
-            var dropdownHeight = $el.height();
-            var openUpwards = (typeof window !== 'undefined' &&
-                               rect.bottom + dropdownHeight > window.innerHeight &&
+        this.options.positionDropdown = function(el, selectEl) {
+            var rect = selectEl.getBoundingClientRect();
+            var dropdownHeight = el.clientHeight;
+            var openUpwards = (rect.bottom + dropdownHeight > window.innerHeight &&
                                rect.top - dropdownHeight > 0);
 
-            var width = $selectEl.outerWidth ? $selectEl.outerWidth() : $selectEl.width();
-            $el.css({
+            extend(el.style, {
                 left: rect.left + 'px',
-                top: (openUpwards ? rect.top - dropdownHeight : rect.bottom) + 'px'
-            }).width(width);
+                top: (openUpwards ? rect.top - dropdownHeight : rect.bottom) + 'px',
+                width: rect.width + 'px'
+            });
         };
     }
 
+    extend(this.allowedOptions, {
+        /**
+         * If set to true, when the user enters a backspace while there is no text in the search
+         * field but there are selected items, the last selected item will be highlighted and when a
+         * second backspace is entered the item is deleted. If false, the item gets deleted on the
+         * first backspace. The default value is false.
+         */
+        backspaceHighlightsBeforeDelete: 'boolean',
+
+        /**
+         * Function to create a new item from a user's search term. This is used to turn the term
+         * into an item when dropdowns are disabled and the user presses Enter. It is also used by
+         * the default tokenizer to create items for individual tokens. The function receives a
+         * 'token' parameter which is the search term (or part of a search term) to create an item
+         * for and must return an item object with 'id' and 'text' properties or null if no token
+         * can be created from the term. The default is a function that returns an item where the id
+         * and text both match the token for any non-empty string and which returns null otherwise.
+         */
+        createTokenItem: 'function',
+
+        /**
+         * Function for tokenizing search terms. Will receive the following parameters:
+         * input - The input string to tokenize.
+         * selection - The current selection data.
+         * createToken - Callback to create a token from the search terms. Should be passed an item
+         *               object with 'id' and 'text' properties.
+         * options - The options set on the Selectivity instance.
+         *
+         * Any string returned by the tokenizer function is treated as the remainder of untokenized
+         * input.
+         */
+        tokenizer: 'function'
+    });
+
     this.events.on({
         'change': this._rerenderSelection,
-        'change selectivity-multiple-input': function() { return false; },
+        'change selectivity-multiple-input': stopPropagation,
         'click': this._clicked,
         'click selectivity-multiple-selected-item': this._itemClicked,
+        'click selectivity-multiple-selected-item-remove': this._itemRemoveClicked,
         'keydown selectivity-multiple-input': this._keyHeld,
         'keyup selectivity-multiple-input': this._keyReleased,
         'paste selectivity-multiple-input': this._onPaste,
@@ -64,7 +98,7 @@ function MultipleSelectivity(options) {
 /**
  * Methods.
  */
-var callSuper = Selectivity.inherits(MultipleSelectivity, Selectivity, {
+var callSuper = Selectivity.inherits(InputTypeMultiple, Selectivity, {
 
     /**
      * Adds an item to the selection, if it's not selected yet.
@@ -130,7 +164,9 @@ var callSuper = Selectivity.inherits(MultipleSelectivity, Selectivity, {
      */
     getDataForValue: function(value) {
 
-        return value.map(this.getItemForId, this).filter(function(item) { return !!item; });
+        return value.map(this.getItemForId, this).filter(function(item) {
+            return !!item;
+        });
     },
 
     /**
@@ -143,7 +179,9 @@ var callSuper = Selectivity.inherits(MultipleSelectivity, Selectivity, {
      */
     getValueForData: function(data) {
 
-        return data.map(function(item) { return item.id; });
+        return data.map(function(item) {
+            return item.id;
+        });
     },
 
     /**
@@ -153,7 +191,7 @@ var callSuper = Selectivity.inherits(MultipleSelectivity, Selectivity, {
      */
     remove: function(item) {
 
-        var id = ($.type(item) === 'object' ? item.id : item);
+        var id = item.id || item;
 
         var removedItem;
         var index = Selectivity.findIndexById(this._data, id);
@@ -195,7 +233,9 @@ var callSuper = Selectivity.inherits(MultipleSelectivity, Selectivity, {
             this._scrollToBottom();
         } else if (event.removed) {
             var quotedId = quoteCssAttr(event.removed.id);
-            this.$('.selectivity-multiple-selected-item[data-item-id=' + quotedId + ']').remove();
+            removeElement(
+                this.$('.selectivity-multiple-selected-item[data-item-id=' + quotedId + ']')
+            );
         } else {
             this.$('.selectivity-multiple-selected-item').remove();
 
@@ -231,7 +271,7 @@ var callSuper = Selectivity.inherits(MultipleSelectivity, Selectivity, {
         if (this.options.tokenizer) {
             term = this.options.tokenizer(term, this._data, this.add.bind(this), this.options);
 
-            if ($.type(term) === 'string' && term !== this.$searchInput.val()) {
+            if (isString(term) && term !== this.$searchInput.val()) {
                 this.$searchInput.val(term);
             }
         }
@@ -243,58 +283,15 @@ var callSuper = Selectivity.inherits(MultipleSelectivity, Selectivity, {
 
     /**
      * @inherit
-     *
-     * @param options Options object. In addition to the options supported in the base
-     *                implementation, this may contain the following properties:
-     *                backspaceHighlightsBeforeDelete - If set to true, when the user enters a
-     *                                                  backspace while there is no text in the
-     *                                                  search field but there are selected items,
-     *                                                  the last selected item will be highlighted
-     *                                                  and when a second backspace is entered the
-     *                                                  item is deleted. If false, the item gets
-     *                                                  deleted on the first backspace. The default
-     *                                                  value is true on devices that have touch
-     *                                                  input and false on devices that don't.
-     *                createTokenItem - Function to create a new item from a user's search term.
-     *                                  This is used to turn the term into an item when dropdowns
-     *                                  are disabled and the user presses Enter. It is also used by
-     *                                  the default tokenizer to create items for individual tokens.
-     *                                  The function receives a 'token' parameter which is the
-     *                                  search term (or part of a search term) to create an item for
-     *                                  and must return an item object with 'id' and 'text'
-     *                                  properties or null if no token can be created from the term.
-     *                                  The default is a function that returns an item where the id
-     *                                  and text both match the token for any non-empty string and
-     *                                  which returns null otherwise.
-     *                tokenizer - Function for tokenizing search terms. Will receive the following
-     *                            parameters:
-     *                            input - The input string to tokenize.
-     *                            selection - The current selection data.
-     *                            createToken - Callback to create a token from the search terms.
-     *                                          Should be passed an item object with 'id' and 'text'
-     *                                          properties.
-     *                            options - The options set on the Selectivity instance.
-     *                            Any string returned by the tokenizer function is treated as the
-     *                            remainder of untokenized input.
      */
     setOptions: function(options) {
-
-        options = options || {};
-
-        var backspaceHighlightsBeforeDelete = 'backspaceHighlightsBeforeDelete';
-        if (options[backspaceHighlightsBeforeDelete] === undefined) {
-            options[backspaceHighlightsBeforeDelete] = hasTouch;
-        }
-
-        options.allowedTypes = options.allowedTypes || {};
-        options.allowedTypes[backspaceHighlightsBeforeDelete] = 'boolean';
 
         var wasEnabled = this.enabled;
 
         callSuper(this, 'setOptions', options);
 
         if (wasEnabled !== this.enabled) {
-            this.$el.html(this.template('multipleSelectInput', { enabled: this.enabled }));
+            this.el.innerHTML = this.template('multipleSelectInput', { enabled: this.enabled });
         }
     },
 
@@ -310,7 +307,7 @@ var callSuper = Selectivity.inherits(MultipleSelectivity, Selectivity, {
 
         if (data === null) {
             return [];
-        } else if ($.type(data) === 'array') {
+        } else if (data instanceof Array) {
             return data.map(this.validateItem, this);
         } else {
             throw new Error('Data for MultiSelectivity instance should be array');
@@ -328,7 +325,7 @@ var callSuper = Selectivity.inherits(MultipleSelectivity, Selectivity, {
 
         if (value === null) {
             return [];
-        } else if ($.type(value) === 'array') {
+        } else if (value instanceof Array) {
             if (value.every(Selectivity.isValidId)) {
                 return value;
             } else {
@@ -358,12 +355,12 @@ var callSuper = Selectivity.inherits(MultipleSelectivity, Selectivity, {
     /**
      * @private
      */
-    _clicked: function() {
+    _clicked: function(event) {
 
         if (this.enabled && this.options.showDropdown !== false) {
             this.open();
 
-            return false;
+            stopPropagation(event);
         }
     },
 
@@ -399,8 +396,10 @@ var callSuper = Selectivity.inherits(MultipleSelectivity, Selectivity, {
     _highlightItem: function(id) {
 
         this._highlightedItemId = id;
-        this.$('.selectivity-multiple-selected-item').removeClass('highlighted')
-            .filter('[data-item-id=' + quoteCssAttr(id) + ']').addClass('highlighted');
+
+        this.el.querySelectorAll('.selectivity-multiple-selected-item').forEach(function(el) {
+            el.classList[el.getAttribute('data-item-id') === id ? 'add' : 'remove']('highlighted');
+        });
 
         if (!hasTouch) {
             this.focus();
@@ -426,7 +425,7 @@ var callSuper = Selectivity.inherits(MultipleSelectivity, Selectivity, {
 
         this._updateInputWidth();
 
-        return false;
+        stopPropagation(event);
     },
 
     /**
@@ -434,7 +433,7 @@ var callSuper = Selectivity.inherits(MultipleSelectivity, Selectivity, {
      */
     _keyHeld: function(event) {
 
-        this._originalValue = this.$searchInput.val();
+        this._originalValue = this.searchInput.value;
 
         if (event.keyCode === KEY_ENTER && !event.ctrlKey) {
             event.preventDefault();
@@ -477,15 +476,12 @@ var callSuper = Selectivity.inherits(MultipleSelectivity, Selectivity, {
 
     _renderSelectedItem: function(item) {
 
-        this.$searchInput.before(this.template('multipleSelectedItem', $.extend({
+        var el = renderElement(this.template('multipleSelectedItem', extend({
             highlighted: (item.id === this._highlightedItemId),
             removable: !this.options.readOnly
         }, item)));
 
-        var quotedId = quoteCssAttr(item.id);
-        this.$('.selectivity-multiple-selected-item[data-item-id=' + quotedId + ']')
-            .find('.selectivity-multiple-selected-item-remove')
-            .on('click', this._itemRemoveClicked.bind(this));
+        this.searchInput.parentNode.insertBefore(el, this.searchInput);
     },
 
     /**
@@ -505,8 +501,8 @@ var callSuper = Selectivity.inherits(MultipleSelectivity, Selectivity, {
      */
     _scrollToBottom: function() {
 
-        var $inputContainer = this.$('.selectivity-multiple-input-container');
-        $inputContainer.scrollTop($inputContainer.height());
+        var inputContainer = this.$('.selectivity-multiple-input-container');
+        inputContainer.scrollTop(inputContainer.clientHeight);
     },
 
     /**
@@ -515,11 +511,11 @@ var callSuper = Selectivity.inherits(MultipleSelectivity, Selectivity, {
     _updateInputWidth: function() {
 
         if (this.enabled) {
-            var $input = this.$searchInput, $widthDetector = this.$('.selectivity-width-detector');
-            $widthDetector.text($input.val() ||
-                                !this._data.length && this.options.placeholder ||
-                                '');
-            $input.width($widthDetector.width() + 20);
+            var input = this.searchInput;
+            var widthDetector = this.$('.selectivity-width-detector');
+            widthDetector.textContent = (input.value ||
+                                         !this._data.length && this.options.placeholder || '');
+            input.style.width = widthDetector.clientWidth + 20;
 
             this.positionDropdown();
         }
@@ -532,12 +528,12 @@ var callSuper = Selectivity.inherits(MultipleSelectivity, Selectivity, {
 
         var placeholder = this._data.length ? '' : this.options.placeholder;
         if (this.enabled) {
-            this.$searchInput.attr('placeholder', placeholder);
+            this.searchInput.setAttribute('placeholder', placeholder);
         } else {
-            this.$('.selectivity-placeholder').text(placeholder);
+            this.$('.selectivity-placeholder').textContent = placeholder;
         }
     }
 
 });
 
-module.exports = Selectivity.InputTypes.Multiple = MultipleSelectivity;
+module.exports = Selectivity.InputTypes.Multiple = InputTypeMultiple;

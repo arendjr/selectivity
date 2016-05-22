@@ -1,6 +1,5 @@
 'use strict';
 
-var _ = require('lodash');
 var browserify = require('browserify');
 var buffer = require('vinyl-buffer');
 var collapse = require('bundle-collapser/plugin');
@@ -17,7 +16,7 @@ var uglify = require('gulp-uglify');
 
 var argv = require('../argv');
 
-var LODASH_METHODS = ['debounce', 'escape'];
+var LODASH_METHODS = ['debounce', 'escape', 'extend', 'isString'];
 
 module.exports = function() {
 

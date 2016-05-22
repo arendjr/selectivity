@@ -87,13 +87,27 @@ function Selectivity(options) {
 
     this.setOptions(options);
 
-    this.el.setAttribute('tabindex', options.tabindex || 0);
+    this.el.setAttribute('tabindex', options.tabIndex || 0);
 
     if (options.value) {
         this.value(options.value, { triggerChange: false });
     } else {
         this.data(options.data || null, { triggerChange: false });
     }
+
+    this.allowedOptions = {
+        closeOnSelect: 'boolean',
+        dropdown: 'function|null',
+        initSelection: 'function|null',
+        matcher: 'function|null',
+        placeholder: 'string',
+        positionDropdown: 'function|null',
+        query: 'function|null',
+        readOnly: 'boolean',
+        removeOnly: 'boolean',
+        searchInputListeners: 'array',
+        suppressWheelClassName: 'string|null'
+    };
 
     this.events = new EventListener(this.el, this);
     this.events.on({
@@ -286,8 +300,6 @@ extend(Selectivity.prototype, {
             listener(this, input);
         }.bind(this));
 
-        $input.on('blur', this._blur);
-
         if (!options || !options.noSearch) {
             input.addEventListener('keyup', function(event) {
                 if (!event.isDefaultPrevented()) {
@@ -317,11 +329,10 @@ extend(Selectivity.prototype, {
 
         var Dropdown = this.options.dropdown || Selectivity.Dropdown;
         if (Dropdown) {
-            this.dropdown = new Dropdown({
+            this.dropdown = new Dropdown(this, {
                 items: this.items,
                 position: this.options.positionDropdown,
                 query: this.options.query,
-                selectivity: this,
                 showSearchInput: options.showSearchInput
             });
         }
@@ -343,38 +354,6 @@ extend(Selectivity.prototype, {
         if (this.dropdown) {
             this.dropdown.position();
         }
-    },
-
-    /**
-     * Renders a template.
-     *
-     * @param templateName Name of the template to render.
-     * @param options Options to pass to the template.
-     *
-     * @return DOM element containing the rendered template.
-     */
-    renderTemplate: function(templateName, options) {
-
-        var template = this.templates[templateName];
-        if (!template) {
-            throw new Error('Unknown template: ' + templateName);
-        }
-
-        var html;
-        if (typeof template === 'function') {
-            html = template(options);
-            if (html instanceof HTMLElement) {
-                return html;
-            }
-        } else if (template.render) {
-            html = template.render(options);
-        } else {
-            html = template.toString();
-        }
-
-        var div = document.createElement('div');
-        div.innerHTML = html;
-        return div.firstChild;
     },
 
     /**
@@ -483,26 +462,13 @@ extend(Selectivity.prototype, {
 
         extend(this.options, options);
 
-        var allowedTypes = extend({
-            closeOnSelect: 'boolean',
-            dropdown: 'function|null',
-            initSelection: 'function|null',
-            matcher: 'function|null',
-            placeholder: 'string',
-            positionDropdown: 'function|null',
-            query: 'function|null',
-            readOnly: 'boolean',
-            removeOnly: 'boolean',
-            searchInputListeners: 'array'
-        }, options.allowedTypes);
-
         for (var key in options) {
             if (!options.hasOwnProperty(key)) {
-                return false;
+                continue;
             }
 
             var value = options[key];
-            var type = allowedTypes[key];
+            var type = this.allowedOptions[key];
             if (type && !type.split('|').some(function(type) {
                 if (type === 'null') {
                     return value === null;
@@ -517,7 +483,7 @@ extend(Selectivity.prototype, {
 
             switch (key) {
             case 'items':
-                this.items = (value === null ? value : Selectivity.processItems(value));
+                this.items = (value ? Selectivity.processItems(value) : null);
                 break;
 
             case 'matcher':
@@ -535,6 +501,30 @@ extend(Selectivity.prototype, {
         }
 
         this.enabled = (!this.options.readOnly && !this.options.removeOnly);
+    },
+
+    /**
+     * Returns the result of the given template.
+     *
+     * @param templateName Name of the template to process.
+     * @param options Options to pass to the template.
+     *
+     * @return String containing HTML.
+     */
+    template: function(templateName, options) {
+
+        var template = this.templates[templateName];
+        if (!template) {
+            throw new Error('Unknown template: ' + templateName);
+        }
+
+        if (typeof template === 'function') {
+            return template(options);
+        } else if (template.render) {
+            return template.render(options);
+        } else {
+            return template.toString();
+        }
     },
 
     /**

@@ -1,28 +1,28 @@
 'use strict';
 
-var Selectivity = require('./selectivity-base');
-var SelectivityDropdown = require('./selectivity-dropdown');
+var Dropdown = require('../dropdown');
+var Selectivity = require('../selectivity');
 
 var findResultItem = require('../util/find-result-item');
 
 /**
  * Extended dropdown that supports submenus.
  */
-function SelectivitySubmenu(options) {
+function SubmenuPlugin(selectivity, options) {
 
     /**
      * Optional parent dropdown menu from which this dropdown was opened.
      */
     this.parentMenu = options.parentMenu;
 
-    SelectivityDropdown.call(this, options);
+    Dropdown.call(this, selectivity, options);
 
     this._closeSubmenuTimeout = 0;
 
     this._openSubmenuTimeout = 0;
 }
 
-var callSuper = Selectivity.inherits(SelectivitySubmenu, SelectivityDropdown, {
+var callSuper = Selectivity.inherits(SubmenuPlugin, Dropdown, {
 
     /**
      * @inherit
@@ -179,40 +179,39 @@ var callSuper = Selectivity.inherits(SelectivitySubmenu, SelectivityDropdown, {
 
         callSuper(this, 'highlight', item);
 
-        if (item.submenu && !this.submenu) {
-            var options = this.selectivity.options;
-            if (options.shouldOpenSubmenu && options.shouldOpenSubmenu(item, reason) === false) {
-                return;
-            }
+        var options = this.selectivity.options;
+        if ((!item.submenu || this.submenu) ||
+            (options.shouldOpenSubmenu && options.shouldOpenSubmenu(item, reason) === false)) {
+            return;
+        }
 
-            var Dropdown = options.dropdown || Selectivity.Dropdown;
-            if (Dropdown) {
-                var resultItems = this.el.querySelectorAll('.selectivity-result-item');
-                var resultItem = findResultItem(resultItems, item.id);
-                var dropdownEl = this.el;
+        var Dropdown = options.dropdown || Selectivity.Dropdown;
+        if (Dropdown) {
+            var resultItems = this.el.querySelectorAll('.selectivity-result-item');
+            var resultItem = findResultItem(resultItems, item.id);
+            var dropdownEl = this.el;
 
-                this.submenu = new Dropdown({
-                    highlightFirstItem: !item.selectable,
-                    items: item.submenu.items || null,
-                    parentMenu: this,
-                    position: item.submenu.positionDropdown || function(el) {
-                        var rect = dropdownEl.getBoundingClientRect();
-                        el.style.left = rect.right + 'px';
-                        el.style.top = resultItem.getBoundingClientRect().top + 'px';
-                        el.style.width = rect + 'px';
-                    },
-                    query: item.submenu.query || null,
-                    selectivity: this.selectivity,
-                    showSearchInput: item.submenu.showSearchInput
-                });
+            this.submenu = new Dropdown({
+                highlightFirstItem: !item.selectable,
+                items: item.submenu.items || null,
+                parentMenu: this,
+                position: item.submenu.positionDropdown || function(el) {
+                    var rect = dropdownEl.getBoundingClientRect();
+                    el.style.left = rect.right + 'px';
+                    el.style.top = resultItem.getBoundingClientRect().top + 'px';
+                    el.style.width = rect + 'px';
+                },
+                query: item.submenu.query || null,
+                selectivity: this.selectivity,
+                showSearchInput: item.submenu.showSearchInput
+            });
 
-                this.submenu.search('');
-            }
+            this.submenu.search('');
         }
     }
 
 });
 
-Selectivity.Dropdown = SelectivitySubmenu;
+Selectivity.Dropdown = SubmenuPlugin;
 
-module.exports = SelectivitySubmenu;
+module.exports = SubmenuPlugin;

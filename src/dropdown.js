@@ -4,6 +4,9 @@ var extend = require('lodash/extend');
 
 var EventListener = require('./event-listener');
 var quoteCssAttr = require('../util/quote-css-attr');
+var removeElement = require('../util/remove-element');
+var renderElement = require('../util/render-element');
+var stopPropagation = require('../util/stop-propagation');
 
 var Selectivity = require('./selectivity-base');
 
@@ -12,26 +15,27 @@ var SCROLL_EVENTS = ['scroll', 'touchend', 'touchmove'];
 /**
  * selectivity Dropdown Constructor.
  *
+ * @param selectivity Selectivity instance to which the dropdown belongs.
  * @param options Options object. Should have the following properties:
  *                highlightFirstItem - Set to false if you don't want the first item to be
  *                                     automatically highlighted (optional).
- *                selectivity - Selectivity instance to show the dropdown for.
+ *                items - Array of items to display.
+ *                position - Callback for positioning the dropdown.
+ *                query - Callback to fetch the items to display.
  *                showSearchInput - Boolean whether a search input should be shown.
  */
-function SelectivityDropdown(options) {
+function SelectivityDropdown(selectivity, options) {
 
-    var selectivity = options.selectivity;
-
-    this.el = selectivity.renderTemplate('dropdown', {
+    this.el = renderElement(selectivity.template('dropdown', {
         dropdownCssClass: selectivity.options.dropdownCssClass,
         searchInputPlaceholder: selectivity.options.searchInputPlaceholder,
         showSearchInput: options.showSearchInput
-    });
+    }));
 
     /**
      * DOM element to add the results to.
      */
-    this.results = this.$('.selectivity-results-container');
+    this.resultsContainer = this.$('.selectivity-results-container');
 
     /**
      * Boolean indicating whether more results are available than currently displayed in the
@@ -65,6 +69,7 @@ function SelectivityDropdown(options) {
     this.selectivity = selectivity;
 
     this._closed = false;
+    this._lastMousePosition = {};
 
     this.close = this.close.bind(this);
     this.position = this.position.bind(this);
@@ -73,12 +78,8 @@ function SelectivityDropdown(options) {
         selectivity.events.on('selectivity-selecting', this.close);
     }
 
-    this._lastMousePosition = {};
-
     this.addToDom();
-    this.position();
-
-    this._suppressMouseWheel();
+    this.showLoading();
 
     if (options.showSearchInput) {
         selectivity.initSearchInput(this.$('.selectivity-search-input'));
@@ -93,11 +94,10 @@ function SelectivityDropdown(options) {
         'mouseenter selectivity-result-item': this._resultHovered
     });
 
-    this._attachAncestorScrollListeners();
+    this._attachScrollListeners();
+    this._suppressMouseWheel();
 
-    this.showLoading();
-
-    setTimeout(this.triggerOpen.bind(this), 1);
+    setTimeout(selectivity.triggerEvent.bind(selectivity, 'selectivity-open'), 1);
 }
 
 /**
@@ -135,13 +135,13 @@ extend(SelectivityDropdown.prototype, {
         if (!this._closed) {
             this._closed = true;
 
-            this.el.parentNode.removeChild(this.el);
+            removeElement(this.el);
 
             this.selectivity.events.off('selectivity-selecting', this.close);
 
-            this.triggerClose();
+            this.selectivity.triggerEvent('selectivity-close');
 
-            this._removeAncestorScrollListeners();
+            this._removeScrollListeners();
         }
     },
 
@@ -193,7 +193,8 @@ extend(SelectivityDropdown.prototype, {
      */
     loadMore: function() {
 
-        this.$('.selectivity-load-more').replaceWith(this.selectivity.template('loading'));
+        removeElement(this.$('.selectivity-load-more'));
+        this.resultsContainer.innerHTML += this.selectivity.template('loading');
 
         this.options.query({
             callback: function(response) {
@@ -220,7 +221,7 @@ extend(SelectivityDropdown.prototype, {
 
         var position = this.options.position;
         if (position) {
-            position(this.$el, this.selectivity.$el);
+            position(this.el, this.selectivity.el);
         }
 
         this._scrolled();
@@ -258,34 +259,32 @@ extend(SelectivityDropdown.prototype, {
      */
     search: function(term) {
 
-        var self = this;
-
         term = term || '';
-        self.term = term;
+        this.term = term;
 
-        if (self.options.items) {
+        if (this.options.items) {
             term = Selectivity.transformText(term);
-            var matcher = self.selectivity.matcher;
-            self._showResults(self.options.items.map(function(item) {
+            var matcher = this.selectivity.matcher;
+            this._showResults(this.options.items.map(function(item) {
                 return matcher(item, term);
             }).filter(function(item) {
                 return !!item;
             }), { term: term });
-        } else if (self.options.query) {
-            self.options.query({
+        } else if (this.options.query) {
+            this.options.query({
                 callback: function(response) {
                     if (response && response.results) {
-                        self._showResults(
+                        this._showResults(
                             Selectivity.processItems(response.results),
                             { hasMore: !!response.more, term: term }
                         );
                     } else {
                         throw new Error('callback must be passed a response object');
                     }
-                },
-                error: self.showError.bind(self),
+                }.bind(this),
+                error: this.showError.bind(this),
                 offset: 0,
-                selectivity: self.selectivity,
+                selectivity: this.selectivity,
                 term: term
             });
         }
@@ -330,12 +329,10 @@ extend(SelectivityDropdown.prototype, {
      */
     showError: function(message, options) {
 
-        options = options || {};
-
-        this.$results.html(this.selectivity.template('error', {
-            escape: options.escape !== false,
+        this.resultsContainer.innerHTML = this.selectivity.template('error', {
+            escape: !options || options.escape !== false,
             message: message
-        }));
+        });
 
         this.hasMore = false;
         this.results = [];
@@ -351,7 +348,7 @@ extend(SelectivityDropdown.prototype, {
      */
     showLoading: function() {
 
-        this.$results.html(this.selectivity.template('loading'));
+        this.resultsContainer.innerHTML = this.selectivity.template('loading');
 
         this.hasMore = false;
         this.results = [];
@@ -374,29 +371,22 @@ extend(SelectivityDropdown.prototype, {
      */
     showResults: function(results, options) {
 
+        removeElement(this.$('.selectivity-loading'));
+
         var resultsHtml = this.renderItems(results);
         if (options.hasMore) {
             resultsHtml += this.selectivity.template('loadMore');
-        } else {
-            if (!resultsHtml && !options.add) {
-                resultsHtml = this.selectivity.template('noResults', { term: options.term });
-            }
+        } else if (!resultsHtml && !options.add) {
+            resultsHtml = this.selectivity.template('noResults', { term: options.term });
         }
+        this.resultsContainer.innerHTML += resultsHtml;
 
-        if (options.add) {
-            this.$('.selectivity-loading').replaceWith(resultsHtml);
-
-            this.results = this.results.concat(results);
-        } else {
-            this.$results.html(resultsHtml);
-
-            this.results = results;
-        }
+        this.results = this.results.concat(results);
 
         this.hasMore = options.hasMore;
 
         var value = this.selectivity.value();
-        if (value && $.type(value) !== 'array') {
+        if (value && !(value instanceof Array)) {
             var item = Selectivity.findNestedById(results, value);
             if (item) {
                 this.highlight(item, { reason: 'current_value' });
@@ -410,50 +400,14 @@ extend(SelectivityDropdown.prototype, {
     },
 
     /**
-     * Triggers the 'selectivity-close' event.
-     */
-    triggerClose: function() {
-
-        this.selectivity.$el.trigger('selectivity-close');
-    },
-
-    /**
-     * Triggers the 'selectivity-open' event.
-     */
-    triggerOpen: function() {
-
-        this.selectivity.$el.trigger('selectivity-open');
-    },
-
-    /**
      * @private
      */
-    _attachAncestorScrollListeners: function() {
+    _attachScrollListeners: function() {
 
-        var position = this.position;
-        var scrollElements = [];
-
-        function attach(el) {
-            for (var i = 0; i < SCROLL_EVENTS.length; i++) {
-                el.addEventListener(SCROLL_EVENTS[i], position);
-            }
-            scrollElements.push(el);
+        for (var i = 0; i < SCROLL_EVENTS.length; i++) {
+            window.addEventListener(SCROLL_EVENTS[i], this.position, true);
         }
-
-        if (typeof window !== 'undefined') {
-            var el = this.selectivity.$el[0];
-            while ((el = el.parentElement)) {
-                var style = window.getComputedStyle(el);
-                if (style.overflowX === 'auto' || style.overflowX === 'scroll' ||
-                    style.overflowY === 'auto' || style.overflowY === 'scroll') {
-                    attach(el);
-                }
-            }
-
-            attach(window);
-        }
-
-        this._ancestorScrollElements = scrollElements;
+        window.addEventListener('resize', this.position);
     },
 
     /**
@@ -487,10 +441,11 @@ extend(SelectivityDropdown.prototype, {
     /**
      * @private
      */
-    _loadMoreClicked: function() {
+    _loadMoreClicked: function(event) {
 
         this.loadMore();
-        return false;
+
+        stopPropagation(event);
     },
 
     /**
@@ -517,15 +472,12 @@ extend(SelectivityDropdown.prototype, {
     /**
      * @private
      */
-    _removeAncestorScrollListeners: function() {
+    _removeScrollListeners: function() {
 
-        this._ancestorScrollElements.forEach(function(el) {
-            for (var i = 0; i < SCROLL_EVENTS.length; i++) {
-                el.removeEventListener(SCROLL_EVENTS[i], this.position);
-            }
-        }, this);
-
-        this._ancestorScrollElements = [];
+        for (var i = 0; i < SCROLL_EVENTS.length; i++) {
+            window.removeEventListener(SCROLL_EVENTS[i], this.position, true);
+        }
+        window.removeEventListener('resize', this.position);
     },
 
     /**
@@ -535,7 +487,7 @@ extend(SelectivityDropdown.prototype, {
 
         this.selectItem(this.selectivity.getRelatedItemId(event));
 
-        return false;
+        stopPropagation(event);
     },
 
     /**
@@ -560,9 +512,9 @@ extend(SelectivityDropdown.prototype, {
      */
     _scrolled: function() {
 
-        var loadMore = this.$('.selectivity-load-more');
-        if (loadMore) {
-            if (loadMore.offsetTop - this.$results[0].scrollTop < this.$el.height()) {
+        var loadMoreEl = this.$('.selectivity-load-more');
+        if (loadMoreEl) {
+            if (loadMoreEl.offsetTop - this.resultsContainer.scrollTop < this.el.clientHeight) {
                 this.loadMore();
             }
         }
@@ -581,42 +533,36 @@ extend(SelectivityDropdown.prototype, {
      */
     _suppressMouseWheel: function() {
 
-        var suppressMouseWheelSelector = this.selectivity.options.suppressMouseWheelSelector;
-        if (suppressMouseWheelSelector === null) {
+        var suppressWheelClassName = this.selectivity.options.suppressWheelClassName;
+        if (suppressWheelClassName === null) {
             return;
         }
 
-        var selector = suppressMouseWheelSelector || '.selectivity-results-container';
-        this.$el.on('DOMMouseScroll mousewheel', selector, function(event) {
-
+        var className = suppressWheelClassName || 'selectivity-results-container';
+        this.events.on('wheel ' + className, function(event) {
             // Thanks to Troy Alford:
             // http://stackoverflow.com/questions/5802467/prevent-scrolling-of-parent-element
 
-            var $el = $(this),
-                scrollTop = this.scrollTop,
-                scrollHeight = this.scrollHeight,
-                height = $el.height(),
-                originalEvent = event.originalEvent,
-                delta = (event.type === 'DOMMouseScroll' ? originalEvent.detail * -40
-                                                         : originalEvent.wheelDelta),
-                up = delta > 0;
+            var el = this.el,
+                scrollTop = el.scrollTop,
+                scrollHeight = el.scrollHeight,
+                height = el.clientHeight,
+                delta = (event.deltaMode === 0 ? event.deltaY : event.deltaY * 40);
 
             function prevent() {
-                event.stopPropagation();
+                stopPropagation(event);
                 event.preventDefault();
-                event.returnValue = false;
-                return false;
             }
 
             if (scrollHeight > height) {
-                if (!up && -delta > scrollHeight - height - scrollTop) {
-                    // Scrolling down, but this will take us past the bottom.
-                    $el.scrollTop(scrollHeight);
-                    return prevent();
-                } else if (up && delta > scrollTop) {
+                if (delta < -scrollTop) {
                     // Scrolling up, but this will take us past the top.
-                    $el.scrollTop(0);
-                    return prevent();
+                    el.scrollTop = 0;
+                    prevent();
+                } else if (delta > scrollHeight - height - scrollTop) {
+                    // Scrolling down, but this will take us past the bottom.
+                    el.scrollTop = scrollHeight;
+                    prevent();
                 }
             }
         });

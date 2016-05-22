@@ -1,8 +1,8 @@
 'use strict';
 
-var $ = require('jquery');
+var extend = require('lodash/extend');
 
-var Selectivity = require('./selectivity-base');
+var Selectivity = require('../selectivity');
 
 function defaultTokenizer(input, selection, createToken, options) {
 
@@ -58,7 +58,7 @@ function defaultTokenizer(input, selection, createToken, options) {
 Selectivity.OptionListeners.push(function(selectivity, options) {
 
     if (options.tokenSeparators) {
-        options.allowedTypes = $.extend({ tokenSeparators: 'array' }, options.allowedTypes);
+        options.allowedTypes = extend({ tokenSeparators: 'array' }, options.allowedTypes);
 
         options.tokenizer = options.tokenizer || defaultTokenizer;
     }

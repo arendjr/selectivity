@@ -353,7 +353,7 @@ TestUtil.createDomTest(
         $input.selectivity({
             value: 'Amsterdam',
             showSearchInputInDropdown: false,
-            tabindex: 2
+            tabIndex: 2
         });
 
         test.equal($input.attr('tabindex'), '2');

@@ -1,21 +1,18 @@
 'use strict';
 
-var $ = require('jquery');
+var extend = require('lodash/extend');
 
-var Selectivity = require('./selectivity-base');
+var Selectivity = require('../selectivity');
+var stopPropagation = require('../util/stop-propagation');
 
 /**
- * SingleSelectivity Constructor.
- *
- * @param options Options object. Accepts all options from the Selectivity Base Constructor in
- *                addition to those accepted by SingleSelectivity.setOptions().
+ * InputTypeSingle Constructor.
  */
-function SingleSelectivity(options) {
+function InputTypeSingle(options) {
 
     Selectivity.call(this, options);
 
-    this.$el.html(this.template('singleSelectInput', this.options))
-            .trigger('selectivity-init', 'single');
+    this.el.innerHTML = this.template('singleSelectInput', this.options);
 
     this.rerenderSelection();
 
@@ -23,22 +20,20 @@ function SingleSelectivity(options) {
         // dropdowns for single-value inputs should open below the select box,
         // unless there is not enough space below, in which case the dropdown should be moved up
         // just enough so it fits in the window, but never so much that it reaches above the top
-        this.options.positionDropdown = function($el, $selectEl) {
-            var rect = $selectEl[0].getBoundingClientRect();
+        this.options.positionDropdown = function(el, selectEl) {
+            var rect = selectEl.getBoundingClientRect();
             var dropdownTop = rect.bottom;
 
-            var deltaUp = 0;
-            if (typeof window !== 'undefined') {
-                deltaUp = Math.min(
-                    Math.max(dropdownTop + $el.height() - window.innerHeight, 0),
-                    rect.top + rect.height
-                );
-            }
+            var deltaUp = Math.min(
+                Math.max(dropdownTop + el.clientHeight - window.innerHeight, 0),
+                rect.top + rect.height
+            );
 
-            $el.css({
+            extend(el.style, {
                 left: rect.left + 'px',
-                top: dropdownTop - deltaUp + 'px'
-            }).width(rect.width);
+                top: dropdownTop - deltaUp + 'px',
+                width: rect.width + 'px'
+            });
         };
     }
 
@@ -46,9 +41,23 @@ function SingleSelectivity(options) {
         this.initSearchInput(this.$('.selectivity-single-select-input'), { noSearch: true });
     }
 
+    extend(this.allowedOptions, {
+        /**
+         * Boolean whether the selected item may be removed.
+         */
+        allowClear: 'boolean',
+
+        /**
+         * Set to false to remove the search input used in dropdowns. The default is true.
+         */
+        showSearchInputInDropdown: 'boolean'
+    });
+
     this.events.on({
         'change': this.rerenderSelection,
         'click': this._clicked,
+        'click selectivity-search-input': stopPropagation,
+        'click selectivity-single-selected-item-remove': this._itemRemoveClicked,
         'focus selectivity-single-select-input': this._focused,
         'selectivity-selected': this._resultSelected
     });
@@ -57,7 +66,7 @@ function SingleSelectivity(options) {
 /**
  * Methods.
  */
-var callSuper = Selectivity.inherits(SingleSelectivity, Selectivity, {
+var callSuper = Selectivity.inherits(InputTypeSingle, Selectivity, {
 
     /**
      * Clears the data and value.
@@ -79,8 +88,8 @@ var callSuper = Selectivity.inherits(SingleSelectivity, Selectivity, {
 
         callSuper(this, 'close');
 
-        if (options && options.keepFocus && this.$searchInput) {
-            this.$searchInput.focus();
+        if (options && options.keepFocus && this.searchInput) {
+            this.searchInput.focus();
         }
 
         this._closing = false;
@@ -120,9 +129,9 @@ var callSuper = Selectivity.inherits(SingleSelectivity, Selectivity, {
         if (!this._opening) {
             this._opening = true;
 
-            var showSearchInput = (this.options.showSearchInputInDropdown !== false);
-
-            callSuper(this, 'open', $.extend({ showSearchInput: showSearchInput }, options));
+            callSuper(this, 'open', extend({
+                showSearchInput: (this.options.showSearchInputInDropdown !== false)
+            }, options));
 
             this._opening = false;
         }
@@ -137,42 +146,12 @@ var callSuper = Selectivity.inherits(SingleSelectivity, Selectivity, {
      */
     rerenderSelection: function() {
 
-        var $container = this.$('.selectivity-single-result-container');
-        if (this._data) {
-            $container.html(
-                this.template('singleSelectedItem', $.extend({
-                    removable: this.options.allowClear && !this.options.readOnly
-                }, this._data))
-            );
+        var template = (this._data ? 'singleSelectedItem' : 'singleSelectPlaceholder');
+        var options = (this._data ? extend({
+            removable: this.options.allowClear && !this.options.readOnly
+        }, this._data) : { placeholder: this.options.placeholder });
 
-            $container.find('.selectivity-single-selected-item-remove')
-                      .on('click', this._itemRemoveClicked.bind(this));
-        } else {
-            $container.html(
-                this.template('singleSelectPlaceholder', { placeholder: this.options.placeholder })
-            );
-        }
-    },
-
-    /**
-     * @inherit
-     *
-     * @param options Options object. In addition to the options supported in the base
-     *                implementation, this may contain the following properties:
-     *                allowClear - Boolean whether the selected item may be removed.
-     *                showSearchInputInDropdown - Set to false to remove the search input used in
-     *                                            dropdowns. The default is true.
-     */
-    setOptions: function(options) {
-
-        options = options || {};
-
-        options.allowedTypes = $.extend(options.allowedTypes || {}, {
-            allowClear: 'boolean',
-            showSearchInputInDropdown: 'boolean'
-        });
-
-        callSuper(this, 'setOptions', options);
+        this.$('.selectivity-single-result-container').innerHTML = this.template(template, options);
     },
 
     /**
@@ -207,11 +186,7 @@ var callSuper = Selectivity.inherits(SingleSelectivity, Selectivity, {
     /**
      * @private
      */
-    _clicked: function(event) {
-
-        if ($(event.target).closest('.selectivity-search-input').length) {
-            return true;
-        }
+    _clicked: function() {
 
         if (this.enabled) {
             if (this.dropdown) {
@@ -219,8 +194,6 @@ var callSuper = Selectivity.inherits(SingleSelectivity, Selectivity, {
             } else if (this.options.showDropdown !== false) {
                 this.open();
             }
-
-            return false;
         }
     },
 
@@ -238,11 +211,11 @@ var callSuper = Selectivity.inherits(SingleSelectivity, Selectivity, {
     /**
      * @private
      */
-    _itemRemoveClicked: function() {
+    _itemRemoveClicked: function(event) {
 
         this.data(null);
 
-        return false;
+        stopPropagation(event);
     },
 
     /**
@@ -257,4 +230,4 @@ var callSuper = Selectivity.inherits(SingleSelectivity, Selectivity, {
 
 });
 
-module.exports = Selectivity.InputTypes.Single = SingleSelectivity;
+module.exports = Selectivity.InputTypes.Single = InputTypeSingle;

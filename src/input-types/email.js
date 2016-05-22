@@ -1,9 +1,9 @@
 'use strict';
 
-var $ = require('jquery');
+var extend = require('lodash/extend');
 
-var Selectivity = require('./selectivity-base');
-var MultipleSelectivity = require('./selectivity-multiple');
+var InputTypeMultiple = require('./multiple');
+var Selectivity = require('../selectivity');
 
 function isValidEmail(email) {
 
@@ -27,7 +27,7 @@ function lastWord(token, length) {
 
 function stripEnclosure(token, enclosure) {
 
-    if (token.slice(0, 1) === enclosure[0] && token.slice(-1) === enclosure[1]) {
+    if (token.charAt(0) === enclosure[0] && token.slice(-1) === enclosure[1]) {
         return token.slice(1, -1).trim();
     } else {
         return token.trim();
@@ -112,34 +112,26 @@ function emailTokenizer(input, selection, createToken) {
 }
 
 /**
- * Emailselectivity Constructor.
+ * InputTypeEmail Constructor.
  *
  * @param options Options object. Accepts all options from the MultipleSelectivity Constructor.
  */
-function Emailselectivity(options) {
+function InputTypeEmail(options) {
 
-    MultipleSelectivity.call(this, options);
+    InputTypeMultiple.call(this, options);
+
+    this.events.on('blur', function() {
+        var input = this.searchInput;
+        if (input && isValidEmail(lastWord(input.value))) {
+            this.add(createEmailItem(input.value));
+        }
+    });
 }
 
 /**
  * Methods.
  */
-var callSuper = Selectivity.inherits(Emailselectivity, MultipleSelectivity, {
-
-    /**
-     * @inherit
-     */
-    initSearchInput: function($input) {
-
-        callSuper(this, 'initSearchInput', $input);
-
-        $input.on('blur', function() {
-            var term = $input.val();
-            if (isValidEmail(lastWord(term))) {
-                this.add(createEmailItem(term));
-            }
-        }.bind(this));
-    },
+var callSuper = Selectivity.inherits(InputTypeEmail, InputTypeMultiple, {
 
     /**
      * @inherit
@@ -149,15 +141,13 @@ var callSuper = Selectivity.inherits(Emailselectivity, MultipleSelectivity, {
      */
     setOptions: function(options) {
 
-        options = $.extend({
+        callSuper(this, 'setOptions', extend({
             createTokenItem: createEmailItem,
             showDropdown: false,
             tokenizer: emailTokenizer
-        }, options);
-
-        callSuper(this, 'setOptions', options);
+        }, options));
     }
 
 });
 
-module.exports = Selectivity.InputTypes.Email = Emailselectivity;
+module.exports = Selectivity.InputTypes.Email = InputTypeEmail;
