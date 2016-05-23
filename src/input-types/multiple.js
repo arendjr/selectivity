@@ -4,9 +4,9 @@ var extend = require('lodash/extend');
 var isString = require('lodash/isString');
 
 var Selectivity = require('../selectivity');
+var parseElement = require('../util/parse-element');
 var quoteCssAttr = require('../util/quote-css-attr');
 var removeElement = require('../util/remove-element');
-var renderElement = require('../util/render-element');
 var stopPropagation = require('../util/stop-propagation');
 
 var KEY_BACKSPACE = 8;
@@ -83,7 +83,7 @@ function InputTypeMultiple(options) {
     });
 
     this.events.on({
-        'change': this._rerenderSelection,
+        'change': this.rerenderSelection,
         'change selectivity-multiple-input': stopPropagation,
         'click': this._clicked,
         'click selectivity-multiple-selected-item': this._itemClicked,
@@ -237,7 +237,10 @@ var callSuper = Selectivity.inherits(InputTypeMultiple, Selectivity, {
                 this.$('.selectivity-multiple-selected-item[data-item-id=' + quotedId + ']')
             );
         } else {
-            this.$('.selectivity-multiple-selected-item').remove();
+            var el;
+            while ((el = this.$('.selectivity-multiple-selected-item'))) {
+                removeElement(el);
+            }
 
             this._data.forEach(this._renderSelectedItem, this);
 
@@ -476,7 +479,7 @@ var callSuper = Selectivity.inherits(InputTypeMultiple, Selectivity, {
 
     _renderSelectedItem: function(item) {
 
-        var el = renderElement(this.template('multipleSelectedItem', extend({
+        var el = parseElement(this.template('multipleSelectedItem', extend({
             highlighted: (item.id === this._highlightedItemId),
             removable: !this.options.readOnly
         }, item)));

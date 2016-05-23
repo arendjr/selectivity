@@ -59,11 +59,11 @@ function createSelectivityNextToSelectElement($el, options) {
     });
     $div.insertAfter($el);
     $el.hide();
-    return $div;
+    return $div[0];
 }
 
 function bindTraditionalSelectEvents(selectivity) {
-    var $el = selectivity.$el;
+    var $el = $(selectivity.el);
     $el.on('selectivity-selected', function(event) {
         var value = selectivity.value();
         $el.prev('select')
@@ -78,7 +78,7 @@ function bindTraditionalSelectEvents(selectivity) {
  */
 Selectivity.OptionListeners.push(function(selectivity, options) {
 
-    var $el = selectivity.$el;
+    var $el = $(selectivity.el);
     if ($el.is('select')) {
         if ($el.attr('autofocus')) {
             setTimeout(function() {
@@ -86,8 +86,8 @@ Selectivity.OptionListeners.push(function(selectivity, options) {
             }, 1);
         }
 
-        selectivity.$el = createSelectivityNextToSelectElement($el, options);
-        selectivity.$el[0].selectivity = selectivity;
+        selectivity.el = createSelectivityNextToSelectElement($el, options);
+        selectivity.el.selectivity = selectivity;
 
         bindTraditionalSelectEvents(selectivity);
     }

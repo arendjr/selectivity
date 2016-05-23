@@ -85,10 +85,6 @@ function Selectivity(options) {
      */
     this.term = '';
 
-    this.setOptions(options);
-
-    this.el.setAttribute('tabindex', options.tabIndex || 0);
-
     if (options.value) {
         this.value(options.value, { triggerChange: false });
     } else {
@@ -106,8 +102,13 @@ function Selectivity(options) {
         readOnly: 'boolean',
         removeOnly: 'boolean',
         searchInputListeners: 'array',
-        suppressWheelClassName: 'string|null'
+        suppressWheelClassName: 'string|null',
+        tabIndex: 'number'
     };
+
+    this.setOptions(options);
+
+    this.el.setAttribute('tabindex', options.tabIndex || 0);
 
     this.events = new EventListener(this.el, this);
     this.events.on({
@@ -456,12 +457,6 @@ extend(Selectivity.prototype, {
 
         options = options || {};
 
-        Selectivity.OptionListeners.forEach(function(listener) {
-            listener(this, options);
-        }.bind(this));
-
-        extend(this.options, options);
-
         for (var key in options) {
             if (!options.hasOwnProperty(key)) {
                 continue;
@@ -499,6 +494,12 @@ extend(Selectivity.prototype, {
                 break;
             }
         }
+
+        Selectivity.OptionListeners.forEach(function(listener) {
+            listener(this, options);
+        }.bind(this));
+
+        extend(this.options, options);
 
         this.enabled = (!this.options.readOnly && !this.options.removeOnly);
     },

@@ -1,10 +1,10 @@
 'use strict';
 
-var TestUtil = require('../test-util');
+var TestUtil = require('../../test-util');
 
-TestUtil.createDomTest(
-    'events: test change event',
-    ['single', 'templates'],
+TestUtil.createJQueryTest(
+    'jquery/events: test change event',
+    ['input-types/single', 'templates'],
     function(test, $input) {
         var changeEvent = null;
 
@@ -25,9 +25,9 @@ TestUtil.createDomTest(
     }
 );
 
-TestUtil.createDomTest(
-    'events: test suppress change event',
-    ['single', 'templates'],
+TestUtil.createJQueryTest(
+    'jquery/events: test suppress change event',
+    ['input-types/single', 'templates'],
     function(test, $input) {
         var changeEvent = null;
 

@@ -7,7 +7,7 @@ var tape = require('tape');
 module.exports = {
 
     /**
-     * Wrapper to easily create unit tests that test Selectivity within a DOM environment.
+     * Wrapper to easily create unit tests that test Selectivity with jQuery.
      *
      * @param name Test name.
      * @param modules Array of Selectivity modules to test, e.g. ['base', 'single'].
@@ -21,7 +21,7 @@ module.exports = {
      *                    resources/testcase.html.
      *           $ - jQuery instance.
      */
-    createDomTest: function(name, modules, options, fn) {
+    createJQueryTest: function(name, modules, options, fn) {
 
         if (options instanceof Function) {
             fn = options;
@@ -37,9 +37,10 @@ module.exports = {
                     var end = test.end.bind(test);
                     test.end = function() {
                         modules.forEach(function(module) {
-                            freshy.unload('../src/selectivity-' + module);
+                            freshy.unload('../src/' + module);
                         });
-                        freshy.unload('../src/selectivity-base');
+                        freshy.unload('../src/apis/jquery');
+                        freshy.unload('../src/selectivity');
                         freshy.unload('jquery');
 
                         window.close();
@@ -52,9 +53,10 @@ module.exports = {
                     window.$ = window.jQuery = require('jquery');
 
                     test.doesNotThrow(function() {
-                        require('../src/selectivity-base');
+                        require('../src/selectivity');
+                        require('../src/apis/jquery');
                         modules.forEach(function(module) {
-                            require('../src/selectivity-' + module);
+                            require('../src/' + module);
                         });
 
                         fn(test, window.$('#selectivity-input'), window.$);

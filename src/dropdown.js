@@ -3,12 +3,12 @@
 var extend = require('lodash/extend');
 
 var EventListener = require('./event-listener');
-var quoteCssAttr = require('../util/quote-css-attr');
-var removeElement = require('../util/remove-element');
-var renderElement = require('../util/render-element');
-var stopPropagation = require('../util/stop-propagation');
+var parseElement = require('./util/parse-element');
+var quoteCssAttr = require('./util/quote-css-attr');
+var removeElement = require('./util/remove-element');
+var stopPropagation = require('./util/stop-propagation');
 
-var Selectivity = require('./selectivity-base');
+var Selectivity = require('./selectivity');
 
 var SCROLL_EVENTS = ['scroll', 'touchend', 'touchmove'];
 
@@ -26,7 +26,7 @@ var SCROLL_EVENTS = ['scroll', 'touchend', 'touchmove'];
  */
 function SelectivityDropdown(selectivity, options) {
 
-    this.el = renderElement(selectivity.template('dropdown', {
+    this.el = parseElement(selectivity.template('dropdown', {
         dropdownCssClass: selectivity.options.dropdownCssClass,
         searchInputPlaceholder: selectivity.options.searchInputPlaceholder,
         showSearchInput: options.showSearchInput
@@ -118,13 +118,7 @@ extend(SelectivityDropdown.prototype, {
      */
     addToDom: function() {
 
-        var next;
-        var anchor = this.selectivity.el;
-        while ((next = anchor.next('.selectivity-dropdown')).length) {
-            anchor = next;
-        }
-
-        anchor.appendChild(this.el);
+        this.selectivity.el.appendChild(this.el);
     },
 
     /**
@@ -155,10 +149,15 @@ extend(SelectivityDropdown.prototype, {
      */
     highlight: function(item, options) {
 
-        this.$('.highlight').classList.remove('highlight');
+        var el = this.$('.highlight');
+        if (el) {
+            el.classList.remove('highlight');
+        }
 
-        var itemId = quoteCssAttr(item.id);
-        this.$('.selectivity-result-item[data-item-id=' + itemId + ']').classList.add('highlight');
+        el = this.$('.selectivity-result-item[data-item-id=' + quoteCssAttr(item.id) + ']');
+        if (el) {
+            el.classList.add('highlight');
+        }
 
         this.highlightedResult = item;
         this.loadMoreHighlighted = false;

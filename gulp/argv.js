@@ -1,10 +1,20 @@
 'use strict';
 
+var _ = require('lodash');
 var glob = require('glob');
 var yargs = require('yargs');
 
+var MODULE_BLACKLIST = ['event-listener', 'selectivity', 'selectivity-custom'];
+
 var argv = yargs
     .usage('Usage: gulp [tasks] [options]')
+    .option('api', {
+        choices: glob.sync('src/apis/*.js').map(function(file) {
+            return file.slice(9, -3);
+        }),
+        describe: 'API to expose',
+        type: 'string'
+    })
     .option('bundle-name', {
         default: 'custom',
         describe: 'Name of the bundle to create.',
@@ -48,15 +58,15 @@ var argv = yargs
                   '`gulp unit-tests`.',
         type: 'string'
     })
-    .help('help', 'Shows this help message.')
     .strict()
     .wrap(yargs.terminalWidth())
     .argv;
 
-argv.modules = (argv.modules === 'all' ? glob.sync('src/selectivity-*.js').map(function(file) {
-    return file.slice(16, -3);
+argv.modules = (argv.modules === 'all' ? glob.sync('src/**/*.js').map(function(file) {
+    return file.slice(4, -3);
 }).filter(function(module) {
-    return module !== 'base' && module !== 'custom';
+    return !_.includes(MODULE_BLACKLIST, module) && !_.startsWith(module, 'apis/') &&
+           !_.startsWith(module, 'util/');
 }) : argv.modules.split(','));
 
 module.exports = argv;

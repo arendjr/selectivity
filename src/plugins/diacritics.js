@@ -842,7 +842,7 @@ var DIACRITICS = {
     '\u03C2': '\u03C3'
 };
 
-var Selectivity = require('./selectivity-base');
+var Selectivity = require('../selectivity');
 var previousTransform = Selectivity.transformText;
 
 /**

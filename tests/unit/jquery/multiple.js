@@ -1,10 +1,10 @@
 'use strict';
 
-var TestUtil = require('../test-util');
+var TestUtil = require('../../test-util');
 
-TestUtil.createDomTest(
-    'multiple: test clear',
-    ['multiple', 'templates'],
+TestUtil.createJQueryTest(
+    'jquery/multiple: test clear',
+    ['input-types/multiple', 'templates'],
     function(test, $input) {
         $input.selectivity({
             data: [
@@ -27,9 +27,9 @@ TestUtil.createDomTest(
     }
 );
 
-TestUtil.createDomTest(
-    'multiple: test click after search',
-    ['multiple', 'dropdown', 'templates'],
+TestUtil.createJQueryTest(
+    'jquery/multiple: test click after search',
+    ['input-types/multiple', 'dropdown', 'templates'],
     function(test, $input, $) {
         $input.selectivity({
             items: ['Amsterdam', 'Antwerp', 'Athens'],
@@ -44,9 +44,9 @@ TestUtil.createDomTest(
     }
 );
 
-TestUtil.createDomTest(
-    'multiple: test filter selected items',
-    ['multiple', 'dropdown', 'templates'],
+TestUtil.createJQueryTest(
+    'jquery/multiple: test filter selected items',
+    ['input-types/multiple', 'dropdown', 'templates'],
     function(test, $input, $) {
         $input.selectivity({
             items: ['Amsterdam', 'Antwerp', 'Athens'],
@@ -70,9 +70,9 @@ TestUtil.createDomTest(
     }
 );
 
-TestUtil.createDomTest(
-    'multiple: test initial data',
-    ['multiple', 'templates'],
+TestUtil.createJQueryTest(
+    'jquery/multiple: test initial data',
+    ['input-types/multiple', 'templates'],
     function(test, $input) {
         $input.selectivity({
             data: [
@@ -96,9 +96,9 @@ TestUtil.createDomTest(
     }
 );
 
-TestUtil.createDomTest(
-    'multiple: test initial value',
-    ['multiple', 'templates'],
+TestUtil.createJQueryTest(
+    'jquery/multiple: test initial value',
+    ['input-types/multiple', 'templates'],
     function(test, $input) {
         $input.selectivity({
             items: ['Amsterdam', 'Antwerp', 'Athens'],
@@ -115,9 +115,9 @@ TestUtil.createDomTest(
     }
 );
 
-TestUtil.createDomTest(
-    'multiple: test nested data',
-    ['multiple', 'templates'],
+TestUtil.createJQueryTest(
+    'jquery/multiple: test nested data',
+    ['input-types/multiple', 'templates'],
     function(test, $input) {
         $input.selectivity({
             data: [
@@ -153,9 +153,9 @@ TestUtil.createDomTest(
     }
 );
 
-TestUtil.createDomTest(
-    'multiple: test without data',
-    ['multiple', 'templates'],
+TestUtil.createJQueryTest(
+    'jquery/multiple: test without data',
+    ['input-types/multiple', 'templates'],
     function(test, $input) {
         $input.selectivity({
             items: [
@@ -172,9 +172,9 @@ TestUtil.createDomTest(
     }
 );
 
-TestUtil.createDomTest(
-    'multiple: test remove-only',
-    ['multiple', 'templates'],
+TestUtil.createJQueryTest(
+    'jquery/multiple: test remove-only',
+    ['input-types/multiple', 'templates'],
     function(test, $input) {
         $input.selectivity({
             items: [
@@ -191,9 +191,9 @@ TestUtil.createDomTest(
     }
 );
 
-TestUtil.createDomTest(
-    'multiple: test set value',
-    ['multiple', 'templates'],
+TestUtil.createJQueryTest(
+    'jquery/multiple: test set value',
+    ['input-types/multiple', 'templates'],
     function(test, $input) {
         $input.selectivity({
             items: ['Amsterdam', 'Antwerp', 'Athens'],
@@ -214,9 +214,9 @@ TestUtil.createDomTest(
     }
 );
 
-TestUtil.createDomTest(
-    'multiple: test set value with init selection',
-    ['multiple', 'templates'],
+TestUtil.createJQueryTest(
+    'jquery/multiple: test set value with init selection',
+    ['input-types/multiple', 'templates'],
     function(test, $input) {
         $input.selectivity({
             initSelection: function(value, callback) {
@@ -246,9 +246,9 @@ TestUtil.createDomTest(
     }
 );
 
-TestUtil.createDomTest(
-    'multiple: test set value without items',
-    ['multiple', 'templates'],
+TestUtil.createJQueryTest(
+    'jquery/multiple: test set value without items',
+    ['input-types/multiple', 'templates'],
     function(test, $input) {
         $input.selectivity({
             multiple: true,
@@ -268,9 +268,9 @@ TestUtil.createDomTest(
     }
 );
 
-TestUtil.createDomTest(
-    'multiple: test mouse over',
-    ['multiple', 'templates'],
+TestUtil.createJQueryTest(
+    'jquery/multiple: test mouse over',
+    ['input-types/multiple', 'templates'],
     function(test, $input, $)
     {
         $input.selectivity({
@@ -288,9 +288,9 @@ TestUtil.createDomTest(
     }
 );
 
-TestUtil.createDomTest(
-    'multiple: test click and mouse over',
-    ['multiple', 'dropdown', 'templates'],
+TestUtil.createJQueryTest(
+    'jquery/multiple: test click and mouse over',
+    ['input-types/multiple', 'dropdown', 'templates'],
     function(test, $input, $)
     {
         $input.selectivity({
@@ -311,9 +311,9 @@ TestUtil.createDomTest(
     }
 );
 
-TestUtil.createDomTest(
-    'multiple: test blur event after opening',
-    ['multiple', 'dropdown', 'templates'],
+TestUtil.createJQueryTest(
+    'jquery/multiple: test blur event after opening',
+    ['input-types/multiple', 'dropdown', 'templates'],
     function(test, $input, $)
     {
         $input.selectivity({

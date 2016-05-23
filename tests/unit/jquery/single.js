@@ -1,10 +1,10 @@
 'use strict';
 
-var TestUtil = require('../test-util');
+var TestUtil = require('../../test-util');
 
-TestUtil.createDomTest(
-    'single: test clear',
-    ['single', 'templates'],
+TestUtil.createJQueryTest(
+    'jquery/single: test clear',
+    ['input-types/single', 'templates'],
     function(test, $input) {
         $input.selectivity({
             data: { id: 1, text: 'Amsterdam' },
@@ -23,9 +23,9 @@ TestUtil.createDomTest(
     }
 );
 
-TestUtil.createDomTest(
-    'single: test don\'t open after clear',
-    ['single', 'dropdown', 'templates'],
+TestUtil.createJQueryTest(
+    'jquery/single: test don\'t open after clear',
+    ['input-types/single', 'dropdown', 'templates'],
     function(test, $input, $) {
         $input.selectivity({
             allowClear: true,
@@ -48,9 +48,9 @@ TestUtil.createDomTest(
     }
 );
 
-TestUtil.createDomTest(
-    'single: test initial data',
-    ['single', 'templates'],
+TestUtil.createJQueryTest(
+    'jquery/single: test initial data',
+    ['input-types/single', 'templates'],
     function(test, $input) {
         $input.selectivity({
             data: { id: 1, text: 'Amsterdam' },
@@ -67,9 +67,9 @@ TestUtil.createDomTest(
     }
 );
 
-TestUtil.createDomTest(
-    'single: test initial value',
-    ['single', 'templates'],
+TestUtil.createJQueryTest(
+    'jquery/single: test initial value',
+    ['input-types/single', 'templates'],
     function(test, $input) {
         $input.selectivity({
             items: ['Amsterdam', 'Antwerp', 'Athens'],
@@ -82,9 +82,9 @@ TestUtil.createDomTest(
     }
 );
 
-TestUtil.createDomTest(
-    'single: test nested data',
-    ['single', 'templates'],
+TestUtil.createJQueryTest(
+    'jquery/single: test nested data',
+    ['input-types/single', 'templates'],
     function(test, $input) {
         $input.selectivity({
             data: { id: 2, text: 'Antwerp' },
@@ -113,9 +113,9 @@ TestUtil.createDomTest(
     }
 );
 
-TestUtil.createDomTest(
-    'single: test nested value',
-    ['single', 'templates'],
+TestUtil.createJQueryTest(
+    'jquery/single: test nested value',
+    ['input-types/single', 'templates'],
     function(test, $input) {
         $input.selectivity({
             value: 2,
@@ -144,9 +144,9 @@ TestUtil.createDomTest(
     }
 );
 
-TestUtil.createDomTest(
-    'single: test without data',
-    ['single', 'templates'],
+TestUtil.createJQueryTest(
+    'jquery/single: test without data',
+    ['input-types/single', 'templates'],
     function(test, $input) {
         $input.selectivity({
             items: [
@@ -162,9 +162,9 @@ TestUtil.createDomTest(
     }
 );
 
-TestUtil.createDomTest(
-    'single: test without search input',
-    ['single', 'dropdown', 'templates'],
+TestUtil.createJQueryTest(
+    'jquery/single: test without search input',
+    ['input-types/single', 'dropdown', 'templates'],
     function(test, $input, $) {
         $input.selectivity({
             items: [
@@ -190,9 +190,9 @@ TestUtil.createDomTest(
     }
 );
 
-TestUtil.createDomTest(
-    'single: test set value',
-    ['single', 'templates'],
+TestUtil.createJQueryTest(
+    'jquery/single: test set value',
+    ['input-types/single', 'templates'],
     function(test, $input) {
         $input.selectivity({
             items: [ 'Amsterdam', 'Antwerp', 'Athens' ],
@@ -209,9 +209,9 @@ TestUtil.createDomTest(
     }
 );
 
-TestUtil.createDomTest(
-    'single: test set value with init selection',
-    ['single', 'templates'],
+TestUtil.createJQueryTest(
+    'jquery/single: test set value with init selection',
+    ['input-types/single', 'templates'],
     function(test, $input) {
         $input.selectivity({
             initSelection: function(value, callback) {
@@ -237,9 +237,9 @@ TestUtil.createDomTest(
     }
 );
 
-TestUtil.createDomTest(
-    'single: test set value without items',
-    ['single', 'templates'],
+TestUtil.createJQueryTest(
+    'jquery/single: test set value without items',
+    ['input-types/single', 'templates'],
     function(test, $input) {
         $input.selectivity({
             value: 'Amsterdam'
@@ -255,9 +255,9 @@ TestUtil.createDomTest(
     }
 );
 
-TestUtil.createDomTest(
-    'single: test mouse over',
-    ['single', 'templates'],
+TestUtil.createJQueryTest(
+    'jquery/single: test mouse over',
+    ['input-types/single', 'templates'],
     function(test, $input, $) {
         $input.selectivity({
             value: 'Amsterdam'
@@ -273,9 +273,9 @@ TestUtil.createDomTest(
     }
 );
 
-TestUtil.createDomTest(
-    'single: test click and mouse over',
-    ['single', 'dropdown', 'templates'],
+TestUtil.createJQueryTest(
+    'jquery/single: test click and mouse over',
+    ['input-types/single', 'dropdown', 'templates'],
     function(test, $input, $) {
         $input.selectivity({
             value: 'Amsterdam'
@@ -295,9 +295,9 @@ TestUtil.createDomTest(
     }
 );
 
-TestUtil.createDomTest(
-    'single: test blur event after opening single select',
-    ['single', 'dropdown', 'templates'],
+TestUtil.createJQueryTest(
+    'jquery/single: test blur event after opening single select',
+    ['input-types/single', 'dropdown', 'templates'],
     function(test, $input, $) {
         $input.selectivity({
             value: 'Amsterdam',
@@ -314,9 +314,9 @@ TestUtil.createDomTest(
     }
 );
 
-TestUtil.createDomTest(
-    'single: test don\'t close when hovering while blur event occurs',
-    ['single', 'dropdown', 'templates'],
+TestUtil.createJQueryTest(
+    'jquery/single: test don\'t close when hovering while blur event occurs',
+    ['input-types/single', 'dropdown', 'templates'],
     function(test, $input, $) {
         $input.selectivity({
             value: 'Amsterdam',
@@ -333,9 +333,9 @@ TestUtil.createDomTest(
     }
 );
 
-TestUtil.createDomTest(
-    'single: test default tab index',
-    ['single', 'dropdown', 'templates'],
+TestUtil.createJQueryTest(
+    'jquery/single: test default tab index',
+    ['input-types/single', 'dropdown', 'templates'],
     function(test, $input) {
         $input.selectivity({
             value: 'Amsterdam',
@@ -346,9 +346,9 @@ TestUtil.createDomTest(
     }
 );
 
-TestUtil.createDomTest(
-    'single: test tab index option',
-    ['single', 'dropdown', 'templates'],
+TestUtil.createJQueryTest(
+    'jquery/single: test tab index option',
+    ['input-types/single', 'dropdown', 'templates'],
     function(test, $input) {
         $input.selectivity({
             value: 'Amsterdam',

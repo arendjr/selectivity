@@ -1,6 +1,6 @@
 'use strict';
 
-var Selectivity = require('./selectivity-base');
+var Selectivity = require('../selectivity');
 
 var latestQueryNum = 0;
 

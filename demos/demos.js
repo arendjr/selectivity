@@ -42,7 +42,7 @@ $(document).ready(function() {
         };
     }).get();
 
-    var transformText = $.fn.selectivity.transformText;
+    var transformText = $.fn.selectivity.Selectivity.transformText;
 
     // example query function that returns at most 10 cities matching the given text
     function queryFunction(query) {
@@ -50,7 +50,7 @@ $(document).ready(function() {
         var term = query.term;
         var offset = query.offset || 0;
         var results;
-        if (selectivity.$el.attr('id') === 'single-input-with-submenus') {
+        if (selectivity.el.getAttribute('id') === 'single-input-with-submenus') {
             if (selectivity.dropdown) {
                 var timezone = selectivity.dropdown.highlightedResult.id;
                 results = citiesWithTimezone.filter(function(city) {

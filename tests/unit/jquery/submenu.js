@@ -1,6 +1,6 @@
 'use strict';
 
-var TestUtil = require('../test-util');
+var TestUtil = require('../../test-util');
 
 var items = [
     { id: '1', text: 'First Item' },
@@ -15,9 +15,9 @@ var items = [
     ] } }
 ];
 
-TestUtil.createDomTest(
-    'submenu: test search input in submenu in multiple select input',
-    ['multiple', 'dropdown', 'submenu', 'templates'],
+TestUtil.createJQueryTest(
+    'jquery/submenu: test search input in submenu in multiple select input',
+    ['input-types/multiple', 'plugins/submenu', 'dropdown', 'templates'],
     function(test, $input, $) {
         $input.selectivity({
             items: [{
@@ -50,9 +50,9 @@ TestUtil.createDomTest(
     }
 );
 
-TestUtil.createDomTest(
-    'submenu: test search in submenu in single select input',
-    ['single', 'dropdown', 'submenu', 'templates'],
+TestUtil.createJQueryTest(
+    'jquery/submenu: test search in submenu in single select input',
+    ['input-types/single', 'plugins/submenu', 'dropdown', 'templates'],
     function(test, $input, $) {
         $input.selectivity({
             items: [{
@@ -91,9 +91,9 @@ TestUtil.createDomTest(
     }
 );
 
-TestUtil.createDomTest(
-    'submenu: test select item after opening submenu',
-    ['single', 'dropdown', 'submenu', 'templates'],
+TestUtil.createJQueryTest(
+    'jquery/submenu: test select item after opening submenu',
+    ['input-types/single', 'plugins/submenu', 'dropdown', 'templates'],
     { async: true },
     function(test, $input, $) {
         $input.selectivity({ items: items });
@@ -123,9 +123,9 @@ TestUtil.createDomTest(
     }
 );
 
-TestUtil.createDomTest(
-    'submenu: test select item in submenu',
-    ['single', 'dropdown', 'submenu', 'templates'],
+TestUtil.createJQueryTest(
+    'jquery/submenu: test select item in submenu',
+    ['input-types/single', 'plugins/submenu', 'dropdown', 'templates'],
     function(test, $input, $) {
         $input.selectivity({ items: items });
 
@@ -146,9 +146,9 @@ TestUtil.createDomTest(
     }
 );
 
-TestUtil.createDomTest(
-    'submenu: test set value',
-    ['single', 'dropdown', 'submenu', 'templates'],
+TestUtil.createJQueryTest(
+    'jquery/submenu: test set value',
+    ['input-types/single', 'plugins/submenu', 'dropdown', 'templates'],
     function(test, $input) {
         $input.selectivity({ items: items });
 

@@ -1,6 +1,6 @@
 'use strict';
 
-var TestUtil = require('../test-util');
+var TestUtil = require('../../test-util');
 
 var expectedDOM = (
     '<div class="selectivity-results-container">' +
@@ -10,9 +10,9 @@ var expectedDOM = (
     '</div>'
 );
 
-TestUtil.createDomTest(
-    'ajax: test response as array',
-    ['ajax', 'single', 'dropdown', 'templates'],
+TestUtil.createJQueryTest(
+    'jquery/ajax: test response as array',
+    ['input-types/single', 'plugins/ajax', 'dropdown', 'templates'],
     function(test, $input, $) {
         $input.selectivity({
             ajax: {
@@ -36,9 +36,9 @@ TestUtil.createDomTest(
     }
 );
 
-TestUtil.createDomTest(
-    'ajax: test response as object',
-    ['ajax', 'single', 'dropdown', 'templates'],
+TestUtil.createJQueryTest(
+    'jquery/ajax: test response as object',
+    ['input-types/single', 'plugins/ajax', 'dropdown', 'templates'],
     function(test, $input, $) {
         $input.selectivity({
             ajax: {
@@ -64,9 +64,9 @@ TestUtil.createDomTest(
     }
 );
 
-TestUtil.createDomTest(
-    'ajax: test response as nested object',
-    ['ajax', 'single', 'dropdown', 'templates'],
+TestUtil.createJQueryTest(
+    'jquery/ajax: test response as nested object',
+    ['input-types/single', 'plugins/ajax', 'dropdown', 'templates'],
     function(test, $input, $) {
         $input.selectivity({
             ajax: {

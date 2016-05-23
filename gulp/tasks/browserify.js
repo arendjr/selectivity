@@ -22,9 +22,15 @@ module.exports = function() {
 
     var b = browserify({ debug: argv['source-map'] === true, standalone: 'selectivity' });
 
+    if (!argv.api) {
+        throw new Error('No API specified! Run `gulp usage` for usage info.');
+    } else if (argv.api !== 'jquery' && argv.modules.indexOf('plugins/traditional') > -1) {
+        throw new Error('The `traditional` plugin is only compatible with the jQuery API!');
+    }
+
     fs.writeFileSync('src/selectivity-custom.js', argv.modules.map(function(module) {
-        return 'require("./selectivity-' + module + '");';
-    }).join('') + 'module.exports=require("./selectivity-base");');
+        return 'require("./' + module + '");';
+    }).join('') + 'module.exports=require("./apis/' + argv.api + '");');
 
     b.add('./src/selectivity-custom.js');
 
@@ -35,6 +41,8 @@ module.exports = function() {
 
     if (argv.lodash) {
         b.external(LODASH_METHODS.map(function(method) { return 'lodash/' + method; }));
+    } else if (argv.api === 'jquery') {
+        b.external(['lodash/extend']);
     }
 
     b.plugin(collapse);
@@ -49,7 +57,7 @@ module.exports = function() {
 
     if (argv.lodash) {
         stream = stream.pipe(replace(/require\(['"]lodash\/(\w+)['"]\)/g, 'window._.$1'));
-    } else {
+    } else if (argv.api === 'jquery') {
         stream = stream.pipe(replace(/require\(['"]lodash\/extend['"]\)/g,
                                      'require("jquery").extend'));
     }

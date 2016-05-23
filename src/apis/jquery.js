@@ -78,4 +78,6 @@ function selectivity(methodName, options) {
     return (result === undefined ? this : result);
 }
 
+selectivity.Selectivity = Selectivity;
+
 module.exports = $.fn.selectivity = selectivity;

@@ -3,9 +3,9 @@
 var $ = require('jquery');
 var debounce = require('lodash/debounce');
 
-var Selectivity = require('./selectivity-base');
+var Selectivity = require('../selectivity');
 
-require('./selectivity-locale');
+require('../locale');
 
 /**
  * Option listener that implements a convenience query function for performing AJAX requests.

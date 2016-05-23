@@ -1,10 +1,10 @@
 'use strict';
 
-var DomUtil = require('../test-util');
+var DomUtil = require('../../test-util');
 
-DomUtil.createDomTest(
-    'traditional: test initialization of single select input',
-    ['single', 'templates', 'traditional'],
+DomUtil.createJQueryTest(
+    'jquery/traditional: test initialization of single select input',
+    ['input-types/single', 'plugins/traditional', 'templates'],
     { indexResource: 'testcase-traditional.html' },
     function(test, $input, $) {
         $input.selectivity();
@@ -21,9 +21,9 @@ DomUtil.createDomTest(
     }
 );
 
-DomUtil.createDomTest(
-    'traditional: test initialization of single select input with custom query',
-    ['single', 'templates', 'traditional'],
+DomUtil.createJQueryTest(
+    'jquery/traditional: test initialization of single select input with custom query',
+    ['input-types/single', 'plugins/traditional', 'templates'],
     { indexResource: 'testcase-traditional.html' },
     function(test, $input) {
         $input.selectivity({
@@ -38,9 +38,9 @@ DomUtil.createDomTest(
     }
 );
 
-DomUtil.createDomTest(
-    'traditional: test initialization of single select input with empty value',
-    ['single', 'templates', 'traditional'],
+DomUtil.createJQueryTest(
+    'jquery/traditional: test initialization of single select input with empty value',
+    ['input-types/single', 'plugins/traditional', 'templates'],
     { indexResource: 'testcase-traditional-empty-value.html' },
     function(test, $input) {
         $input.selectivity();
@@ -51,9 +51,9 @@ DomUtil.createDomTest(
     }
 );
 
-DomUtil.createDomTest(
-    'traditional: test initialization of multiple select input',
-    ['multiple', 'templates', 'traditional'],
+DomUtil.createJQueryTest(
+    'jquery/traditional: test initialization of multiple select input',
+    ['input-types/multiple', 'plugins/traditional', 'templates'],
     { indexResource: 'testcase-traditional-multiple.html' },
     function(test, $input, $) {
         $input.selectivity();
@@ -74,9 +74,9 @@ DomUtil.createDomTest(
     }
 );
 
-DomUtil.createDomTest(
-    'traditional: test change events of single select input',
-    ['single', 'templates', 'traditional'],
+DomUtil.createJQueryTest(
+    'jquery/traditional: test change events of single select input',
+    ['input-types/single', 'plugins/traditional', 'templates'],
     { indexResource: 'testcase-traditional.html' },
     function(test, $input, $) {
         var changeEvents = 0;
@@ -98,9 +98,9 @@ DomUtil.createDomTest(
     }
 );
 
-DomUtil.createDomTest(
-    'traditional: test change events of multiple select input',
-    ['multiple', 'templates', 'traditional'],
+DomUtil.createJQueryTest(
+    'jquery/traditional: test change events of multiple select input',
+    ['input-types/multiple', 'plugins/traditional', 'templates'],
     { indexResource: 'testcase-traditional-multiple.html' },
     function(test, $input, $) {
         var changeEvents = 0;

@@ -1,6 +1,6 @@
 'use strict';
 
-var TestUtil = require('../test-util');
+var TestUtil = require('../../test-util');
 
 var items = [
     'Amsterdam',
@@ -41,9 +41,9 @@ function query(options) {
     });
 }
 
-TestUtil.createDomTest(
-    'dropdown: test disabled items',
-    ['single', 'dropdown', 'templates'],
+TestUtil.createJQueryTest(
+    'jquery/dropdown: test disabled items',
+    ['input-types/single', 'dropdown', 'templates'],
     function(test, $input, $) {
         $input.selectivity({
             query: function(options) {
@@ -91,9 +91,9 @@ TestUtil.createDomTest(
     }
 );
 
-TestUtil.createDomTest(
-    'dropdown: test disabled items with submenu',
-    ['single', 'dropdown', 'submenu', 'templates'],
+TestUtil.createJQueryTest(
+    'jquery/dropdown: test disabled items with submenu',
+    ['input-types/single', 'plugins/submenu', 'dropdown', 'templates'],
     function(test, $input, $) {
         $input.selectivity({
             query: function(options) {
@@ -141,9 +141,9 @@ TestUtil.createDomTest(
     }
 );
 
-TestUtil.createDomTest(
-    'dropdown: test initial highlights',
-    ['single', 'dropdown', 'templates'],
+TestUtil.createJQueryTest(
+    'jquery/dropdown: test initial highlights',
+    ['input-types/single', 'dropdown', 'templates'],
     function(test, $input, $) {
         $input.selectivity({
             items: [ 'Amsterdam', 'Antwerp', 'Athens' ]
@@ -167,9 +167,9 @@ TestUtil.createDomTest(
     }
 );
 
-TestUtil.createDomTest(
-    'dropdown: test load more',
-    ['single', 'dropdown', 'templates'],
+TestUtil.createJQueryTest(
+    'jquery/dropdown: test load more',
+    ['input-types/single', 'dropdown', 'templates'],
     function(test, $input, $) {
         $input.selectivity({ query: query });
 
@@ -203,9 +203,9 @@ TestUtil.createDomTest(
     }
 );
 
-TestUtil.createDomTest(
-    'dropdown: test search',
-    ['single', 'dropdown', 'templates'],
+TestUtil.createJQueryTest(
+    'jquery/dropdown: test search',
+    ['input-types/single', 'dropdown', 'templates'],
     function(test, $input, $) {
         $input.selectivity({ query: query });
 

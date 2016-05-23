@@ -1,6 +1,6 @@
 'use strict';
 
-var TestUtil = require('../test-util');
+var TestUtil = require('../../test-util');
 
 var items = [
     'Amsterdam',
@@ -48,9 +48,9 @@ function query() {
     };
 }
 
-TestUtil.createDomTest(
-    'async: test with async',
-    ['async', 'single', 'dropdown', 'templates'],
+TestUtil.createJQueryTest(
+    'jquery/async: test with async',
+    ['input-types/single', 'plugins/async', 'dropdown', 'templates'],
     { async: true },
     function(test, $input, $) {
         $input.selectivity({ query: query() });
@@ -72,9 +72,9 @@ TestUtil.createDomTest(
     }
 );
 
-TestUtil.createDomTest(
-    'async: test without async',
-    ['single', 'dropdown', 'templates'],
+TestUtil.createJQueryTest(
+    'jquery/async: test without async',
+    ['input-types/single', 'dropdown', 'templates'],
     { async: true },
     function(test, $input, $) {
         $input.selectivity({ query: query() });

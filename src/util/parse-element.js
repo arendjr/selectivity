@@ -1,9 +1,9 @@
 'use strict';
 
 /**
- * Renders an HTML string and returns the resulting DOM element.
+ * Parses an HTML string and returns the resulting DOM element.
  *
- * @param html HTML representing the element to render.
+ * @param html HTML representation of the element to parse.
  */
 module.exports = function(html) {
 

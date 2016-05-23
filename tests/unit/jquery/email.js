@@ -1,10 +1,10 @@
 'use strict';
 
-var TestUtil = require('../test-util');
+var TestUtil = require('../../test-util');
 
-TestUtil.createDomTest(
-    'email: test value on enter',
-    ['email', 'templates'],
+TestUtil.createJQueryTest(
+    'jquery/email: test value on enter',
+    ['input-types/email', 'templates'],
     function(test, $input, $) {
         $input.selectivity({
             inputType: 'Email'
@@ -17,9 +17,9 @@ TestUtil.createDomTest(
     }
 );
 
-TestUtil.createDomTest(
-    'email: test value after space and enter',
-    ['email', 'templates'],
+TestUtil.createJQueryTest(
+    'jquery/email: test value after space and enter',
+    ['input-types/email', 'templates'],
     function(test, $input, $) {
         $input.selectivity({
             inputType: 'Email'

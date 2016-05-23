@@ -1,56 +1,52 @@
 'use strict';
 
-var TestUtil = require('../test-util');
+var tape = require('tape');
 
-TestUtil.createDomTest(
-    'matcher: test basic matcher',
-    [],
-    function(test, $input) {
-        var Selectivity = $input.selectivity;
+var Selectivity = require('../../src/selectivity');
 
-        test.deepEqual(
-            Selectivity.matcher({ id: 1, text: 'Amsterdam' }, 'am'),
-            { id: 1, text: 'Amsterdam' }
-        );
-        test.deepEqual(
-            Selectivity.matcher({ id: 1, text: 'Amsterdam' }, 'sterdam'),
-            { id: 1, text: 'Amsterdam' }
-        );
+tape('matcher: test basic matcher', function(test) {
+    test.plan(6);
 
-        test.deepEqual(
-            Selectivity.matcher({ id: 45, text: 'Rotterdam' }, 'am'),
-            { id: 45, text: 'Rotterdam' }
-        );
-        test.deepEqual(Selectivity.matcher({ id: 45, text: 'Rotterdam' }, 'sterdam'), null);
+    test.deepEqual(
+        Selectivity.matcher({ id: 1, text: 'Amsterdam' }, 'am'),
+        { id: 1, text: 'Amsterdam' }
+    );
+    test.deepEqual(
+        Selectivity.matcher({ id: 1, text: 'Amsterdam' }, 'sterdam'),
+        { id: 1, text: 'Amsterdam' }
+    );
 
-        test.deepEqual(Selectivity.matcher({ id: 29, text: 'Łódź' }, 'łódź'),
-                                           { id: 29, text: 'Łódź' });
-        test.deepEqual(Selectivity.matcher({ id: 29, text: 'Łódź' }, 'lodz'), null);
-    }
-);
+    test.deepEqual(
+        Selectivity.matcher({ id: 45, text: 'Rotterdam' }, 'am'),
+        { id: 45, text: 'Rotterdam' }
+    );
+    test.deepEqual(Selectivity.matcher({ id: 45, text: 'Rotterdam' }, 'sterdam'), null);
 
-TestUtil.createDomTest(
-    'matcher: test diacritics',
-    ['diacritics'],
-    function(test, $input) {
-        var Selectivity = $input.selectivity;
+    test.deepEqual(Selectivity.matcher({ id: 29, text: 'Łódź' }, 'łódź'),
+                                       { id: 29, text: 'Łódź' });
+    test.deepEqual(Selectivity.matcher({ id: 29, text: 'Łódź' }, 'lodz'), null);
+});
 
-        test.deepEqual(
-            Selectivity.matcher({ id: 1, text: 'Amsterdam' }, 'am'),
-            { id: 1, text: 'Amsterdam' }
-        );
-        test.deepEqual(
-            Selectivity.matcher({ id: 1, text: 'Amsterdam' }, 'sterdam'),
-            { id: 1, text: 'Amsterdam' }
-        );
+tape('matcher: test diacritics', function(test) {
+    test.plan(5);
 
-        test.deepEqual(
-            Selectivity.matcher({ id: 45, text: 'Rotterdam' }, 'am'),
-            { id: 45, text: 'Rotterdam' }
-        );
-        test.deepEqual(Selectivity.matcher({ id: 45, text: 'Rotterdam' }, 'sterdam'), null);
+    require('../../src/plugins/diacritics');
 
-        test.deepEqual(Selectivity.matcher({ id: 29, text: 'Łódź' }, 'lodz'),
-                                           { id: 29, text: 'Łódź' });
-    }
-);
+    test.deepEqual(
+        Selectivity.matcher({ id: 1, text: 'Amsterdam' }, 'am'),
+        { id: 1, text: 'Amsterdam' }
+    );
+    test.deepEqual(
+        Selectivity.matcher({ id: 1, text: 'Amsterdam' }, 'sterdam'),
+        { id: 1, text: 'Amsterdam' }
+    );
+
+    test.deepEqual(
+        Selectivity.matcher({ id: 45, text: 'Rotterdam' }, 'am'),
+        { id: 45, text: 'Rotterdam' }
+    );
+    test.deepEqual(Selectivity.matcher({ id: 45, text: 'Rotterdam' }, 'sterdam'), null);
+
+    test.deepEqual(Selectivity.matcher({ id: 29, text: 'Łódź' }, 'lodz'),
+                                       { id: 29, text: 'Łódź' });
+});
