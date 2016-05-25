@@ -40,14 +40,17 @@ function createSelectivityNextToSelectElement($el, options) {
     options.allowClear = ('allowClear' in options ? options.allowClear : !$el.prop('required'));
 
     var items = $el.children('option,optgroup').map(mapOptions).get();
+    options.data = data;
+
     options.items = (options.query ? null : items);
 
     options.placeholder = options.placeholder || $el.data('placeholder') || '';
 
-    options.data = data;
+    options.tabIndex = (options.tabIndex === undefined ? $el.attr('tabindex') || 0
+                                                       : options.tabIndex);
 
     var classes = ($el.attr('class') || 'selectivity-input').split(' ');
-    if (classes.indexOf('selectivity-input') === -1) {
+    if (classes.indexOf('selectivity-input') < 0) {
         classes.push('selectivity-input');
     }
 

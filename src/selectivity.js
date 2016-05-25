@@ -3,6 +3,7 @@
 var extend = require('lodash/extend');
 
 var EventListener = require('./event-listener');
+var toggleClass = require('./util/toggle-class');
 
 /**
  * Selectivity Base Constructor.
@@ -303,7 +304,7 @@ extend(Selectivity.prototype, {
 
         if (!options || !options.noSearch) {
             input.addEventListener('keyup', function(event) {
-                if (!event.isDefaultPrevented()) {
+                if (!event.defaultPrevented) {
                     this.search();
                 }
             }.bind(this));
@@ -344,7 +345,7 @@ extend(Selectivity.prototype, {
 
         this.focus();
 
-        this.el.classList.add('open');
+        toggleClass(this.el, 'open', true);
     },
 
     /**
@@ -457,6 +458,10 @@ extend(Selectivity.prototype, {
 
         options = options || {};
 
+        Selectivity.OptionListeners.forEach(function(listener) {
+            listener(this, options);
+        }.bind(this));
+
         for (var key in options) {
             if (!options.hasOwnProperty(key)) {
                 continue;
@@ -468,7 +473,7 @@ extend(Selectivity.prototype, {
                 if (type === 'null') {
                     return value === null;
                 } else if (type === 'array') {
-                    return value instanceof Array;
+                    return Array.isArray(value);
                 } else {
                     return typeof value === type;
                 }
@@ -494,10 +499,6 @@ extend(Selectivity.prototype, {
                 break;
             }
         }
-
-        Selectivity.OptionListeners.forEach(function(listener) {
-            listener(this, options);
-        }.bind(this));
 
         extend(this.options, options);
 
@@ -653,7 +654,7 @@ extend(Selectivity.prototype, {
 
         this.dropdown = null;
 
-        this.el.classList.remove('open');
+        toggleClass(this.el, 'open', false);
     },
 
     /**
@@ -661,7 +662,7 @@ extend(Selectivity.prototype, {
      */
     _mouseleave: function() {
 
-        this.el.classList.remove('hover');
+        toggleClass(this.el, 'hover', false);
     },
 
     /**
@@ -669,7 +670,7 @@ extend(Selectivity.prototype, {
      */
     _mouseenter: function() {
 
-        this.el.classList.add('hover');
+        toggleClass(this.el, 'hover', true);
     }
 
 });
@@ -880,7 +881,7 @@ Selectivity.processItem = function(item) {
  */
 Selectivity.processItems = function(items) {
 
-    if (items instanceof Array) {
+    if (Array.isArray(items)) {
         return items.map(Selectivity.processItem);
     } else {
         throw new Error('invalid items');

@@ -191,7 +191,7 @@ var callSuper = Selectivity.inherits(SubmenuPlugin, Dropdown, {
             var resultItem = findResultItem(resultItems, item.id);
             var dropdownEl = this.el;
 
-            this.submenu = new Dropdown({
+            this.submenu = new Dropdown(this.selectivity, {
                 highlightFirstItem: !item.selectable,
                 items: item.submenu.items || null,
                 parentMenu: this,
@@ -202,7 +202,6 @@ var callSuper = Selectivity.inherits(SubmenuPlugin, Dropdown, {
                     el.style.width = rect + 'px';
                 },
                 query: item.submenu.query || null,
-                selectivity: this.selectivity,
                 showSearchInput: item.submenu.showSearchInput
             });
 

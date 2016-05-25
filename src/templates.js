@@ -171,8 +171,13 @@ Selectivity.Templates = {
      * Renders a container for item children.
      *
      * The template is expected to have an element with the class 'selectivity-result-children'.
+     *
+     * @param options Options object containing the following property:
+     *                childrenHtml - Rendered HTML for the children.
      */
-    resultChildren: '<div class="selectivity-result-children"></div>',
+    resultChildren: function(options) {
+        return '<div class="selectivity-result-children">' + options.childrenHtml + '</div>';
+    },
 
     /**
      * Render a result item in the dropdown.

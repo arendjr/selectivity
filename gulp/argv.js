@@ -65,8 +65,9 @@ var argv = yargs
 argv.modules = (argv.modules === 'all' ? glob.sync('src/**/*.js').map(function(file) {
     return file.slice(4, -3);
 }).filter(function(module) {
-    return !_.includes(MODULE_BLACKLIST, module) && !_.startsWith(module, 'apis/') &&
-           !_.startsWith(module, 'util/');
+    return !_.includes(MODULE_BLACKLIST, module) &&
+           !(module === 'plugins/traditional' && argv.api !== 'jquery') &&
+           !_.startsWith(module, 'util/') && !_.startsWith(module, 'apis/');
 }) : argv.modules.split(','));
 
 module.exports = argv;

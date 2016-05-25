@@ -4,14 +4,20 @@ var extend = require('lodash/extend');
 var isString = require('lodash/isString');
 
 var Selectivity = require('../selectivity');
+var getItemSelector = require('../util/get-item-selector');
 var parseElement = require('../util/parse-element');
-var quoteCssAttr = require('../util/quote-css-attr');
 var removeElement = require('../util/remove-element');
 var stopPropagation = require('../util/stop-propagation');
+var toggleClass = require('../util/toggle-class');
 
 var KEY_BACKSPACE = 8;
 var KEY_DELETE = 46;
 var KEY_ENTER = 13;
+
+var INPUT_CLASS = 'selectivity-multiple-input';
+var INPUT_SELECTOR = '.' + INPUT_CLASS;
+var SELECTED_ITEM_CLASS = 'selectivity-multiple-selected-item';
+var SELECTED_ITEM_SELECTOR = '.' + SELECTED_ITEM_CLASS;
 
 var hasTouch = 'ontouchstart' in window;
 
@@ -26,7 +32,7 @@ function InputTypeMultiple(options) {
 
     this._highlightedItemId = null;
 
-    this.initSearchInput(this.$('.selectivity-multiple-input:not(.selectivity-width-detector)'));
+    this.initSearchInput(this.$(INPUT_SELECTOR + ':not(.selectivity-width-detector)'));
 
     this.rerenderSelection();
 
@@ -82,17 +88,19 @@ function InputTypeMultiple(options) {
         tokenizer: 'function'
     });
 
-    this.events.on({
+    var events = {
         'change': this.rerenderSelection,
-        'change selectivity-multiple-input': stopPropagation,
         'click': this._clicked,
-        'click selectivity-multiple-selected-item': this._itemClicked,
-        'click selectivity-multiple-selected-item-remove': this._itemRemoveClicked,
-        'keydown selectivity-multiple-input': this._keyHeld,
-        'keyup selectivity-multiple-input': this._keyReleased,
-        'paste selectivity-multiple-input': this._onPaste,
         'selectivity-selected': this._resultSelected
-    });
+    };
+    events['change ' + INPUT_CLASS] = stopPropagation;
+    events['click ' + SELECTED_ITEM_CLASS] = this._itemClicked;
+    events['click ' + SELECTED_ITEM_CLASS + '-remove'] = this._itemRemoveClicked;
+    events['keydown ' + INPUT_CLASS] = this._keyHeld;
+    events['keyup ' + INPUT_CLASS] = this._keyReleased;
+    events['paste ' + INPUT_CLASS] = this._onPaste;
+
+    this.events.on(events);
 }
 
 /**
@@ -132,7 +140,7 @@ var callSuper = Selectivity.inherits(InputTypeMultiple, Selectivity, {
             }
         }
 
-        this.$searchInput.val('');
+        this.searchInput.value = '';
     },
 
     /**
@@ -232,13 +240,10 @@ var callSuper = Selectivity.inherits(InputTypeMultiple, Selectivity, {
 
             this._scrollToBottom();
         } else if (event.removed) {
-            var quotedId = quoteCssAttr(event.removed.id);
-            removeElement(
-                this.$('.selectivity-multiple-selected-item[data-item-id=' + quotedId + ']')
-            );
+            removeElement(this.$(getItemSelector(SELECTED_ITEM_CLASS, event.removed.id)));
         } else {
             var el;
-            while ((el = this.$('.selectivity-multiple-selected-item'))) {
+            while ((el = this.$(SELECTED_ITEM_SELECTOR))) {
                 removeElement(el);
             }
 
@@ -269,13 +274,13 @@ var callSuper = Selectivity.inherits(InputTypeMultiple, Selectivity, {
      */
     search: function() {
 
-        var term = this.$searchInput.val();
+        var term = this.searchInput.value;
 
         if (this.options.tokenizer) {
             term = this.options.tokenizer(term, this._data, this.add.bind(this), this.options);
 
-            if (isString(term) && term !== this.$searchInput.val()) {
-                this.$searchInput.val(term);
+            if (isString(term) && term !== this.searchInput.value) {
+                this.searchInput.value = term;
             }
         }
 
@@ -310,7 +315,7 @@ var callSuper = Selectivity.inherits(InputTypeMultiple, Selectivity, {
 
         if (data === null) {
             return [];
-        } else if (data instanceof Array) {
+        } else if (Array.isArray(data)) {
             return data.map(this.validateItem, this);
         } else {
             throw new Error('Data for MultiSelectivity instance should be array');
@@ -328,7 +333,7 @@ var callSuper = Selectivity.inherits(InputTypeMultiple, Selectivity, {
 
         if (value === null) {
             return [];
-        } else if (value instanceof Array) {
+        } else if (Array.isArray(value)) {
             if (value.every(Selectivity.isValidId)) {
                 return value;
             } else {
@@ -372,7 +377,7 @@ var callSuper = Selectivity.inherits(InputTypeMultiple, Selectivity, {
      */
     _createToken: function() {
 
-        var term = this.$searchInput.val();
+        var term = this.searchInput.value;
         var createTokenItem = this.options.createTokenItem;
 
         if (term && createTokenItem) {
@@ -400,8 +405,8 @@ var callSuper = Selectivity.inherits(InputTypeMultiple, Selectivity, {
 
         this._highlightedItemId = id;
 
-        this.el.querySelectorAll('.selectivity-multiple-selected-item').forEach(function(el) {
-            el.classList[el.getAttribute('data-item-id') === id ? 'add' : 'remove']('highlighted');
+        this.el.querySelectorAll(SELECTED_ITEM_SELECTOR).forEach(function(el) {
+            toggleClass(el, 'highlighted', el.getAttribute('data-item-id') === id);
         });
 
         if (!hasTouch) {
@@ -504,8 +509,8 @@ var callSuper = Selectivity.inherits(InputTypeMultiple, Selectivity, {
      */
     _scrollToBottom: function() {
 
-        var inputContainer = this.$('.selectivity-multiple-input-container');
-        inputContainer.scrollTop(inputContainer.clientHeight);
+        var inputContainer = this.$(INPUT_SELECTOR + '-container');
+        inputContainer.scrollTop = inputContainer.clientHeight;
     },
 
     /**

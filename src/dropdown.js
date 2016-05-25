@@ -3,17 +3,24 @@
 var extend = require('lodash/extend');
 
 var EventListener = require('./event-listener');
+var getItemSelector = require('./util/get-item-selector');
 var parseElement = require('./util/parse-element');
-var quoteCssAttr = require('./util/quote-css-attr');
 var removeElement = require('./util/remove-element');
 var stopPropagation = require('./util/stop-propagation');
+var toggleClass = require('./util/toggle-class');
 
 var Selectivity = require('./selectivity');
+
+var HIGHLIGHT_CLASS = 'highlight';
+var HIGHLIGHT_SELECTOR = '.' + HIGHLIGHT_CLASS;
+var LOAD_MORE_CLASS = 'selectivity-load-more';
+var LOAD_MORE_SELECTOR = '.' + LOAD_MORE_CLASS;
+var RESULT_ITEM_CLASS = 'selectivity-result-item';
 
 var SCROLL_EVENTS = ['scroll', 'touchend', 'touchmove'];
 
 /**
- * selectivity Dropdown Constructor.
+ * Selectivity Dropdown Constructor.
  *
  * @param selectivity Selectivity instance to which the dropdown belongs.
  * @param options Options object. Should have the following properties:
@@ -86,18 +93,19 @@ function SelectivityDropdown(selectivity, options) {
         selectivity.focus();
     }
 
+    var events = {};
+    events['click ' + LOAD_MORE_CLASS] = this._loadMoreClicked;
+    events['click ' + RESULT_ITEM_CLASS] = this._resultClicked;
+    events['mouseenter ' + LOAD_MORE_CLASS] = this._loadMoreHovered;
+    events['mouseenter ' + RESULT_ITEM_CLASS] = this._resultHovered;
+
     this.events = new EventListener(this.el, this);
-    this.events.on({
-        'click selectivity-load-more': this._loadMoreClicked,
-        'click selectivity-result-item': this._resultClicked,
-        'mouseenter selectivity-load-more': this._loadMoreHovered,
-        'mouseenter selectivity-result-item': this._resultHovered
-    });
+    this.events.on(events);
 
     this._attachScrollListeners();
     this._suppressMouseWheel();
 
-    setTimeout(selectivity.triggerEvent.bind(selectivity, 'selectivity-open'), 1);
+    setTimeout(this.triggerOpen.bind(this), 1);
 }
 
 /**
@@ -133,7 +141,7 @@ extend(SelectivityDropdown.prototype, {
 
             this.selectivity.events.off('selectivity-selecting', this.close);
 
-            this.selectivity.triggerEvent('selectivity-close');
+            this.triggerClose();
 
             this._removeScrollListeners();
         }
@@ -149,15 +157,8 @@ extend(SelectivityDropdown.prototype, {
      */
     highlight: function(item, options) {
 
-        var el = this.$('.highlight');
-        if (el) {
-            el.classList.remove('highlight');
-        }
-
-        el = this.$('.selectivity-result-item[data-item-id=' + quoteCssAttr(item.id) + ']');
-        if (el) {
-            el.classList.add('highlight');
-        }
+        toggleClass(this.$(HIGHLIGHT_SELECTOR), HIGHLIGHT_CLASS, false);
+        toggleClass(this.$(getItemSelector(RESULT_ITEM_CLASS, item.id)), HIGHLIGHT_CLASS, true);
 
         this.highlightedResult = item;
         this.loadMoreHighlighted = false;
@@ -176,9 +177,8 @@ extend(SelectivityDropdown.prototype, {
      */
     highlightLoadMore: function() {
 
-        this.$('.highlight').classList.remove('highlight');
-
-        this.$('.selectivity-load-more').classList.add('highlight');
+        toggleClass(this.$(HIGHLIGHT_SELECTOR), HIGHLIGHT_CLASS, false);
+        toggleClass(this.$(LOAD_MORE_SELECTOR), HIGHLIGHT_CLASS, true);
 
         this.highlightedResult = null;
         this.loadMoreHighlighted = true;
@@ -192,7 +192,7 @@ extend(SelectivityDropdown.prototype, {
      */
     loadMore: function() {
 
-        removeElement(this.$('.selectivity-load-more'));
+        removeElement(this.$(LOAD_MORE_SELECTOR));
         this.resultsContainer.innerHTML += this.selectivity.template('loading');
 
         this.options.query({
@@ -370,7 +370,11 @@ extend(SelectivityDropdown.prototype, {
      */
     showResults: function(results, options) {
 
-        removeElement(this.$('.selectivity-loading'));
+        if (options.add) {
+            removeElement(this.$('.selectivity-loading'));
+        } else {
+            this.resultsContainer.innerHTML = '';
+        }
 
         var resultsHtml = this.renderItems(results);
         if (options.hasMore) {
@@ -385,7 +389,7 @@ extend(SelectivityDropdown.prototype, {
         this.hasMore = options.hasMore;
 
         var value = this.selectivity.value();
-        if (value && !(value instanceof Array)) {
+        if (value && !Array.isArray(value)) {
             var item = Selectivity.findNestedById(results, value);
             if (item) {
                 this.highlight(item, { reason: 'current_value' });
@@ -396,6 +400,22 @@ extend(SelectivityDropdown.prototype, {
         }
 
         this.position();
+    },
+
+    /**
+     * Triggers the 'selectivity-close' event.
+     */
+    triggerClose: function() {
+
+        this.selectivity.triggerEvent('selectivity-close');
+    },
+
+    /**
+     * Triggers the 'selectivity-open' event.
+     */
+    triggerOpen: function() {
+
+        this.selectivity.triggerEvent('selectivity-open');
     },
 
     /**
@@ -511,11 +531,9 @@ extend(SelectivityDropdown.prototype, {
      */
     _scrolled: function() {
 
-        var loadMoreEl = this.$('.selectivity-load-more');
-        if (loadMoreEl) {
-            if (loadMoreEl.offsetTop - this.resultsContainer.scrollTop < this.el.clientHeight) {
-                this.loadMore();
-            }
+        var el = this.$(LOAD_MORE_SELECTOR);
+        if (el && el.offsetTop - this.resultsContainer.scrollTop < this.el.clientHeight) {
+            this.loadMore();
         }
     },
 
