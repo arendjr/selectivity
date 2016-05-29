@@ -2,6 +2,7 @@
 
 var Selectivity = require('../selectivity');
 var findResultItem = require('../util/find-result-item');
+var getKeyCode = require('../util/get-key-code');
 
 var KEY_BACKSPACE = 8;
 var KEY_DOWN_ARROW = 40;
@@ -79,7 +80,8 @@ function listener(selectivity, input) {
 
         var dropdown = selectivity.dropdown;
         if (dropdown) {
-            if (event.keyCode === KEY_BACKSPACE) {
+            var keyCode = getKeyCode(event);
+            if (keyCode === KEY_BACKSPACE) {
                 if (!input.value) {
                     if (dropdown.submenu) {
                         var submenu = dropdown.submenu;
@@ -92,15 +94,15 @@ function listener(selectivity, input) {
                     event.preventDefault();
                     keydownCanceled = true;
                 }
-            } else if (event.keyCode === KEY_DOWN_ARROW) {
+            } else if (keyCode === KEY_DOWN_ARROW) {
                 moveHighlight(dropdown, 1);
-            } else if (event.keyCode === KEY_UP_ARROW) {
+            } else if (keyCode === KEY_UP_ARROW) {
                 moveHighlight(dropdown, -1);
-            } else if (event.keyCode === KEY_TAB) {
+            } else if (keyCode === KEY_TAB) {
                 setTimeout(function() {
                     selectivity.close();
                 }, 1);
-            } else if (event.keyCode === KEY_ENTER) {
+            } else if (keyCode === KEY_ENTER) {
                 event.preventDefault(); // don't submit forms on keydown
             }
         }
@@ -115,6 +117,7 @@ function listener(selectivity, input) {
         }
 
         var dropdown = selectivity.dropdown;
+        var keyCode = getKeyCode(event);
         if (keydownCanceled) {
             event.preventDefault();
             keydownCanceled = false;
@@ -124,11 +127,11 @@ function listener(selectivity, input) {
                 selectivity.focus();
                 closeSubmenu = null;
             }
-        } else if (event.keyCode === KEY_BACKSPACE) {
+        } else if (keyCode === KEY_BACKSPACE) {
             if (!dropdown && selectivity.options.allowClear) {
                 selectivity.clear();
             }
-        } else if (event.keyCode === KEY_ENTER && !event.ctrlKey) {
+        } else if (keyCode === KEY_ENTER && !event.ctrlKey) {
             if (dropdown) {
                 dropdown.selectHighlight();
             } else if (selectivity.options.showDropdown !== false) {
@@ -136,11 +139,11 @@ function listener(selectivity, input) {
             }
 
             event.preventDefault();
-        } else if (event.keyCode === KEY_ESCAPE) {
+        } else if (keyCode === KEY_ESCAPE) {
             selectivity.close();
 
             event.preventDefault();
-        } else if (event.keyCode === KEY_DOWN_ARROW || event.keyCode === KEY_UP_ARROW) {
+        } else if (keyCode === KEY_DOWN_ARROW || keyCode === KEY_UP_ARROW) {
             // handled in keyHeld() because the response feels faster and it works with repeated
             // events if the user holds the key for a longer period
             // still, we issue an open() call here in case the dropdown was not yet open...

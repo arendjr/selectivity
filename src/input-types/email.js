@@ -118,7 +118,11 @@ function emailTokenizer(input, selection, createToken) {
  */
 function InputTypeEmail(options) {
 
-    InputTypeMultiple.call(this, options);
+    InputTypeMultiple.call(this, extend({
+        createTokenItem: createEmailItem,
+        showDropdown: false,
+        tokenizer: emailTokenizer
+    }, options));
 
     this.events.on('blur', function() {
         var input = this.searchInput;
@@ -128,26 +132,6 @@ function InputTypeEmail(options) {
     });
 }
 
-/**
- * Methods.
- */
-var callSuper = Selectivity.inherits(InputTypeEmail, InputTypeMultiple, {
-
-    /**
-     * @inherit
-     *
-     * Note that for the Email input type the option showDropdown is set to false and the tokenizer
-     * option is set to a tokenizer specialized for email addresses.
-     */
-    setOptions: function(options) {
-
-        callSuper(this, 'setOptions', extend({
-            createTokenItem: createEmailItem,
-            showDropdown: false,
-            tokenizer: emailTokenizer
-        }, options));
-    }
-
-});
+Selectivity.inherits(InputTypeEmail, InputTypeMultiple);
 
 module.exports = Selectivity.InputTypes.Email = InputTypeEmail;

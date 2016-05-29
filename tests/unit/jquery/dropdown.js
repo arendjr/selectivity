@@ -215,13 +215,15 @@ TestUtil.createJQueryTest(
         test.equal($('.selectivity-result-item').length, 10);
         test.equal($('.selectivity-load-more').length, 1);
 
-        $('.selectivity-search-input').val('am').keyup();
+        $('.selectivity-search-input').val('am');
+        TestUtil.simulateEvent('.selectivity-search-input', 'keyup');
 
         test.equal($('.selectivity-dropdown').length, 1);
         test.equal($('.selectivity-result-item').length, 3);
         test.equal($('.selectivity-load-more').length, 0);
 
-        $('.selectivity-search-input').val('').keyup();
+        $('.selectivity-search-input').val('');
+        TestUtil.simulateEvent('.selectivity-search-input', 'keyup');
 
         test.equal($('.selectivity-dropdown').length, 1);
         test.equal($('.selectivity-result-item').length, 10);

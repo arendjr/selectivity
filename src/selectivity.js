@@ -20,8 +20,10 @@ var toggleClass = require('./util/toggle-class');
  *                          property is set by the API wrapper.
  *                value - Initial value to set. This should be an array of IDs. This property is
  *                        mutually exclusive with 'data'.
+ * @param allowedOptions Optional object with allowed options and their expected types. See below
+ *                       where this.allowedOptions is assigned for examples.
  */
-function Selectivity(options) {
+function Selectivity(options, allowedOptions) {
 
     /**
      * Reference to the currently open dropdown.
@@ -92,7 +94,7 @@ function Selectivity(options) {
         this.data(options.data || null, { triggerChange: false });
     }
 
-    this.allowedOptions = {
+    this.allowedOptions = extend({
         closeOnSelect: 'boolean',
         dropdown: 'function|null',
         initSelection: 'function|null',
@@ -105,7 +107,7 @@ function Selectivity(options) {
         searchInputListeners: 'array',
         suppressWheelClassName: 'string|null',
         tabIndex: 'number'
-    };
+    }, allowedOptions);
 
     this.setOptions(options);
 
@@ -298,16 +300,17 @@ extend(Selectivity.prototype, {
 
         this.searchInput = input;
 
+        var selectivity = this;
         this.searchInputListeners.forEach(function(listener) {
-            listener(this, input);
-        }.bind(this));
+            listener(selectivity, input);
+        });
 
         if (!options || !options.noSearch) {
             input.addEventListener('keyup', function(event) {
                 if (!event.defaultPrevented) {
-                    this.search();
+                    selectivity.search();
                 }
-            }.bind(this));
+            });
         }
     },
 

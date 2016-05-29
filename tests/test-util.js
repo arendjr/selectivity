@@ -1,5 +1,6 @@
 'use strict';
 
+var _ = require('lodash');
 var freshy = require('freshy');
 var jsdom = require('jsdom');
 var tape = require('tape');
@@ -68,6 +69,37 @@ module.exports = {
                 }
             });
         });
+    },
+
+    /**
+     * Simulates an event on a given element.
+     *
+     * @param element The element to trigger the event on. May also be specified through a CSS
+     *                selector.
+     * @param eventName Name of the event to trigger.
+     * @param eventData Optional properties to assign to the event.
+     */
+    simulateEvent: function(element, eventName, eventData) {
+
+        var el = element;
+        if (_.isString(el)) {
+            el = document.querySelector(el);
+        }
+        if (!el) {
+            throw new Error('No such element: ' + element);
+        }
+
+        var eventInterface = 'Event';
+        if (eventName === 'blur' || eventName === 'focus') {
+            eventInterface = 'FocusEvent';
+        } else if (eventName === 'click' || _.startsWith(eventName, 'mouse')) {
+            eventInterface = 'MouseEvent';
+        } else if (_.startsWith(eventName, 'key')) {
+            eventInterface = 'KeyboardEvent';
+        }
+
+        var event = new window[eventInterface](eventName, eventData);
+        el.dispatchEvent(event);
     }
 
 };

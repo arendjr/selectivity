@@ -50,9 +50,9 @@ tape('event-listener: it supports multiple listeners on an element', function(te
             }
 
             var events = new EventListener(document.body);
-            events.on('click', 'some-class', callback1);
-            events.on('click', 'some-class', callback1); // the same handler twice will be filtered
-            events.on('click', 'some-class', callback2);
+            events.on('click', '.some-class', callback1);
+            events.on('click', '.some-class', callback1); // the same handler twice will be filtered
+            events.on('click', '.some-class', callback2);
 
             var event = new window.MouseEvent('click', { bubbles: true, view: window });
             document.querySelector('.some-class').dispatchEvent(event);
@@ -83,8 +83,8 @@ tape('event-listener: it supports an event map', function(test) {
 
             var events = new EventListener(document.body);
             events.on({
-                'click some-class': callback1,
-                'click another-class': callback2
+                'click .some-class': callback1,
+                'click .another-class': callback2
             });
 
             var event = new window.MouseEvent('click', { bubbles: true, view: window });
@@ -120,8 +120,8 @@ tape('event-listener: it supports stopping the propagation', function(test) {
             }
 
             var events = new EventListener(document.body);
-            events.on('click', 'some-class', callback1);
-            events.on('click', 'another-class', callback2);
+            events.on('click', '.some-class', callback1);
+            events.on('click', '.another-class', callback2);
 
             var event = new window.MouseEvent('click', { bubbles: true, view: window });
             document.querySelector('.another-class').dispatchEvent(event);
@@ -155,14 +155,14 @@ tape('event-listener: it supports unregistering a listener', function(test) {
             }
 
             var events = new EventListener(document.body);
-            events.on('click', 'some-class', callback);
+            events.on('click', '.some-class', callback);
 
             var event = new window.MouseEvent('click', { bubbles: true, view: window });
             document.querySelector('.some-class').dispatchEvent(event);
 
             test.equal(numCallbacksCalled, 1);
 
-            events.off('click', 'some-class', callback);
+            events.off('click', '.some-class', callback);
             document.querySelector('.some-class').dispatchEvent(event);
 
             test.equal(numCallbacksCalled, 1);
@@ -187,7 +187,7 @@ tape('event-listener: it supports capturing an event', function(test) {
             }
 
             var events = new EventListener(document.body);
-            events.on('blur', 'some-class', callback);
+            events.on('blur', '.some-class', callback);
 
             var event = new window.FocusEvent('blur', { bubbles: false, view: window });
             document.querySelector('.another-class').dispatchEvent(event);
@@ -214,7 +214,7 @@ tape('event-listener: it has a destructor', function(test) {
             }
 
             var events = new EventListener(document.body);
-            events.on('click', 'some-class', callback);
+            events.on('click', '.some-class', callback);
 
             var event = new window.MouseEvent('click', { bubbles: true, view: window });
             document.querySelector('.some-class').dispatchEvent(event);

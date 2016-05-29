@@ -5,6 +5,7 @@ var isString = require('lodash/isString');
 
 var Selectivity = require('../selectivity');
 var getItemSelector = require('../util/get-item-selector');
+var getKeyCode = require('../util/get-key-code');
 var parseElement = require('../util/parse-element');
 var removeElement = require('../util/remove-element');
 var stopPropagation = require('../util/stop-propagation');
@@ -14,10 +15,8 @@ var KEY_BACKSPACE = 8;
 var KEY_DELETE = 46;
 var KEY_ENTER = 13;
 
-var INPUT_CLASS = 'selectivity-multiple-input';
-var INPUT_SELECTOR = '.' + INPUT_CLASS;
-var SELECTED_ITEM_CLASS = 'selectivity-multiple-selected-item';
-var SELECTED_ITEM_SELECTOR = '.' + SELECTED_ITEM_CLASS;
+var INPUT_SELECTOR = '.selectivity-multiple-input';
+var SELECTED_ITEM_SELECTOR = '.selectivity-multiple-selected-item';
 
 var hasTouch = 'ontouchstart' in window;
 
@@ -26,21 +25,11 @@ var hasTouch = 'ontouchstart' in window;
  */
 function InputTypeMultiple(options) {
 
-    Selectivity.call(this, options);
-
-    this.el.innerHTML = this.template('multipleSelectInput', { enabled: this.enabled });
-
-    this._highlightedItemId = null;
-
-    this.initSearchInput(this.$(INPUT_SELECTOR + ':not(.selectivity-width-detector)'));
-
-    this.rerenderSelection();
-
-    if (!options.positionDropdown) {
+    Selectivity.call(this, extend({
         // dropdowns for multiple-value inputs should open below the select box,
         // unless there is not enough space below, but there is space enough above, then it should
         // open upwards
-        this.options.positionDropdown = function(el, selectEl) {
+        positionDropdown: function(el, selectEl) {
             var rect = selectEl.getBoundingClientRect();
             var dropdownHeight = el.clientHeight;
             var openUpwards = (rect.bottom + dropdownHeight > window.innerHeight &&
@@ -51,10 +40,8 @@ function InputTypeMultiple(options) {
                 top: (openUpwards ? rect.top - dropdownHeight : rect.bottom) + 'px',
                 width: rect.width + 'px'
             });
-        };
-    }
-
-    extend(this.allowedOptions, {
+        }
+    }, options), {
         /**
          * If set to true, when the user enters a backspace while there is no text in the search
          * field but there are selected items, the last selected item will be highlighted and when a
@@ -88,17 +75,25 @@ function InputTypeMultiple(options) {
         tokenizer: 'function'
     });
 
+    this.el.innerHTML = this.template('multipleSelectInput', { enabled: this.enabled });
+
+    this._highlightedItemId = null;
+
+    this.initSearchInput(this.$(INPUT_SELECTOR + ':not(.selectivity-width-detector)'));
+
+    this.rerenderSelection();
+
     var events = {
         'change': this.rerenderSelection,
         'click': this._clicked,
         'selectivity-selected': this._resultSelected
     };
-    events['change ' + INPUT_CLASS] = stopPropagation;
-    events['click ' + SELECTED_ITEM_CLASS] = this._itemClicked;
-    events['click ' + SELECTED_ITEM_CLASS + '-remove'] = this._itemRemoveClicked;
-    events['keydown ' + INPUT_CLASS] = this._keyHeld;
-    events['keyup ' + INPUT_CLASS] = this._keyReleased;
-    events['paste ' + INPUT_CLASS] = this._onPaste;
+    events['change ' + INPUT_SELECTOR] = stopPropagation;
+    events['click ' + SELECTED_ITEM_SELECTOR] = this._itemClicked;
+    events['click ' + SELECTED_ITEM_SELECTOR + '-remove'] = this._itemRemoveClicked;
+    events['keydown ' + INPUT_SELECTOR] = this._keyHeld;
+    events['keyup ' + INPUT_SELECTOR] = this._keyReleased;
+    events['paste ' + INPUT_SELECTOR] = this._onPaste;
 
     this.events.on(events);
 }
@@ -240,7 +235,7 @@ var callSuper = Selectivity.inherits(InputTypeMultiple, Selectivity, {
 
             this._scrollToBottom();
         } else if (event.removed) {
-            removeElement(this.$(getItemSelector(SELECTED_ITEM_CLASS, event.removed.id)));
+            removeElement(this.$(getItemSelector(SELECTED_ITEM_SELECTOR, event.removed.id)));
         } else {
             var el;
             while ((el = this.$(SELECTED_ITEM_SELECTOR))) {
@@ -318,7 +313,7 @@ var callSuper = Selectivity.inherits(InputTypeMultiple, Selectivity, {
         } else if (Array.isArray(data)) {
             return data.map(this.validateItem, this);
         } else {
-            throw new Error('Data for MultiSelectivity instance should be array');
+            throw new Error('Data for MultiSelectivity instance should be an array');
         }
     },
 
@@ -443,7 +438,7 @@ var callSuper = Selectivity.inherits(InputTypeMultiple, Selectivity, {
 
         this._originalValue = this.searchInput.value;
 
-        if (event.keyCode === KEY_ENTER && !event.ctrlKey) {
+        if (getKeyCode(event) === KEY_ENTER && !event.ctrlKey) {
             event.preventDefault();
         }
     },
@@ -454,14 +449,16 @@ var callSuper = Selectivity.inherits(InputTypeMultiple, Selectivity, {
     _keyReleased: function(event) {
 
         var inputHadText = !!this._originalValue;
+        var keyCode = getKeyCode(event);
 
-        if (event.keyCode === KEY_ENTER && !event.ctrlKey) {
+        console.log('\n_keyReleased', keyCode, '\n\n')
+        if (keyCode === KEY_ENTER && !event.ctrlKey) {
             if (this.options.createTokenItem) {
                 this._createToken();
             }
-        } else if (event.keyCode === KEY_BACKSPACE && !inputHadText) {
+        } else if (keyCode === KEY_BACKSPACE && !inputHadText) {
             this._backspacePressed();
-        } else if (event.keyCode === KEY_DELETE && !inputHadText) {
+        } else if (keyCode === KEY_DELETE && !inputHadText) {
             this._deletePressed();
         }
 
@@ -482,6 +479,9 @@ var callSuper = Selectivity.inherits(InputTypeMultiple, Selectivity, {
         }.bind(this), 10);
     },
 
+    /**
+     * @private
+     */
     _renderSelectedItem: function(item) {
 
         var el = parseElement(this.template('multipleSelectedItem', extend({

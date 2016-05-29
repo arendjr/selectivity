@@ -5,13 +5,13 @@ var TestUtil = require('../../test-util');
 TestUtil.createJQueryTest(
     'jquery/email: test value on enter',
     ['input-types/email', 'templates'],
-    function(test, $input, $) {
+    function(test, $input) {
         $input.selectivity({
             inputType: 'Email'
         });
 
-        $input.find('.selectivity-multiple-input').val('test@gmail.com')
-                                                  .trigger($.Event('keyup', { keyCode: 13 }));
+        $input.find('.selectivity-multiple-input').val('test@gmail.com');
+        TestUtil.simulateEvent('.selectivity-multiple-input', 'keyup', { keyCode: 13 });
 
         test.deepEqual($input.selectivity('value'), ['test@gmail.com']);
     }
@@ -20,18 +20,20 @@ TestUtil.createJQueryTest(
 TestUtil.createJQueryTest(
     'jquery/email: test value after space and enter',
     ['input-types/email', 'templates'],
-    function(test, $input, $) {
+    function(test, $input) {
         $input.selectivity({
             inputType: 'Email'
         });
 
         var $multipleInput = $input.find('.selectivity-multiple-input');
-        $multipleInput.val('test@gmail.com ').trigger($.Event('keyup', { keyCode: 32 }));
+        $multipleInput.val('test@gmail.com ');
+        TestUtil.simulateEvent('.selectivity-multiple-input', 'keyup', { keyCode: 32 });
 
         test.equal($multipleInput.val(), '');
         test.deepEqual($input.selectivity('value'), ['test@gmail.com']);
 
-        $multipleInput.val('test2@gmail.com').trigger($.Event('keyup', { keyCode: 13 }));
+        $multipleInput.val('test2@gmail.com');
+        TestUtil.simulateEvent('.selectivity-multiple-input', 'keyup', { keyCode: 13 });
 
         test.deepEqual($input.selectivity('value'), ['test@gmail.com', 'test2@gmail.com']);
     }

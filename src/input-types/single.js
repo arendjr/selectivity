@@ -10,17 +10,11 @@ var stopPropagation = require('../util/stop-propagation');
  */
 function InputTypeSingle(options) {
 
-    Selectivity.call(this, options);
-
-    this.el.innerHTML = this.template('singleSelectInput', this.options);
-
-    this.rerenderSelection();
-
-    if (!options.positionDropdown) {
+    Selectivity.call(this, extend({
         // dropdowns for single-value inputs should open below the select box,
         // unless there is not enough space below, in which case the dropdown should be moved up
         // just enough so it fits in the window, but never so much that it reaches above the top
-        this.options.positionDropdown = function(el, selectEl) {
+        positionDropdown: function(el, selectEl) {
             var rect = selectEl.getBoundingClientRect();
             var dropdownTop = rect.bottom;
 
@@ -34,14 +28,8 @@ function InputTypeSingle(options) {
                 top: dropdownTop - deltaUp + 'px',
                 width: rect.width + 'px'
             });
-        };
-    }
-
-    if (options.showSearchInputInDropdown === false) {
-        this.initSearchInput(this.$('.selectivity-single-select-input'), { noSearch: true });
-    }
-
-    extend(this.allowedOptions, {
+        }
+    }, options), {
         /**
          * Boolean whether the selected item may be removed.
          */
@@ -53,12 +41,20 @@ function InputTypeSingle(options) {
         showSearchInputInDropdown: 'boolean'
     });
 
+    this.el.innerHTML = this.template('singleSelectInput', this.options);
+
+    this.rerenderSelection();
+
+    if (options.showSearchInputInDropdown === false) {
+        this.initSearchInput(this.$('.selectivity-single-select-input'), { noSearch: true });
+    }
+
     this.events.on({
         'change': this.rerenderSelection,
         'click': this._clicked,
-        'click selectivity-search-input': stopPropagation,
-        'click selectivity-single-selected-item-remove': this._itemRemoveClicked,
-        'focus selectivity-single-select-input': this._focused,
+        'click .selectivity-search-input': stopPropagation,
+        'click .selectivity-single-selected-item-remove': this._itemRemoveClicked,
+        'focus .selectivity-single-select-input': this._focused,
         'selectivity-selected': this._resultSelected
     });
 }

@@ -5,6 +5,13 @@ var isString = require('lodash/isString');
 
 var CAPTURED_EVENTS = ['blur', 'focus', 'mouseenter', 'mouseleave', 'scroll'];
 
+function matchesSelector(el, selector) {
+
+    var method = el.matches || el.webkitMatchesSelector ||
+                 el.mozMatchesSelector || el.msMatchesSelector;
+    return method.call(el, selector);
+}
+
 /**
  * Listens to events dispatched to an element or its children.
  *
@@ -47,15 +54,15 @@ extend(EventListener.prototype, {
      * The arguments are the same as for on(), but when no callback is given, all callbacks for the
      * given event and class are discarded.
      */
-    off: function(eventName, className, callback) {
+    off: function(eventName, selector, callback) {
 
-        if (!isString(className)) {
-            callback = className;
-            className = '';
+        if (!isString(selector)) {
+            callback = selector;
+            selector = '';
         }
 
         if (callback) {
-            var events = this.events[eventName][className];
+            var events = this.events[eventName][selector];
             for (var i = 0; i < events.length; i++) {
                 if (events[i] === callback) {
                     events.splice(i, 1);
@@ -63,7 +70,7 @@ extend(EventListener.prototype, {
                 }
             }
         } else {
-            this.events[eventName][className] = [];
+            this.events[eventName][selector] = [];
         }
     },
 
@@ -71,20 +78,20 @@ extend(EventListener.prototype, {
      * Starts listening to an event.
      *
      * @param eventName Name of the event to listen to, in lower-case.
-     * @param className Optional CSS class name. If given, only events inside a child element with
-     *                  that class name are caught.
+     * @param selector Optional CSS selector. If given, only events inside a child element matching
+     *                 the selector are caught.
      * @param callback Callback to invoke when the event is caught.
      *
      * Alternatively, the arguments may be provided using a map to start listening to multiple
-     * events at once. Here, the keys of the map are eventNames and the values are callbacks. Class
-     * names may be specified by separating them from the event name with a space. For example:
+     * events at once. Here, the keys of the map are eventNames and the values are callbacks.
+     * Selectors may be specified by separating them from the event name with a space. For example:
      *
      *     .on({
      *         'blur': this._blurred,
-     *         'click some-input': this._inputClicked,
+     *         'click .some-input': this._inputClicked,
      *     })
      */
-    on: function(eventName, className, callback) {
+    on: function(eventName, selector, callback) {
 
         if (!isString(eventName)) {
             var eventsMap = eventName;
@@ -101,9 +108,9 @@ extend(EventListener.prototype, {
             return;
         }
 
-        if (!isString(className)) {
-            callback = className;
-            className = '';
+        if (!isString(selector)) {
+            callback = selector;
+            selector = '';
         }
 
         if (!this.events.hasOwnProperty(eventName)) {
@@ -113,12 +120,12 @@ extend(EventListener.prototype, {
             this.events[eventName] = {};
         }
 
-        if (!this.events[eventName].hasOwnProperty(className)) {
-            this.events[eventName][className] = [];
+        if (!this.events[eventName].hasOwnProperty(selector)) {
+            this.events[eventName][selector] = [];
         }
 
-        if (this.events[eventName][className].indexOf(callback) < 0) {
-            this.events[eventName][className].push(callback);
+        if (this.events[eventName][selector].indexOf(callback) < 0) {
+            this.events[eventName][selector].push(callback);
         }
     },
 
@@ -141,10 +148,10 @@ extend(EventListener.prototype, {
         var target = event.target;
         var events = this.events[event.type.toLowerCase()];
         while (target && target !== this.el && !isPropagationStopped) {
-            for (var className in events) {
-                if (className && events.hasOwnProperty(className) &&
-                    target.classList.contains(className)) {
-                    callAll(events[className]);
+            for (var selector in events) {
+                if (selector && events.hasOwnProperty(selector) &&
+                    matchesSelector(target, selector)) {
+                    callAll(events[selector]);
                 }
             }
             target = target.parentElement;
