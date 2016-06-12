@@ -1,11 +1,13 @@
 'use strict';
 
-var $ = require('jquery');
 var debounce = require('lodash/debounce');
 
 var Selectivity = require('../selectivity');
+var Locale = require('../locale');
 
-require('../locale');
+function addUrlParam(url, key, value) {
+    return url + (url.indexOf('?') > -1 ? '&' : '?') + key + '=' + encodeURIComponent(value);
+}
 
 /**
  * Option listener that implements a convenience query function for performing AJAX requests.
@@ -14,57 +16,51 @@ Selectivity.OptionListeners.unshift(function(selectivity, options) {
 
     var ajax = options.ajax;
     if (ajax && ajax.url) {
-        var formatError = ajax.formatError || Selectivity.Locale.ajaxError;
-        var minimumInputLength = ajax.minimumInputLength || 0;
-        var params = ajax.params;
-        var processItem = ajax.processItem || function(item) { return item; };
-        var quietMillis = ajax.quietMillis || 0;
-        var resultsCb = ajax.results || function(data) { return { results: data, more: false }; };
-        var transport = ajax.transport || $.ajax;
-
-        if (quietMillis) {
-            transport = debounce(transport, quietMillis);
-        }
-
         options.query = function(queryOptions) {
-            var offset = queryOptions.offset;
             var term = queryOptions.term;
-            if (term.length < minimumInputLength) {
-                queryOptions.error(
-                    Selectivity.Locale.needMoreCharacters(minimumInputLength - term.length)
-                );
-            } else {
-                var url = (ajax.url instanceof Function ? ajax.url(queryOptions) : ajax.url);
-                if (params) {
-                    url += (url.indexOf('?') > -1 ? '&' : '?') + $.param(params(term, offset));
-                }
 
-                var success = ajax.success;
-                var error = ajax.error;
-
-                transport($.extend({}, ajax, {
-                    url: url,
-                    success: function(data, textStatus, jqXHR) {
-                        if (success) {
-                            success(data, textStatus, jqXHR);
-                        }
-
-                        var results = resultsCb(data, offset);
-                        results.results = $.map(results.results, processItem);
-                        queryOptions.callback(results);
-                    },
-                    error: function(jqXHR, textStatus, errorThrown) {
-                        if (error) {
-                            error(jqXHR, textStatus, errorThrown);
-                        }
-
-                        queryOptions.error(
-                            formatError(term, jqXHR, textStatus, errorThrown),
-                            { escape: false }
-                        );
-                    }
-                }));
+            var numCharsNeeded = ajax.minimumInputLength - term.length;
+            if (numCharsNeeded) {
+                queryOptions.error(Locale.needMoreCharacters(numCharsNeeded));
+                return;
             }
+
+            var fetch = ajax.fetch || window.fetch;
+            if (ajax.quietMillis) {
+                fetch = debounce(fetch, ajax.quietMillis);
+            }
+
+            var url = (ajax.url instanceof Function ? ajax.url(queryOptions) : ajax.url);
+            if (queryOptions.params) {
+                var params = queryOptions.params(term, queryOptions.offset || 0);
+                for (var key in params) {
+                    if (params.hasOwnProperty(key)) {
+                        url = addUrlParam(url, key, params[key]);
+                    }
+                }
+            }
+
+            fetch(url, ajax)
+                .then(function(response) {
+                    if (response.ok) {
+                        return response.json();
+                    } else if (response.results) {
+                        return response;
+                    } else {
+                        throw new Error('Unexpected AJAX response');
+                    }
+                })
+                .then(function(response) {
+                    if (Array.isArray(response)) {
+                        queryOptions.callback({ results: response, more: false });
+                    } else {
+                        queryOptions.callback({ results: response.results, more: !!response.more });
+                    }
+                })
+                .catch(function(error) {
+                    var formatError = ajax.formatError || Locale.ajaxError;
+                    queryOptions.error(formatError(term, error), { escape: false });
+                });
         };
     }
 });

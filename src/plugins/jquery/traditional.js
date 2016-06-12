@@ -2,7 +2,7 @@
 
 var $ = require('jquery');
 
-var Selectivity = require('../selectivity');
+var Selectivity = require('../../selectivity');
 
 function createSelectivityNextToSelectElement($el, options) {
 

@@ -8,6 +8,7 @@
         "window": false,
         "event": true,
         "Comment": true,
+        "Promise": true
     },
     "rules": {
         "camelcase": 2,

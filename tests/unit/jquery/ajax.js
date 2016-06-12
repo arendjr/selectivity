@@ -2,6 +2,8 @@
 
 var TestUtil = require('../../test-util');
 
+var FAKE_URL = 'http://localhost/my-endpoint';
+
 var expectedDOM = (
     '<div class="selectivity-results-container">' +
         '<div class="selectivity-result-item highlight" data-item-id="1">Amsterdam</div>' +
@@ -13,81 +15,69 @@ var expectedDOM = (
 TestUtil.createJQueryTest(
     'jquery/ajax: test response as array',
     ['input-types/single', 'plugins/ajax', 'dropdown', 'templates'],
+    { async: true },
     function(test, $input, $) {
+        test.plan(2);
+
         $input.selectivity({
             ajax: {
-                url: true,  // non-null value to bypass test
-                transport: function(settings) {
-                    settings.success([
+                url: FAKE_URL,
+                fetch: function(url) {
+                    test.equal(url, FAKE_URL);
+
+                    return Promise.resolve([
                         { id: 1, text: 'Amsterdam' },
                         { id: 2, text: 'Antwerp' },
                         { id: 3, text: 'Athens' }
                     ]);
-                },
-                results: function(data) {
-                    return { results: data, more: false };
                 }
             }
         });
 
-        $input.click();
+        TestUtil.simulateEvent($input[0], 'click');
 
-        test.equal($('.selectivity-results-container').prop('outerHTML'), expectedDOM);
+        setTimeout(function() {
+            test.equal($('.selectivity-results-container').prop('outerHTML'), expectedDOM);
+            test.end();
+        }, 10);
     }
 );
 
 TestUtil.createJQueryTest(
-    'jquery/ajax: test response as object',
-    ['input-types/single', 'plugins/ajax', 'dropdown', 'templates'],
+    'jquery/ajax: test response as object with default fetch method',
+    ['input-types/single', 'plugins/ajax', 'plugins/jquery/ajax', 'dropdown', 'templates'],
+    { async: true },
     function(test, $input, $) {
+        test.plan(4);
+
+        // the jQuery API should use $.ajax to polyfill the fetch() method,
+        // and it should be able to handle object responses
+        $.ajax = function(url, settings) {
+            test.equal(url, FAKE_URL + '?q=&offset=0');
+            test.equal(settings.cache, true);
+            test.equal(settings.method, 'GET');
+
+            return Promise.resolve({
+                'one': { 'id': 1, 'text': 'Amsterdam' },
+                'two': { 'id': 2, 'text': 'Antwerp' },
+                'three': { 'id': 3, 'text': 'Athens' }
+            });
+        };
+
         $input.selectivity({
             ajax: {
-                url: true,
-                transport: function(settings) {
-                    settings.success({
-                        'items': [
-                            { 'id': 1, 'text': 'Amsterdam' },
-                            { 'id': 2, 'text': 'Antwerp' },
-                            { 'id': 3, 'text': 'Athens' }
-                        ]
-                    });
-                },
-                results: function(data) {
-                    return { results: data.items, more: false };
+                url: FAKE_URL,
+                params: function(term, offset) {
+                    return { q: term, offset: offset };
                 }
             }
         });
 
-        $input.click();
+        TestUtil.simulateEvent($input[0], 'click');
 
-        test.equal($('.selectivity-results-container').prop('outerHTML'), expectedDOM);
-    }
-);
-
-TestUtil.createJQueryTest(
-    'jquery/ajax: test response as nested object',
-    ['input-types/single', 'plugins/ajax', 'dropdown', 'templates'],
-    function(test, $input, $) {
-        $input.selectivity({
-            ajax: {
-                url: true,
-                transport: function(settings) {
-                    settings.success({
-                        'items': {
-                            'one': { 'id': 1, 'text': 'Amsterdam' },
-                            'two': { 'id': 2, 'text': 'Antwerp' },
-                            'three': { 'id': 3, 'text': 'Athens' }
-                        }
-                    });
-                },
-                results: function(data) {
-                    return { results: data.items, more: false };
-                }
-            }
-        });
-
-        $input.click();
-
-        test.equal($('.selectivity-results-container').prop('outerHTML'), expectedDOM);
+        setTimeout(function() {
+            test.equal($('.selectivity-results-container').prop('outerHTML'), expectedDOM);
+            test.end();
+        }, 10);
     }
 );

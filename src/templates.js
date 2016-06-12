@@ -3,8 +3,7 @@
 var escape = require('lodash/escape');
 
 var Selectivity = require('./selectivity');
-
-require('./locale');
+var Locale = require('./locale');
 
 /**
  * Default set of templates to use with Selectivity.js.
@@ -76,7 +75,7 @@ Selectivity.Templates = {
      * replaced with actual results.
      */
     loading: function() {
-        return '<div class="selectivity-loading">' + Selectivity.Locale.loading + '</div>';
+        return '<div class="selectivity-loading">' + Locale.loading + '</div>';
     },
 
     /**
@@ -86,7 +85,7 @@ Selectivity.Templates = {
      * clicked, will load more results.
      */
     loadMore: function() {
-        return '<div class="selectivity-load-more">' + Selectivity.Locale.loadMore + '</div>';
+        return '<div class="selectivity-load-more">' + Locale.loadMore + '</div>';
     },
 
     /**
@@ -159,7 +158,6 @@ Selectivity.Templates = {
      *                term - Search term the user is searching for.
      */
     noResults: function(options) {
-        var Locale = Selectivity.Locale;
         return (
             '<div class="selectivity-error">' +
                 (options.term ? Locale.noResultsForTerm(options.term) : Locale.noResults) +

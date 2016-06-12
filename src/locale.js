@@ -10,7 +10,7 @@ var Selectivity = require('./selectivity');
  * Be aware that these strings are added straight to the HTML output of the templates, so any
  * non-safe strings should be escaped.
  */
-Selectivity.Locale = {
+module.exports = Selectivity.Locale = {
 
     ajaxError: function(term) { return 'Failed to fetch results for <b>' + escape(term) + '</b>'; },
     loading: 'Loading...',
