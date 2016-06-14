@@ -7,7 +7,7 @@
             "request": "launch",
             "program": "${workspaceRoot}/node_modules/.bin/gulp",
             "stopOnEntry": false,
-            "args": ["unit-tests", "--test=jquery/ajax"],
+            "args": ["unit-tests"],
             "cwd": "${workspaceRoot}",
             "preLaunchTask": null,
             "runtimeExecutable": null,
