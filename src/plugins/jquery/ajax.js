@@ -19,7 +19,9 @@ Selectivity.OptionListeners.unshift(function(selectivity, options) {
                 method: init.method || 'GET',
                 xhrFields: (init.credentials === 'include' ? { withCredentials: true } : null)
             }).then(function(data) {
-                deferred.resolve({ results: $.map(data), more: false });
+                deferred.resolve({ results: $.map(data, function(result) {
+                    return result;
+                }), more: false });
             }, function(jqXHR, textStatus, errorThrown) {
                 deferred.reject(new Error('AJAX request returned: ' + textStatus +
                                           (errorThrown ? ', ' + errorThrown : '')));

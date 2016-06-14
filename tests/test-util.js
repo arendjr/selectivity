@@ -53,15 +53,13 @@ module.exports = {
 
                     window.$ = window.jQuery = require('jquery');
 
-                    test.doesNotThrow(function() {
-                        require('../src/selectivity');
-                        require('../src/apis/jquery');
-                        modules.forEach(function(module) {
-                            require('../src/' + module);
-                        });
-
-                        fn(test, window.$('#selectivity-input'), window.$);
+                    require('../src/selectivity');
+                    require('../src/apis/jquery');
+                    modules.forEach(function(module) {
+                        require('../src/' + module);
                     });
+
+                    fn(test, window.$('#selectivity-input'), window.$);
 
                     if (!options.async) {
                         test.end();

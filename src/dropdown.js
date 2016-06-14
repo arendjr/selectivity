@@ -13,9 +13,8 @@ var Selectivity = require('./selectivity');
 
 var HIGHLIGHT_CLASS = 'highlight';
 var HIGHLIGHT_SELECTOR = '.' + HIGHLIGHT_CLASS;
-var LOAD_MORE_CLASS = 'selectivity-load-more';
-var LOAD_MORE_SELECTOR = '.' + LOAD_MORE_CLASS;
-var RESULT_ITEM_CLASS = 'selectivity-result-item';
+var LOAD_MORE_SELECTOR = '.selectivity-load-more';
+var RESULT_ITEM_SELECTOR = '.selectivity-result-item';
 
 var SCROLL_EVENTS = ['scroll', 'touchend', 'touchmove'];
 
@@ -94,10 +93,10 @@ function SelectivityDropdown(selectivity, options) {
     }
 
     var events = {};
-    events['click ' + LOAD_MORE_CLASS] = this._loadMoreClicked;
-    events['click ' + RESULT_ITEM_CLASS] = this._resultClicked;
-    events['mouseenter ' + LOAD_MORE_CLASS] = this._loadMoreHovered;
-    events['mouseenter ' + RESULT_ITEM_CLASS] = this._resultHovered;
+    events['click ' + LOAD_MORE_SELECTOR] = this._loadMoreClicked;
+    events['click ' + RESULT_ITEM_SELECTOR] = this._resultClicked;
+    events['mouseenter ' + LOAD_MORE_SELECTOR] = this._loadMoreHovered;
+    events['mouseenter ' + RESULT_ITEM_SELECTOR] = this._resultHovered;
 
     this.events = new EventListener(this.el, this);
     this.events.on(events);
@@ -152,13 +151,13 @@ extend(SelectivityDropdown.prototype, {
      *
      * @param item The item to highlight.
      * @param options Optional options object that may contain the following property:
-     *                reason - The reason why the result item is being highlighted. Possible values:
-     *                         'current_value', 'first_result', 'hovered'.
+     *                reason - The reason why the result item is being highlighted. Possible
+     *                         values: 'current_value', 'first_result', 'hovered'.
      */
     highlight: function(item, options) {
 
         toggleClass(this.$(HIGHLIGHT_SELECTOR), HIGHLIGHT_CLASS, false);
-        toggleClass(this.$(getItemSelector(RESULT_ITEM_CLASS, item.id)), HIGHLIGHT_CLASS, true);
+        toggleClass(this.$(getItemSelector(RESULT_ITEM_SELECTOR, item.id)), HIGHLIGHT_CLASS, true);
 
         this.highlightedResult = item;
         this.loadMoreHighlighted = false;

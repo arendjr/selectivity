@@ -12,13 +12,24 @@ var Selectivity = require('./selectivity');
  */
 module.exports = Selectivity.Locale = {
 
-    ajaxError: function(term) { return 'Failed to fetch results for <b>' + escape(term) + '</b>'; },
     loading: 'Loading...',
     loadMore: 'Load more...',
+    noResults: 'No results found',
+
+    ajaxError: function(term) {
+        if (term) {
+            return 'Failed to fetch results for <b>' + escape(term) + '</b>';
+        } else {
+            return 'Failed to fetch results';
+        }
+    },
+
     needMoreCharacters: function(numCharacters) {
         return 'Enter ' + numCharacters + ' more characters to search';
     },
-    noResults: 'No results found',
-    noResultsForTerm: function(term) { return 'No results for <b>' + escape(term) + '</b>'; }
+
+    noResultsForTerm: function(term) {
+        return 'No results for <b>' + escape(term) + '</b>';
+    }
 
 };

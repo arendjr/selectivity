@@ -36,10 +36,10 @@ TestUtil.createJQueryTest(
 
         TestUtil.simulateEvent($input[0], 'click');
 
-        setTimeout(function() {
+        setImmediate(function() {
             test.equal($('.selectivity-results-container').prop('outerHTML'), expectedDOM);
             test.end();
-        }, 10);
+        });
     }
 );
 

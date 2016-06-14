@@ -31,8 +31,8 @@ Selectivity.OptionListeners.unshift(function(selectivity, options) {
             }
 
             var url = (ajax.url instanceof Function ? ajax.url(queryOptions) : ajax.url);
-            if (queryOptions.params) {
-                var params = queryOptions.params(term, queryOptions.offset || 0);
+            if (ajax.params) {
+                var params = ajax.params(term, queryOptions.offset || 0);
                 for (var key in params) {
                     if (params.hasOwnProperty(key)) {
                         url = addUrlParam(url, key, params[key]);
@@ -44,7 +44,7 @@ Selectivity.OptionListeners.unshift(function(selectivity, options) {
                 .then(function(response) {
                     if (response.ok) {
                         return response.json();
-                    } else if (response.results) {
+                    } else if (Array.isArray(response) || response.results) {
                         return response;
                     } else {
                         throw new Error('Unexpected AJAX response');
