@@ -451,7 +451,6 @@ var callSuper = Selectivity.inherits(InputTypeMultiple, Selectivity, {
         var inputHadText = !!this._originalValue;
         var keyCode = getKeyCode(event);
 
-        console.log('\n_keyReleased', keyCode, '\n\n')
         if (keyCode === KEY_ENTER && !event.ctrlKey) {
             if (this.options.createTokenItem) {
                 this._createToken();

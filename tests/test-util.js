@@ -87,12 +87,16 @@ module.exports = {
             throw new Error('No such element: ' + element);
         }
 
+        eventData = eventData || {};
         var eventInterface = 'Event';
         if (eventName === 'blur' || eventName === 'focus') {
+            eventData.bubbles = false;
             eventInterface = 'FocusEvent';
         } else if (eventName === 'click' || _.startsWith(eventName, 'mouse')) {
+            eventData.bubbles = true;
             eventInterface = 'MouseEvent';
         } else if (_.startsWith(eventName, 'key')) {
+            eventData.bubbles = true;
             eventInterface = 'KeyboardEvent';
         }
 

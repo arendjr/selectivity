@@ -8,10 +8,17 @@ var Selectivity = require('../selectivity');
 function isValidEmail(email) {
 
     var atIndex = email.indexOf('@');
+    if (atIndex === -1 || email.indexOf(' ') > -1) {
+        return false; // email needs to have an '@', and may not contain any spaces
+    }
+
     var dotIndex = email.lastIndexOf('.');
-    var spaceIndex = email.indexOf(' ');
-    return (atIndex > 0 && dotIndex > atIndex + 1 &&
-            dotIndex < email.length - 2 && spaceIndex === -1);
+    if (dotIndex === -1) {
+        return true; // no dot is fine
+    }
+
+    // but if there is a dot after the '@', it must be followed by at least two more characters
+    return (dotIndex > atIndex ? dotIndex < email.length - 2 : true);
 }
 
 function lastWord(token, length) {

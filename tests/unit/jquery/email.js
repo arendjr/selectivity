@@ -6,9 +6,7 @@ TestUtil.createJQueryTest(
     'jquery/email: test value on enter',
     ['input-types/email', 'templates'],
     function(test, $input) {
-        $input.selectivity({
-            inputType: 'Email'
-        });
+        $input.selectivity({ inputType: 'Email' });
 
         $input.find('.selectivity-multiple-input').val('test@gmail.com');
         TestUtil.simulateEvent('.selectivity-multiple-input', 'keyup', { keyCode: 13 });
@@ -21,9 +19,7 @@ TestUtil.createJQueryTest(
     'jquery/email: test value after space and enter',
     ['input-types/email', 'templates'],
     function(test, $input) {
-        $input.selectivity({
-            inputType: 'Email'
-        });
+        $input.selectivity({ inputType: 'Email' });
 
         var $multipleInput = $input.find('.selectivity-multiple-input');
         $multipleInput.val('test@gmail.com ');
