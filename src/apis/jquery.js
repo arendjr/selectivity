@@ -72,6 +72,13 @@ function selectivity(methodName, options) {
             }
 
             this.selectivity = new InputType(options);
+
+            // monkey-patch the triggerEvent() implementation to use jQuery events instead
+            this.selectivity.triggerEvent = function(eventName, data) {
+                var event = $.Event(eventName, data || {});
+                $(this.el).trigger(event);
+                return !event.isDefaultPrevented();
+            };
         }
     });
 
