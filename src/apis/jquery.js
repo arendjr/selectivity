@@ -4,6 +4,13 @@ var $ = require('jquery');
 
 var Selectivity = require('../selectivity');
 
+var EVENT_PROPERTIES = {
+    'change': ['added', 'removed', 'value'],
+    'selectivity-highlight': ['id', 'item'],
+    'selectivity-selected': ['id', 'item'],
+    'selectivity-selecting': ['id', 'item']
+};
+
 /**
  * Create a new Selectivity instance or invoke a method on an instance.
  *
@@ -73,12 +80,17 @@ function selectivity(methodName, options) {
 
             this.selectivity = new InputType(options);
 
-            // monkey-patch the triggerEvent() implementation to use jQuery events instead
-            this.selectivity.triggerEvent = function(eventName, data) {
-                var event = $.Event(eventName, data || {});
-                $(this.el).trigger(event);
-                return !event.isDefaultPrevented();
-            };
+            // create event listeners that will copy the custom properties from the native events
+            // to the jQuery events, so jQuery users can use them seamlessly
+            $.each(EVENT_PROPERTIES, function(eventName, properties) {
+                $this.on(eventName, function(event) {
+                    if (event.originalEvent) {
+                        properties.forEach(function(propertyName) {
+                            event[propertyName] = event.originalEvent[propertyName];
+                        });
+                    }
+                });
+            });
         }
     });
 

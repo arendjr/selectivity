@@ -5,7 +5,7 @@ var TestUtil = require('../../test-util');
 TestUtil.createJQueryTest(
     'jquery/keyboard: test select nested item',
     ['input-types/single', 'plugins/keyboard', 'dropdown', 'templates'],
-    function(test, $input, $) {
+    function(test, $input) {
         $input.selectivity({
             items: [{
                 text: 'Austria',
@@ -27,9 +27,9 @@ TestUtil.createJQueryTest(
         });
 
         $input.find('.selectivity-single-select').click();
-        $('.selectivity-search-input').val('belg')
-                                      .trigger('keyup')
-                                      .trigger(new $.Event('keyup', { keyCode: 13 }));
+        $input.find('.selectivity-search-input').val('belg');
+        TestUtil.simulateEvent('.selectivity-search-input', 'keyup');
+        TestUtil.simulateEvent('.selectivity-search-input', 'keyup', { keyCode: 13 });
 
         test.deepEqual($input.selectivity('value'), 2);
     }
@@ -38,7 +38,7 @@ TestUtil.createJQueryTest(
 TestUtil.createJQueryTest(
     'jquery/keyboard: test change event after enter',
     ['input-types/multiple', 'plugins/keyboard', 'dropdown', 'templates'],
-    function(test, $input, $) {
+    function(test, $input) {
         var numChangeEvents = 0;
 
         $input.selectivity({
@@ -51,10 +51,10 @@ TestUtil.createJQueryTest(
             test.deepEqual(event.value, ['Amsterdam']);
         });
 
-        $input.find('.selectivity-multiple-input').val('Amsterdam')
-                                                  .trigger('keyup')
-                                                  .trigger('change')
-                                                  .trigger(new $.Event('keyup', { keyCode: 13 }));
+        $input.find('.selectivity-multiple-input').val('Amsterdam');
+        TestUtil.simulateEvent('.selectivity-multiple-input', 'keyup');
+        TestUtil.simulateEvent('.selectivity-multiple-input', 'change');
+        TestUtil.simulateEvent('.selectivity-multiple-input', 'keyup', { keyCode: 13 });
 
         test.deepEqual($input.selectivity('value'), ['Amsterdam']);
 

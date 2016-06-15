@@ -1,8 +1,8 @@
 'use strict';
 
-var DomUtil = require('../../test-util');
+var TestUtil = require('../../test-util');
 
-DomUtil.createJQueryTest(
+TestUtil.createJQueryTest(
     'jquery/traditional: test initialization of single select input',
     ['input-types/single', 'plugins/jquery/traditional', 'templates'],
     { indexResource: 'testcase-traditional.html' },
@@ -21,7 +21,7 @@ DomUtil.createJQueryTest(
     }
 );
 
-DomUtil.createJQueryTest(
+TestUtil.createJQueryTest(
     'jquery/traditional: test initialization of single select input with custom query',
     ['input-types/single', 'plugins/jquery/traditional', 'templates'],
     { indexResource: 'testcase-traditional.html' },
@@ -38,7 +38,7 @@ DomUtil.createJQueryTest(
     }
 );
 
-DomUtil.createJQueryTest(
+TestUtil.createJQueryTest(
     'jquery/traditional: test initialization of single select input with empty value',
     ['input-types/single', 'plugins/jquery/traditional', 'templates'],
     { indexResource: 'testcase-traditional-empty-value.html' },
@@ -51,7 +51,7 @@ DomUtil.createJQueryTest(
     }
 );
 
-DomUtil.createJQueryTest(
+TestUtil.createJQueryTest(
     'jquery/traditional: test initialization of multiple select input',
     ['input-types/multiple', 'plugins/jquery/traditional', 'templates'],
     { indexResource: 'testcase-traditional-multiple.html' },
@@ -74,11 +74,11 @@ DomUtil.createJQueryTest(
     }
 );
 
-DomUtil.createJQueryTest(
+TestUtil.createJQueryTest(
     'jquery/traditional: test change events of single select input',
     ['input-types/single', 'plugins/jquery/traditional', 'templates'],
     { indexResource: 'testcase-traditional.html' },
-    function(test, $input, $) {
+    function(test, $input) {
         var changeEvents = 0;
         $input.selectivity({
             query: function() {}
@@ -88,8 +88,7 @@ DomUtil.createJQueryTest(
             changeEvents++;
         });
 
-        $('.selectivity-single-select').trigger({
-            type: 'selectivity-selected',
+        TestUtil.simulateEvent('.selectivity-single-select', 'selectivity-selected', {
             item: { id: '1', text: 'foo bar' }
         });
 
@@ -98,11 +97,11 @@ DomUtil.createJQueryTest(
     }
 );
 
-DomUtil.createJQueryTest(
+TestUtil.createJQueryTest(
     'jquery/traditional: test change events of multiple select input',
     ['input-types/multiple', 'plugins/jquery/traditional', 'templates'],
     { indexResource: 'testcase-traditional-multiple.html' },
-    function(test, $input, $) {
+    function(test, $input) {
         var changeEvents = 0;
         $input.selectivity({
             query: function() {}
@@ -112,16 +111,14 @@ DomUtil.createJQueryTest(
             changeEvents++;
         });
 
-        $('.selectivity-multiple-input-container').trigger({
-            type: 'selectivity-selected',
+        TestUtil.simulateEvent('.selectivity-multiple-input-container', 'selectivity-selected', {
             item: { id: '1', text: 'foo bar' }
         });
 
         test.equal(changeEvents, 1);
         test.deepEqual($input.val(), ['1', '3', '4']);
 
-        $('.selectivity-multiple-input-container').trigger({
-            type: 'selectivity-selected',
+        TestUtil.simulateEvent('.selectivity-multiple-input-container', 'selectivity-selected', {
             item: { id: '2', text: 'foo bar' }
         });
 

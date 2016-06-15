@@ -93,7 +93,7 @@ module.exports = {
             eventData.bubbles = false;
             eventInterface = 'FocusEvent';
         } else if (eventName === 'click' || _.startsWith(eventName, 'mouse')) {
-            eventData.bubbles = true;
+            eventData.bubbles = (eventName !== 'mouseenter' && eventName !== 'mouseleave');
             eventInterface = 'MouseEvent';
         } else if (_.startsWith(eventName, 'key')) {
             eventData.bubbles = true;
