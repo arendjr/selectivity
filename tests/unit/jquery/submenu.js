@@ -37,13 +37,17 @@ TestUtil.createJQueryTest(
             multiple: true
         });
 
-        $input.click();
+        test.equal($('.selectivity-dropdown').length, 0);
 
-        $('.selectivity-result-item[data-item-id="1"]').mouseover();
+        TestUtil.simulateEvent($input[0], 'click');
+
+        test.equal($('.selectivity-dropdown').length, 1);
+
+        TestUtil.simulateEvent('.selectivity-result-item[data-item-id="1"]', 'mouseenter');
 
         test.equal($('.selectivity-dropdown').length, 2);
 
-        $('.selectivity-result-item[data-item-id="2"]').click();
+        TestUtil.simulateEvent('.selectivity-result-item[data-item-id="2"]', 'click');
 
         test.equal($('.selectivity-dropdown').length, 0);
         test.deepEqual($input.selectivity('value'), [2]);
@@ -71,20 +75,22 @@ TestUtil.createJQueryTest(
             }]
         });
 
-        $input.click();
+        TestUtil.simulateEvent($input[0], 'click');
         test.equal($('.selectivity-result-item').length, 3);
 
-        $('.selectivity-result-item[data-item-id="1"]').mouseover();
+        TestUtil.simulateEvent('.selectivity-result-item[data-item-id="1"]', 'mouseenter');
 
         test.equal($('.selectivity-dropdown').length, 2);
         test.equal($('.selectivity-result-item').length, 3);
 
-        $('.selectivity-search-input').val('Second').trigger('keyup');
+        $('.selectivity-search-input').val('Second');
+        TestUtil.simulateEvent('.selectivity-search-input', 'keyup');
 
         test.equal($('.selectivity-dropdown').length, 2);
         test.equal($('.selectivity-result-item').length, 2);
 
-        $('.selectivity-search-input').val('').trigger('keyup');
+        $('.selectivity-search-input').val('');
+        TestUtil.simulateEvent('.selectivity-search-input', 'keyup');
 
         test.equal($('.selectivity-dropdown').length, 2);
         test.equal($('.selectivity-result-item').length, 3);
@@ -98,20 +104,20 @@ TestUtil.createJQueryTest(
     function(test, $input, $) {
         $input.selectivity({ items: items });
 
-        $input.find('.selectivity-single-select').click();
+        TestUtil.simulateEvent('.selectivity-single-select', 'click');
 
         test.equal($('.selectivity-dropdown').length, 1);
 
-        $('.selectivity-result-item[data-item-id="3"]').mouseover();
+        TestUtil.simulateEvent('.selectivity-result-item[data-item-id="3"]', 'mouseenter');
 
         test.equal($('.selectivity-dropdown').length, 2);
 
-        $('.selectivity-result-item[data-item-id="2"]').mouseover();
+        TestUtil.simulateEvent('.selectivity-result-item[data-item-id="2"]', 'mouseenter');
 
         setTimeout(function() {
             test.equal($('.selectivity-dropdown').length, 1);
 
-            $('.selectivity-result-item[data-item-id="2"]').click();
+            TestUtil.simulateEvent('.selectivity-result-item[data-item-id="2"]', 'click');
 
             test.equal($('.selectivity-dropdown').length, 0);
 
@@ -129,15 +135,15 @@ TestUtil.createJQueryTest(
     function(test, $input, $) {
         $input.selectivity({ items: items });
 
-        $input.find('.selectivity-single-select').click();
+        TestUtil.simulateEvent('.selectivity-single-select', 'click');
 
         test.equal($('.selectivity-dropdown').length, 1);
 
-        $('.selectivity-result-item[data-item-id="3"]').mouseover();
+        TestUtil.simulateEvent('.selectivity-result-item[data-item-id="3"]', 'mouseenter');
 
         test.equal($('.selectivity-dropdown').length, 2);
 
-        $('.selectivity-result-item[data-item-id="3-1"]').click();
+        TestUtil.simulateEvent('.selectivity-result-item[data-item-id="3-1"]', 'click');
 
         test.equal($('.selectivity-dropdown').length, 0);
 

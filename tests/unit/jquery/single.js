@@ -39,7 +39,7 @@ TestUtil.createJQueryTest(
 
         test.equal($input.selectivity('value'), 1);
 
-        $input.find('.selectivity-single-selected-item-remove').click();
+        TestUtil.simulateEvent('.selectivity-single-selected-item-remove', 'click');
 
         test.equal($input.selectivity('data'), null);
         test.equal($input.selectivity('value'), null);
