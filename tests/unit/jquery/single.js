@@ -258,16 +258,16 @@ TestUtil.createJQueryTest(
 TestUtil.createJQueryTest(
     'jquery/single: test mouse over',
     ['input-types/single', 'templates'],
-    function(test, $input, $) {
+    function(test, $input) {
         $input.selectivity({
             value: 'Amsterdam'
         });
 
-        $('.selectivity-single-select').trigger('mouseover');
+        TestUtil.simulateEvent('.selectivity-single-select', 'mouseenter');
 
         test.ok($input.hasClass('hover'));
 
-        $input.trigger('mouseleave');
+        TestUtil.simulateEvent($input[0], 'mouseleave');
 
         test.equal($input.hasClass('hover'), false);
     }
@@ -285,7 +285,7 @@ TestUtil.createJQueryTest(
 
         test.equal($input.attr('class'), 'open');
 
-        $('.selectivity-single-select').trigger('mouseover');
+        TestUtil.simulateEvent('.selectivity-single-select', 'mouseenter');
 
         test.equal($input.attr('class'),'open hover');
 
@@ -308,7 +308,7 @@ TestUtil.createJQueryTest(
 
         test.ok($input.hasClass('open'));
 
-        $input.trigger('blur');
+        TestUtil.simulateEvent($input[0], 'blur');
 
         test.equal($('#selectivity-input').hasClass('open'), false);
     }
@@ -325,9 +325,9 @@ TestUtil.createJQueryTest(
 
         $('.selectivity-single-select').click();
 
-        $('.selectivity-single-select').trigger('mouseover');
+        TestUtil.simulateEvent('.selectivity-single-select', 'mouseenter');
 
-        $input.trigger('blur');
+        TestUtil.simulateEvent($input[0], 'blur');
 
         test.equal($input.hasClass('open'), true);
     }

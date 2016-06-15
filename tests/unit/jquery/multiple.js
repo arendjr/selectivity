@@ -271,18 +271,17 @@ TestUtil.createJQueryTest(
 TestUtil.createJQueryTest(
     'jquery/multiple: test mouse over',
     ['input-types/multiple', 'templates'],
-    function(test, $input, $)
-    {
+    function(test, $input) {
         $input.selectivity({
             multiple: true,
             value: ['Amsterdam']
         });
 
-        $('.selectivity-multiple-input').trigger('mouseover');
+        TestUtil.simulateEvent('.selectivity-multiple-input', 'mouseenter');
 
         test.ok($input.hasClass('hover'));
 
-        $('.selectivity-multiple-input').trigger('mouseleave');
+        TestUtil.simulateEvent('.selectivity-multiple-input', 'mouseleave');
 
         test.equal($input.hasClass('hover'), false);
     }
@@ -291,8 +290,7 @@ TestUtil.createJQueryTest(
 TestUtil.createJQueryTest(
     'jquery/multiple: test click and mouse over',
     ['input-types/multiple', 'dropdown', 'templates'],
-    function(test, $input, $)
-    {
+    function(test, $input, $) {
         $input.selectivity({
             multiple: true,
             value: ['Amsterdam']
@@ -302,7 +300,7 @@ TestUtil.createJQueryTest(
 
         test.equal($input.attr('class'), 'open');
 
-        $('.selectivity-multiple-input').trigger('mouseover');
+        TestUtil.simulateEvent('.selectivity-multiple-input', 'mouseenter');
 
         test.equal($input.attr('class'), 'open hover');
         $input.selectivity('close');
@@ -314,8 +312,7 @@ TestUtil.createJQueryTest(
 TestUtil.createJQueryTest(
     'jquery/multiple: test blur event after opening',
     ['input-types/multiple', 'dropdown', 'templates'],
-    function(test, $input, $)
-    {
+    function(test, $input, $) {
         $input.selectivity({
             multiple: true,
             value: ['Amsterdam']
@@ -325,7 +322,7 @@ TestUtil.createJQueryTest(
 
         test.ok($input.hasClass('open'));
 
-        $input.trigger('blur');
+        TestUtil.simulateEvent($input[0], 'blur');
 
         test.equal($input.hasClass('open'), false);
     }

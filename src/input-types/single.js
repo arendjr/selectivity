@@ -29,17 +29,7 @@ function InputTypeSingle(options) {
                 width: rect.width + 'px'
             });
         }
-    }, options), {
-        /**
-         * Boolean whether the selected item may be removed.
-         */
-        allowClear: 'boolean',
-
-        /**
-         * Set to false to remove the search input used in dropdowns. The default is true.
-         */
-        showSearchInputInDropdown: 'boolean'
-    });
+    }, options));
 
     this.el.innerHTML = this.template('singleSelectInput', this.options);
 

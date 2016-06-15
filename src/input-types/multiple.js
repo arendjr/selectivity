@@ -41,39 +41,7 @@ function InputTypeMultiple(options) {
                 width: rect.width + 'px'
             });
         }
-    }, options), {
-        /**
-         * If set to true, when the user enters a backspace while there is no text in the search
-         * field but there are selected items, the last selected item will be highlighted and when a
-         * second backspace is entered the item is deleted. If false, the item gets deleted on the
-         * first backspace. The default value is false.
-         */
-        backspaceHighlightsBeforeDelete: 'boolean',
-
-        /**
-         * Function to create a new item from a user's search term. This is used to turn the term
-         * into an item when dropdowns are disabled and the user presses Enter. It is also used by
-         * the default tokenizer to create items for individual tokens. The function receives a
-         * 'token' parameter which is the search term (or part of a search term) to create an item
-         * for and must return an item object with 'id' and 'text' properties or null if no token
-         * can be created from the term. The default is a function that returns an item where the id
-         * and text both match the token for any non-empty string and which returns null otherwise.
-         */
-        createTokenItem: 'function',
-
-        /**
-         * Function for tokenizing search terms. Will receive the following parameters:
-         * input - The input string to tokenize.
-         * selection - The current selection data.
-         * createToken - Callback to create a token from the search terms. Should be passed an item
-         *               object with 'id' and 'text' properties.
-         * options - The options set on the Selectivity instance.
-         *
-         * Any string returned by the tokenizer function is treated as the remainder of untokenized
-         * input.
-         */
-        tokenizer: 'function'
-    });
+    }, options));
 
     this.el.innerHTML = this.template('multipleSelectInput', { enabled: this.enabled });
 

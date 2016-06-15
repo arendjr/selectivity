@@ -20,10 +20,8 @@ var toggleClass = require('./util/toggle-class');
  *                          property is set by the API wrapper.
  *                value - Initial value to set. This should be an array of IDs. This property is
  *                        mutually exclusive with 'data'.
- * @param allowedOptions Optional object with allowed options and their expected types. See below
- *                       where this.allowedOptions is assigned for examples.
  */
-function Selectivity(options, allowedOptions) {
+function Selectivity(options) {
 
     /**
      * Reference to the currently open dropdown.
@@ -88,28 +86,13 @@ function Selectivity(options, allowedOptions) {
      */
     this.term = '';
 
+    this.setOptions(options);
+
     if (options.value) {
         this.value(options.value, { triggerChange: false });
     } else {
         this.data(options.data || null, { triggerChange: false });
     }
-
-    this.allowedOptions = extend({
-        closeOnSelect: 'boolean',
-        dropdown: 'function|null',
-        initSelection: 'function|null',
-        matcher: 'function|null',
-        placeholder: 'string',
-        positionDropdown: 'function|null',
-        query: 'function|null',
-        readOnly: 'boolean',
-        removeOnly: 'boolean',
-        searchInputListeners: 'array',
-        suppressWheelClassName: 'string|null',
-        tabIndex: 'number'
-    }, allowedOptions);
-
-    this.setOptions(options);
 
     this.el.setAttribute('tabindex', options.tabIndex || 0);
 
@@ -471,18 +454,6 @@ extend(Selectivity.prototype, {
             }
 
             var value = options[key];
-            var type = this.allowedOptions[key];
-            if (type && !type.split('|').some(function(type) {
-                if (type === 'null') {
-                    return value === null;
-                } else if (type === 'array') {
-                    return Array.isArray(value);
-                } else {
-                    return typeof value === type;
-                }
-            })) {
-                throw new Error(key + ' must be of type ' + type);
-            }
 
             switch (key) {
             case 'items':
