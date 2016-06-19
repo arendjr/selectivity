@@ -128,7 +128,7 @@ var callSuper = Selectivity.inherits(SubmenuPlugin, Dropdown, {
             }
         }
 
-        if (this.submenu) {
+        if (this.submenu && options.dropdown !== this) {
             this.submenu.showResults(results, options);
         } else {
             results.forEach(setSelectable);

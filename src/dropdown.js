@@ -541,7 +541,10 @@ extend(SelectivityDropdown.prototype, {
      */
     _showResults: function(results, options) {
 
-        this.showResults(this.selectivity.filterResults(results), options);
+        this.showResults(
+            this.selectivity.filterResults(results),
+            $.extend({ dropdown: this }, options)
+        );
     },
 
     /**
