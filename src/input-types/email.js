@@ -132,7 +132,7 @@ function InputTypeEmail(options) {
     }, options));
 
     this.events.on('blur', function() {
-        var input = this.searchInput;
+        var input = this.input;
         if (input && isValidEmail(lastWord(input.value))) {
             this.add(createEmailItem(input.value));
         }

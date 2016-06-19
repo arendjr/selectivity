@@ -36,7 +36,7 @@ function InputTypeSingle(options) {
     this.rerenderSelection();
 
     if (options.showSearchInputInDropdown === false) {
-        this.initSearchInput(this.$('.selectivity-single-select-input'), { noSearch: true });
+        this.initInput(this.$('.selectivity-single-select-input'), { search: false });
     }
 
     this.events.on({
@@ -74,8 +74,8 @@ var callSuper = Selectivity.inherits(InputTypeSingle, Selectivity, {
 
         callSuper(this, 'close');
 
-        if (options && options.keepFocus && this.searchInput) {
-            this.searchInput.focus();
+        if (options && options.keepFocus && this.input) {
+            this.input.focus();
         }
 
         this._closing = false;
@@ -105,22 +105,6 @@ var callSuper = Selectivity.inherits(InputTypeSingle, Selectivity, {
     getValueForData: function(data) {
 
         return (data ? data.id : null);
-    },
-
-    /**
-     * @inherit
-     */
-    open: function(options) {
-
-        if (!this._opening) {
-            this._opening = true;
-
-            callSuper(this, 'open', extend({
-                showSearchInput: (this.options.showSearchInputInDropdown !== false)
-            }, options));
-
-            this._opening = false;
-        }
     },
 
     /**

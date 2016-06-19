@@ -41,6 +41,20 @@ function Selectivity(options) {
     this.enabled = true;
 
     /**
+     * DOM element for the input.
+     *
+     * May be null as long as there is no visible input. It is set by initInput().
+     */
+    this.input = null;
+
+    /**
+     * Array of input listeners.
+     *
+     * Custom listeners can be specified in the options object.
+     */
+    this.inputListeners = Selectivity.InputListeners;
+
+    /**
      * Array of items from which to select. If set, this will be an array of objects with 'id' and
      * 'text' properties.
      *
@@ -59,20 +73,6 @@ function Selectivity(options) {
      * Options passed to the Selectivity instance or set through setOptions().
      */
     this.options = {};
-
-    /**
-     * DOM element for the search input.
-     *
-     * May be null as long as there is no visible search input. It is set by initSearchInput().
-     */
-    this.searchInput = null;
-
-    /**
-     * Array of search input listeners.
-     *
-     * Custom listeners can be specified in the options object.
-     */
-    this.searchInputListeners = Selectivity.SearchInputListeners;
 
     /**
      * Mapping of templates.
@@ -200,8 +200,8 @@ extend(Selectivity.prototype, {
 
         this._focusing = true;
 
-        if (this.searchInput) {
-            this.searchInput.focus();
+        if (this.input) {
+            this.input.focus();
         }
 
         this._focusing = false;
@@ -268,27 +268,27 @@ extend(Selectivity.prototype, {
     },
 
     /**
-     * Initializes the search input element.
+     * Initializes the input element.
      *
-     * Sets the searchInput property, invokes all search input listeners and attaches the default
-     * action of searching when something is typed.
+     * Sets the input property, invokes all input listeners and (by default) attaches the action of
+     * searching when something is typed.
      *
      * @param input Input element.
      * @param options Optional options object. May contain the following property:
-     *                noSearch - If true, no event handlers are setup to initiate searching when
-     *                           the user types in the input field. This is useful if you want to
-     *                           use the input only to handle keyboard support.
+     *                search - If false, no event handlers are setup to initiate searching when the
+     *                         user types in the input field. This is useful if you want to use the
+     *                         input only to handle keyboard support.
      */
-    initSearchInput: function(input, options) {
+    initInput: function(input, options) {
 
-        this.searchInput = input;
+        this.input = input;
 
         var selectivity = this;
-        this.searchInputListeners.forEach(function(listener) {
-            listener(selectivity, input);
+        this.inputListeners.forEach(function(listener) {
+            listener(selectivity, input, options);
         });
 
-        if (!options || !options.noSearch) {
+        if (!options || options.search !== false) {
             input.addEventListener('keyup', function(event) {
                 if (!event.defaultPrevented) {
                     selectivity.search();
@@ -299,21 +299,14 @@ extend(Selectivity.prototype, {
 
     /**
      * Opens the dropdown.
-     *
-     * @param options Optional options object. May contain the following property:
-     *                search - Boolean whether the dropdown should be initialized by performing a
-     *                         search for the empty string (ie. display all results). Default is
-     *                         true.
-     *                showSearchInput - Boolean whether a search input should be shown in the
-     *                                  dropdown. Default is false.
      */
-    open: function(options) {
+    open: function() {
 
-        if (this.dropdown || !this.triggerEvent('selectivity-opening')) {
+        if (this._opening || this.dropdown || !this.triggerEvent('selectivity-opening')) {
             return;
         }
 
-        options = options || {};
+        this._opening = true;
 
         var Dropdown = this.options.dropdown || Selectivity.Dropdown;
         if (Dropdown) {
@@ -321,17 +314,17 @@ extend(Selectivity.prototype, {
                 items: this.items,
                 position: this.options.positionDropdown,
                 query: this.options.query,
-                showSearchInput: options.showSearchInput
+                showSearchInput: (this.options.showSearchInputInDropdown !== false)
             });
         }
 
-        if (options.search !== false) {
-            this.search('');
-        }
+        this.search('');
 
         this.focus();
 
         toggleClass(this.el, 'open', true);
+
+        this._opening = false;
     },
 
     /**
@@ -351,16 +344,16 @@ extend(Selectivity.prototype, {
      * search will be performed among those items. Otherwise, the query function specified in the
      * options will be used to perform the search. If neither is defined, nothing happens.
      *
-     * @param term Optional term to search for. If ommitted, the value of the search input element
+     * @param term Optional term to search for. If omitted, the value of the search input element
      *             is used as term.
      */
     search: function(term) {
 
         if (term === undefined) {
-            term = (this.searchInput ? this.searchInput.value : '');
+            term = (this.input ? this.input.value : '');
         }
 
-        this.open({ search: false });
+        this.open();
 
         if (this.dropdown) {
             this.dropdown.search(term);
@@ -381,6 +374,8 @@ extend(Selectivity.prototype, {
      *                                of IDs depending on the input type. The callback should be
      *                                invoked with an object or array of objects, respectively,
      *                                containing 'id' and 'text' properties.
+     *                inputListeners - Array of search input listeners. By default, the global
+     *                                 array Selectivity.InputListeners is used.
      *                items - Array of items from which to select. Should be an array of objects
      *                        with 'id' and 'text' properties. As convenience, you may also pass an
      *                        array of strings, in which case the same string is used for both the
@@ -428,8 +423,6 @@ extend(Selectivity.prototype, {
      *                readOnly - If true, disables any modification of the input.
      *                removeOnly - If true, disables any modification of the input except removing
      *                             of selected items.
-     *                searchInputListeners - Array of search input listeners. By default, the global
-     *                                       array Selectivity.SearchInputListeners is used.
      *                shouldOpenSubmenu - Function to call that will decide whether a submenu should
      *                                    be opened. Receives two parameters:
      *                                    item - The currently highlighted result item.
@@ -437,6 +430,9 @@ extend(Selectivity.prototype, {
      *                                             See Dropdown#highlight() for possible values.
      *                showDropdown - Set to false if you don't want to use any dropdown (you can
      *                               still open it programmatically using open()).
+     *                showSearchInputInDropdown - Set to false to remove the search input used in
+     *                                            dropdowns. The default is true for single-value
+     *                                            inputs.
      *                templates - Object with instance-specific templates to override the global
      *                            templates assigned to Selectivity.Templates.
      */
@@ -464,8 +460,8 @@ extend(Selectivity.prototype, {
                 this.matcher = value;
                 break;
 
-            case 'searchInputListeners':
-                this.searchInputListeners = value;
+            case 'inputListeners':
+                this.inputListeners = value;
                 break;
 
             case 'templates':
@@ -657,6 +653,20 @@ extend(Selectivity.prototype, {
 Selectivity.Dropdown = null;
 
 /**
+ * Array of input listeners.
+ *
+ * Input listeners are invoked when initInput() is called (typically right after the input is
+ * created). Every listener receives three arguments:
+ *
+ * selectivity - The Selectivity instance.
+ * input - DOM element of the input.
+ * options - Options that were passed to initInput().
+ *
+ * An example of a search input listener is the selectivity-keyboard module.
+ */
+Selectivity.InputListeners = [];
+
+/**
  * Mapping of input types.
  */
 Selectivity.InputTypes = {};
@@ -672,19 +682,6 @@ Selectivity.InputTypes = {};
  * An example of an option listener is the selectivity-traditional module.
  */
 Selectivity.OptionListeners = [];
-
-/**
- * Array of search input listeners.
- *
- * Search input listeners are invoked when initSearchInput() is called (typically right after the
- * search input is created). Every listener receives two arguments:
- *
- * selectivity - The Selectivity instance.
- * $input - jQuery container with the search input.
- *
- * An example of a search input listener is the selectivity-keyboard module.
- */
-Selectivity.SearchInputListeners = [];
 
 /**
  * Mapping with templates to use for rendering select boxes and dropdowns. See

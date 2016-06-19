@@ -40,14 +40,16 @@ function InputTypeMultiple(options) {
                 top: (openUpwards ? rect.top - dropdownHeight : rect.bottom) + 'px',
                 width: rect.width + 'px'
             });
-        }
+        },
+
+        showSearchInputInDropdown: false
     }, options));
 
     this.el.innerHTML = this.template('multipleSelectInput', { enabled: this.enabled });
 
     this._highlightedItemId = null;
 
-    this.initSearchInput(this.$(INPUT_SELECTOR + ':not(.selectivity-width-detector)'));
+    this.initInput(this.$(INPUT_SELECTOR + ':not(.selectivity-width-detector)'));
 
     this.rerenderSelection();
 
@@ -103,7 +105,7 @@ var callSuper = Selectivity.inherits(InputTypeMultiple, Selectivity, {
             }
         }
 
-        this.searchInput.value = '';
+        this.input.value = '';
     },
 
     /**
@@ -237,13 +239,12 @@ var callSuper = Selectivity.inherits(InputTypeMultiple, Selectivity, {
      */
     search: function() {
 
-        var term = this.searchInput.value;
-
         if (this.options.tokenizer) {
-            term = this.options.tokenizer(term, this._data, this.add.bind(this), this.options);
+            var term = this.options.tokenizer(this.input.value, this._data,
+                                              this.add.bind(this), this.options);
 
-            if (isString(term) && term !== this.searchInput.value) {
-                this.searchInput.value = term;
+            if (isString(term) && term !== this.input.value) {
+                this.input.value = term;
             }
         }
 
@@ -340,7 +341,7 @@ var callSuper = Selectivity.inherits(InputTypeMultiple, Selectivity, {
      */
     _createToken: function() {
 
-        var term = this.searchInput.value;
+        var term = this.input.value;
         var createTokenItem = this.options.createTokenItem;
 
         if (term && createTokenItem) {
@@ -404,7 +405,7 @@ var callSuper = Selectivity.inherits(InputTypeMultiple, Selectivity, {
      */
     _keyHeld: function(event) {
 
-        this._originalValue = this.searchInput.value;
+        this._originalValue = this.input.value;
 
         if (getKeyCode(event) === KEY_ENTER && !event.ctrlKey) {
             event.preventDefault();
@@ -456,7 +457,7 @@ var callSuper = Selectivity.inherits(InputTypeMultiple, Selectivity, {
             removable: !this.options.readOnly
         }, item)));
 
-        this.searchInput.parentNode.insertBefore(el, this.searchInput);
+        this.input.parentNode.insertBefore(el, this.input);
     },
 
     /**
@@ -486,11 +487,10 @@ var callSuper = Selectivity.inherits(InputTypeMultiple, Selectivity, {
     _updateInputWidth: function() {
 
         if (this.enabled) {
-            var input = this.searchInput;
             var widthDetector = this.$('.selectivity-width-detector');
-            widthDetector.textContent = (input.value ||
+            widthDetector.textContent = (this.input.value ||
                                          !this._data.length && this.options.placeholder || '');
-            input.style.width = widthDetector.clientWidth + 20;
+            this.input.style.width = widthDetector.clientWidth + 20;
 
             this.positionDropdown();
         }
@@ -503,7 +503,7 @@ var callSuper = Selectivity.inherits(InputTypeMultiple, Selectivity, {
 
         var placeholder = this._data.length ? '' : this.options.placeholder;
         if (this.enabled) {
-            this.searchInput.setAttribute('placeholder', placeholder);
+            this.input.setAttribute('placeholder', placeholder);
         } else {
             this.$('.selectivity-placeholder').textContent = placeholder;
         }

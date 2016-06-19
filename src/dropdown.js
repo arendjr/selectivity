@@ -88,7 +88,7 @@ function SelectivityDropdown(selectivity, options) {
     this.showLoading();
 
     if (options.showSearchInput) {
-        selectivity.initSearchInput(this.$('.selectivity-search-input'));
+        selectivity.initInput(this.$('.selectivity-search-input'));
         selectivity.focus();
     }
 
@@ -513,8 +513,8 @@ extend(SelectivityDropdown.prototype, {
      */
     _resultHovered: function(event) {
 
-        if (event.screenX === undefined || event.screenX !== this._lastMousePosition.x ||
-            event.screenY === undefined || event.screenY !== this._lastMousePosition.y) {
+        if (!event.screenX || event.screenX !== this._lastMousePosition.x ||
+            !event.screenY || event.screenY !== this._lastMousePosition.y) {
             var id = this.selectivity.getRelatedItemId(event);
             var item = Selectivity.findNestedById(this.results, id);
             if (item && !item.disabled) {
@@ -543,7 +543,7 @@ extend(SelectivityDropdown.prototype, {
 
         this.showResults(
             this.selectivity.filterResults(results),
-            $.extend({ dropdown: this }, options)
+            extend({ dropdown: this }, options)
         );
     },
 

@@ -12,7 +12,8 @@ module.exports = function(resultItems, itemId) {
 
     for (var i = 0, length = resultItems.length; i < length; i++) {
         var resultItem = resultItems[i];
-        if (resultItem.getAttribute('data-item-id') === itemId) {
+        var resultId = resultItem.getAttribute('data-item-id');
+        if ((typeof itemId === 'number' ? parseInt(resultId, 10) : resultId) === itemId) {
             return resultItem;
         }
     }

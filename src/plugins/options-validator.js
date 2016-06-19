@@ -9,6 +9,7 @@ var allowedOptions = {
     createTokenItem: 'function',
     dropdown: 'function|null',
     initSelection: 'function|null',
+    inputListeners: 'array',
     items: 'array|null',
     matcher: 'function|null',
     placeholder: 'string',
@@ -16,7 +17,6 @@ var allowedOptions = {
     query: 'function|null',
     readOnly: 'boolean',
     removeOnly: 'boolean',
-    searchInputListeners: 'array',
     showSearchInputInDropdown: 'boolean',
     suppressWheelClassName: 'string|null',
     tabIndex: 'number',
@@ -43,7 +43,7 @@ Selectivity.OptionListeners.unshift(function(selectivity, options) {
             } else if (type === 'array') {
                 return Array.isArray(value);
             } else {
-                return value && typeof value === type;
+                return value !== null && value !== undefined && typeof value === type;
             }
         })) {
             throw new Error(key + ' must be of type ' + type);

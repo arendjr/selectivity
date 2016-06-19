@@ -159,4 +159,4 @@ function listener(selectivity, input) {
     input.addEventListener('keyup', keyReleased);
 }
 
-Selectivity.SearchInputListeners.push(listener);
+Selectivity.InputListeners.push(listener);
