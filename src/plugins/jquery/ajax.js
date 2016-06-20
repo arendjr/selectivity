@@ -10,7 +10,7 @@ var Selectivity = require('../../selectivity');
 Selectivity.OptionListeners.unshift(function(selectivity, options) {
 
     var ajax = options.ajax;
-    if (ajax && ajax.url && !ajax.fetch) {
+    if (ajax && ajax.url && !ajax.fetch && $.Deferred) {
         ajax.fetch = function(url, init) {
             var deferred = new $.Deferred();
             $.ajax(url, {

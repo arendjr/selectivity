@@ -150,24 +150,30 @@ $(document).ready(function() {
             dataType: 'json',
             minimumInputLength: 3,
             quietMillis: 250,
+            fetch: function(url, init, queryOptions) {
+                return fetch(url, init)
+                    .then(function(response) {
+                        return response.json();
+                    })
+                    .then(function(data) {
+                        var offset = queryOptions.offset || 0;
+                        return {
+                            results: data.items.map(function(item) {
+                                return {
+                                    id: item.id,
+                                    text: item.name,
+                                    description: item.description
+                                };
+                            }),
+                            more: (data.total_count > offset + data.items.length)
+                        };
+                    });
+            },
             params: function(term, offset) {
                 // GitHub uses 1-based pages with 30 results, by default
                 var page = 1 + Math.floor(offset / 30);
 
                 return { q: term, page: page };
-            },
-            processItem: function(item) {
-                return {
-                    id: item.id,
-                    text: item.name,
-                    description: item.description
-                };
-            },
-            results: function(data, offset) {
-                return {
-                    results: data.items,
-                    more: (data.total_count > offset + data.items.length)
-                };
             }
         },
         placeholder: 'Search for a repository',
