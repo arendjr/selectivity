@@ -79,21 +79,35 @@ TestUtil.createJQueryTest(
     ['input-types/single', 'plugins/jquery/traditional', 'templates'],
     { indexResource: 'testcase-traditional.html' },
     function(test, $input) {
+        test.plan(6);
+
+        var $originalInput = $input;
+
         var changeEvents = 0;
-        $input.selectivity({
+        var originalChangeEvents = 0;
+
+        $input = $input.selectivity({
             query: function() {}
         });
 
-        $input.on('change', function() {
+        $input.on('change', function(event) {
+            test.equal(event.value, '1');
             changeEvents++;
         });
 
-        TestUtil.simulateEvent('.selectivity-single-select', 'selectivity-selected', {
+        $originalInput.on('change', function(event) {
+            test.equal(event.value, '1');
+            originalChangeEvents++;
+        });
+
+        TestUtil.simulateEvent($input[0], 'selectivity-selected', {
             item: { id: '1', text: 'foo bar' }
         });
 
         test.equal(changeEvents, 1);
-        test.equal($input.val(), '1');
+        test.equal(originalChangeEvents, 1);
+        test.equal($originalInput.val(), '1');
+        test.equal($input.selectivity('value'), '1');
     }
 );
 
@@ -102,27 +116,54 @@ TestUtil.createJQueryTest(
     ['input-types/multiple', 'plugins/jquery/traditional', 'templates'],
     { indexResource: 'testcase-traditional-multiple.html' },
     function(test, $input) {
+        test.plan(15);
+
+        var $originalInput = $input;
+
         var changeEvents = 0;
-        $input.selectivity({
+        var originalChangeEvents = 0;
+
+        $input = $input.selectivity({
             query: function() {}
         });
 
-        $input.on('change', function() {
+        $input.on('change', function(event) {
+            if (changeEvents === 0) {
+                test.deepEqual(event.value, ['3', '4', '1']);
+                test.deepEqual(event.added, { id: '1', text: 'foo bar' });
+            } else {
+                test.deepEqual(event.value, ['3', '4', '1', '2']);
+                test.deepEqual(event.added, { id: '2', text: 'foo bar' });
+            }
             changeEvents++;
         });
 
-        TestUtil.simulateEvent('.selectivity-multiple-input-container', 'selectivity-selected', {
+        $originalInput.on('change', function(event) {
+            if (changeEvents === 0) {
+                test.deepEqual(event.value, ['3', '4', '1']);
+                test.deepEqual(event.added, { id: '1', text: 'foo bar' });
+            } else {
+                test.deepEqual(event.value, ['3', '4', '1', '2']);
+                test.deepEqual(event.added, { id: '2', text: 'foo bar' });
+            }
+            originalChangeEvents++;
+        });
+
+        TestUtil.simulateEvent($input[0], 'selectivity-selected', {
             item: { id: '1', text: 'foo bar' }
         });
 
         test.equal(changeEvents, 1);
-        test.deepEqual($input.val(), ['1', '3', '4']);
+        test.equal(originalChangeEvents, 1);
+        test.deepEqual($originalInput.val(), ['1', '3', '4']);
 
-        TestUtil.simulateEvent('.selectivity-multiple-input-container', 'selectivity-selected', {
+        TestUtil.simulateEvent($input[0], 'selectivity-selected', {
             item: { id: '2', text: 'foo bar' }
         });
 
         test.equal(changeEvents, 2);
-        test.deepEqual($input.val(), ['1', '2', '3', '4']);
+        test.equal(originalChangeEvents, 2);
+        test.deepEqual($originalInput.val(), ['1', '2', '3', '4']);
+        test.deepEqual($input.selectivity('value'), ['3', '4', '1', '2']);
     }
 );

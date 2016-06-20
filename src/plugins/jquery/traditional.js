@@ -3,6 +3,7 @@
 var $ = require('jquery');
 
 var Selectivity = require('../../selectivity');
+var jQueryAPI = require('../../apis/jquery');
 
 function createSelectivityNextToSelectElement($el, options) {
 
@@ -67,11 +68,9 @@ function createSelectivityNextToSelectElement($el, options) {
 
 function bindTraditionalSelectEvents(selectivity) {
     var $el = $(selectivity.el);
-    $el.on('selectivity-selected', function(event) {
-        var value = selectivity.value();
-        $el.prev('select')
-            .val($.type(value) === 'array' ? [event.item.id].concat(value) : event.item.id)
-            .change();
+    $el.on('change', function(event) {
+        var value = event.originalEvent.value;
+        $el.prev('select').val($.type(value) === 'array' ? value.slice(0) : value).trigger(event);
     });
 }
 
@@ -91,6 +90,8 @@ Selectivity.OptionListeners.push(function(selectivity, options) {
 
         selectivity.el = createSelectivityNextToSelectElement($el, options);
         selectivity.el.selectivity = selectivity;
+
+        jQueryAPI.patchEvents($el);
 
         bindTraditionalSelectEvents(selectivity);
     }

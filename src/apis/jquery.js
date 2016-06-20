@@ -11,6 +11,21 @@ var EVENT_PROPERTIES = {
     'selectivity-selecting': ['id', 'item']
 };
 
+// create event listeners that will copy the custom properties from the native events
+// to the jQuery events, so jQuery users can use them seamlessly
+function patchEvents($el) {
+
+    $.each(EVENT_PROPERTIES, function(eventName, properties) {
+        $el.on(eventName, function(event) {
+            if (event.originalEvent) {
+                properties.forEach(function(propertyName) {
+                    event[propertyName] = event.originalEvent[propertyName];
+                });
+            }
+        });
+    });
+}
+
 /**
  * Create a new Selectivity instance or invoke a method on an instance.
  *
@@ -79,23 +94,20 @@ function selectivity(methodName, options) {
             }
 
             this.selectivity = new InputType(options);
+            $this = $(this.selectivity.el);
 
-            // create event listeners that will copy the custom properties from the native events
-            // to the jQuery events, so jQuery users can use them seamlessly
-            $.each(EVENT_PROPERTIES, function(eventName, properties) {
-                $this.on(eventName, function(event) {
-                    if (event.originalEvent) {
-                        properties.forEach(function(propertyName) {
-                            event[propertyName] = event.originalEvent[propertyName];
-                        });
-                    }
-                });
-            });
+            patchEvents($this);
+
+            if (result === undefined) {
+                result = $this;
+            }
         }
     });
 
     return (result === undefined ? this : result);
 }
+
+selectivity.patchEvents = patchEvents;
 
 selectivity.Selectivity = Selectivity;
 
