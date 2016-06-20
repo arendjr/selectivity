@@ -40,7 +40,9 @@ module.exports = function() {
     });
 
     if (argv.lodash) {
-        b.external(LODASH_METHODS.map(function(method) { return 'lodash/' + method; }));
+        b.external(LODASH_METHODS.map(function(method) {
+            return 'lodash/' + method;
+        }));
     } else if (argv.api === 'jquery') {
         b.external(['lodash/extend']);
     }

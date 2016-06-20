@@ -225,7 +225,9 @@ TestUtil.createJQueryTest(
                     2: 'Antwerp',
                     3: 'Athens'
                 };
-                callback(value.map(function(id) { return { id: id, text: cities[id] }; }));
+                callback(value.map(function(id) {
+                    return { id: id, text: cities[id] };
+                }));
             },
             multiple: true,
             value: [1]
