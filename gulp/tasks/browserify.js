@@ -16,15 +16,21 @@ var uglify = require('gulp-uglify');
 
 var argv = require('../argv');
 
-var LODASH_METHODS = ['debounce', 'escape'];
+var LODASH_METHODS = ['debounce', 'escape', 'extend', 'isString'];
 
 module.exports = function() {
 
     var b = browserify({ debug: argv['source-map'] === true, standalone: 'selectivity' });
 
+    if (!argv.api) {
+        throw new Error('No API specified! Run `gulp usage` for usage info.');
+    } else if (argv.api !== 'jquery' && argv.modules.indexOf('plugins/traditional') > -1) {
+        throw new Error('The `traditional` plugin is only compatible with the jQuery API!');
+    }
+
     fs.writeFileSync('src/selectivity-custom.js', argv.modules.map(function(module) {
-        return 'require("./selectivity-' + module + '");';
-    }).join('') + 'module.exports=require("./selectivity-base");');
+        return 'require("./' + module + '");';
+    }).join('') + 'module.exports=require("./apis/' + argv.api + '");');
 
     b.add('./src/selectivity-custom.js');
 
@@ -34,7 +40,11 @@ module.exports = function() {
     });
 
     if (argv.lodash) {
-        b.external(LODASH_METHODS.map(function(method) { return 'lodash/' + method; }));
+        b.external(LODASH_METHODS.map(function(method) {
+            return 'lodash/' + method;
+        }));
+    } else if (argv.api === 'jquery') {
+        b.external(['lodash/extend']);
     }
 
     b.plugin(collapse);
@@ -45,12 +55,16 @@ module.exports = function() {
             this.end();
         })
         .pipe(source('selectivity-' + argv.bundleName + (argv.minify ? '.min' : '') + '.js'))
-        .pipe(buffer())
-        .pipe(replace(/require\(['"]jquery['"]\)/g, 'window.jQuery || window.Zepto'));
+        .pipe(buffer());
 
     if (argv.lodash) {
         stream = stream.pipe(replace(/require\(['"]lodash\/(\w+)['"]\)/g, 'window._.$1'));
+    } else if (argv.api === 'jquery') {
+        stream = stream.pipe(replace(/require\(['"]lodash\/extend['"]\)/g,
+                                     'require("jquery").extend'));
     }
+
+    stream = stream.pipe(replace(/require\(['"]jquery['"]\)/g, '(window.jQuery || window.Zepto)'));
 
     if (argv.commonJs || argv.derequire) {
         stream = stream.pipe(derequire());
@@ -60,10 +74,6 @@ module.exports = function() {
         stream = stream.pipe(replace(/window\.jQuery \|\| window\.Zepto/g, 'require("jquery")'));
         stream = stream.pipe(replace(/window\._/g, 'require("lodash")'));
     }
-
-    stream = stream.pipe(replace(/\/\*\s*hasModule\('(\w+)'\):(.*?)\*\//g, function(match, p1, p2) {
-        return (argv.modules.indexOf(p1) > -1 ? p2 : '');
-    }));
 
     if (argv.minify) {
         stream = stream.pipe(uglify());
@@ -97,5 +107,5 @@ module.exports = function() {
         ));
     }
 
-    return stream.pipe(gulp.dest('dist/'));
+    return stream.pipe(gulp.dest('build/'));
 };

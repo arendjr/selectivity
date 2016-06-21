@@ -1,19 +1,12 @@
-dist/selectivity-custom.*
+build
 src/selectivity-custom.js
 styles/selectivity-custom.sass
 
 .sass-cache
-bower_components
 node_modules
 
 # OS X mess
 .DS_Store
-
-# Qt Creator IDE files
-selectivity*.config
-selectivity*.creator*
-selectivity*.files
-selectivity*.includes
 
 # Sublime Text files
 selectivity.sublime-*

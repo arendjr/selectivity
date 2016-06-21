@@ -5,8 +5,8 @@ var gulp = require('./gulp')([
     'browser-sync',
     'sass',
     'eslint',
-    'qt-creator',
     'unit-tests',
+    'usage',
     'watch'
 ]);
 

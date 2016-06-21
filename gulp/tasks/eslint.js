@@ -6,9 +6,9 @@ var eslint = require('gulp-eslint');
 module.exports = function() {
     return gulp.src(
         [
+            'gulpfile.js',
             'gulp/**/*.js',
             'src/**/*.js',
-            '!src/lodash/*.js',
             'tests/**/*.js',
             '!src/selectivity-custom.js'
         ])

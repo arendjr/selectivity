@@ -1,0 +1,12 @@
+// Place your settings in this file to overwrite default and user settings.
+{
+    "editor.rulers": [101],
+    "files.exclude": {
+        ".DS_Store": true,
+        ".git": true,
+        ".sass-cache": true,
+        "build": true,
+        "node_modules": true
+    },
+    "files.trimTrailingWhitespace": true
+}
