@@ -276,7 +276,10 @@ TestUtil.createJQueryTest(
 TestUtil.createJQueryTest(
     'jquery/single: test click and mouse over',
     ['input-types/single', 'dropdown', 'templates'],
+    { async: true },
     function(test, $input, $) {
+        test.plan(3);
+
         $input.selectivity({
             value: 'Amsterdam'
         });
@@ -287,18 +290,24 @@ TestUtil.createJQueryTest(
 
         TestUtil.simulateEvent('.selectivity-single-select', 'mouseenter');
 
-        test.equal($input.attr('class'),'open hover');
+        test.equal($input.attr('class'), 'open hover');
 
         $input.selectivity('close');
 
-        test.equal($input.attr('class'), 'hover');
+        setTimeout(function() {
+            test.equal($input.attr('class'), 'hover');
+            test.end();
+        }, 10);
     }
 );
 
 TestUtil.createJQueryTest(
     'jquery/single: test blur event after opening single select',
     ['input-types/single', 'dropdown', 'templates'],
+    { async: true },
     function(test, $input, $) {
+        test.plan(2);
+
         $input.selectivity({
             value: 'Amsterdam',
             showSearchInputInDropdown: false
@@ -310,7 +319,10 @@ TestUtil.createJQueryTest(
 
         TestUtil.simulateEvent($input[0], 'blur');
 
-        test.equal($('#selectivity-input').hasClass('open'), false);
+        setTimeout(function() {
+            test.equal($('#selectivity-input').hasClass('open'), false);
+            test.end();
+        }, 10);
     }
 );
 

@@ -1,6 +1,17 @@
 CHANGELOG
 =========
 
+## 3.0.0
+
+- Made jQuery dependency fully optional.
+- Added optional React dependency.
+- Fix #128: Added NPM package.
+- Removed Bower and Component support.
+- Removed dist directory from the repository.
+- Moved option validation into its own plugin.
+- Fix #107: Remove the dropdown after timeout to fix "hover" behavior.
+- Fix #136: Update original `<select>` element on "change" instead of "selectivity-selected".
+
 ## 2.1.0
 
 - Implemented `disabled` property on items. When an item is disabled it cannot

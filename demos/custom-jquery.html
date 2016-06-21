@@ -3,7 +3,7 @@
     <head>
         <title>Selectivity.js Demo Use Cases</title>
         <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
-        <link href="../dist/selectivity-full.css" rel="stylesheet">
+        <link href="../build/selectivity-custom.css" rel="stylesheet">
         <style>
             body, input {
                 font-family: Helvetica, sans-serif;
@@ -19,21 +19,20 @@
             }
         </style>
         <script src="../vendor/jquery.js"></script>
-        <script src="../dist/selectivity-full.js"></script>
-        <script src="./demos.js"></script>
+        <script src="../build/selectivity-custom.js"></script>
+        <script src="./demos-jquery.js"></script>
     </head>
     <body>
-        <h1>jQuery Demo's</h1>
-        <p>Demo use-cases showing how to use selectivity with jQuery. Inspect the sources for
-            details.</p>
+        <h1>Custom Build Demos</h1>
+        <p>Demo use-cases showing how a custom build of Selectivity is behaving with jQuery.</p>
         <p class="dev-instructions"><b>Important:</b> In order for the functionality on this page to work, you need to be
             running a development server:</p>
         <ul class="dev-instructions">
             <li><code>git clone https://github.com/arendjr/selectivity.git</code></li>
             <li><code>cd selectivity</code></li>
             <li><code>npm install</code></li>
-            <li><code>node_modules/.bin/gulp dev --browser-sync</code></li>
-            <li>Then open <a href="http://localhost:3000/demos/jquery.html">http://localhost:3000/demos/jquery.html</a>
+            <li><code>node_modules/.bin/gulp dev --api=jquery --browser-sync</code></li>
+            <li>Then open <a href="http://localhost:3000/demos/custom-jquery.html">http://localhost:3000/demos/custom-jquery.html</a>
                 (the port number may differ, check the console output from the previous command)</li>
         </ul>
         <h2>Select a single city</h2>

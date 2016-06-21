@@ -123,8 +123,13 @@ extend(Selectivity.prototype, {
      */
     close: function() {
 
-        if (this.dropdown) {
-            this.dropdown.close();
+        var dropdown = this.dropdown;
+        if (dropdown) {
+            setTimeout(function() {
+                dropdown.close();
+            }, 1);
+
+            this.dropdown = null;
         }
     },
 

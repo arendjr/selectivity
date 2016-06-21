@@ -107,5 +107,5 @@ module.exports = function() {
         ));
     }
 
-    return stream.pipe(gulp.dest('dist/'));
+    return stream.pipe(gulp.dest('build/'));
 };

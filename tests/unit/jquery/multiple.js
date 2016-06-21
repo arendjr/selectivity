@@ -47,7 +47,10 @@ TestUtil.createJQueryTest(
 TestUtil.createJQueryTest(
     'jquery/multiple: test filter selected items',
     ['input-types/multiple', 'dropdown', 'templates'],
+    { async: true },
     function(test, $input, $) {
+        test.plan(6);
+
         $input.selectivity({
             items: ['Amsterdam', 'Antwerp', 'Athens'],
             multiple: true,
@@ -61,12 +64,16 @@ TestUtil.createJQueryTest(
         test.equal($('.selectivity-result-item').text(), 'Antwerp');
 
         $input.selectivity('close');
-        $input.selectivity('value', ['Athens']);
-        $input.selectivity('open');
 
-        test.equal($('.selectivity-result-item').length, 2);
-        test.equal($('.selectivity-result-item').first().text(), 'Amsterdam');
-        test.equal($('.selectivity-result-item').last().text(), 'Antwerp');
+        setTimeout(function() {
+            $input.selectivity('value', ['Athens']);
+            $input.selectivity('open');
+
+            test.equal($('.selectivity-result-item').length, 2);
+            test.equal($('.selectivity-result-item').first().text(), 'Amsterdam');
+            test.equal($('.selectivity-result-item').last().text(), 'Antwerp');
+            test.end();
+        }, 10);
     }
 );
 
@@ -292,7 +299,10 @@ TestUtil.createJQueryTest(
 TestUtil.createJQueryTest(
     'jquery/multiple: test click and mouse over',
     ['input-types/multiple', 'dropdown', 'templates'],
+    { async: true },
     function(test, $input, $) {
+        test.plan(3);
+
         $input.selectivity({
             multiple: true,
             value: ['Amsterdam']
@@ -307,14 +317,20 @@ TestUtil.createJQueryTest(
         test.equal($input.attr('class'), 'open hover');
         $input.selectivity('close');
 
-        test.equal($input.attr('class'), 'hover');
+        setTimeout(function() {
+            test.equal($input.attr('class'), 'hover');
+            test.end();
+        }, 10);
     }
 );
 
 TestUtil.createJQueryTest(
     'jquery/multiple: test blur event after opening',
     ['input-types/multiple', 'dropdown', 'templates'],
+    { async: true },
     function(test, $input, $) {
+        test.plan(2);
+
         $input.selectivity({
             multiple: true,
             value: ['Amsterdam']
@@ -326,7 +342,10 @@ TestUtil.createJQueryTest(
 
         TestUtil.simulateEvent($input[0], 'blur');
 
-        test.equal($input.hasClass('open'), false);
+        setTimeout(function() {
+            test.equal($input.hasClass('open'), false);
+            test.end();
+        }, 10);
     }
 );
 

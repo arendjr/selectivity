@@ -123,10 +123,11 @@ To display any other options available for custom builds, run `gulp usage`.
 
 While developing, you can start a development server like this:
 
-    $ gulp dev [--modules=<comma-separated-module-list>] [--source-map]
+    $ gulp dev --api=<jquery-or-react> [--modules=<comma-separated-module-list>] [--source-map]
 
-You may want to pass the `--source-map` parameter to generate a source map for debugging. The file
-`demos/custom.html` is set up to work with custom builds, which you can also use for development.
+You may want to pass the `--source-map` parameter to generate a source map for debugging. The files
+`demos/custom-jquery.html` and `demos/custom-zepto.html` are set up to work with custom builds, which
+you can also use for development.
 
 Unit Tests
 ----------

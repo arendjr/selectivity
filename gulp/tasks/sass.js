@@ -29,5 +29,5 @@ module.exports = function() {
             .pipe(autoprefixer({ browsers: ['last 5 versions'], cascade: false }))
             .pipe(concat('selectivity-' + argv.bundleName + (argv.minify ? '.min' : '') + '.css'))
             .pipe(gulpif(argv.minify, csso()))
-            .pipe(gulp.dest('dist/'));
+            .pipe(gulp.dest('build/'));
 };
