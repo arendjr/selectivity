@@ -15,8 +15,8 @@ module.exports = function() {
 
     var sassModules = ['variables', 'base'].concat(argv.modules);
     fs.writeFileSync('styles/selectivity-custom.sass', sassModules.map(function(module) {
-        if (fs.existsSync('styles/selectivity/' + module + '.sass')) {
-            return '@import \'selectivity/' + module + '\'\n';
+        if (fs.existsSync('styles/' + module + '.sass')) {
+            return '@import \'' + module + '\'\n';
         } else {
             return '';
         }
