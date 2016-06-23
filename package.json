@@ -1,15 +1,15 @@
 {
   "name": "selectivity",
   "desc": "Modular and light-weight selection library for jQuery and Zepto.js",
-  "version": "3.0.0",
+  "version": "3.0.0-alpha",
   "repository": {
     "type": "git",
     "url": "git://github.com/arendjr/selectivity.git"
   },
   "scripts": {
-    "build-min": "gulp --bundle-name=full --minify",
-    "build-source": "gulp --bundle-name=full --derequire",
-    "build": "npm run build-source && npm run build-min",
+    "build-jquery-min": "gulp --api=jquery --bundle-name=jquery --exclude-modules=plugins/options-validator --minify",
+    "build-jquery-source": "gulp --api=jquery --bundle-name=jquery --derequire",
+    "build": "npm run build-jquery-source && npm run build-jquery-min",
     "test": "gulp eslint && gulp unit-tests"
   },
   "devDependencies": {
@@ -34,17 +34,15 @@
     "gulp-tape": "0.0.9",
     "gulp-uglify": "^1.0.2",
     "gulp-util": "^3.0.1",
-    "jquery": "^3.0.0",
     "jsdom": "^9.1.0",
-    "lodash": "^4.6.1",
     "tape": "^4.5.1",
     "vinyl-buffer": "^1.0.0",
     "vinyl-source-stream": "^1.0.0",
     "yargs": "^4.3.2"
   },
   "license": "MIT",
-  "main": "dist/selectivity-full",
   "dependencies": {
-    "delegate": "^3.0.1"
+    "jquery": "^3.0.0",
+    "lodash": "^4.13.1"
   }
 }

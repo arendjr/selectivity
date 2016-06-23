@@ -3,7 +3,6 @@
 var $ = require('jquery');
 
 var Selectivity = require('../../selectivity');
-var jQueryAPI = require('../../apis/jquery');
 
 function createSelectivityNextToSelectElement($el, options) {
 
@@ -91,7 +90,7 @@ Selectivity.OptionListeners.push(function(selectivity, options) {
         selectivity.el = createSelectivityNextToSelectElement($el, options);
         selectivity.el.selectivity = selectivity;
 
-        jQueryAPI.patchEvents($el);
+        Selectivity.patchEvents($el);
 
         bindTraditionalSelectEvents(selectivity);
     }

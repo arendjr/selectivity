@@ -4,14 +4,16 @@ var _ = require('lodash');
 var glob = require('glob');
 var yargs = require('yargs');
 
+var APIS = glob.sync('src/apis/*.js').map(function(file) {
+    return file.slice(9, -3);
+});
+
 var MODULE_BLACKLIST = ['event-listener', 'selectivity', 'selectivity-custom'];
 
 var argv = yargs
     .usage('Usage: gulp [tasks] [options]')
     .option('api', {
-        choices: glob.sync('src/apis/*.js').map(function(file) {
-            return file.slice(9, -3);
-        }),
+        choices: APIS,
         describe: 'API to expose',
         type: 'string'
     })
@@ -30,6 +32,12 @@ var argv = yargs
         default: false,
         describe: 'Renames all calls to require() to avoid conflicts with build systems.',
         type: 'boolean'
+    })
+    .option('exclude-modules', {
+        default: '',
+        describe: 'Comma-separated list of modules to exclude. See the README.md for a list of ' +
+                  'supported modules.',
+        type: 'string'
     })
     .option('lodash', {
         default: false,
@@ -62,12 +70,16 @@ var argv = yargs
     .wrap(yargs.terminalWidth())
     .argv;
 
+var excludedModules = (argv.excludeModules ? argv.excludeModules.split(',') : []);
+
 argv.modules = (argv.modules === 'all' ? glob.sync('src/**/*.js').map(function(file) {
     return file.slice(4, -3);
 }).filter(function(module) {
-    return !_.includes(MODULE_BLACKLIST, module) &&
-           !(module === 'plugins/traditional' && argv.api !== 'jquery') &&
-           !_.startsWith(module, 'util/') && !_.startsWith(module, 'apis/');
+    return !_.includes(MODULE_BLACKLIST, module) && !_.includes(excludedModules, module) &&
+           !_.startsWith(module, 'apis/') && !_.startsWith(module, 'util/') &&
+           !_.some(APIS, function(api) {
+               return (argv.api !== api && _.startsWith(module, 'plugins/' + api));
+           });
 }) : argv.modules.split(','));
 
 module.exports = argv;

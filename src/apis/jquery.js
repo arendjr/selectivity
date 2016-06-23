@@ -107,8 +107,8 @@ function selectivity(methodName, options) {
     return (result === undefined ? this : result);
 }
 
-selectivity.patchEvents = patchEvents;
+Selectivity.patchEvents = patchEvents;
 
-selectivity.Selectivity = Selectivity;
+$.fn.selectivity = selectivity;
 
-module.exports = $.fn.selectivity = selectivity;
+module.exports = Selectivity;

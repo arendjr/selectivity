@@ -83,21 +83,22 @@ use the following command:
 
 The following modules are available:
 
-Module                   | Description
--------------------------|------------
-**input-types/email**    | Implements the 'Email' input type. This is a special case of the 'Multiple' input type with no dropdown and a specialized tokenizer for recognizing email addresses (including pasted content from address books).
-**input-types/multiple** | Implements the 'Multiple' input type. If you only want to use Selectivity with single values, you can leave this out.
-**input-types/single**   | Implements the 'Single' input type. If you only want to use Selectivity with multiple values, you can leave this out.
-**plugins/ajax**         | Convenience module for performing AJAX requests. All options passed into the `ajax` object are provided by this module.
-**plugins/async**        | Blocks the query function from calling its callback functions if another query has been issued since. This prevents out-of-order replies from remote sources to display incorrect results. This module is only needed if you use the query function and call its callbacks asynchronously.
-**plugins/diacritics**   | Diacritics support. This will make sure that `"Łódź"` will match when the user searches for `"Lodz"`, for example. However, if you always query a server when searching for results, you may want to solve matching of diacritics server-side, in which case this module can be omitted.
-**plugins/keyboard**     | Provides keyboard support for navigating through the dropdown. If you don't use a dropdown, or are only targeting mobile, you may want to leave this module out.
-**plugins/submenu**      | Extends the default dropdown so that multiple levels of submenus can be created.
-**plugins/tokenizer**    | Default tokenizer implementation. This module adds support for the `tokenSeparators` option which is used by the default tokenizer. Support for tokenizers themselves is already included in the "multiple" module, so you can omit this module if you don't want to use any tokenizers or want to specify your own tokenizer.
-**plugins/traditional**  | This module allows you to convert an HTML5 &lt;select&gt; form element into a Selectivity instance. The items will be initialized from the &lt;option&gt; and &lt;optgroup&gt; elements. **This plugin is only compatible with the jQuery API.**
-**dropdown**             | Module that implements the dropdown. You will most likely want to include this, unless you only want to use Selectivity without any dropdown or you provide a completely custom implementation instead.
-**locale**               | Localizable content pulled in by the default templates. You may or may not decide to use these with your own templates. Also used for localizable messages by the ajax module.
-**templates**            | Default templates to use with Selectivity. If you provide your own templates, you may want to skip this.
+Module                          | Description
+--------------------------------|------------
+**input-types/email**           | Implements the 'Email' input type. This is a special case of the 'Multiple' input type with no dropdown and a specialized tokenizer for recognizing email addresses (including pasted content from address books).
+**input-types/multiple**        | Implements the 'Multiple' input type. If you only want to use Selectivity with single values, you can leave this out.
+**input-types/single**          | Implements the 'Single' input type. If you only want to use Selectivity with multiple values, you can leave this out.
+**plugins/ajax**                | Convenience module for performing AJAX requests. Needed if you want to use any `ajax` options. If you use this module, you should also include the 'async' module to correctly handle out-of-order replies. This module relies on the presence of the `[fetch()](https://developer.mozilla.org/en-US/docs/Web/API/GlobalFetch/fetch)` method which is only available in modern browsers, so you should either provide a polyfill if you want to support older browsers, or -- if you're creating a jQuery build -- you can use the 'jquery/ajax' module to provide a fallback that uses `$.ajax()` instead.
+**plugins/async**               | Blocks the query function from calling its callback functions if another query has been issued since. This prevents out-of-order replies from remote sources to display incorrect results. This module is only needed if you use the query function and call its callbacks asynchronously.
+**plugins/diacritics**          | Diacritics support. This will make sure that `"Łódź"` will match when the user searches for `"Lodz"`, for example. However, if you always query a server when searching for results, you may want to solve matching of diacritics server-side, in which case this module can be omitted.
+**plugins/keyboard**            | Provides keyboard support for navigating through the dropdown. If you don't use a dropdown, or are only targeting mobile, you may want to leave this module out.
+**plugins/submenu**             | Extends the default dropdown so that multiple levels of submenus can be created.
+**plugins/tokenizer**           | Default tokenizer implementation. This module adds support for the `tokenSeparators` option which is used by the default tokenizer. Support for tokenizers themselves is already included in the "multiple" module, so you can omit this module if you don't want to use any tokenizers or want to specify your own tokenizer.
+**plugins/jquery/ajax**         | Provides a fallback to use `$.ajax()` instead of the `fetch()` method for performing AJAX requests. *(Requires jQuery 3.0 or higher)*
+**plugins/jquery/traditional**  | This module allows you to convert an HTML5 `<select>` form element into a Selectivity instance. The items will be initialized from the `<option>` and `<optgroup>` elements. *(jQuery only)*
+**dropdown**                    | Module that implements the dropdown. You will most likely want to include this, unless you only want to use Selectivity without any dropdown or you provide a completely custom implementation instead.
+**locale**                      | Localizable content pulled in by the default templates. You may or may not decide to use these with your own templates. Also used for localizable messages by the ajax module.
+**templates**                   | Default templates to use with Selectivity. If you provide your own templates, you may want to skip this.
 
 Note that the build system automatically resolves dependencies between modules. So for example, if
 you specify you want the submenu plugin, the dropdown module will be automatically included.

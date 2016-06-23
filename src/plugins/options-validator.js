@@ -17,6 +17,7 @@ var allowedOptions = {
     query: 'function|null',
     readOnly: 'boolean',
     removeOnly: 'boolean',
+    shouldOpenSubmenu: 'function',
     showSearchInputInDropdown: 'boolean',
     suppressWheelClassName: 'string|null',
     tabIndex: 'number',

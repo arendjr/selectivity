@@ -4,8 +4,14 @@ CHANGELOG
 ## 3.0.0
 
 - Made jQuery dependency fully optional.
+  - As a result, all callbacks that received jQuery containers as argument(s) now receive plain DOM
+    nodes instead.
 - Added optional React dependency.
 - Fix #128: Added NPM package.
+- Added options:
+  - `shouldOpenSubmenu()` - Callback that determines whether a submenu should be opened.
+  - `selectable` - Allows to make items unselectable without having to disable them. This is mainly
+                   useful for items that trigger submenus.
 - Removed Bower and Component support.
 - Removed dist directory from the repository.
 - Moved option validation into its own plugin.
