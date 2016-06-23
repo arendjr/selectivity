@@ -42,7 +42,7 @@ function createNpmPackage() {
 
     console.log('Creating NPM package ' + version + '...');
 
-    execSync('cp -R LICENSE src/* ' + targetDir);
+    execSync('cp -R LICENSE README.md src/* ' + targetDir);
 
     var packageJson = require('../package.json');
     packageJson.main = './selectivity.js';
