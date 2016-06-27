@@ -38,8 +38,23 @@
     "tape": "^4.5.1",
     "vinyl-buffer": "^1.0.0",
     "vinyl-source-stream": "^1.0.0",
-    "yargs": "^4.3.2"
+    "yargs": "^4.7.1"
   },
+  "keywords": [
+    "dropdown",
+    "ecosystem:jquery",
+    "ecosystem:react",
+    "form",
+    "input",
+    "jquery-plugin",
+    "multiselect",
+    "select",
+    "selectivity",
+    "submenu",
+    "tag",
+    "tagging",
+    "ui"
+  ],
   "license": "MIT",
   "dependencies": {
     "jquery": "^3.0.0",
