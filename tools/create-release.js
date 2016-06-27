@@ -25,7 +25,8 @@ var argv = yargs
     .argv;
 
 var version = argv._[0];
-var targetDir = 'release/selectivity-' + version;
+var tarballDir = 'release/selectivity-' + version;
+var npmDir = 'release/selectivity-npm';
 
 function createTarball() {
 
@@ -33,36 +34,39 @@ function createTarball() {
 
     execSync('npm run build');
 
-    execSync('cp build/selectivity-jquery.* ' + targetDir);
-    execSync('cp CHANGELOG.md LICENSE README.md ' + targetDir);
-    execSync('tar czf ' + targetDir + '.tar.gz ' + targetDir);
+    execSync('cp build/selectivity-jquery.* ' + tarballDir);
+    execSync('cp CHANGELOG.md LICENSE README.md ' + tarballDir);
+    execSync('tar czf ' + tarballDir + '.tar.gz ' + tarballDir);
 }
 
 function createNpmPackage() {
 
     console.log('Creating NPM package ' + version + '...');
 
-    execSync('cp -R LICENSE README.md src/* ' + targetDir);
+    execSync('cp -R CHANGELOG.md LICENSE README.md src/* ' + npmDir);
+
+    execSync('mkdir ' + npmDir + '/styles');
+    execSync('cp ' + tarballDir + '/*.css ' + npmDir + '/styles');
 
     var packageJson = require('../package.json');
     packageJson.main = './selectivity.js';
     packageJson.version = version;
-    fs.writeFileSync(targetDir + '/package.json', JSON.stringify(packageJson, null, 2));
+    fs.writeFileSync(npmDir + '/package.json', JSON.stringify(packageJson, null, 2));
 
     if (argv.publish) {
-        execSync('pushd ' + targetDir + '; npm publish .; popd');
+        execSync('pushd ' + npmDir + '; npm publish .; popd');
     }
 }
 
-execSync('mkdir -p ' + targetDir);
-
+execSync('mkdir -p ' + tarballDir);
 createTarball();
 
-execSync('rm -R ' + targetDir + '/*');
+execSync('mkdir -p ' + npmDir);
 createNpmPackage();
 
 if (argv.clean) {
-    execSync('rm -R ' + targetDir);
+    execSync('rm -R ' + tarballDir);
+    execSync('rm -R ' + npmDir);
 }
 
 console.log('OK');
