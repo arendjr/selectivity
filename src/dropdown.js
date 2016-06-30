@@ -553,7 +553,7 @@ extend(SelectivityDropdown.prototype, {
     _suppressWheel: function() {
 
         var suppressWheelSelector = this.selectivity.options.suppressWheelSelector;
-        if (!suppressWheelSelector) {
+        if (suppressWheelSelector === null) {
             return;
         }
 
