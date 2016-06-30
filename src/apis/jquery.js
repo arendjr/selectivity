@@ -109,6 +109,8 @@ function selectivity(methodName, options) {
 
 Selectivity.patchEvents = patchEvents;
 
+selectivity.Selectivity = Selectivity;
+
 $.fn.selectivity = selectivity;
 
 module.exports = Selectivity;
