@@ -102,7 +102,7 @@ function SelectivityDropdown(selectivity, options) {
     this.events.on(events);
 
     this._attachScrollListeners();
-    this._suppressMouseWheel();
+    this._suppressWheel();
 
     setTimeout(this.triggerOpen.bind(this), 1);
 }
@@ -550,15 +550,15 @@ extend(SelectivityDropdown.prototype, {
     /**
      * @private
      */
-    _suppressMouseWheel: function() {
+    _suppressWheel: function() {
 
-        var suppressWheelClassName = this.selectivity.options.suppressWheelClassName;
-        if (suppressWheelClassName === null) {
+        var suppressWheelSelector = this.selectivity.options.suppressWheelSelector;
+        if (!suppressWheelSelector) {
             return;
         }
 
-        var className = suppressWheelClassName || 'selectivity-results-container';
-        this.events.on('wheel ' + className, function(event) {
+        var selector = suppressWheelSelector || '.selectivity-results-container';
+        this.events.on('wheel ' + selector, function(event) {
             // Thanks to Troy Alford:
             // http://stackoverflow.com/questions/5802467/prevent-scrolling-of-parent-element
 

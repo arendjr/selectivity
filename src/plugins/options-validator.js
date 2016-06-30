@@ -19,7 +19,7 @@ var allowedOptions = {
     removeOnly: 'boolean',
     shouldOpenSubmenu: 'function',
     showSearchInputInDropdown: 'boolean',
-    suppressWheelClassName: 'string|null',
+    suppressWheelSelector: 'string|null',
     tabIndex: 'number',
     templates: 'object',
     tokenizer: 'function'

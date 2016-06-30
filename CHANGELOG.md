@@ -21,6 +21,7 @@ CHANGELOG
     browsers, unless you're using a jQuery build in which case the `jquery/ajax` plugin can provide
     a shim based on `$.ajax()` (requires jQuery 3.0 or higher).
   - Please check the documentation for the new options that can be passed.
+- Renamed the option `suppressMouseWheelSelector` to just `suppressWheelSelector`.
 - Fix #107: Remove the dropdown after timeout to fix "hover" behavior.
 - Fix #136: Update original `<select>` element on "change" instead of "selectivity-selected".
 
