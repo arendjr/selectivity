@@ -195,11 +195,24 @@ var callSuper = Selectivity.inherits(SubmenuPlugin, Dropdown, {
                 highlightFirstItem: !item.selectable,
                 items: item.submenu.items || null,
                 parentMenu: this,
-                position: item.submenu.positionDropdown || function(el) {
-                    var rect = dropdownEl.getBoundingClientRect();
-                    el.style.left = rect.right + 'px';
-                    el.style.top = resultItem.getBoundingClientRect().top + 'px';
-                    el.style.width = rect + 'px';
+                position: function(el, selectEl) {
+                    if (item.submenu.positionDropdown) {
+                        item.submenu.positionDropdown(el, selectEl, resultItem, dropdownEl);
+                    } else {
+                        var rect = dropdownEl.getBoundingClientRect();
+                        var left = rect.right;
+                        var width = rect.width;
+                        if (left + width > document.body.clientWidth && rect.left - width > 0) {
+                            // Open the submenu on the left-hand side if there's no sufficient
+                            // space on the right side.
+                            // Use a little margin to prevent awkward-looking overlaps.
+                            left = rect.left - width + 10;
+                        }
+
+                        el.style.left = left + 'px';
+                        el.style.top = resultItem.getBoundingClientRect().top + 'px';
+                        el.style.width = width + 'px';
+                    }
                 },
                 query: item.submenu.query || null,
                 showSearchInput: item.submenu.showSearchInput
