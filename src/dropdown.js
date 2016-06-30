@@ -4,6 +4,7 @@ var extend = require('lodash/extend');
 
 var EventListener = require('./event-listener');
 var getItemSelector = require('./util/get-item-selector');
+var matchesSelector = require('./util/matches-selector');
 var parseElement = require('./util/parse-element');
 var removeElement = require('./util/remove-element');
 var stopPropagation = require('./util/stop-propagation');
@@ -17,6 +18,14 @@ var LOAD_MORE_SELECTOR = '.selectivity-load-more';
 var RESULT_ITEM_SELECTOR = '.selectivity-result-item';
 
 var SCROLL_EVENTS = ['scroll', 'touchend', 'touchmove'];
+
+function findClosestElementMatchingSelector(el, selector) {
+
+    while (el && !matchesSelector(el, selector)) {
+        el = el.parentElement;
+    }
+    return el || null;
+}
 
 /**
  * Selectivity Dropdown Constructor.
@@ -558,15 +567,15 @@ extend(SelectivityDropdown.prototype, {
         }
 
         var selector = suppressWheelSelector || '.selectivity-results-container';
-        this.events.on('wheel ' + selector, function(event) {
+        this.events.on('wheel', selector, function(event) {
             // Thanks to Troy Alford:
             // http://stackoverflow.com/questions/5802467/prevent-scrolling-of-parent-element
 
-            var el = this.el,
-                scrollTop = el.scrollTop,
-                scrollHeight = el.scrollHeight,
-                height = el.clientHeight,
-                delta = (event.deltaMode === 0 ? event.deltaY : event.deltaY * 40);
+            var delta = (event.deltaMode === 0 ? event.deltaY : event.deltaY * 40);
+            var el = findClosestElementMatchingSelector(event.target, selector);
+            var height = el.clientHeight;
+            var scrollHeight = el.scrollHeight;
+            var scrollTop = el.scrollTop;
 
             function prevent() {
                 stopPropagation(event);

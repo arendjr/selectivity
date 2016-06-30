@@ -3,14 +3,9 @@
 var extend = require('lodash/extend');
 var isString = require('lodash/isString');
 
+var matchesSelector = require('./util/matches-selector');
+
 var CAPTURED_EVENTS = ['blur', 'focus', 'mouseenter', 'mouseleave', 'scroll'];
-
-function matchesSelector(el, selector) {
-
-    var method = el.matches || el.webkitMatchesSelector ||
-                 el.mozMatchesSelector || el.msMatchesSelector;
-    return method.call(el, selector);
-}
 
 /**
  * Listens to events dispatched to an element or its children.
