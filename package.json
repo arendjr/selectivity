@@ -25,7 +25,7 @@
     "gulp-concat": "^2.4.3",
     "gulp-csso": "^2.0.0",
     "gulp-derequire": "^2.0.0",
-    "gulp-eslint": "^2.0.0",
+    "gulp-eslint": "^3.0.0",
     "gulp-header": "^1.7.1",
     "gulp-if": "^2.0.0",
     "gulp-nodeunit": "0.0.5",
