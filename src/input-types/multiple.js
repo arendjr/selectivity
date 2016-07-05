@@ -329,8 +329,12 @@ var callSuper = Selectivity.inherits(InputTypeMultiple, Selectivity, {
      */
     _clicked: function(event) {
 
-        if (this.enabled && this.options.showDropdown !== false) {
-            this.open();
+        if (this.enabled) {
+            if (this.options.showDropdown !== false) {
+                this.open();
+            } else {
+                this.focus();
+            }
 
             stopPropagation(event);
         }
