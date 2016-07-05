@@ -392,7 +392,7 @@ extend(SelectivityDropdown.prototype, {
         }
         this.resultsContainer.innerHTML += resultsHtml;
 
-        this.results = this.results.concat(results);
+        this.results = (options.add ? this.results.concat(results) : results);
 
         this.hasMore = options.hasMore;
 
