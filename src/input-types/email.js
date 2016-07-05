@@ -14,7 +14,8 @@ function isValidEmail(email) {
 
     var dotIndex = email.lastIndexOf('.');
     if (dotIndex === -1) {
-        return true; // no dot is fine
+        // no dot is fine, as long as the '@' is followed by at least two more characters
+        return atIndex < email.length - 2;
     }
 
     // but if there is a dot after the '@', it must be followed by at least two more characters
