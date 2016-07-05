@@ -421,9 +421,7 @@ var callSuper = Selectivity.inherits(InputTypeMultiple, Selectivity, {
         var keyCode = getKeyCode(event);
 
         if (keyCode === KEY_ENTER && !event.ctrlKey) {
-            if (this.options.createTokenItem) {
-                this._createToken();
-            }
+            this._createToken();
         } else if (keyCode === KEY_BACKSPACE && !inputHadText) {
             this._backspacePressed();
         } else if (keyCode === KEY_DELETE && !inputHadText) {
@@ -441,9 +439,7 @@ var callSuper = Selectivity.inherits(InputTypeMultiple, Selectivity, {
         setTimeout(function() {
             this.search();
 
-            if (this.options.createTokenItem) {
-                this._createToken();
-            }
+            this._createToken();
         }.bind(this), 10);
     },
 
@@ -490,7 +486,7 @@ var callSuper = Selectivity.inherits(InputTypeMultiple, Selectivity, {
             var widthDetector = this.$('.selectivity-width-detector');
             widthDetector.textContent = (this.input.value ||
                                          !this._data.length && this.options.placeholder || '');
-            this.input.style.width = widthDetector.clientWidth + 20;
+            this.input.style.width = widthDetector.clientWidth + 20 + 'px';
 
             this.positionDropdown();
         }
