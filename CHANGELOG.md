@@ -24,6 +24,7 @@ CHANGELOG
 - Renamed the option `suppressMouseWheelSelector` to just `suppressWheelSelector`.
 - Improved submenu positioning by automatically opening them on the left-hand side if there's
   insufficient space on the right side.
+- Improve searching behavior with multiple submenus open.
 - Fix #107: Remove the dropdown after timeout to fix "hover" behavior.
 - Fix #136: Update original `<select>` element on "change" instead of "selectivity-selected".
 - Fix: When a Selectivity instance is clicked but its dropdown should not open, at least it should

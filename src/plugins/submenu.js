@@ -94,10 +94,16 @@ var callSuper = Selectivity.inherits(SubmenuPlugin, Dropdown, {
     search: function(term) {
 
         if (this.submenu) {
-            this.submenu.search(term);
-        } else {
-            callSuper(this, 'search', term);
+            var searchInput = this.$('.selectivity-search-input');
+            if (searchInput && searchInput === document.activeElement) {
+                this.submenu.close();
+            } else {
+                this.submenu.search(term);
+                return;
+            }
         }
+
+        callSuper(this, 'search', term);
     },
 
     /**
