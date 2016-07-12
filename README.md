@@ -5,6 +5,13 @@ Modular and light-weight selection library.
 
 [![Build Status](https://travis-ci.org/arendjr/selectivity.svg?branch=master)](https://travis-ci.org/arendjr/selectivity)
 
+Warning
+-------
+
+Selectivity is currently transitioning from version 2 to version 3, causing occasional mismatches
+in the documentation between what you see here and on the project website. Please be patient as this
+is sorted out.
+
 Setup
 -----
 
@@ -16,16 +23,18 @@ In addition, the default templates assume that you have included
 
 ### Manual
 
-Copy `selectivity-full.js` and `selectivity-full.css` from the `dist/` directory into your project.
+Download and unpack the latest release from the project website: https://arendjr.github.io/selectivity/
+
+Copy the files `selectivity-jquery.js` and `selectivity-jquery.css` from archive into your project.
 Then put the following in your HTML head:
 
     <head>
         ...
         <link href="font-awesome.css" rel="stylesheet">
-        <link href="selectivity-full.css" rel="stylesheet">
+        <link href="selectivity-jquery.css" rel="stylesheet">
         ...
         <script src="jquery.js"></script>
-        <script src="selectivity-full.js"></script>
+        <script src="selectivity-jquery.js"></script>
         ...
     </head>
 
@@ -37,6 +46,18 @@ Zepto.js) should be loaded before including Selectivity.
 Make sure you have Node.js installed and run:
 
     $ npm install selectivity
+
+You can require Selectivity using:
+
+    var Selectivity = require('selectivity');
+
+Note this will only give you access to the Selectivity object, which is mainly useful for
+customization and attaching of plugins. If you want to use the jQuery API, require:
+
+    require('selectivity/jquery');
+
+Finally, you will need to reference the CSS yourself. You can find it in
+`node_modules/selectivity/selectivity-jquery.css`.
 
 ### Ruby on Rails
 
