@@ -501,7 +501,7 @@ var callSuper = Selectivity.inherits(InputTypeMultiple, Selectivity, {
      */
     _updatePlaceholder: function() {
 
-        var placeholder = this._data.length ? '' : this.options.placeholder;
+        var placeholder = (!this._data.length && this.options.placeholder || '');
         if (this.enabled) {
             this.input.setAttribute('placeholder', placeholder);
         } else {
