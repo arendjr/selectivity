@@ -618,6 +618,10 @@ extend(Selectivity.prototype, {
     _blur: function() {
 
         if (!this._focusing && !this.el.classList.contains('hover')) {
+            // Without the timeout it appears clicks on result items are not always properly
+            // handled, especially when the user doesn't click exactly on the text of the result
+            // item. I don't understand really why that happens, or why the timeout has to be so
+            // large, but after trial and error, this now seems to work reliably...
             setTimeout(this.close.bind(this), 166);
         }
     },
