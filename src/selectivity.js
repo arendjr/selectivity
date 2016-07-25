@@ -618,7 +618,7 @@ extend(Selectivity.prototype, {
     _blur: function() {
 
         if (!this._focusing && !this.el.classList.contains('hover')) {
-            this.close();
+            setTimeout(this.close.bind(this), 166);
         }
     },
 

@@ -345,7 +345,7 @@ TestUtil.createJQueryTest(
         setTimeout(function() {
             test.equal($input.hasClass('open'), false);
             test.end();
-        }, 10);
+        }, 200);
     }
 );
 

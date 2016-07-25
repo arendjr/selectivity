@@ -322,7 +322,7 @@ TestUtil.createJQueryTest(
         setTimeout(function() {
             test.equal($('#selectivity-input').hasClass('open'), false);
             test.end();
-        }, 10);
+        }, 200);
     }
 );
 
