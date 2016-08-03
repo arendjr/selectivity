@@ -13,7 +13,7 @@
     "test": "gulp eslint && gulp unit-tests"
   },
   "devDependencies": {
-    "browser-sync": "^2.10.0",
+    "browser-sync": "^2.14.0",
     "browserify": "^13.0.0",
     "bundle-collapser": "^1.1.0",
     "eslint": "^3.0.0",
