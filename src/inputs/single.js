@@ -6,9 +6,9 @@ var Selectivity = require('../selectivity');
 var stopPropagation = require('../util/stop-propagation');
 
 /**
- * InputTypeSingle Constructor.
+ * SingleInput Constructor.
  */
-function InputTypeSingle(options) {
+function SingleInput(options) {
 
     Selectivity.call(this, extend({
         // dropdowns for single-value inputs should open below the select box,
@@ -52,7 +52,7 @@ function InputTypeSingle(options) {
 /**
  * Methods.
  */
-var callSuper = Selectivity.inherits(InputTypeSingle, Selectivity, {
+var callSuper = Selectivity.inherits(SingleInput, Selectivity, {
 
     /**
      * Clears the data and value.
@@ -200,4 +200,4 @@ var callSuper = Selectivity.inherits(InputTypeSingle, Selectivity, {
 
 });
 
-module.exports = Selectivity.InputTypes.Single = InputTypeSingle;
+module.exports = Selectivity.Inputs.Single = SingleInput;

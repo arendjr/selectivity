@@ -13,7 +13,6 @@ CHANGELOG
   - `selectable` - Allows to make items unselectable without having to disable them. This is mainly
                    useful for items that trigger submenus.
 - Removed Bower and Component support.
-- Removed dist directory from the repository.
 - Moved option validation into its own plugin.
 - Rewrote the AJAX plugin:
   - It now relies on the `fetch()` method for performing AJAX requests. This method is only
@@ -22,6 +21,8 @@ CHANGELOG
     a shim based on `$.ajax()` (requires jQuery 3.0 or higher).
   - Please check the documentation for the new options that can be passed.
 - Renamed the option `suppressMouseWheelSelector` to just `suppressWheelSelector`.
+- Renamed the `Selectivity.InputTypes` map to `Selectivity.Inputs`.
+- Removed dist directory from the repository.
 - Improved submenu positioning by automatically opening them on the left-hand side if there's
   insufficient space on the right side.
 - Improve searching behavior with multiple submenus open.

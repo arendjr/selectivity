@@ -4,7 +4,7 @@ var TestUtil = require('../../test-util');
 
 TestUtil.createJQueryTest(
     'jquery/traditional: test initialization of single select input',
-    ['input-types/single', 'plugins/jquery/traditional', 'templates'],
+    ['inputs/single', 'plugins/jquery/traditional', 'templates'],
     { indexResource: 'testcase-traditional.html' },
     function(test, $input, $) {
         $input.selectivity();
@@ -23,7 +23,7 @@ TestUtil.createJQueryTest(
 
 TestUtil.createJQueryTest(
     'jquery/traditional: test initialization of single select input with custom query',
-    ['input-types/single', 'plugins/jquery/traditional', 'templates'],
+    ['inputs/single', 'plugins/jquery/traditional', 'templates'],
     { indexResource: 'testcase-traditional.html' },
     function(test, $input) {
         $input.selectivity({
@@ -40,7 +40,7 @@ TestUtil.createJQueryTest(
 
 TestUtil.createJQueryTest(
     'jquery/traditional: test initialization of single select input with empty value',
-    ['input-types/single', 'plugins/jquery/traditional', 'templates'],
+    ['inputs/single', 'plugins/jquery/traditional', 'templates'],
     { indexResource: 'testcase-traditional-empty-value.html' },
     function(test, $input) {
         $input.selectivity();
@@ -53,7 +53,7 @@ TestUtil.createJQueryTest(
 
 TestUtil.createJQueryTest(
     'jquery/traditional: test initialization of multiple select input',
-    ['input-types/multiple', 'plugins/jquery/traditional', 'templates'],
+    ['inputs/multiple', 'plugins/jquery/traditional', 'templates'],
     { indexResource: 'testcase-traditional-multiple.html' },
     function(test, $input, $) {
         $input.selectivity();
@@ -76,7 +76,7 @@ TestUtil.createJQueryTest(
 
 TestUtil.createJQueryTest(
     'jquery/traditional: test change events of single select input',
-    ['input-types/single', 'plugins/jquery/traditional', 'templates'],
+    ['inputs/single', 'plugins/jquery/traditional', 'templates'],
     { indexResource: 'testcase-traditional.html' },
     function(test, $input) {
         test.plan(6);
@@ -113,7 +113,7 @@ TestUtil.createJQueryTest(
 
 TestUtil.createJQueryTest(
     'jquery/traditional: test change events of multiple select input',
-    ['input-types/multiple', 'plugins/jquery/traditional', 'templates'],
+    ['inputs/multiple', 'plugins/jquery/traditional', 'templates'],
     { indexResource: 'testcase-traditional-multiple.html' },
     function(test, $input) {
         test.plan(15);

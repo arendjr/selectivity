@@ -2,7 +2,7 @@
 
 var extend = require('lodash/extend');
 
-var InputTypeMultiple = require('./multiple');
+var MultipleInput = require('./multiple');
 var Selectivity = require('../selectivity');
 
 function isValidEmail(email) {
@@ -124,13 +124,13 @@ function emailTokenizer(input, selection, createToken) {
 }
 
 /**
- * InputTypeEmail Constructor.
+ * EmailInput Constructor.
  *
- * @param options Options object. Accepts all options from the MultipleSelectivity Constructor.
+ * @param options Options object. Accepts all options from the MultipleInput Constructor.
  */
-function InputTypeEmail(options) {
+function EmailInput(options) {
 
-    InputTypeMultiple.call(this, extend({
+    MultipleInput.call(this, extend({
         createTokenItem: createEmailItem,
         showDropdown: false,
         tokenizer: emailTokenizer
@@ -144,6 +144,6 @@ function InputTypeEmail(options) {
     });
 }
 
-Selectivity.inherits(InputTypeEmail, InputTypeMultiple);
+Selectivity.inherits(EmailInput, MultipleInput);
 
-module.exports = Selectivity.InputTypes.Email = InputTypeEmail;
+module.exports = Selectivity.Inputs.Email = EmailInput;

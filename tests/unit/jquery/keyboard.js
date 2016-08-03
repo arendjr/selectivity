@@ -4,7 +4,7 @@ var TestUtil = require('../../test-util');
 
 TestUtil.createJQueryTest(
     'jquery/keyboard: test select nested item',
-    ['input-types/single', 'plugins/keyboard', 'dropdown', 'templates'],
+    ['inputs/single', 'plugins/keyboard', 'dropdown', 'templates'],
     function(test, $input) {
         $input.selectivity({
             items: [{
@@ -37,7 +37,7 @@ TestUtil.createJQueryTest(
 
 TestUtil.createJQueryTest(
     'jquery/keyboard: test change event after enter',
-    ['input-types/multiple', 'plugins/keyboard', 'dropdown', 'templates'],
+    ['inputs/multiple', 'plugins/keyboard', 'dropdown', 'templates'],
     function(test, $input) {
         var numChangeEvents = 0;
 

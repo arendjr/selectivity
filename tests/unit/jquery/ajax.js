@@ -14,7 +14,7 @@ var expectedDOM = (
 
 TestUtil.createJQueryTest(
     'jquery/ajax: test response as array',
-    ['input-types/single', 'plugins/ajax', 'dropdown', 'templates'],
+    ['inputs/single', 'plugins/ajax', 'dropdown', 'templates'],
     { async: true },
     function(test, $input, $) {
         test.plan(2);
@@ -45,7 +45,7 @@ TestUtil.createJQueryTest(
 
 TestUtil.createJQueryTest(
     'jquery/ajax: test response as object with default fetch method',
-    ['input-types/single', 'plugins/ajax', 'plugins/jquery/ajax', 'dropdown', 'templates'],
+    ['inputs/single', 'plugins/ajax', 'plugins/jquery/ajax', 'dropdown', 'templates'],
     { async: true },
     function(test, $input, $) {
         test.plan(4);

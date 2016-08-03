@@ -4,7 +4,7 @@ var TestUtil = require('../../test-util');
 
 TestUtil.createJQueryTest(
     'jquery/events: test change event',
-    ['input-types/single', 'templates'],
+    ['inputs/single', 'templates'],
     function(test, $input) {
         var changeEvent = null;
 
@@ -27,7 +27,7 @@ TestUtil.createJQueryTest(
 
 TestUtil.createJQueryTest(
     'jquery/events: test suppress change event',
-    ['input-types/single', 'templates'],
+    ['inputs/single', 'templates'],
     function(test, $input) {
         var changeEvent = null;
 

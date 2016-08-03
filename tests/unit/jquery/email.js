@@ -4,7 +4,7 @@ var TestUtil = require('../../test-util');
 
 TestUtil.createJQueryTest(
     'jquery/email: test value on enter',
-    ['input-types/email', 'templates'],
+    ['inputs/email', 'templates'],
     function(test, $input) {
         $input.selectivity({ inputType: 'Email' });
 
@@ -17,7 +17,7 @@ TestUtil.createJQueryTest(
 
 TestUtil.createJQueryTest(
     'jquery/email: test value after space and enter',
-    ['input-types/email', 'templates'],
+    ['inputs/email', 'templates'],
     function(test, $input) {
         $input.selectivity({ inputType: 'Email' });
 

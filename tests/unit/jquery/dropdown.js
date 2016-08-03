@@ -43,7 +43,7 @@ function query(options) {
 
 TestUtil.createJQueryTest(
     'jquery/dropdown: test disabled items',
-    ['input-types/single', 'dropdown', 'templates'],
+    ['inputs/single', 'dropdown', 'templates'],
     function(test, $input, $) {
         $input.selectivity({
             query: function(options) {
@@ -93,7 +93,7 @@ TestUtil.createJQueryTest(
 
 TestUtil.createJQueryTest(
     'jquery/dropdown: test disabled items with submenu',
-    ['input-types/single', 'plugins/submenu', 'dropdown', 'templates'],
+    ['inputs/single', 'plugins/submenu', 'dropdown', 'templates'],
     function(test, $input, $) {
         $input.selectivity({
             query: function(options) {
@@ -143,7 +143,7 @@ TestUtil.createJQueryTest(
 
 TestUtil.createJQueryTest(
     'jquery/dropdown: test initial highlights',
-    ['input-types/single', 'dropdown', 'templates'],
+    ['inputs/single', 'dropdown', 'templates'],
     function(test, $input, $) {
         $input.selectivity({
             items: [ 'Amsterdam', 'Antwerp', 'Athens' ]
@@ -169,7 +169,7 @@ TestUtil.createJQueryTest(
 
 TestUtil.createJQueryTest(
     'jquery/dropdown: test load more',
-    ['input-types/single', 'dropdown', 'templates'],
+    ['inputs/single', 'dropdown', 'templates'],
     function(test, $input, $) {
         $input.selectivity({ query: query });
 
@@ -205,7 +205,7 @@ TestUtil.createJQueryTest(
 
 TestUtil.createJQueryTest(
     'jquery/dropdown: test search',
-    ['input-types/single', 'dropdown', 'templates'],
+    ['inputs/single', 'dropdown', 'templates'],
     function(test, $input, $) {
         $input.selectivity({ query: query });
 

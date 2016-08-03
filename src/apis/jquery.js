@@ -37,13 +37,13 @@ function patchEvents($el) {
  *                   method.
  * @param options Options object to pass to the constructor or the setOptions() method. In case
  *                a new instance is being created, the following properties are used:
- *                inputType - The input type to use. Default input types include 'Multiple' and
- *                            'Single', but you can add custom input types to the InputTypes map or
- *                            just specify one here as a function. The default value is 'Single',
- *                            unless multiple is true in which case it is 'Multiple'.
+ *                inputType - The input type to use. Default inputs include 'Multiple' and 'Single',
+ *                            but you can add custom inputs to the Selectivity.Inputs map or just
+ *                            specify one here as a function. The default value is 'Multiple' if
+ *                            `multiple` is true and 'Single' otherwise.
  *                multiple - Boolean determining whether multiple items may be selected
- *                           (default: false). If true, a MultipleSelectivity instance is created,
- *                           otherwise a SingleSelectivity instance is created.
+ *                           (default: false). If true, the default `inputType` is set to
+ *                           'Multiple'.
  *
  * @return If the given method returns a value, this method returns the value of that method
  *         executed on the first element in the set of matched elements.
@@ -83,11 +83,11 @@ function selectivity(methodName, options) {
                 options.multiple = true;
             }
 
-            var InputTypes = Selectivity.InputTypes;
+            var Inputs = Selectivity.Inputs;
             var InputType = (options.inputType || (options.multiple ? 'Multiple' : 'Single'));
             if (typeof InputType !== 'function') {
-                if (InputTypes[InputType]) {
-                    InputType = InputTypes[InputType];
+                if (Inputs[InputType]) {
+                    InputType = Inputs[InputType];
                 } else {
                     throw new Error('Unknown Selectivity input type: ' + InputType);
                 }

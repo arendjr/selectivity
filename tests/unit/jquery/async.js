@@ -50,7 +50,7 @@ function query() {
 
 TestUtil.createJQueryTest(
     'jquery/async: test with async',
-    ['input-types/single', 'plugins/async', 'dropdown', 'templates'],
+    ['inputs/single', 'plugins/async', 'dropdown', 'templates'],
     { async: true },
     function(test, $input, $) {
         $input.selectivity({ query: query() });
@@ -74,7 +74,7 @@ TestUtil.createJQueryTest(
 
 TestUtil.createJQueryTest(
     'jquery/async: test without async',
-    ['input-types/single', 'dropdown', 'templates'],
+    ['inputs/single', 'dropdown', 'templates'],
     { async: true },
     function(test, $input, $) {
         $input.selectivity({ query: query() });

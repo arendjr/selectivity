@@ -21,9 +21,9 @@ var SELECTED_ITEM_SELECTOR = '.selectivity-multiple-selected-item';
 var hasTouch = 'ontouchstart' in window;
 
 /**
- * MultipleSelectivity Constructor.
+ * MultipleInput Constructor.
  */
-function InputTypeMultiple(options) {
+function MultipleInput(options) {
 
     Selectivity.call(this, extend({
         // dropdowns for multiple-value inputs should open below the select box,
@@ -71,7 +71,7 @@ function InputTypeMultiple(options) {
 /**
  * Methods.
  */
-var callSuper = Selectivity.inherits(InputTypeMultiple, Selectivity, {
+var callSuper = Selectivity.inherits(MultipleInput, Selectivity, {
 
     /**
      * Adds an item to the selection, if it's not selected yet.
@@ -511,4 +511,4 @@ var callSuper = Selectivity.inherits(InputTypeMultiple, Selectivity, {
 
 });
 
-module.exports = Selectivity.InputTypes.Multiple = InputTypeMultiple;
+module.exports = Selectivity.Inputs.Multiple = MultipleInput;

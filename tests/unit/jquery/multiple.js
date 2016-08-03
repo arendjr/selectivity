@@ -4,7 +4,7 @@ var TestUtil = require('../../test-util');
 
 TestUtil.createJQueryTest(
     'jquery/multiple: test clear',
-    ['input-types/multiple', 'templates'],
+    ['inputs/multiple', 'templates'],
     function(test, $input) {
         $input.selectivity({
             data: [
@@ -29,7 +29,7 @@ TestUtil.createJQueryTest(
 
 TestUtil.createJQueryTest(
     'jquery/multiple: test click after search',
-    ['input-types/multiple', 'dropdown', 'templates'],
+    ['inputs/multiple', 'dropdown', 'templates'],
     function(test, $input, $) {
         $input.selectivity({
             items: ['Amsterdam', 'Antwerp', 'Athens'],
@@ -46,7 +46,7 @@ TestUtil.createJQueryTest(
 
 TestUtil.createJQueryTest(
     'jquery/multiple: test filter selected items',
-    ['input-types/multiple', 'dropdown', 'templates'],
+    ['inputs/multiple', 'dropdown', 'templates'],
     { async: true },
     function(test, $input, $) {
         test.plan(6);
@@ -79,7 +79,7 @@ TestUtil.createJQueryTest(
 
 TestUtil.createJQueryTest(
     'jquery/multiple: test initial data',
-    ['input-types/multiple', 'templates'],
+    ['inputs/multiple', 'templates'],
     function(test, $input) {
         $input.selectivity({
             data: [
@@ -105,7 +105,7 @@ TestUtil.createJQueryTest(
 
 TestUtil.createJQueryTest(
     'jquery/multiple: test initial value',
-    ['input-types/multiple', 'templates'],
+    ['inputs/multiple', 'templates'],
     function(test, $input) {
         $input.selectivity({
             items: ['Amsterdam', 'Antwerp', 'Athens'],
@@ -124,7 +124,7 @@ TestUtil.createJQueryTest(
 
 TestUtil.createJQueryTest(
     'jquery/multiple: test nested data',
-    ['input-types/multiple', 'templates'],
+    ['inputs/multiple', 'templates'],
     function(test, $input) {
         $input.selectivity({
             data: [
@@ -162,7 +162,7 @@ TestUtil.createJQueryTest(
 
 TestUtil.createJQueryTest(
     'jquery/multiple: test without data',
-    ['input-types/multiple', 'templates'],
+    ['inputs/multiple', 'templates'],
     function(test, $input) {
         $input.selectivity({
             items: [
@@ -181,7 +181,7 @@ TestUtil.createJQueryTest(
 
 TestUtil.createJQueryTest(
     'jquery/multiple: test remove-only',
-    ['input-types/multiple', 'templates'],
+    ['inputs/multiple', 'templates'],
     function(test, $input) {
         $input.selectivity({
             items: [
@@ -200,7 +200,7 @@ TestUtil.createJQueryTest(
 
 TestUtil.createJQueryTest(
     'jquery/multiple: test set value',
-    ['input-types/multiple', 'templates'],
+    ['inputs/multiple', 'templates'],
     function(test, $input) {
         $input.selectivity({
             items: ['Amsterdam', 'Antwerp', 'Athens'],
@@ -223,7 +223,7 @@ TestUtil.createJQueryTest(
 
 TestUtil.createJQueryTest(
     'jquery/multiple: test set value with init selection',
-    ['input-types/multiple', 'templates'],
+    ['inputs/multiple', 'templates'],
     function(test, $input) {
         $input.selectivity({
             initSelection: function(value, callback) {
@@ -257,7 +257,7 @@ TestUtil.createJQueryTest(
 
 TestUtil.createJQueryTest(
     'jquery/multiple: test set value without items',
-    ['input-types/multiple', 'templates'],
+    ['inputs/multiple', 'templates'],
     function(test, $input) {
         $input.selectivity({
             multiple: true,
@@ -279,7 +279,7 @@ TestUtil.createJQueryTest(
 
 TestUtil.createJQueryTest(
     'jquery/multiple: test mouse over',
-    ['input-types/multiple', 'templates'],
+    ['inputs/multiple', 'templates'],
     function(test, $input) {
         $input.selectivity({
             multiple: true,
@@ -298,7 +298,7 @@ TestUtil.createJQueryTest(
 
 TestUtil.createJQueryTest(
     'jquery/multiple: test click and mouse over',
-    ['input-types/multiple', 'dropdown', 'templates'],
+    ['inputs/multiple', 'dropdown', 'templates'],
     { async: true },
     function(test, $input, $) {
         test.plan(3);
@@ -326,7 +326,7 @@ TestUtil.createJQueryTest(
 
 TestUtil.createJQueryTest(
     'jquery/multiple: test blur event after opening',
-    ['input-types/multiple', 'dropdown', 'templates'],
+    ['inputs/multiple', 'dropdown', 'templates'],
     { async: true },
     function(test, $input, $) {
         test.plan(2);

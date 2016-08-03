@@ -678,7 +678,7 @@ Selectivity.InputListeners = [];
 /**
  * Mapping of input types.
  */
-Selectivity.InputTypes = {};
+Selectivity.Inputs = {};
 
 /**
  * Array of option listeners.

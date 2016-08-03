@@ -4,7 +4,7 @@ var TestUtil = require('../../test-util');
 
 TestUtil.createJQueryTest(
     'jquery/single: test clear',
-    ['input-types/single', 'templates'],
+    ['inputs/single', 'templates'],
     function(test, $input) {
         $input.selectivity({
             data: { id: 1, text: 'Amsterdam' },
@@ -25,7 +25,7 @@ TestUtil.createJQueryTest(
 
 TestUtil.createJQueryTest(
     'jquery/single: test don\'t open after clear',
-    ['input-types/single', 'dropdown', 'templates'],
+    ['inputs/single', 'dropdown', 'templates'],
     function(test, $input, $) {
         $input.selectivity({
             allowClear: true,
@@ -50,7 +50,7 @@ TestUtil.createJQueryTest(
 
 TestUtil.createJQueryTest(
     'jquery/single: test initial data',
-    ['input-types/single', 'templates'],
+    ['inputs/single', 'templates'],
     function(test, $input) {
         $input.selectivity({
             data: { id: 1, text: 'Amsterdam' },
@@ -69,7 +69,7 @@ TestUtil.createJQueryTest(
 
 TestUtil.createJQueryTest(
     'jquery/single: test initial value',
-    ['input-types/single', 'templates'],
+    ['inputs/single', 'templates'],
     function(test, $input) {
         $input.selectivity({
             items: ['Amsterdam', 'Antwerp', 'Athens'],
@@ -84,7 +84,7 @@ TestUtil.createJQueryTest(
 
 TestUtil.createJQueryTest(
     'jquery/single: test nested data',
-    ['input-types/single', 'templates'],
+    ['inputs/single', 'templates'],
     function(test, $input) {
         $input.selectivity({
             data: { id: 2, text: 'Antwerp' },
@@ -115,7 +115,7 @@ TestUtil.createJQueryTest(
 
 TestUtil.createJQueryTest(
     'jquery/single: test nested value',
-    ['input-types/single', 'templates'],
+    ['inputs/single', 'templates'],
     function(test, $input) {
         $input.selectivity({
             value: 2,
@@ -146,7 +146,7 @@ TestUtil.createJQueryTest(
 
 TestUtil.createJQueryTest(
     'jquery/single: test without data',
-    ['input-types/single', 'templates'],
+    ['inputs/single', 'templates'],
     function(test, $input) {
         $input.selectivity({
             items: [
@@ -164,7 +164,7 @@ TestUtil.createJQueryTest(
 
 TestUtil.createJQueryTest(
     'jquery/single: test without search input',
-    ['input-types/single', 'dropdown', 'templates'],
+    ['inputs/single', 'dropdown', 'templates'],
     function(test, $input, $) {
         $input.selectivity({
             items: [
@@ -192,7 +192,7 @@ TestUtil.createJQueryTest(
 
 TestUtil.createJQueryTest(
     'jquery/single: test set value',
-    ['input-types/single', 'templates'],
+    ['inputs/single', 'templates'],
     function(test, $input) {
         $input.selectivity({
             items: [ 'Amsterdam', 'Antwerp', 'Athens' ],
@@ -211,7 +211,7 @@ TestUtil.createJQueryTest(
 
 TestUtil.createJQueryTest(
     'jquery/single: test set value with init selection',
-    ['input-types/single', 'templates'],
+    ['inputs/single', 'templates'],
     function(test, $input) {
         $input.selectivity({
             initSelection: function(value, callback) {
@@ -239,7 +239,7 @@ TestUtil.createJQueryTest(
 
 TestUtil.createJQueryTest(
     'jquery/single: test set value without items',
-    ['input-types/single', 'templates'],
+    ['inputs/single', 'templates'],
     function(test, $input) {
         $input.selectivity({
             value: 'Amsterdam'
@@ -257,7 +257,7 @@ TestUtil.createJQueryTest(
 
 TestUtil.createJQueryTest(
     'jquery/single: test mouse over',
-    ['input-types/single', 'templates'],
+    ['inputs/single', 'templates'],
     function(test, $input) {
         $input.selectivity({
             value: 'Amsterdam'
@@ -275,7 +275,7 @@ TestUtil.createJQueryTest(
 
 TestUtil.createJQueryTest(
     'jquery/single: test click and mouse over',
-    ['input-types/single', 'dropdown', 'templates'],
+    ['inputs/single', 'dropdown', 'templates'],
     { async: true },
     function(test, $input, $) {
         test.plan(3);
@@ -303,7 +303,7 @@ TestUtil.createJQueryTest(
 
 TestUtil.createJQueryTest(
     'jquery/single: test blur event after opening single select',
-    ['input-types/single', 'dropdown', 'templates'],
+    ['inputs/single', 'dropdown', 'templates'],
     { async: true },
     function(test, $input, $) {
         test.plan(2);
@@ -328,7 +328,7 @@ TestUtil.createJQueryTest(
 
 TestUtil.createJQueryTest(
     'jquery/single: test don\'t close when hovering while blur event occurs',
-    ['input-types/single', 'dropdown', 'templates'],
+    ['inputs/single', 'dropdown', 'templates'],
     function(test, $input, $) {
         $input.selectivity({
             value: 'Amsterdam',
@@ -347,7 +347,7 @@ TestUtil.createJQueryTest(
 
 TestUtil.createJQueryTest(
     'jquery/single: test default tab index',
-    ['input-types/single', 'dropdown', 'templates'],
+    ['inputs/single', 'dropdown', 'templates'],
     function(test, $input) {
         $input.selectivity({
             value: 'Amsterdam',
@@ -360,7 +360,7 @@ TestUtil.createJQueryTest(
 
 TestUtil.createJQueryTest(
     'jquery/single: test tab index option',
-    ['input-types/single', 'dropdown', 'templates'],
+    ['inputs/single', 'dropdown', 'templates'],
     function(test, $input) {
         $input.selectivity({
             value: 'Amsterdam',
