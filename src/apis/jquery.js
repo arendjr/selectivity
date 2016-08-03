@@ -1,6 +1,7 @@
 'use strict';
 
 var $ = require('jquery');
+var isString = require('lodash/isString');
 
 var Selectivity = require('../selectivity');
 
@@ -57,19 +58,19 @@ function selectivity(methodName, options) {
         var instance = this.selectivity;
 
         if (instance) {
-            if (typeof methodName !== 'string') {
+            if (!isString(methodName)) {
                 methodArgs = [methodName];
                 methodName = 'setOptions';
             }
 
-            if (typeof instance[methodName] === 'function') {
+            if ($.isFunction(instance[methodName])) {
                 if (result === undefined) {
                     result = instance[methodName].apply(instance, methodArgs);
                 }
             } else {
                 throw new Error('Unknown method: ' + methodName);
             }
-        } else if (typeof methodName === 'string') {
+        } else if (isString(methodName)) {
             if (methodName !== 'destroy') {
                 throw new Error('Cannot call method on element without Selectivity instance');
             }
@@ -85,7 +86,7 @@ function selectivity(methodName, options) {
 
             var Inputs = Selectivity.Inputs;
             var InputType = (options.inputType || (options.multiple ? 'Multiple' : 'Single'));
-            if (typeof InputType !== 'function') {
+            if (!$.isFunction(InputType)) {
                 if (Inputs[InputType]) {
                     InputType = Inputs[InputType];
                 } else {
