@@ -6,7 +6,7 @@ CHANGELOG
 - Made jQuery dependency fully optional.
   - As a result, all callbacks that received jQuery containers as argument(s) now receive plain DOM
     nodes instead.
-- Added optional React dependency.
+- Added optional React API.
 - Fix #128: Added NPM package.
 - Added options:
   - `shouldOpenSubmenu()` - Callback that determines whether a submenu should be opened.
