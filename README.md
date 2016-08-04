@@ -48,7 +48,6 @@ React (production)        | selectivity-react.min.js  | selectivity-react.min.cs
 *VanillaJS* (development) | selectivity.js            | selectivity.css
 *VanillaJS* (production)  | selectivity.min.js        | selectivity.min.css
 
-
 Reference the files from your HTML page like this:
 
     <head>
@@ -80,6 +79,54 @@ Make sure you have Node.js installed and run:
 
 Note will need to reference the CSS yourself. You can find it in
 `node_modules/selectivity/selectivity.css`.
+
+#### Which module do I require?
+
+You can `require()` Selectivity as follows:
+
+    var Selectivity = require('selectivity');
+
+But, this will only expose the main Selectivity object and will load none of the plugins, nor enable
+any of the specialized APIs. You could say what you're getting is the core of the VanillaJS API.
+
+If however, you just want to use the jQuery API with all the relevant plugins loaded, you can do
+this:
+
+    require('selectivity/jquery');
+
+After this you can call the jQuery API as you would expect:
+
+    $('...').selectivity(/*...*/);
+
+Similarly, if you want to use the React API with all its relevant plugins, you can do this:
+
+    var Selectivity = require('selectivity/react');
+
+The Selectivity object you receive is the same one as if you'd required `'selectivity'`, but you get
+the React Component definition as `Selectivity.React` so you can use it as follows:
+
+    <Selectivity.React {...props} />
+
+Finally, if you're an expert (*) you can choose to use the VanillaJS API and enable just the plugins
+you want one by one. For example:
+
+    var Selectivity = require('selectivity');
+    require('selectivity/dropdown');
+    require('selectivity/inputs/single');
+    require('selectivity/plugins/ajax');
+    require('selectivity/plugins/async');
+    require('selectivity/plugins/submenu');
+
+    var singleInput = new Selectivity.Inputs.Single({
+        element: document.querySelector('...'),
+        /*...*/
+    });
+
+All the modules listed in the table below under *Creating custom builds* can be required this way.
+
+*) Using the VanillaJS API isn't really that hard, but all the examples and documentation assume
+   you're using either the React or the jQuery API, so be prepared that you'll have to figure out a
+   bit more on your own.
 
 ### Ruby on Rails
 
