@@ -5,11 +5,9 @@ var buffer = require('vinyl-buffer');
 var collapse = require('bundle-collapser/plugin');
 var derequire = require('gulp-derequire');
 var fs = require('fs');
-var glob = require('glob');
 var gulp = require('gulp');
 var gutil = require('gulp-util');
 var header = require('gulp-header');
-var path = require('path');
 var replace = require('gulp-replace');
 var source = require('vinyl-source-stream');
 var uglify = require('gulp-uglify');
@@ -38,9 +36,8 @@ module.exports = function() {
 
     b.add('./src/selectivity-custom.js');
 
-    glob.sync('vendor/*.js').forEach(function(file) {
-        var basename = path.basename(file, '.js');
-        b.external(basename);
+    ['jquery', 'react', 'react-dom/server'].forEach(function(lib) {
+        b.external(lib);
     });
 
     if (argv.lodash) {

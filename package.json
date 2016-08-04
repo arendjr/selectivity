@@ -13,7 +13,7 @@
     "build-react-source": "gulp --api=react --bundle-name=react --derequire",
     "build-vanilla-min": "gulp --bundle-name= --exclude-modules=plugins/options-validator --export-global --minify",
     "build-vanilla-source": "gulp --bundle-name= --derequire",
-    "build": "npm run build-jquery-source && npm run build-jquery-min && npm run build-react-min && npm run build-react-min && npm run build-vanilla-min && npm run build-vanilla-min",
+    "build": "npm run build-jquery-source && npm run build-jquery-min && npm run build-react-min && npm run build-react-source && npm run build-vanilla-min && npm run build-vanilla-source",
     "test": "gulp eslint && gulp unit-tests"
   },
   "devDependencies": {

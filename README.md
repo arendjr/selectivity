@@ -39,11 +39,14 @@ https://arendjr.github.io/selectivity/
 Copy the files JavaScript and CSS file for your desired build from the archive into your project.
 See the following table to see which files you need:
 
-Build       | JavaScript file       | CSS file
-------------|-----------------------|-----------------------
-jQuery      | selectivity-jquery.js | selectivity-jquery.css
-React       | selectivity-react.js  | selectivity-react.css
-*VanillaJS* | selectivity.js        | selectivity.css
+Build                     | JavaScript file           | CSS file
+--------------------------|---------------------------|---------------------------
+jQuery (development)      | selectivity-jquery.js     | selectivity-jquery.css
+jQuery (production)       | selectivity-jquery.min.js | selectivity-jquery.min.css
+React (development)       | selectivity-react.js      | selectivity-react.css
+React (production)        | selectivity-react.min.js  | selectivity-react.min.css
+*VanillaJS* (development) | selectivity.js            | selectivity.css
+*VanillaJS* (production)  | selectivity.min.js        | selectivity.min.css
 
 
 Reference the files from your HTML page like this:
