@@ -1,6 +1,6 @@
 {
   "name": "selectivity",
-  "desc": "Modular and light-weight selection library for jQuery and Zepto.js",
+  "desc": "Modular and light-weight selection library",
   "version": "3.0.0-beta",
   "repository": {
     "type": "git",
