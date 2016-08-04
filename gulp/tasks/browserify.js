@@ -24,13 +24,17 @@ module.exports = function() {
 
     if (!argv.api) {
         throw new Error('No API specified! Run `gulp usage` for usage info.');
-    } else if (argv.api !== 'jquery' && argv.modules.indexOf('plugins/traditional') > -1) {
-        throw new Error('The `traditional` plugin is only compatible with the jQuery API!');
     }
 
-    fs.writeFileSync('src/selectivity-custom.js', argv.modules.map(function(module) {
-        return 'require("./' + module + '");';
-    }).join('') + 'module.exports=require("./apis/' + argv.api + '");');
+    fs.writeFileSync(
+        'src/selectivity-custom.js',
+        argv.modules.map(function(module) {
+            return 'require("./' + module + '");';
+        }).join('') +
+        (argv.api !== 'vanilla' ? 'require("./apis/' + argv.api + '");' : '') +
+        (argv.exportGlobal ? 'window.Selectivity=require("./selectivity");' : '') +
+        (argv.commonJs ? 'module.exports=require("./selectivity");' : '')
+    );
 
     b.add('./src/selectivity-custom.js');
 
@@ -54,7 +58,10 @@ module.exports = function() {
             gutil.log(gutil.colors.red('Error creating bundle: ') + error.toString());
             this.end();
         })
-        .pipe(source('selectivity-' + argv.bundleName + (argv.minify ? '.min' : '') + '.js'))
+        .pipe(source(
+            (argv.bundleName ? 'selectivity-' + argv.bundleName : 'selectivity') +
+            (argv.minify ? '.min' : '') + '.js'
+        ))
         .pipe(buffer());
 
     if (argv.lodash) {
@@ -65,6 +72,8 @@ module.exports = function() {
     }
 
     stream = stream.pipe(replace(/require\(['"]jquery['"]\)/g, '(window.jQuery || window.Zepto)'));
+    stream = stream.pipe(replace(/require\(['"]react['"]\)/g, 'window.React'));
+    stream = stream.pipe(replace(/require\(['"]react-dom\/server['"]\)/g, 'window.ReactDOMServer'));
 
     if (argv.commonJs || argv.derequire) {
         stream = stream.pipe(derequire());
@@ -73,13 +82,18 @@ module.exports = function() {
     if (argv.commonJs) {
         stream = stream.pipe(replace(/window\.jQuery \|\| window\.Zepto/g, 'require("jquery")'));
         stream = stream.pipe(replace(/window\._/g, 'require("lodash")'));
+        stream = stream.pipe(replace(/window\.ReactDOMServer/g, 'require("react-dom/server")'));
+        stream = stream.pipe(replace(/window\.React/g, 'require("react")'));
+    } else {
+        stream = stream.pipe(replace(/var ReactDOMServer *= *window\.ReactDOMServer;/g, ''));
+        stream = stream.pipe(replace(/var React *= *window\.React;/g, ''));
     }
 
     if (argv.minify) {
         stream = stream.pipe(uglify());
     } else {
         var buildCommand;
-        if (argv.bundleName !== 'full') {
+        if (argv.bundleName === 'custom') {
             buildCommand = ['gulp'].concat(process.argv.slice(2)).join(' ');
         }
 
@@ -99,7 +113,7 @@ module.exports = function() {
             ' */\n',
             {
                 buildCommand: buildCommand,
-                buildDescription: (argv.bundleName === 'full' ? '' : ' (Custom Build)'),
+                buildDescription: (argv.bundleName === 'custom' ? ' (Custom Build)' : ''),
                 licenseUrl: 'https://github.com/arendjr/selectivity/blob/master/LICENSE',
                 projectUrl: 'https://arendjr.github.io/selectivity/',
                 version: JSON.parse(fs.readFileSync('package.json', 'utf-8')).version

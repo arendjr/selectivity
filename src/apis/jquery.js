@@ -49,7 +49,7 @@ function patchEvents($el) {
  * @return If the given method returns a value, this method returns the value of that method
  *         executed on the first element in the set of matched elements.
  */
-function selectivity(methodName, options) {
+$.fn.selectivity = function selectivity(methodName, options) {
 
     var methodArgs = Array.prototype.slice.call(arguments, 1);
     var result;
@@ -106,12 +106,6 @@ function selectivity(methodName, options) {
     });
 
     return (result === undefined ? this : result);
-}
+};
 
 Selectivity.patchEvents = patchEvents;
-
-selectivity.Selectivity = Selectivity;
-
-$.fn.selectivity = selectivity;
-
-module.exports = Selectivity;

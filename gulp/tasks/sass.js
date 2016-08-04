@@ -27,7 +27,10 @@ module.exports = function() {
                 gutil.log(gutil.colors.red('Error building CSS bundle: ') + error.toString());
             })
             .pipe(autoprefixer({ browsers: ['last 5 versions'], cascade: false }))
-            .pipe(concat('selectivity-' + argv.bundleName + (argv.minify ? '.min' : '') + '.css'))
+            .pipe(concat(
+                (argv.bundleName ? 'selectivity-' + argv.bundleName : 'selectivity') +
+                (argv.minify ? '.min' : '') + '.css'
+            ))
             .pipe(gulpif(argv.minify, csso()))
             .pipe(gulp.dest('build/'));
 };

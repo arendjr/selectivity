@@ -6,7 +6,7 @@ var yargs = require('yargs');
 
 var APIS = glob.sync('src/apis/*.js').map(function(file) {
     return file.slice(9, -3);
-});
+}).concat(['vanilla']);
 
 var MODULE_BLACKLIST = ['event-listener', 'selectivity', 'selectivity-custom'];
 
@@ -14,6 +14,7 @@ var argv = yargs
     .usage('Usage: gulp [tasks] [options]')
     .option('api', {
         choices: APIS,
+        default: 'vanilla',
         describe: 'API to expose',
         type: 'string'
     })
@@ -39,9 +40,14 @@ var argv = yargs
                   'supported modules.',
         type: 'string'
     })
+    .option('export-global', {
+        default: false,
+        describe: 'Export the Selectivity object to the global window object.',
+        type: 'boolean'
+    })
     .option('lodash', {
         default: false,
-        describe: 'Use lodash or underscore.js as a dependency, making Selectivity even smaller.',
+        describe: 'Use lodash as an external dependency, making Selectivity itself even smaller.',
         type: 'boolean'
     })
     .option('minify', {

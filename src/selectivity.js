@@ -1,6 +1,7 @@
 'use strict';
 
 var extend = require('lodash/extend');
+var isString = require('lodash/isString');
 
 var EventListener = require('./event-listener');
 var toggleClass = require('./util/toggle-class');
@@ -552,7 +553,7 @@ extend(Selectivity.prototype, {
      */
     validateItem: function(item) {
 
-        if (item && Selectivity.isValidId(item.id) && typeof item.text === 'string') {
+        if (item && Selectivity.isValidId(item.id) && isString(item.text)) {
             return item;
         } else {
             throw new Error('Item should have id (number or string) and text (string) properties');
@@ -793,8 +794,7 @@ Selectivity.inherits = function(SubClass, SuperClass, prototype) {
  */
 Selectivity.isValidId = function(id) {
 
-    var type = typeof id;
-    return type === 'number' || type === 'string';
+    return typeof id === 'number' || isString(id);
 };
 
 /**
@@ -840,8 +840,7 @@ Selectivity.processItem = function(item) {
     if (Selectivity.isValidId(item)) {
         return { id: item, text: '' + item };
     } else if (item &&
-               (Selectivity.isValidId(item.id) || item.children) &&
-               typeof item.text === 'string') {
+               (Selectivity.isValidId(item.id) || item.children) && isString(item.text)) {
         if (item.children) {
             item.children = Selectivity.processItems(item.children);
         }

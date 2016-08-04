@@ -45,12 +45,9 @@ TestUtil.createJQueryTest(
 );
 
 TestUtil.createJQueryTest(
-    'jquery/multiple: test filter selected items',
+    'jquery/multiple: test filter selected items (1)',
     ['inputs/multiple', 'dropdown', 'templates'],
-    { async: true },
     function(test, $input, $) {
-        test.plan(6);
-
         $input.selectivity({
             items: ['Amsterdam', 'Antwerp', 'Athens'],
             multiple: true,
@@ -62,18 +59,25 @@ TestUtil.createJQueryTest(
         test.equal($('.selectivity-dropdown').length, 1);
         test.equal($('.selectivity-result-item').length, 1);
         test.equal($('.selectivity-result-item').text(), 'Antwerp');
+    }
+);
 
-        $input.selectivity('close');
+TestUtil.createJQueryTest(
+    'jquery/multiple: test filter selected items (2)',
+    ['inputs/multiple', 'dropdown', 'templates'],
+    function(test, $input, $) {
+        $input.selectivity({
+            items: ['Amsterdam', 'Antwerp', 'Athens'],
+            multiple: true,
+            value: ['Athens']
+        });
 
-        setTimeout(function() {
-            $input.selectivity('value', ['Athens']);
-            $input.selectivity('open');
+        $input.click();
 
-            test.equal($('.selectivity-result-item').length, 2);
-            test.equal($('.selectivity-result-item').first().text(), 'Amsterdam');
-            test.equal($('.selectivity-result-item').last().text(), 'Antwerp');
-            test.end();
-        }, 10);
+        test.equal($('.selectivity-dropdown').length, 1);
+        test.equal($('.selectivity-result-item').length, 2);
+        test.equal($('.selectivity-result-item').first().text(), 'Amsterdam');
+        test.equal($('.selectivity-result-item').last().text(), 'Antwerp');
     }
 );
 

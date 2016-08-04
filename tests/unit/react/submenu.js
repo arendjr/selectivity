@@ -1,5 +1,8 @@
 'use strict';
 
+var React = require('react');
+var ReactDOM = require('react-dom');
+
 var TestUtil = require('../../test-util');
 
 var items = [
@@ -15,63 +18,62 @@ var items = [
     ] } }
 ];
 
-TestUtil.createJQueryTest(
-    'jquery/submenu: test search input in submenu in multiple select input',
+TestUtil.createReactTest(
+    'react/submenu: test search input in submenu in multiple select input',
     ['inputs/multiple', 'plugins/submenu', 'dropdown', 'templates'],
-    function(test, $input, $) {
-        $input.selectivity({
-            items: [{
-                id: 1,
-                text: 'First Item',
-                submenu: {
-                    items: [{
-                        id: 2,
-                        text: 'First subitem'
-                    }, {
-                        id: 3,
-                        text: 'Second subitem'
-                    }],
-                    showSearchInput: true
-                }
-            }],
-            multiple: true
-        });
-
+    {
+        items: [{
+            id: 1,
+            text: 'First Item',
+            submenu: {
+                items: [{
+                    id: 2,
+                    text: 'First subitem'
+                }, {
+                    id: 3,
+                    text: 'Second subitem'
+                }],
+                showSearchInput: true
+            }
+        }],
+        multiple: true
+    },
+    function(SelectivityReact, test, ref, container, $) {
         test.equal($('.selectivity-dropdown').length, 0);
+        test.deepEqual(ref.getValue(), []);
 
-        TestUtil.simulateEvent($input[0], 'click');
+        TestUtil.simulateEvent(container.firstChild, 'click');
 
         test.equal($('.selectivity-dropdown').length, 2);
 
         TestUtil.simulateEvent('.selectivity-result-item[data-item-id="2"]', 'click');
 
         test.equal($('.selectivity-dropdown').length, 0);
-        test.deepEqual($input.selectivity('value'), [2]);
+        test.deepEqual(ref.getValue(), [2]);
     }
 );
 
-TestUtil.createJQueryTest(
-    'jquery/submenu: test search in submenu in single select input',
+TestUtil.createReactTest(
+    'react/submenu: test search in submenu in single select input',
     ['inputs/single', 'plugins/submenu', 'dropdown', 'templates'],
-    function(test, $input, $) {
-        $input.selectivity({
-            items: [{
-                id: 1,
-                text: 'First Item',
-                submenu: {
-                    items: [{
-                        id: 2,
-                        text: 'First subitem'
-                    }, {
-                        id: 3,
-                        text: 'Second subitem'
-                    }],
-                    showSearchInput: true
-                }
-            }]
-        });
-
-        TestUtil.simulateEvent($input[0], 'click');
+    {
+        items: [{
+            id: 1,
+            text: 'First Item',
+            submenu: {
+                items: [{
+                    id: 2,
+                    text: 'First subitem'
+                }, {
+                    id: 3,
+                    text: 'Second subitem'
+                }],
+                showSearchInput: true
+            }
+        }]
+    },
+    function(SelectivityReact, test, ref, container, $) {
+        TestUtil.simulateEvent(container.firstChild, 'click');
         test.equal($('.selectivity-result-item').length, 3);
 
         TestUtil.simulateEvent('.selectivity-result-item[data-item-id="1"]', 'mouseenter');
@@ -79,13 +81,13 @@ TestUtil.createJQueryTest(
         test.equal($('.selectivity-dropdown').length, 2);
         test.equal($('.selectivity-result-item').length, 3);
 
-        $('.selectivity-search-input').val('Second');
+        $('.selectivity-search-input')[1].value = 'Second';
         TestUtil.simulateEvent('.selectivity-search-input', 'keyup');
 
         test.equal($('.selectivity-dropdown').length, 2);
         test.equal($('.selectivity-result-item').length, 2);
 
-        $('.selectivity-search-input').val('');
+        $('.selectivity-search-input')[1].value = '';
         TestUtil.simulateEvent('.selectivity-search-input', 'keyup');
 
         test.equal($('.selectivity-dropdown').length, 2);
@@ -93,12 +95,14 @@ TestUtil.createJQueryTest(
     }
 );
 
-TestUtil.createJQueryTest(
-    'jquery/submenu: test select item after opening submenu',
+TestUtil.createReactTest(
+    'react/submenu: test select item after opening submenu',
     ['inputs/single', 'plugins/submenu', 'dropdown', 'templates'],
-    { async: true },
-    function(test, $input, $) {
-        $input.selectivity({ items: items });
+    { async: true, items: items },
+    function(SelectivityReact, test, ref, container, $) {
+        test.plan(7);
+
+        test.equal(ref.getValue(), null);
 
         TestUtil.simulateEvent('.selectivity-single-select', 'click');
 
@@ -117,20 +121,19 @@ TestUtil.createJQueryTest(
 
             test.equal($('.selectivity-dropdown').length, 0);
 
-            test.deepEqual($input.selectivity('data'), { id: '2', text: 'Second Item' });
-            test.equal($input.selectivity('value'), '2');
+            test.deepEqual(ref.getData(), { id: '2', text: 'Second Item' });
+            test.equal(ref.getValue(), '2');
 
             test.end();
         }, 150);
     }
 );
 
-TestUtil.createJQueryTest(
-    'jquery/submenu: test select item in submenu',
+TestUtil.createReactTest(
+    'react/submenu: test select item in submenu',
     ['inputs/single', 'plugins/submenu', 'dropdown', 'templates'],
-    function(test, $input, $) {
-        $input.selectivity({ items: items });
-
+    { items: items },
+    function(SelectivityReact, test, ref, container, $) {
         TestUtil.simulateEvent('.selectivity-single-select', 'click');
 
         test.equal($('.selectivity-dropdown').length, 1);
@@ -143,20 +146,28 @@ TestUtil.createJQueryTest(
 
         test.equal($('.selectivity-dropdown').length, 0);
 
-        test.deepEqual($input.selectivity('data'), { id: '3-1', text: 'Third Item' });
-        test.equal($input.selectivity('value'), '3-1');
+        test.deepEqual(ref.getData(), { id: '3-1', text: 'Third Item' });
+        test.equal(ref.getValue(), '3-1');
     }
 );
 
-TestUtil.createJQueryTest(
-    'jquery/submenu: test set value',
+TestUtil.createReactTest(
+    'react/submenu: test set value',
     ['inputs/single', 'plugins/submenu', 'dropdown', 'templates'],
-    function(test, $input) {
-        $input.selectivity({ items: items });
+    { async: true, items: items },
+    function(SelectivityReact, test, ref, container) {
+        test.plan(3);
 
-        $input.selectivity('value', '3-1');
+        test.equal(ref.getValue(), null);
 
-        test.deepEqual($input.selectivity('data'), { id: '3-1', text: 'Third Item' });
-        test.equal($input.selectivity('value'), '3-1');
+        ReactDOM.render(
+            React.createElement(SelectivityReact, { items: items, value: '3-1' }),
+            container,
+            function() {
+                test.deepEqual(ref.getData(), { id: '3-1', text: 'Third Item' });
+                test.equal(ref.getValue(), '3-1');
+                test.end();
+            }
+        );
     }
 );

@@ -1,6 +1,6 @@
 'use strict';
 
-/* global $ */
+/* global $, Selectivity */
 
 function escape(string) {
     return string ? String(string).replace(/[&<>"']/g, function(match) {
@@ -42,7 +42,7 @@ $(document).ready(function() {
         };
     }).get();
 
-    var transformText = $.fn.selectivity.Selectivity.transformText;
+    var transformText = Selectivity.transformText;
 
     // example query function that returns at most 10 cities matching the given text
     function queryFunction(query) {
@@ -56,7 +56,9 @@ $(document).ready(function() {
                 results = citiesWithTimezone.filter(function(city) {
                     return transformText(city.id).indexOf(transformText(term)) > -1 &&
                            city.timezone === timezone;
-                }).map(function(city) { return city.id; });
+                }).map(function(city) {
+                    return city.id;
+                });
             } else {
                 query.callback({ more: false, results: [] });
                 return;

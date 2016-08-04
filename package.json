@@ -9,7 +9,11 @@
   "scripts": {
     "build-jquery-min": "gulp --api=jquery --bundle-name=jquery --exclude-modules=plugins/options-validator --minify",
     "build-jquery-source": "gulp --api=jquery --bundle-name=jquery --derequire",
-    "build": "npm run build-jquery-source && npm run build-jquery-min",
+    "build-react-min": "gulp --api=react --bundle-name=react --exclude-modules=plugins/options-validator --export-global --minify",
+    "build-react-source": "gulp --api=react --bundle-name=react --derequire",
+    "build-vanilla-min": "gulp --bundle-name= --exclude-modules=plugins/options-validator --export-global --minify",
+    "build-vanilla-source": "gulp --bundle-name= --derequire",
+    "build": "npm run build-jquery-source && npm run build-jquery-min && npm run build-react-min && npm run build-react-min && npm run build-vanilla-min && npm run build-vanilla-min",
     "test": "gulp eslint && gulp unit-tests"
   },
   "devDependencies": {
@@ -40,6 +44,9 @@
     "vinyl-source-stream": "^1.0.0",
     "yargs": "^4.7.1"
   },
+  "dependencies": {
+    "lodash": "^4.0.0"
+  },
   "keywords": [
     "dropdown",
     "ecosystem:jquery",
@@ -56,8 +63,9 @@
     "ui"
   ],
   "license": "MIT",
-  "dependencies": {
+  "peerDependencies": {
     "jquery": "^3.0.0",
-    "lodash": "^4.13.1"
+    "react": "^15.0.0",
+    "react-dom": "^15.0.0"
   }
 }

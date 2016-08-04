@@ -9,12 +9,22 @@ function addUrlParam(url, key, value) {
     return url + (url.indexOf('?') > -1 ? '&' : '?') + key + '=' + encodeURIComponent(value);
 }
 
+function pick(object, keys) {
+    var result = {};
+    keys.forEach(function(key) {
+        if (object[key] !== undefined) {
+            result[key] = object[key];
+        }
+    });
+    return result;
+}
+
 function doFetch(ajax, queryOptions) {
 
     var fetch = ajax.fetch || window.fetch;
     var term = queryOptions.term;
 
-    var url = (ajax.url instanceof Function ? ajax.url(queryOptions) : ajax.url);
+    var url = (typeof ajax.url === 'function' ? ajax.url(queryOptions) : ajax.url);
     if (ajax.params) {
         var params = ajax.params(term, queryOptions.offset || 0);
         for (var key in params) {
@@ -24,7 +34,10 @@ function doFetch(ajax, queryOptions) {
         }
     }
 
-    fetch(url, ajax, queryOptions)
+    var init = pick(ajax, ['body', 'cache', 'credentials', 'headers', 'integrity', 'method', 'mode',
+                           'redirect', 'referrer', 'referrerPolicy']);
+
+    fetch(url, init, queryOptions)
         .then(function(response) {
             if (response.ok) {
                 return response.json();

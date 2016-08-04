@@ -19,4 +19,4 @@ In order to validate your code before pushing, please run the following script:
 
     $ tools/install-git-hooks.sh
 
-This will install a Git pre-push hook that will run Eslint and all unit tests before pushing.
+This will install a Git pre-push hook that will run ESLint and all unit tests before pushing.

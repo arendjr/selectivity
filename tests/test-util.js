@@ -70,6 +70,87 @@ module.exports = {
     },
 
     /**
+     * Wrapper to easily create unit tests that test Selectivity with React.
+     *
+     * @param name Test name.
+     * @param modules Array of Selectivity modules to test, e.g. ['base', 'single'].
+     * @param options Props to pass to the Selectivity instance. May contain the following options:
+     *                indexResource - Filename of the index resource (default: 'testcase.html').
+     *                async - Set to true to indicate the test function is asynchronous and calls
+     *                        done() itself.
+     * @param fn The actual test function. Receives three arguments:
+     *           test - The nodeunit test instance.
+     *           $input - jQuery container for the '#selectivity-input' element defined in
+     *                    resources/testcase.html.
+     *           $ - jQuery instance.
+     */
+    createReactTest: function(name, modules, props, fn) {
+
+        var indexResource = props.indexResource || 'testcase.html';
+
+        tape(name, function(test) {
+            jsdom.env({
+                file: 'tests/resources/' + indexResource,
+                onload: function(window) {
+                    var end = test.end.bind(test);
+                    test.end = function() {
+                        ReactDOM.unmountComponentAtNode(container);
+
+                        modules.forEach(function(module) {
+                            freshy.unload('../src/' + module);
+                        });
+                        freshy.unload('../src/apis/react');
+                        freshy.unload('../src/selectivity');
+
+                        window.close();
+                        end();
+                    };
+
+                    global.console.debug = _.noop;
+                    global.document = window.document;
+                    global.navigator = {
+                        userAgent: 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, ' +
+                                   'like Gecko) Chrome/51.0.2704.106 Safari/537.36'
+                    };
+                    global.window = window;
+
+                    window.$ = window.jQuery = require('jquery');
+
+                    require('../src/selectivity');
+                    modules.forEach(function(module) {
+                        require('../src/' + module);
+                    });
+
+                    var React = require('react');
+                    var ReactDOM = require('react-dom');
+                    var SelectivityReact = require('../src/apis/react');
+
+                    var container = document.querySelector('#selectivity-input');
+
+                    var ref = null;
+                    props.ref = function(_ref) {
+                        ref = _ref;
+                    };
+
+                    ReactDOM.render(
+                        React.createElement(SelectivityReact, props),
+                        container,
+                        function() {
+                            fn(SelectivityReact, test, ref, container, function(selector) {
+                                return container.querySelectorAll(selector);
+                            });
+
+                            if (!props.async) {
+                                test.end();
+                            }
+                        }
+                    );
+                }
+            });
+        });
+    },
+
+    /**
      * Simulates an event on a given element.
      *
      * @param element The element to trigger the event on. May also be specified through a CSS

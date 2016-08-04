@@ -15,31 +15,59 @@ is sorted out.
 Setup
 -----
 
-Selectivity relies on [React](https://facebook.github.io/react/), [jQuery](http://jquery.com/) or
-[Zepto.js](http://zeptojs.com/) being loaded on the page to work.
+### Dependencies
 
-In addition, the default templates assume that you have included
-[FontAwesome](http://fortawesome.github.io/Font-Awesome/) in your page to display the icons.
+Selectivity doesn't require any external libraries to be loaded on your page, but it does have some
+optional dependencies:
+
+ * There's a React build that provides the official Selectivity React API. If you wish to use this,
+   [React](https://facebook.github.io/react/) should be loaded on your page.
+ * There's a jQuery build that provides the official Selectivity jQuery API. If you wish to use
+   this, either [jQuery](http://jquery.com/) or [Zepto.js](http://zeptojs.com/) should be loaded on
+   your page.
+ * The default templates assume that you have included
+   [FontAwesome](http://fortawesome.github.io/Font-Awesome/) in your page to display the icons. If
+   you do not want this, please specify custom templates.
 
 ### Manual
 
-Download and unpack the latest release from the project website: https://arendjr.github.io/selectivity/
+**Warning:** Do you use Browserify or Webpack? Please use NPM as described below.
 
-Copy the files `selectivity-jquery.js` and `selectivity-jquery.css` from archive into your project.
-Then put the following in your HTML head:
+Download and unpack the latest release from the project website:
+https://arendjr.github.io/selectivity/
+
+Copy the files JavaScript and CSS file for your desired build from the archive into your project.
+See the following table to see which files you need:
+
+Build       | JavaScript file       | CSS file
+------------|-----------------------|-----------------------
+jQuery      | selectivity-jquery.js | selectivity-jquery.css
+React       | selectivity-react.js  | selectivity-react.css
+*VanillaJS* | selectivity.js        | selectivity.css
+
+
+Reference the files from your HTML page like this:
 
     <head>
         ...
         <link href="font-awesome.css" rel="stylesheet">
-        <link href="selectivity-jquery.css" rel="stylesheet">
+        <link href="selectivity.css" rel="stylesheet">
         ...
-        <script src="jquery.js"></script>
-        <script src="selectivity-jquery.js"></script>
+        <script src="jquery-or-react-or-zepto.js"></script>
+        <script src="selectivity.js"></script>
         ...
     </head>
 
-Verify the paths are correct for your particular project. The important thing is that jQuery (or
-Zepto.js) should be loaded before including Selectivity.
+Note the first line includes FontAwesome which is required for the default icons. This line is
+optional if you use custom templates.
+
+The second line should reference the CSS file from the bundle you chose to use.
+
+The third line should reference jQuery, React or Zepto.js as appropriate. This line is optional if
+you use the VanillaJS bundle. *Note: If you want to use the React templates plugin, don't forget to
+also include `react-dom-server.js`.*
+
+Finally, the last line should reference the JavaScript file from the bundle you chose to use.
 
 ### Using NPM
 
@@ -47,23 +75,19 @@ Make sure you have Node.js installed and run:
 
     $ npm install selectivity
 
-You can require Selectivity using:
-
-    var Selectivity = require('selectivity');
-
-Note this will only give you access to the Selectivity object, which is mainly useful for
-customization and attaching of plugins. If you want to use the jQuery API, require:
-
-    require('selectivity/jquery');
-
-Finally, you will need to reference the CSS yourself. You can find it in
-`node_modules/selectivity/selectivity-jquery.css`.
+Note will need to reference the CSS yourself. You can find it in
+`node_modules/selectivity/selectivity.css`.
 
 ### Ruby on Rails
 
 Detailed information for `selectivity-rails`, including
 [Installation and usage](https://github.com/msx2/selectivity-rails#installation-and-usage) are
 provided in the [gem's repository](https://github.com/msx2/selectivity-rails).
+
+API
+---
+
+For usage instructions, please see the Selectivity homepage: https://arendjr.github.io/selectivity/
 
 Browser Support
 ---------------
@@ -75,12 +99,7 @@ Browser Support
 
 Note that while Internet Explorer versions older than 10 are not supported, you might be able
 to get them to work, possibly with the use of some polyfills. Reports of success or patches
-to create a &quot;legacy&quot; build would be welcomed.
-
-API
----
-
-See the Selectivity homepage: https://arendjr.github.io/selectivity/
+to create a "legacy" build would be welcomed.
 
 Build System
 ------------
@@ -100,7 +119,7 @@ Then you can generate new distributable files from the sources, using:
 If you want to create your own Selectivity library that contains just the modules you need, you can
 use the following command:
 
-    $ gulp --api=<react-or-jquery> --modules=<comma-separated-module-list>
+    $ gulp [--api=<react-or-jquery>] --modules=<comma-separated-module-list>
 
 The following modules are available:
 
@@ -117,6 +136,7 @@ Module                          | Description
 **plugins/tokenizer**           | Default tokenizer implementation. This module adds support for the `tokenSeparators` option which is used by the default tokenizer. Support for tokenizers themselves is already included in the "multiple" module, so you can omit this module if you don't want to use any tokenizers or want to specify your own tokenizer.
 **plugins/jquery/ajax**         | Provides a fallback to use `$.ajax()` instead of the `fetch()` method for performing AJAX requests. *(Requires jQuery 3.0 or higher)*
 **plugins/jquery/traditional**  | This module allows you to convert an HTML5 `<select>` form element into a Selectivity instance. The items will be initialized from the `<option>` and `<optgroup>` elements. *(jQuery only)*
+**plugins/react/templates**     | Adds support for React (JSX) templates. Requires `react-dom/server` to be available.
 **dropdown**                    | Module that implements the dropdown. You will most likely want to include this, unless you only want to use Selectivity without any dropdown or you provide a completely custom implementation instead.
 **locale**                      | Localizable content pulled in by the default templates. You may or may not decide to use these with your own templates. Also used for localizable messages by the ajax module.
 **templates**                   | Default templates to use with Selectivity. If you provide your own templates, you may want to skip this.
@@ -129,15 +149,9 @@ Example:
     $ gulp --api=react --modules=inputs/multiple,dropdown
 
 This will create a custom build that uses the React API and which has support for selecting multiple
-values with a dropdown. The build will be saved in `dist/selectivity-custom.js`. There will be no
+values with a dropdown. The build will be saved in `build/selectivity-custom.js`. There will be no
 plugins available, you will have to provide your own templates with their localizable content, and
 you cannot use this build for creating a single-select input.
-
-Note that because Selectivity uses Browserify internally, the build will contain various `require()`
-calls, which may sometimes interfere with build systems that scan for those calls. If this gives
-problems for you, you can pass the `--derequire` parameter to rename those calls. Of course, if
-you're using Browserify in your own project you may even decide to skip the whole build process and
-just copy the relevant modules from the `src/` directory straight into your project.
 
 To display any other options available for custom builds, run `gulp usage`.
 
@@ -145,11 +159,11 @@ To display any other options available for custom builds, run `gulp usage`.
 
 While developing, you can start a development server like this:
 
-    $ gulp dev --api=<jquery-or-react> [--modules=<comma-separated-module-list>] [--source-map]
+    $ gulp dev --export-global [--api=<jquery-or-react>] [--source-map]
 
-You may want to pass the `--source-map` parameter to generate a source map for debugging. The files
-`demos/custom-jquery.html` and `demos/custom-zepto.html` are set up to work with custom builds, which
-you can also use for development.
+You may want to pass the `--source-map` parameter to generate a source map for debugging. Check out
+the various files in the `demos/` directory that are set up to with custom builds as they can be
+used for development.
 
 Unit Tests
 ----------
