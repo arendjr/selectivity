@@ -5,13 +5,6 @@ Modular and light-weight selection library.
 
 [![Build Status](https://travis-ci.org/arendjr/selectivity.svg?branch=master)](https://travis-ci.org/arendjr/selectivity)
 
-Warning
--------
-
-Selectivity is currently transitioning from version 2 to version 3, causing occasional mismatches
-in the documentation between what you see here and on the project website. Please be patient as this
-is sorted out.
-
 Setup
 -----
 
