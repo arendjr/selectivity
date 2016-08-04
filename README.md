@@ -75,7 +75,7 @@ Finally, the last line should reference the JavaScript file from the bundle you 
 
 Make sure you have Node.js installed and run:
 
-    $ npm install selectivity
+    $ npm install selectivity@3.0.0-beta1
 
 Note will need to reference the CSS yourself. You can find it in
 `node_modules/selectivity/selectivity.css`.
