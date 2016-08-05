@@ -115,7 +115,7 @@ var SelectivityReact = React.createClass({
 
         if (props.onChange) {
             el.addEventListener('change', props.onChange);
-        } else if (props.data || props.value) {
+        } else if ((props.data || props.value) && !props.readOnly) {
             throw new Error('Selectivity: You have specified a data or value property without an ' +
                             'onChange listener. You should use defaultData or defaultValue ' +
                             'instead.');

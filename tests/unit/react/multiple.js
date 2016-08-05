@@ -377,3 +377,40 @@ TestUtil.createReactTest(
     }
 );
 
+TestUtil.createReactTest(
+    'react/multiple: test read-only input',
+    ['inputs/multiple', 'templates'],
+    { async: true, multiple: true, onChange: _.noop, value: ['Amsterdam', 'Antwerp'] },
+    function(SelectivityReact, test, ref, container, $) {
+        test.plan(6);
+
+        test.equal($('.selectivity-multiple-selected-item').length, 2);
+        test.equal($('.selectivity-multiple-selected-item-remove').length, 2);
+
+        ReactDOM.render(
+            React.createElement(SelectivityReact, {
+                readOnly: true,
+                value: ['Amsterdam', 'Antwerp']
+            }),
+            container,
+            function() {
+                test.equal($('.selectivity-multiple-selected-item').length, 2);
+                test.equal($('.selectivity-multiple-selected-item-remove').length, 0);
+
+                ReactDOM.render(
+                    React.createElement(SelectivityReact, {
+                        readOnly: false,
+                        value: ['Amsterdam', 'Antwerp']
+                    }),
+                    container,
+                    function() {
+                        test.equal($('.selectivity-multiple-selected-item').length, 2);
+                        test.equal($('.selectivity-multiple-selected-item-remove').length, 2);
+
+                        test.end();
+                    }
+                );
+            }
+        );
+    }
+);

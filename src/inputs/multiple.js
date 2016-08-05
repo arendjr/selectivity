@@ -45,13 +45,7 @@ function MultipleInput(options) {
         showSearchInputInDropdown: false
     }, options));
 
-    this.el.innerHTML = this.template('multipleSelectInput', { enabled: this.enabled });
-
-    this._highlightedItemId = null;
-
-    this.initInput(this.$(INPUT_SELECTOR + ':not(.selectivity-width-detector)'));
-
-    this.rerenderSelection();
+    this._reset();
 
     var events = {
         'change': this.rerenderSelection,
@@ -260,7 +254,7 @@ var callSuper = Selectivity.inherits(MultipleInput, Selectivity, {
         callSuper(this, 'setOptions', options);
 
         if (wasEnabled !== this.enabled) {
-            this.el.innerHTML = this.template('multipleSelectInput', { enabled: this.enabled });
+            this._reset();
         }
     },
 
@@ -463,6 +457,20 @@ var callSuper = Selectivity.inherits(MultipleInput, Selectivity, {
         }, item)));
 
         this.input.parentNode.insertBefore(el, this.input);
+    },
+
+    /**
+     * @private
+     */
+    _reset: function() {
+
+        this.el.innerHTML = this.template('multipleSelectInput', { enabled: this.enabled });
+
+        this._highlightedItemId = null;
+
+        this.initInput(this.$(INPUT_SELECTOR + ':not(.selectivity-width-detector)'));
+
+        this.rerenderSelection();
     },
 
     /**
