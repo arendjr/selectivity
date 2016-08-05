@@ -55,6 +55,8 @@
     "input",
     "jquery-plugin",
     "multiselect",
+    "react",
+    "react-component",
     "select",
     "selectivity",
     "submenu",
