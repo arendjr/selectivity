@@ -30,6 +30,7 @@ CHANGELOG
 - Fix #136: Update original `<select>` element on "change" instead of "selectivity-selected".
 - Fix: When a Selectivity instance is clicked but its dropdown should not open, at least it should
        be focused.
+- Fix #144: Properly handle dynamically changing readOnly option.
 
 ## 2.1.0
 
