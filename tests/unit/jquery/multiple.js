@@ -353,3 +353,28 @@ TestUtil.createJQueryTest(
     }
 );
 
+TestUtil.createJQueryTest(
+    'jquery/multiple: test highlighting a selected item',
+    ['inputs/multiple', 'templates'],
+    function(test, $input, $) {
+        $input.selectivity({
+            multiple: true,
+            value: ['Amsterdam', 'Antwerp']
+        });
+
+        test.equal($('.selectivity-multiple-selected-item').length, 2);
+        test.equal($('.selectivity-multiple-selected-item.highlighted').length, 0);
+
+        TestUtil.simulateEvent(
+            '.selectivity-multiple-selected-item[data-item-id="Amsterdam"]',
+            'click'
+        );
+
+        test.equal($('.selectivity-multiple-selected-item').length, 2);
+        test.equal($('.selectivity-multiple-selected-item.highlighted').length, 1);
+        test.equal(
+            $('.selectivity-multiple-selected-item[data-item-id="Amsterdam"].highlighted').length,
+            1
+        );
+    }
+);

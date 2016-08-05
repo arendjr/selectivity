@@ -207,10 +207,7 @@ var callSuper = Selectivity.inherits(MultipleInput, Selectivity, {
         } else if (event.removed) {
             removeElement(this.$(getItemSelector(SELECTED_ITEM_SELECTOR, event.removed.id)));
         } else {
-            var el;
-            while ((el = this.$(SELECTED_ITEM_SELECTOR))) {
-                removeElement(el);
-            }
+            this._forEachSelectedItem(removeElement);
 
             this._data.forEach(this._renderSelectedItem, this);
 
@@ -369,11 +366,19 @@ var callSuper = Selectivity.inherits(MultipleInput, Selectivity, {
     /**
      * @private
      */
+    _forEachSelectedItem: function(callback) {
+
+        Array.prototype.forEach.call(this.el.querySelectorAll(SELECTED_ITEM_SELECTOR), callback);
+    },
+
+    /**
+     * @private
+     */
     _highlightItem: function(id) {
 
         this._highlightedItemId = id;
 
-        this.el.querySelectorAll(SELECTED_ITEM_SELECTOR).forEach(function(el) {
+        this._forEachSelectedItem(function(el) {
             toggleClass(el, 'highlighted', el.getAttribute('data-item-id') === id);
         });
 
