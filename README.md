@@ -29,8 +29,8 @@ optional dependencies:
 Download and unpack the latest release from the project website:
 https://arendjr.github.io/selectivity/
 
-Copy the files JavaScript and CSS file for your desired build from the archive into your project.
-See the following table to see which files you need:
+Copy the JavaScript and CSS file for your desired build from the archive into your project. See the
+following table to see which files you need:
 
 Build                     | JavaScript file           | CSS file
 --------------------------|---------------------------|---------------------------
@@ -64,13 +64,16 @@ also include `react-dom-server.js`.*
 
 Finally, the last line should reference the JavaScript file from the bundle you chose to use.
 
+You are now ready to start using Selectivity as described on the Selectivity homepage:
+https://arendjr.github.io/selectivity/
+
 ### Using NPM
 
 Make sure you have Node.js installed and run:
 
     $ npm install selectivity@3.0.0-beta1
 
-Note will need to reference the CSS yourself. You can find it in
+Note you will need to include the CSS yourself. You can find it in
 `node_modules/selectivity/selectivity.css`.
 
 #### Which module do I require?
@@ -96,7 +99,7 @@ Similarly, if you want to use the React API with all its relevant plugins, you c
     var Selectivity = require('selectivity/react');
 
 The Selectivity object you receive is the same one as if you'd required `'selectivity'`, but you get
-the React Component definition as `Selectivity.React` so you can use it as follows:
+the React Component class as `Selectivity.React` so you can use it as follows:
 
     <Selectivity.React {...props} />
 
@@ -148,7 +151,7 @@ Build System
 ------------
 
 Selectivity is built modularly and uses Gulp as a build system to build its distributable files. To
-install the necessary dependencies, please run:
+install the necessary dependencies for the build system, please run:
 
     $ npm install -g gulp
     $ npm install
