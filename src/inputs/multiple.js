@@ -100,6 +100,7 @@ var callSuper = Selectivity.inherits(MultipleInput, Selectivity, {
         }
 
         this.input.value = '';
+        this._updateInputWidth();
     },
 
     /**
@@ -181,6 +182,8 @@ var callSuper = Selectivity.inherits(MultipleInput, Selectivity, {
         if (id === this._highlightedItemId) {
             this._highlightedItemId = null;
         }
+
+        this._updateInputWidth();
     },
 
     /**
@@ -238,6 +241,8 @@ var callSuper = Selectivity.inherits(MultipleInput, Selectivity, {
                 this.input.value = term;
             }
         }
+
+        this._updateInputWidth();
 
         if (this.dropdown) {
             callSuper(this, 'search');
@@ -398,8 +403,6 @@ var callSuper = Selectivity.inherits(MultipleInput, Selectivity, {
 
         this.remove(this.getRelatedItemId(event));
 
-        this._updateInputWidth();
-
         stopPropagation(event);
     },
 
@@ -430,8 +433,6 @@ var callSuper = Selectivity.inherits(MultipleInput, Selectivity, {
         } else if (keyCode === KEY_DELETE && !inputHadText) {
             this._deletePressed();
         }
-
-        this._updateInputWidth();
     },
 
     /**
@@ -468,7 +469,7 @@ var callSuper = Selectivity.inherits(MultipleInput, Selectivity, {
 
         this._highlightedItemId = null;
 
-        this.initInput(this.$(INPUT_SELECTOR + ':not(.selectivity-width-detector)'));
+        this.initInput(this.$(INPUT_SELECTOR));
 
         this.rerenderSelection();
     },
@@ -500,10 +501,9 @@ var callSuper = Selectivity.inherits(MultipleInput, Selectivity, {
     _updateInputWidth: function() {
 
         if (this.enabled) {
-            var widthDetector = this.$('.selectivity-width-detector');
-            widthDetector.textContent = (this.input.value ||
-                                         !this._data.length && this.options.placeholder || '');
-            this.input.style.width = widthDetector.clientWidth + 20 + 'px';
+            var inputContent = (this.input.value ||
+                                !this._data.length && this.options.placeholder || '');
+            this.input.setAttribute('size', inputContent.length + 2);
 
             this.positionDropdown();
         }

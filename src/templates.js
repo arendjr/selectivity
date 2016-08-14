@@ -97,11 +97,6 @@ Selectivity.Templates = {
      * 'selectivity-multiple-input' - The actual input element that allows the user to type to
      *                                search for more items. When selected items are added, they are
      *                                inserted right before this element.
-     * 'selectivity-width-detector' - This element is optional, but important to make sure the
-     *                                '.selectivity-multiple-input' element will fit in the
-     *                                container. The width detector also has the
-     *                                'select2-multiple-input' class on purpose to be able to detect
-     *                                the width of text entered in the input element.
      *
      * @param options Options object containing the following property:
      *                enabled - Boolean whether the input is enabled.
@@ -110,10 +105,7 @@ Selectivity.Templates = {
         return (
             '<div class="selectivity-multiple-input-container">' +
                 (options.enabled ? '<input type="text" autocomplete="off" autocorrect="off" ' +
-                                          'autocapitalize="off" ' +
-                                          'class="selectivity-multiple-input">' +
-                                   '<span class="selectivity-multiple-input ' +
-                                                'selectivity-width-detector"></span>'
+                                          'autocapitalize="off" class="selectivity-multiple-input">'
                                  : '<div class="selectivity-multiple-input ' +
                                                'selectivity-placeholder"></div>') +
                 '<div class="selectivity-clearfix"></div>' +
