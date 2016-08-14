@@ -371,6 +371,7 @@ extend(SelectivityDropdown.prototype, {
      * @param results Array of result items.
      * @param options Options object. May contain the following properties:
      *                add - True if the results should be added to any already shown results.
+     *                dropdown - The dropdown instance for which the results are meant.
      *                hasMore - Boolean whether more results can be fetched using the query()
      *                          function.
      *                term - The search term for which the results are displayed.
@@ -383,7 +384,7 @@ extend(SelectivityDropdown.prototype, {
             this.resultsContainer.innerHTML = '';
         }
 
-        var resultsHtml = this.renderItems(results);
+        var resultsHtml = this.renderItems(this.selectivity.filterResults(results));
         if (options.hasMore) {
             resultsHtml += this.selectivity.template('loadMore');
         } else if (!resultsHtml && !options.add) {
@@ -549,10 +550,7 @@ extend(SelectivityDropdown.prototype, {
      */
     _showResults: function(results, options) {
 
-        this.showResults(
-            this.selectivity.filterResults(results),
-            extend({ dropdown: this }, options)
-        );
+        this.showResults(results, extend({ dropdown: this }, options));
     },
 
     /**

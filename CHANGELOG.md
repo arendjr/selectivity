@@ -35,6 +35,7 @@ CHANGELOG
             ".selectivity-width-detector" element is no longer needed.
 - Fix #146: Selectivity created from `<select>` element now uses "s9y_" prefix for its ID (thanks to
             @dr-itz).
+- Fix: Provide correct offset in pagination when results are filtered.
 
 ## 2.1.0
 
