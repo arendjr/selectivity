@@ -18,6 +18,8 @@ TestUtil.createJQueryTest(
         var $options = $('select[name="my_select"] option[selected]');
         test.equal($options.length, 1);
         test.equal($options.first().val(), '3');
+
+        test.equal($('div.selectivity-input')[0].id, 's9y_selectivity-input');
     }
 );
 
@@ -71,6 +73,8 @@ TestUtil.createJQueryTest(
         test.equal($options.length, 2);
         test.equal($options.first().val(), '3');
         test.equal($options.last().val(), '4');
+
+        test.equal($('div.selectivity-input')[0].id, 's9y_selectivity-input');
     }
 );
 
