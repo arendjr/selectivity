@@ -256,7 +256,7 @@ extend(SelectivityDropdown.prototype, {
     },
 
     /**
-     * Searches for results based on the term given or the term entered in the search input.
+     * Searches for results based on the term given.
      *
      * If an items array has been passed with the options to the Selectivity instance, a local
      * search will be performed among those items. Otherwise, the query function specified in the
@@ -266,12 +266,11 @@ extend(SelectivityDropdown.prototype, {
      */
     search: function(term) {
 
-        term = term || '';
         this.term = term;
 
         if (this.options.items) {
             term = Selectivity.transformText(term);
-            var matcher = this.selectivity.matcher;
+            var matcher = this.selectivity.options.matcher || Selectivity.matcher;
             this._showResults(this.options.items.map(function(item) {
                 return matcher(item, term);
             }).filter(function(item) {

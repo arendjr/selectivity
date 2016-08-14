@@ -36,7 +36,7 @@ TestUtil.createJQueryTest(
             multiple: true
         });
 
-        $input.find('.selectivity-multiple-input').click().val('amster').trigger('keyup');
+        $input.find('.selectivity-multiple-input').click().val('amster');
         $('.selectivity-result-item[data-item-id="Amsterdam"]').click();
 
         test.deepEqual($input.selectivity('value'), ['Amsterdam']);
@@ -400,5 +400,28 @@ TestUtil.createJQueryTest(
 
         test.equal($('.selectivity-multiple-selected-item').length, 2);
         test.equal($('.selectivity-multiple-selected-item-remove').length, 2);
+    }
+);
+
+TestUtil.createJQueryTest(
+    'jquery/multiple: test input size',
+    ['inputs/multiple', 'templates'],
+    function(test, $input, $) {
+        $input.selectivity({
+            items: ['Amsterdam', 'Antwerp', 'Athens'],
+            multiple: true,
+            placeholder: 'Select a city'
+        });
+
+        test.equal($('.selectivity-multiple-input').attr('size'), '15');
+
+        $input.selectivity('value', ['Amsterdam']);
+
+        test.equal($('.selectivity-multiple-input').attr('size'), '2');
+
+        $('.selectivity-multiple-input').val('antw');
+        TestUtil.simulateEvent('.selectivity-multiple-input', 'keyup');
+
+        test.equal($('.selectivity-multiple-input').attr('size'), '6');
     }
 );

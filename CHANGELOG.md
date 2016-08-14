@@ -31,6 +31,8 @@ CHANGELOG
 - Fix: When a Selectivity instance is clicked but its dropdown should not open, at least it should
        be focused.
 - Fix #144: Properly handle dynamically changing readOnly option.
+- Fix #145: Make sure size detection works outside the DOM (also the .selectivity-width-detector
+            element is no longer needed).
 
 ## 2.1.0
 

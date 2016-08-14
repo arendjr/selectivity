@@ -74,24 +74,31 @@ TestUtil.createReactTest(
     },
     function(SelectivityReact, test, ref, container, $) {
         TestUtil.simulateEvent(container.firstChild, 'click');
-        test.equal($('.selectivity-result-item').length, 3);
+        test.equal($('.selectivity-result-item').length, 3,
+                   'After opening 3 result items are expected');
 
         TestUtil.simulateEvent('.selectivity-result-item[data-item-id="1"]', 'mouseenter');
 
-        test.equal($('.selectivity-dropdown').length, 2);
-        test.equal($('.selectivity-result-item').length, 3);
+        test.equal($('.selectivity-dropdown').length, 2,
+                   'There should be 2 dropdowns open');
+        test.equal($('.selectivity-result-item').length, 3,
+                   'With a total of 3 result items');
 
         $('.selectivity-search-input')[1].value = 'Second';
-        TestUtil.simulateEvent('.selectivity-search-input', 'keyup');
+        TestUtil.simulateEvent($('.selectivity-search-input')[1], 'keyup');
 
-        test.equal($('.selectivity-dropdown').length, 2);
-        test.equal($('.selectivity-result-item').length, 2);
+        test.equal($('.selectivity-dropdown').length, 2,
+                   'After searching for "Second" still 2 dropdowns should be open');
+        test.equal($('.selectivity-result-item').length, 2,
+                   'But now only 2 result items remain');
 
         $('.selectivity-search-input')[1].value = '';
-        TestUtil.simulateEvent('.selectivity-search-input', 'keyup');
+        TestUtil.simulateEvent($('.selectivity-search-input')[1], 'keyup');
 
-        test.equal($('.selectivity-dropdown').length, 2);
-        test.equal($('.selectivity-result-item').length, 3);
+        test.equal($('.selectivity-dropdown').length, 2,
+                   'After clearing the search we still have 2 dropdowns');
+        test.equal($('.selectivity-result-item').length, 3,
+                   'And all 3 result items are displayed again');
     }
 );
 

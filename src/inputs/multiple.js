@@ -231,11 +231,10 @@ var callSuper = Selectivity.inherits(MultipleInput, Selectivity, {
     /**
      * @inherit
      */
-    search: function() {
+    search: function(term) {
 
         if (this.options.tokenizer) {
-            var term = this.options.tokenizer(this.input.value, this._data,
-                                              this.add.bind(this), this.options);
+            term = this.options.tokenizer(term, this._data, this.add.bind(this), this.options);
 
             if (isString(term) && term !== this.input.value) {
                 this.input.value = term;
@@ -245,7 +244,7 @@ var callSuper = Selectivity.inherits(MultipleInput, Selectivity, {
         this._updateInputWidth();
 
         if (this.dropdown) {
-            callSuper(this, 'search');
+            callSuper(this, 'search', term);
         }
     },
 
@@ -441,7 +440,7 @@ var callSuper = Selectivity.inherits(MultipleInput, Selectivity, {
     _onPaste: function() {
 
         setTimeout(function() {
-            this.search();
+            this.search(this.input.value);
 
             this._createToken();
         }.bind(this), 10);

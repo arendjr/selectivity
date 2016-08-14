@@ -49,13 +49,6 @@ function Selectivity(options) {
     this.input = null;
 
     /**
-     * Array of input listeners.
-     *
-     * Custom listeners can be specified in the options object.
-     */
-    this.inputListeners = Selectivity.InputListeners;
-
-    /**
      * Array of items from which to select. If set, this will be an array of objects with 'id' and
      * 'text' properties.
      *
@@ -64,11 +57,6 @@ function Selectivity(options) {
      * should be provided to fetch remote data.
      */
     this.items = null;
-
-    /**
-     * The function to be used for matching search results.
-     */
-    this.matcher = Selectivity.matcher;
 
     /**
      * Options passed to the Selectivity instance or set through setOptions().
@@ -290,14 +278,15 @@ extend(Selectivity.prototype, {
         this.input = input;
 
         var selectivity = this;
-        this.inputListeners.forEach(function(listener) {
+        var inputListeners = this.options.inputListeners || Selectivity.InputListeners;
+        inputListeners.forEach(function(listener) {
             listener(selectivity, input, options);
         });
 
         if (!options || options.search !== false) {
             input.addEventListener('keyup', function(event) {
                 if (!event.defaultPrevented) {
-                    selectivity.search();
+                    selectivity.search(event.target.value);
                 }
             });
         }
@@ -344,20 +333,15 @@ extend(Selectivity.prototype, {
     },
 
     /**
-     * Searches for results based on the term given or the term entered in the search input.
+     * Searches for results based on the term given.
      *
      * If an items array has been passed with the options to the Selectivity instance, a local
      * search will be performed among those items. Otherwise, the query function specified in the
      * options will be used to perform the search. If neither is defined, nothing happens.
      *
-     * @param term Optional term to search for. If omitted, the value of the search input element
-     *             is used as term.
+     * @param term Term to search for.
      */
     search: function(term) {
-
-        if (term === undefined) {
-            term = (this.input ? this.input.value : '');
-        }
 
         this.open();
 
@@ -446,34 +430,16 @@ extend(Selectivity.prototype, {
 
         options = options || {};
 
+        var selectivity = this;
         Selectivity.OptionListeners.forEach(function(listener) {
-            listener(this, options);
-        }.bind(this));
+            listener(selectivity, options);
+        });
 
-        for (var key in options) {
-            if (!options.hasOwnProperty(key)) {
-                continue;
-            }
-
-            var value = options[key];
-
-            switch (key) {
-            case 'items':
-                this.items = (value ? Selectivity.processItems(value) : null);
-                break;
-
-            case 'matcher':
-                this.matcher = value;
-                break;
-
-            case 'inputListeners':
-                this.inputListeners = value;
-                break;
-
-            case 'templates':
-                extend(this.templates, value);
-                break;
-            }
+        if ('items' in options) {
+            this.items = (options.items ? Selectivity.processItems(options.items) : null);
+        }
+        if ('templates' in options) {
+            extend(this.templates, options.templates);
         }
 
         extend(this.options, options);
