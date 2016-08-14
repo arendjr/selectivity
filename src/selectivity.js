@@ -112,12 +112,10 @@ extend(Selectivity.prototype, {
      */
     close: function() {
 
-        var dropdown = this.dropdown;
-        if (dropdown) {
-            setTimeout(function() {
-                dropdown.close();
-            }, 1);
+        this._clearCloseTimeout();
 
+        if (this.dropdown) {
+            this.dropdown.close();
             this.dropdown = null;
         }
     },
@@ -191,6 +189,8 @@ extend(Selectivity.prototype, {
      * Applies focus to the input.
      */
     focus: function() {
+
+        this._clearCloseTimeout();
 
         this._focusing = true;
 
@@ -589,7 +589,19 @@ extend(Selectivity.prototype, {
             // handled, especially when the user doesn't click exactly on the text of the result
             // item. I don't understand really why that happens, or why the timeout has to be so
             // large, but after trial and error, this now seems to work reliably...
-            setTimeout(this.close.bind(this), 166);
+            this._clearCloseTimeout();
+            this._closeTimeout = setTimeout(this.close.bind(this), 166);
+        }
+    },
+
+    /**
+     * @private
+     */
+    _clearCloseTimeout: function() {
+
+        if (this._closeTimeout) {
+            clearTimeout(this._closeTimeout);
+            this._closeTimeout = 0;
         }
     },
 
