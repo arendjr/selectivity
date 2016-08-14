@@ -55,7 +55,7 @@ function createSelectivityNextToSelectElement($el, options) {
     }
 
     var $div = $('<div>').attr({
-        'id': $el.attr('id'),
+        'id': 's9y_' + $el.attr('id'),
         'class': classes.join(' '),
         'style': $el.attr('style'),
         'data-name': $el.attr('name')
