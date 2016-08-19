@@ -176,7 +176,7 @@ var SelectivityReact = React.createClass({
      */
     getData: function() {
 
-        return this.selectivity.data();
+        return this.selectivity.getData();
     },
 
     /**
@@ -187,7 +187,7 @@ var SelectivityReact = React.createClass({
      */
     getValue: function() {
 
-        return this.selectivity.value();
+        return this.selectivity.getValue();
     },
 
     /**

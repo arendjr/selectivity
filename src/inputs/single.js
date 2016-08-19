@@ -59,7 +59,7 @@ var callSuper = Selectivity.inherits(SingleInput, Selectivity, {
      */
     clear: function() {
 
-        this.data(null);
+        this.setData(null);
     },
 
     /**
@@ -183,7 +183,7 @@ var callSuper = Selectivity.inherits(SingleInput, Selectivity, {
      */
     _itemRemoveClicked: function(event) {
 
-        this.data(null);
+        this.setData(null);
 
         stopPropagation(event);
     },
@@ -193,7 +193,7 @@ var callSuper = Selectivity.inherits(SingleInput, Selectivity, {
      */
     _resultSelected: function(event) {
 
-        this.data(event.item);
+        this.setData(event.item);
 
         this.close({ keepFocus: true });
     }

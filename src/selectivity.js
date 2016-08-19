@@ -78,9 +78,9 @@ function Selectivity(options) {
     this.setOptions(options);
 
     if (options.value) {
-        this.value(options.value, { triggerChange: false });
+        this.setValue(options.value, { triggerChange: false });
     } else {
-        this.data(options.data || null, { triggerChange: false });
+        this.setData(options.data || null, { triggerChange: false });
     }
 
     this.el.setAttribute('tabindex', options.tabIndex || 0);
@@ -117,42 +117,6 @@ extend(Selectivity.prototype, {
         if (this.dropdown) {
             this.dropdown.close();
             this.dropdown = null;
-        }
-    },
-
-    /**
-     * Sets or gets the selection data.
-     *
-     * The selection data contains both IDs and text labels. If you only want to set or get the IDs,
-     * you should use the value() method.
-     *
-     * @param newData Optional new data to set. For a MultipleSelectivity instance the data must be
-     *                an array of objects with 'id' and 'text' properties, for a SingleSelectivity
-     *                instance the data must be a single such object or null to indicate no item is
-     *                selected.
-     * @param options Optional options object. May contain the following property:
-     *                triggerChange - Set to false to suppress the "change" event being triggered.
-     *                                Note this will also cause the UI to not update automatically;
-     *                                so you may want to call rerenderSelection() manually when
-     *                                using this option.
-     *
-     * @return If newData is omitted, this method returns the current data.
-     */
-    data: function(newData, options) {
-
-        options = options || {};
-
-        if (newData === undefined) {
-            return this._data;
-        } else {
-            newData = this.validateData(newData);
-
-            this._data = newData;
-            this._value = this.getValueForData(newData);
-
-            if (options.triggerChange !== false) {
-                this.triggerChange();
-            }
         }
     },
 
@@ -199,6 +163,14 @@ extend(Selectivity.prototype, {
         }
 
         this._focusing = false;
+    },
+
+    /**
+     * Returns the selection data.
+     */
+    getData: function() {
+
+        return this._data;
     },
 
     /**
@@ -259,6 +231,14 @@ extend(Selectivity.prototype, {
             var number = parseInt(id, 10);
             return ('' + number === id ? number : id);
         }
+    },
+
+    /**
+     * Returns the value of the selection.
+     */
+    getValue: function() {
+
+        return this._value;
     },
 
     /**
@@ -347,6 +327,35 @@ extend(Selectivity.prototype, {
 
         if (this.dropdown) {
             this.dropdown.search(term);
+        }
+    },
+
+    /**
+     * Sets the selection data.
+     *
+     * The selection data contains both IDs and text labels. If you only want to set or get the IDs,
+     * you should use the value() method.
+     *
+     * @param newData New data to set. For a MultipleSelectivity instance the data must be an array
+     *                of objects with 'id' and 'text' properties, for a SingleSelectivity instance
+     *                the data must be a single such object or null to indicate no item is selected.
+     * @param options Optional options object. May contain the following property:
+     *                triggerChange - Set to false to suppress the "change" event being triggered.
+     *                                Note this will also cause the UI to not update automatically;
+     *                                so you may want to call rerenderSelection() manually when
+     *                                using this option.
+     */
+    setData: function(newData, options) {
+
+        options = options || {};
+
+        newData = this.validateData(newData);
+
+        this._data = newData;
+        this._value = this.getValueForData(newData);
+
+        if (options.triggerChange !== false) {
+            this.triggerChange();
         }
     },
 
@@ -448,6 +457,53 @@ extend(Selectivity.prototype, {
     },
 
     /**
+     * Sets the value of the selection.
+     *
+     * The value of the selection only concerns the IDs of the selection items. If you are
+     * interested in the IDs and the text labels, you should use the data() method.
+     *
+     * Note that if neither the items option nor the initSelection option have been set, Selectivity
+     * will have no way to determine what text labels should be used with the given IDs in which
+     * case it will assume the text is equal to the ID. This is useful if you're working with tags,
+     * or selecting e-mail addresses for instance, but may not always be what you want.
+     *
+     * @param newValue New value to set. For a MultipleSelectivity instance the value must be an
+     *                 array of IDs, for a SingleSelectivity instance the value must be a single ID
+     *                 (a string or a number) or null to indicate no item is selected.
+     * @param options Optional options object. May contain the following property:
+     *                triggerChange - Set to false to suppress the "change" event being triggered.
+     *                                Note this will also cause the UI to not update automatically;
+     *                                so you may want to call rerenderSelection() manually when
+     *                                using this option.
+     */
+    setValue: function(newValue, options) {
+
+        options = options || {};
+
+        newValue = this.validateValue(newValue);
+
+        this._value = newValue;
+
+        if (this.options.initSelection) {
+            this.options.initSelection(newValue, function(data) {
+                if (this._value === newValue) {
+                    this._data = this.validateData(data);
+
+                    if (options.triggerChange !== false) {
+                        this.triggerChange();
+                    }
+                }
+            }.bind(this));
+        } else {
+            this._data = this.getDataForValue(newValue);
+
+            if (options.triggerChange !== false) {
+                this.triggerChange();
+            }
+        }
+    },
+
+    /**
      * Returns the result of the given template.
      *
      * @param templateName Name of the template to process.
@@ -503,14 +559,6 @@ extend(Selectivity.prototype, {
     },
 
     /**
-     * Shorthand for value().
-     */
-    val: function(newValue) {
-
-        return this.value(newValue);
-    },
-
-    /**
      * Validates a single item. Throws an exception if the item is invalid.
      *
      * @param item The item to validate.
@@ -523,59 +571,6 @@ extend(Selectivity.prototype, {
             return item;
         } else {
             throw new Error('Item should have id (number or string) and text (string) properties');
-        }
-    },
-
-    /**
-     * Sets or gets the value of the selection.
-     *
-     * The value of the selection only concerns the IDs of the selection items. If you are
-     * interested in the IDs and the text labels, you should use the data() method.
-     *
-     * Note that if neither the items option nor the initSelection option have been set, Selectivity
-     * will have no way to determine what text labels should be used with the given IDs in which
-     * case it will assume the text is equal to the ID. This is useful if you're working with tags,
-     * or selecting e-mail addresses for instance, but may not always be what you want.
-     *
-     * @param newValue Optional new value to set. For a MultipleSelectivity instance the value must
-     *                 be an array of IDs, for a SingleSelectivity instance the value must be a
-     *                 single ID (a string or a number) or null to indicate no item is selected.
-     * @param options Optional options object. May contain the following property:
-     *                triggerChange - Set to false to suppress the "change" event being triggered.
-     *                                Note this will also cause the UI to not update automatically;
-     *                                so you may want to call rerenderSelection() manually when
-     *                                using this option.
-     *
-     * @return If newValue is omitted, this method returns the current value.
-     */
-    value: function(newValue, options) {
-
-        options = options || {};
-
-        if (newValue === undefined) {
-            return this._value;
-        } else {
-            newValue = this.validateValue(newValue);
-
-            this._value = newValue;
-
-            if (this.options.initSelection) {
-                this.options.initSelection(newValue, function(data) {
-                    if (this._value === newValue) {
-                        this._data = this.validateData(data);
-
-                        if (options.triggerChange !== false) {
-                            this.triggerChange();
-                        }
-                    }
-                }.bind(this));
-            } else {
-                this._data = this.getDataForValue(newValue);
-
-                if (options.triggerChange !== false) {
-                    this.triggerChange();
-                }
-            }
         }
     },
 

@@ -58,7 +58,11 @@ $.fn.selectivity = function selectivity(methodName, options) {
         var instance = this.selectivity;
 
         if (instance) {
-            if (!isString(methodName)) {
+            if (methodName === 'data') {
+                methodName = (methodArgs.length ? 'setData' : 'getData');
+            } else if (methodName === 'val' || methodName === 'value') {
+                methodName = (methodArgs.length ? 'setValue' : 'getValue');
+            } else if (!isString(methodName)) {
                 methodArgs = [methodName];
                 methodName = 'setOptions';
             }

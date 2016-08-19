@@ -108,7 +108,7 @@ var callSuper = Selectivity.inherits(MultipleInput, Selectivity, {
      */
     clear: function() {
 
-        this.data([]);
+        this.setData([]);
     },
 
     /**

@@ -396,7 +396,7 @@ extend(SelectivityDropdown.prototype, {
 
         this.hasMore = options.hasMore;
 
-        var value = this.selectivity.value();
+        var value = this.selectivity.getValue();
         if (value && !Array.isArray(value)) {
             var item = Selectivity.findNestedById(results, value);
             if (item) {
