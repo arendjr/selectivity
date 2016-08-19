@@ -63,7 +63,7 @@ function propsToOptions(props) {
 
     var options = {};
     for (var key in props) {
-        if (key in selectivityOptions) {
+        if (props.hasOwnProperty(key) && !(key in selectivityCallbacks) && !(key in otherProps)) {
             options[key] = props[key];
         }
     }
