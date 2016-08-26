@@ -151,11 +151,11 @@ var SelectivityReact = React.createClass({
 
         selectivity.setOptions(propsToOptions(nextProps));
         if (nextProps.data !== this.props.data) {
-            selectivity.data(nextProps.data, { triggerChange: false });
+            selectivity.setData(nextProps.data, { triggerChange: false });
             selectivity.rerenderSelection();
         }
         if (nextProps.value !== this.props.value) {
-            selectivity.value(nextProps.value, { triggerChange: false });
+            selectivity.setValue(nextProps.value, { triggerChange: false });
             selectivity.rerenderSelection();
         }
     },
