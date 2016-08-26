@@ -111,7 +111,7 @@ var SelectivityReact = React.createClass({
         }
 
         options.element = el;
-        this.selectivity = new InputType(options);
+        el.selectivity = this.selectivity = new InputType(options);
 
         if (props.onChange) {
             el.addEventListener('change', props.onChange);
