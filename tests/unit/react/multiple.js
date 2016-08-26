@@ -150,15 +150,43 @@ TestUtil.createReactTest(
         ],
         multiple: true
     },
-    function(SelectivityReact, test, ref) {
+    function(SelectivityReact, test, ref, container, $) {
         test.deepEqual(ref.getData(), []);
 
         test.deepEqual(ref.getValue(), []);
+
+        test.equal(ref.selectivity.enabled, true);
+
+        test.equal($('input').length, 1);
+    }
+);
+
+
+TestUtil.createReactTest(
+    'react/multiple: test without data and remove-only',
+    ['inputs/multiple', 'templates'],
+    {
+        items: [
+            { id: 1, text: 'Amsterdam' },
+            { id: 2, text: 'Antwerp' },
+            { id: 3, text: 'Athens' }
+        ],
+        multiple: true,
+        removeOnly: true
+    },
+    function(SelectivityReact, test, ref, container, $) {
+        test.deepEqual(ref.getData(), []);
+
+        test.deepEqual(ref.getValue(), []);
+
+        test.equal(ref.selectivity.enabled, false);
+
+        test.equal($('input').length, 0);
     }
 );
 
 TestUtil.createReactTest(
-    'react/multiple: test remove-only',
+    'react/multiple: test setting remove-only after construction',
     ['inputs/multiple', 'templates'],
     {
         async: true,

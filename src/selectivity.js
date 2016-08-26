@@ -39,7 +39,7 @@ function Selectivity(options) {
      *
      * This is false when the option readOnly is false or the option removeOnly is false.
      */
-    this.enabled = true;
+    this.enabled = (!options.readOnly && !options.removeOnly);
 
     /**
      * DOM element for the input.
