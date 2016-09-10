@@ -1,7 +1,7 @@
 {
   "name": "selectivity",
   "desc": "Modular and light-weight selection library",
-  "version": "3.0.0-beta",
+  "version": "3.0.0-rc",
   "repository": {
     "type": "git",
     "url": "git://github.com/arendjr/selectivity.git"
