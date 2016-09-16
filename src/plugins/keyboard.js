@@ -31,7 +31,7 @@ function listener(selectivity, input) {
             return;
         }
 
-        var resultItems = dropdown.el.querySelectorAll('.selectivity-result-item');
+        var resultItems = [].slice.call(dropdown.el.querySelectorAll('.selectivity-result-item'));
 
         function scrollToHighlight() {
             var el;

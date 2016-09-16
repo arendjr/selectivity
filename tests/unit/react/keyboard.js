@@ -60,3 +60,43 @@ TestUtil.createReactTest(
         test.deepEqual(changeEvents[0].value, ['Amsterdam']);
     }
 );
+
+TestUtil.createReactTest(
+    'react/keyboard: test up and down navigation',
+    ['inputs/single', 'plugins/keyboard', 'dropdown', 'templates'],
+    {
+        items: ['Amsterdam', 'Antwerp', 'Athens']
+    },
+    function(SelectivityReact, test, ref, container, $) {
+        TestUtil.simulateEvent('.selectivity-single-select', 'click');
+
+        test.equal($('.selectivity-result-item').length, 3);
+        test.equal($('.selectivity-result-item.highlight').length, 1);
+        test.equal($('.selectivity-result-item.highlight')[0].textContent, 'Amsterdam');
+
+        TestUtil.simulateEvent('.selectivity-search-input', 'keydown', { keyCode: 40 });
+
+        test.equal($('.selectivity-result-item.highlight').length, 1);
+        test.equal($('.selectivity-result-item.highlight')[0].textContent, 'Antwerp');
+
+        TestUtil.simulateEvent('.selectivity-search-input', 'keydown', { keyCode: 40 });
+
+        test.equal($('.selectivity-result-item.highlight').length, 1);
+        test.equal($('.selectivity-result-item.highlight')[0].textContent, 'Athens');
+
+        TestUtil.simulateEvent('.selectivity-search-input', 'keydown', { keyCode: 40 });
+
+        test.equal($('.selectivity-result-item.highlight').length, 1);
+        test.equal($('.selectivity-result-item.highlight')[0].textContent, 'Amsterdam');
+
+        TestUtil.simulateEvent('.selectivity-search-input', 'keydown', { keyCode: 38 });
+
+        test.equal($('.selectivity-result-item.highlight').length, 1);
+        test.equal($('.selectivity-result-item.highlight')[0].textContent, 'Athens');
+
+        TestUtil.simulateEvent('.selectivity-search-input', 'keydown', { keyCode: 38 });
+
+        test.equal($('.selectivity-result-item.highlight').length, 1);
+        test.equal($('.selectivity-result-item.highlight')[0].textContent, 'Antwerp');
+    }
+);
