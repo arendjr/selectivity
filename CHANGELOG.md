@@ -14,6 +14,10 @@ CHANGELOG
                    useful for items that trigger submenus.
 - Removed Bower and Component support.
 - Moved option validation into its own plugin.
+- Introduced the `"selectivity-change"` event. It's exactly the same as the `"change"` event (which
+  is still supported as well) from version 2, but with the added benefit it cannot be confused with
+  `"change"` events that bubble from internal `<input>` elements. The React API's `onChange`
+  property uses the new event.
 - Rewrote the AJAX plugin:
   - It now relies on the `fetch()` method for performing AJAX requests. This method is only
     available on modern browsers, so you'll need a polyfill if you want to use this with old

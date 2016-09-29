@@ -537,7 +537,9 @@ extend(Selectivity.prototype, {
      */
     triggerChange: function(options) {
 
-        this.triggerEvent('change', extend({ value: this._value }, options));
+        var data = extend({ value: this._value }, options);
+        this.triggerEvent('change', data);
+        this.triggerEvent('selectivity-change', data);
     },
 
     /**

@@ -7,6 +7,7 @@ var Selectivity = require('../selectivity');
 
 var EVENT_PROPERTIES = {
     'change': ['added', 'removed', 'value'],
+    'selectivity-change': ['added', 'removed', 'value'],
     'selectivity-highlight': ['id', 'item'],
     'selectivity-selected': ['id', 'item'],
     'selectivity-selecting': ['id', 'item']
