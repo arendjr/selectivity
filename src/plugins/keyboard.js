@@ -56,7 +56,7 @@ function listener(selectivity, input) {
         var highlightedResult = dropdown.highlightedResult;
         if (highlightedResult) {
             var highlightedResultItem = findResultItem(resultItems, highlightedResult.id);
-            index = resultItems.indexOf(highlightedResultItem) + delta;
+            index = Array.prototype.indexOf.call(resultItems, highlightedResultItem) + delta;
             if (delta > 0 ? index >= resultItems.length : index < 0) {
                 if (dropdown.hasMore) {
                     dropdown.highlightLoadMore();
