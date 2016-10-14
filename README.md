@@ -72,7 +72,7 @@ https://arendjr.github.io/selectivity/
 
 Make sure you have Node.js installed and run:
 
-    $ npm install selectivity@3.0.0-rc1
+    $ npm install selectivity
 
 Note you will need to include the CSS yourself. You can find it in
 `node_modules/selectivity/selectivity.css`.
