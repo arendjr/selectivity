@@ -34,8 +34,10 @@ function doFetch(ajax, queryOptions) {
         }
     }
 
-    var init = pick(ajax, ['body', 'cache', 'credentials', 'headers', 'integrity', 'method', 'mode',
-                           'redirect', 'referrer', 'referrerPolicy']);
+    var init = pick(ajax, [
+        'body', 'cache', 'credentials', 'headers', 'integrity', 'method', 'mode', 'redirect',
+        'referrer', 'referrerPolicy'
+    ]);
 
     fetch(url, init, queryOptions)
         .then(function(response) {
