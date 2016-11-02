@@ -1,6 +1,10 @@
 CHANGELOG
 =========
 
+## 3.0.1
+
+- Fix #156: Don't crash when unsubscribing from non-subscribed event listener.
+
 ## 3.0.0
 
 - Made jQuery dependency fully optional.
