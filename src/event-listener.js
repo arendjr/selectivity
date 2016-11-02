@@ -57,11 +57,16 @@ extend(EventListener.prototype, {
         }
 
         if (callback) {
-            var events = this.events[eventName][selector];
-            for (var i = 0; i < events.length; i++) {
-                if (events[i] === callback) {
-                    events.splice(i, 1);
-                    i--;
+            var events = this.events[eventName];
+            if (events) {
+                events = events[selector];
+                if (events) {
+                    for (var i = 0; i < events.length; i++) {
+                        if (events[i] === callback) {
+                            events.splice(i, 1);
+                            i--;
+                        }
+                    }
                 }
             }
         } else {

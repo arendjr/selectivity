@@ -172,6 +172,25 @@ tape('event-listener: it supports unregistering a listener', function(test) {
     });
 });
 
+tape('event-listener: it supports unregistering a non-registered listener', function(test) {
+    jsdom.env({
+        file: 'tests/resources/testcase-event-listener.html',
+        onload: function(window) {
+            global.document = window.document;
+            global.window = window;
+
+            var events = new EventListener(document.body);
+            events.off('click', '.some-class', function() {});
+
+            // nothing to test for here, we just don't want it to crash :)
+
+            window.close();
+
+            test.end();
+        }
+    });
+});
+
 tape('event-listener: it supports capturing an event', function(test) {
     test.plan(1);
 
