@@ -131,6 +131,36 @@ Detailed information for `selectivity-rails`, including
 [Installation and usage](https://github.com/msx2/selectivity-rails#installation-and-usage) are
 provided in the [gem's repository](https://github.com/msx2/selectivity-rails).
 
+### Customization
+
+Once installed, you may want to customize Selectivity. For example, by specifying custom templates or
+localized strings. While creating a custom build is always an option (see details below), easier
+options exist.
+
+To do any basic customization, you'll need a reference to the `Selectivity` object. If you have
+installed through NPM, you can get this object through `var Selectivity = require('selectivity');`.
+If you're using a jQuery build, the object is exposed as `$.Selectivity`. For non-jQuery builds that
+you included as a script, the object is exposed as global variable.
+
+#### Example: Customizing localization in a jQuery build
+
+    $.Selectivity.Locale.noResultsForTerm = function(term) {
+        return 'No results were found for <b>' + escape(term) + '</b>';
+    };
+
+See [locale.js](https://github.com/arendjr/selectivity/blob/master/src/locale.js) for an overview of
+all localizable messages.
+
+#### Example: Specifying a custom template when installed through NPM
+
+    var Selectivity = require('selectivity');
+    Selectivity.Templates.loading = function() {
+        return '<div class="selectivity-loading"><div class="my-spinner"></div></div>';
+    };
+
+See [templates.js](https://github.com/arendjr/selectivity/blob/master/src/templates.js) for an
+overview of all templates that can be customized.
+
 API
 ---
 
