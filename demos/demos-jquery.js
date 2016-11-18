@@ -1,6 +1,6 @@
 'use strict';
 
-/* global $, Selectivity */
+/* global $ */
 
 function escape(string) {
     return string ? String(string).replace(/[&<>"']/g, function(match) {
@@ -42,7 +42,7 @@ $(document).ready(function() {
         };
     }).get();
 
-    var transformText = Selectivity.transformText;
+    var transformText = $.Selectivity.transformText;
 
     // example query function that returns at most 10 cities matching the given text
     function queryFunction(query) {

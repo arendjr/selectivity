@@ -171,3 +171,20 @@ TestUtil.createJQueryTest(
         test.deepEqual($input.selectivity('value'), ['3', '4', '1', '2']);
     }
 );
+
+TestUtil.createJQueryTest(
+    'jquery/traditional: test placeholder with multiple select input',
+    ['inputs/multiple', 'plugins/jquery/traditional', 'templates'],
+    { indexResource: 'testcase-traditional-multiple-placeholder.html' },
+    function(test, $input, $) {
+        $input.selectivity();
+
+        test.deepEqual($input.selectivity('data'), []);
+        test.equal($('select[name="my_select"] option[selected]').length, 0);
+        test.equal($('.multiple-selected-item').length, 0);
+
+        var input = $('.selectivity-multiple-input')[0];
+        test.equal(input.value, '');
+        test.equal(input.getAttribute('placeholder'), 'Select one or more');
+    }
+);
