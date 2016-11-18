@@ -61,7 +61,7 @@ The second line should reference the CSS file from the bundle you chose to use.
 
 The third line should reference jQuery, React or Zepto.js as appropriate. This line is optional if
 you use the VanillaJS bundle. *Note: If you want to use the React templates plugin, don't forget to
-also include `react-dom-server.js`.*
+also include `react-dom.js`.*
 
 Finally, the last line should reference the JavaScript file from the bundle you chose to use.
 
@@ -213,7 +213,7 @@ Module                          | Description
 **plugins/tokenizer**           | Default tokenizer implementation. This module adds support for the `tokenSeparators` option which is used by the default tokenizer. Support for tokenizers themselves is already included in the "multiple" module, so you can omit this module if you don't want to use any tokenizers or want to specify your own tokenizer.
 **plugins/jquery/ajax**         | Provides a fallback to use `$.ajax()` instead of the `fetch()` method for performing AJAX requests. *(Requires jQuery 3.0 or higher)*
 **plugins/jquery/traditional**  | This module allows you to convert an HTML5 `<select>` form element into a Selectivity instance. The items will be initialized from the `<option>` and `<optgroup>` elements. *(jQuery only)*
-**plugins/react/templates**     | Adds support for React (JSX) templates. Requires `react-dom/server` to be available.
+**plugins/react/templates**     | Adds support for React (JSX) templates. Requires `react-dom` to be available.
 **dropdown**                    | Module that implements the dropdown. You will most likely want to include this, unless you only want to use Selectivity without any dropdown or you provide a completely custom implementation instead.
 **locale**                      | Localizable content pulled in by the default templates. You may or may not decide to use these with your own templates. Also used for localizable messages by the ajax module.
 **templates**                   | Default templates to use with Selectivity. If you provide your own templates, you may want to skip this.

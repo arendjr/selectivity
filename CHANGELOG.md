@@ -4,6 +4,7 @@ CHANGELOG
 ## 3.0.1
 
 - Fix #156: Don't crash when unsubscribing from non-subscribed event listener.
+- Don't rely on `react-dom-server` in React templates plugin to avoid issues with React 15.4.
 
 ## 3.0.0
 

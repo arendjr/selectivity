@@ -36,7 +36,7 @@ module.exports = function() {
 
     b.add('./src/selectivity-custom.js');
 
-    ['jquery', 'react', 'react-dom/server'].forEach(function(lib) {
+    ['jquery', 'react', 'react-dom'].forEach(function(lib) {
         b.external(lib);
     });
 
@@ -70,7 +70,7 @@ module.exports = function() {
 
     stream = stream.pipe(replace(/require\(['"]jquery['"]\)/g, '(window.jQuery || window.Zepto)'));
     stream = stream.pipe(replace(/require\(['"]react['"]\)/g, 'window.React'));
-    stream = stream.pipe(replace(/require\(['"]react-dom\/server['"]\)/g, 'window.ReactDOMServer'));
+    stream = stream.pipe(replace(/require\(['"]react-dom['"]\)/g, 'window.ReactDOM'));
 
     if (argv.commonJs || argv.derequire) {
         stream = stream.pipe(derequire());
@@ -79,7 +79,7 @@ module.exports = function() {
     if (argv.commonJs) {
         stream = stream.pipe(replace(/window\.jQuery \|\| window\.Zepto/g, 'require("jquery")'));
         stream = stream.pipe(replace(/window\._/g, 'require("lodash")'));
-        stream = stream.pipe(replace(/window\.ReactDOMServer/g, 'require("react-dom/server")'));
+        stream = stream.pipe(replace(/window\.ReactDOM/g, 'require("react-dom")'));
         stream = stream.pipe(replace(/window\.React/g, 'require("react")'));
     } else {
         stream = stream.pipe(replace(/var ReactDOMServer *= *window\.ReactDOMServer;/g, ''));

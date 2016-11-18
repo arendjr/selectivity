@@ -1,9 +1,16 @@
 'use strict';
 
 var isValidElement = require('react').isValidElement;
-var ReactDOMServer = require('react-dom/server');
+var ReactDOM = require('react-dom');
 
 var Selectivity = require('../../selectivity');
+
+var div = null;
+function renderToString(element) {
+    div = div || document.createElement('div');
+    ReactDOM.render(element, div);
+    return div.innerHTML;
+}
 
 /**
  * Overrides the Selectivity template() method to support React templates.
@@ -26,12 +33,12 @@ Selectivity.prototype.template = function(templateName, options) {
 
     var template = this.templates[templateName];
     if (isValidElement(template)) {
-        return ReactDOMServer.renderToStaticMarkup(template);
+        return renderToString(template);
     }
 
     var result = templateMethod.call(this, templateName, options);
     if (isValidElement(result)) {
-        return ReactDOMServer.renderToStaticMarkup(result);
+        return renderToString(result);
     } else {
         return result;
     }
