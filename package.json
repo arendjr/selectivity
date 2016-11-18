@@ -38,7 +38,10 @@
     "gulp-tape": "0.0.9",
     "gulp-uglify": "^2.0.0",
     "gulp-util": "^3.0.1",
+    "jquery": "^3.0.0",
     "jsdom": "^9.1.0",
+    "react": "^15.0.0",
+    "react-dom": "^15.0.0",
     "tape": "^4.5.1",
     "vinyl-buffer": "^1.0.0",
     "vinyl-source-stream": "^1.0.0",
@@ -64,10 +67,5 @@
     "tagging",
     "ui"
   ],
-  "license": "MIT",
-  "peerDependencies": {
-    "jquery": "^3.0.0",
-    "react": "^15.0.0",
-    "react-dom": "^15.0.0"
-  }
+  "license": "MIT"
 }
