@@ -5,6 +5,7 @@ CHANGELOG
 
 - Fix #156: Don't crash when unsubscribing from non-subscribed event listener.
 - Don't rely on `react-dom-server` in React templates plugin to avoid issues with React 15.4.
+- Fix #158: Expose Selectivity object as `$.Selectivity` in jQuery builds.
 
 ## 3.0.0
 
