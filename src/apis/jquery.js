@@ -114,3 +114,5 @@ $.fn.selectivity = function selectivity(methodName, options) {
 };
 
 Selectivity.patchEvents = patchEvents;
+
+$.Selectivity = Selectivity;
