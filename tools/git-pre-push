@@ -1,4 +1,4 @@
 #!/bin/sh
 
 # Run gulp to check the build is not broken
-gulp eslint && gulp unit-tests
+npm run lint && gulp unit-tests

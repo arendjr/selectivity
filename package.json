@@ -14,13 +14,14 @@
     "build-vanilla-min": "gulp --bundle-name= --exclude-modules=plugins/options-validator --export-global --minify",
     "build-vanilla-source": "gulp --bundle-name= --derequire",
     "build": "npm run build-jquery-source && npm run build-jquery-min && npm run build-react-min && npm run build-react-source && npm run build-vanilla-min && npm run build-vanilla-source",
-    "test": "gulp eslint && gulp unit-tests"
+    "lint": "eslint .",
+    "test": "eslint . && gulp unit-tests"
   },
   "devDependencies": {
     "browser-sync": "^2.14.0",
     "browserify": "^13.0.0",
     "bundle-collapser": "^1.1.0",
-    "eslint": "^3.0.0",
+    "eslint": "^3.10.2",
     "faucet": "0.0.1",
     "freshy": "^1.0.2",
     "glob": "^7.0.3",
@@ -29,7 +30,6 @@
     "gulp-concat": "^2.4.3",
     "gulp-csso": "^2.0.0",
     "gulp-derequire": "^2.0.0",
-    "gulp-eslint": "^3.0.0",
     "gulp-header": "^1.7.1",
     "gulp-if": "^2.0.0",
     "gulp-nodeunit": "0.0.5",
