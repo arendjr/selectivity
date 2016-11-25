@@ -1,6 +1,10 @@
 CHANGELOG
 =========
 
+## 3.0.2
+
+- Fix #161: React API: Value should be re-set when the items change.
+
 ## 3.0.1
 
 - Fix #156: Don't crash when unsubscribing from non-subscribed event listener.

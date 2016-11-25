@@ -154,7 +154,8 @@ var SelectivityReact = React.createClass({
             selectivity.setData(nextProps.data, { triggerChange: false });
             selectivity.rerenderSelection();
         }
-        if (nextProps.value !== this.props.value) {
+        if (nextProps.value !== this.props.value ||
+            (nextProps.value && nextProps.items !== this.props.items)) {
             selectivity.setValue(nextProps.value, { triggerChange: false });
             selectivity.rerenderSelection();
         }
