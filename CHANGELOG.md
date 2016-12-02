@@ -1,6 +1,10 @@
 CHANGELOG
 =========
 
+## 3.0.3
+
+- Fix issue when a single-value Selectivity input is reset to null throught the React API.
+
 ## 3.0.2
 
 - Fix #161: React API: Value should be re-set when the items change.

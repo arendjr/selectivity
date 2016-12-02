@@ -187,6 +187,8 @@ extend(Selectivity.prototype, {
         var items = this.items;
         if (items) {
             return Selectivity.findNestedById(items, id);
+        } else if (id === null) {
+            return null;
         } else {
             return { id: id, text: '' + id };
         }

@@ -31,6 +31,47 @@ TestUtil.createReactTest(
 );
 
 TestUtil.createReactTest(
+    'react/single: test clear by setting null from outside',
+    ['inputs/single', 'dropdown', 'templates'],
+    {
+        allowClear: true,
+        async: true,
+        onChange: _.noop,
+        value: 1,
+        query: function(queryOptions) {
+            queryOptions.callback({
+                results: [
+                    { id: 1, text: 'Amsterdam' },
+                    { id: 2, text: 'Antwerp' },
+                    { id: 3, text: 'Athens' }
+                ]
+            });
+        }
+    },
+    function(SelectivityReact, test, ref, container, $) {
+        test.plan(4);
+
+        test.equal(ref.getValue(), 1);
+
+        ReactDOM.render(
+            React.createElement(SelectivityReact, {
+                allowClear: true,
+                onChange: _.noop,
+                value: null
+            }),
+            container,
+            function() {
+                test.equal(ref.getData(), null);
+                test.equal(ref.getValue(), null);
+
+                test.equal($('.selectivity-dropdown').length, 0);
+                test.end();
+            }
+        );
+    }
+);
+
+TestUtil.createReactTest(
     'react/single: test initial data',
     ['inputs/single', 'templates'],
     {
