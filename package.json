@@ -21,7 +21,7 @@
     "browser-sync": "^2.14.0",
     "browserify": "^13.0.0",
     "bundle-collapser": "^1.1.0",
-    "eslint": "^3.10.2",
+    "eslint": "^3.12.1",
     "faucet": "0.0.1",
     "freshy": "^1.0.2",
     "glob": "^7.0.3",
