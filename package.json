@@ -19,7 +19,7 @@
   },
   "devDependencies": {
     "browser-sync": "^2.14.0",
-    "browserify": "^13.0.0",
+    "browserify": "^14.0.0",
     "bundle-collapser": "^1.1.0",
     "eslint": "^3.10.2",
     "faucet": "0.0.1",
