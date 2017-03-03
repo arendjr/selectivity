@@ -45,7 +45,7 @@
     "tape": "^4.5.1",
     "vinyl-buffer": "^1.0.0",
     "vinyl-source-stream": "^1.0.0",
-    "yargs": "^6.1.1"
+    "yargs": "^7.0.1"
   },
   "dependencies": {
     "lodash": "^4.0.0"
