@@ -384,7 +384,8 @@ extend(SelectivityDropdown.prototype, {
             this.resultsContainer.innerHTML = '';
         }
 
-        var resultsHtml = this.renderItems(this.selectivity.filterResults(results));
+        var filteredResults = this.selectivity.filterResults(results);
+        var resultsHtml = this.renderItems(filteredResults);
         if (options.hasMore) {
             resultsHtml += this.selectivity.template('loadMore');
         } else if (!resultsHtml && !options.add) {
@@ -404,7 +405,7 @@ extend(SelectivityDropdown.prototype, {
             }
         } else if (this.options.highlightFirstItem !== false &&
                    (!options.add || this.loadMoreHighlighted)) {
-            this._highlightFirstItem(results);
+            this._highlightFirstItem(filteredResults);
         }
 
         this.position();
