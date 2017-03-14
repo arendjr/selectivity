@@ -168,6 +168,41 @@ TestUtil.createJQueryTest(
 );
 
 TestUtil.createJQueryTest(
+    'jquery/dropdown: test initial highlights',
+    ['inputs/multiple', 'dropdown', 'templates'],
+    function(test, $input, $) {
+        $input.selectivity({
+            multiple: true,
+            items: [ 'Amsterdam', 'Antwerp', 'Athens' ]
+        });
+
+        test.deepEqual($input.selectivity('val'), []);
+
+        $input.click();
+
+        // 3 results
+        test.equal($('.selectivity-result-item').length, 3);
+        // first item should be highlighted when there is no selection yet
+        test.equal($('.selectivity-result-item.highlight').length, 1);
+        // first item should be highlighted when there is no selection yet
+        test.equal($('.selectivity-result-item.highlight').text(), 'Amsterdam');
+
+        $('.selectivity-result-item[data-item-id="Amsterdam"]').click();
+
+        test.deepEqual($input.selectivity('val'), ['Amsterdam']);
+
+        $input.click();
+
+        // selected items should not be rendered in dropdown
+        test.equal($('.selectivity-result-item').length, 2);
+        test.equal($('.selectivity-result-item.highlight').length, 1);
+        // the first (unselected) result should be highlighted
+        test.equal($('.selectivity-result-item.highlight').text(), 'Antwerp');
+    }
+);
+
+
+TestUtil.createJQueryTest(
     'jquery/dropdown: test load more with single input',
     ['inputs/single', 'dropdown', 'templates'],
     function(test, $input, $) {

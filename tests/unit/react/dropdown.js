@@ -154,6 +154,36 @@ TestUtil.createReactTest(
 );
 
 TestUtil.createReactTest(
+    'react/dropdown: test multiple input initial highlights',
+    ['inputs/multiple', 'dropdown', 'templates'],
+    { multiple: true, items: ['Amsterdam', 'Antwerp', 'Athens'] },
+    function(SelectivityReact, test, ref, container, $) {
+        test.deepEqual(ref.getValue(), []);
+
+        TestUtil.simulateEvent(container.firstChild, 'click');
+
+        // 3 results
+        test.equal($('.selectivity-result-item').length, 3);
+        // first item should be highlighted when there is no selection yet
+        test.equal($('.selectivity-result-item.highlight').length, 1);
+        test.equal($('.selectivity-result-item.highlight')[0].textContent, 'Amsterdam');
+
+        TestUtil.simulateEvent('.selectivity-result-item[data-item-id="Amsterdam"]', 'click');
+
+        test.deepEqual(ref.getValue(), ['Amsterdam']);
+
+        TestUtil.simulateEvent(container.firstChild, 'click');
+
+        // selected items should not be rendered in dropdown
+        test.equal($('.selectivity-result-item').length, 2);
+        test.equal($('.selectivity-result-item.highlight').length, 1);
+        // first (unselected) result should be highlighted
+        test.equal($('.selectivity-result-item.highlight')[0].textContent, 'Antwerp');
+    }
+);
+
+
+TestUtil.createReactTest(
     'react/dropdown: test load more',
     ['inputs/single', 'dropdown', 'templates'],
     { query: query },
