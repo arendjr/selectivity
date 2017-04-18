@@ -16,6 +16,9 @@ function remove(path) {
   execSync(`rm -rf ${path}`);
 };
 
+console.log('installing dependencies');
+execSync('npm i');
+
 console.log('cleaning existing files for master release');
 remove(masterReleasePath);
 remove(`${masterReleasePath}.tar.gz`);
