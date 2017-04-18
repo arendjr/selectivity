@@ -213,14 +213,21 @@ Selectivity.Templates = {
      * 'selectivity-single-result-container' which is the element containing the selected item or
      * the placeholder.
      */
-    singleSelectInput: (
-        '<div class="selectivity-single-select">' +
-            '<input type="text" class="selectivity-single-select-input">' +
+    singleSelectInput: function(options) {
+        var input = (
+            '<input type="text" class="selectivity-single-select-input"' +
+                (options.value ? ' value="' + options.value + '"' : '') +
+                (options.required ? ' required' : '') +
+            '>'
+        );
+
+        return (
+            '<div class="selectivity-single-select">' + input +
             '<div class="selectivity-single-result-container"></div>' +
             '<i class="fa fa-sort-desc selectivity-caret"></i>' +
-        '</div>'
-    ),
-
+            '</div>'
+        );
+    },
     /**
      * Renders the placeholder for single-select input boxes.
      *
