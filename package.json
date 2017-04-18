@@ -15,7 +15,8 @@
     "build-vanilla-source": "gulp --bundle-name= --export-global --derequire",
     "build": "npm run build-jquery-source && npm run build-jquery-min && npm run build-react-min && npm run build-react-source && npm run build-vanilla-min && npm run build-vanilla-source",
     "lint": "eslint .",
-    "test": "eslint . && gulp unit-tests"
+    "test": "eslint . && gulp unit-tests",
+    "postinstall": "scripts/postinstall.js"
   },
   "devDependencies": {
     "browser-sync": "^2.14.0",
