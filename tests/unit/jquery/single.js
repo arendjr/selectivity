@@ -79,6 +79,8 @@ TestUtil.createJQueryTest(
         test.deepEqual($input.selectivity('data'), { id: 'Amsterdam', text: 'Amsterdam' });
 
         test.deepEqual($input.selectivity('value'), 'Amsterdam');
+
+        test.equal($input[0].querySelector('input').value, 'Amsterdam');
     }
 );
 

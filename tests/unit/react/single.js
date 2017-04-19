@@ -94,9 +94,13 @@ TestUtil.createReactTest(
     ['inputs/single', 'templates'],
     { defaultValue: 'Amsterdam', items: ['Amsterdam', 'Antwerp', 'Athens'] },
     function(SelectivityReact, test, ref) {
+        var el = ref._reactInternalInstance._hostContainerInfo._node;
+
         test.deepEqual(ref.getData(), { id: 'Amsterdam', text: 'Amsterdam' });
 
         test.deepEqual(ref.getValue(), 'Amsterdam');
+
+        test.equal(el.querySelector('input').value, 'Amsterdam');
     }
 );
 
