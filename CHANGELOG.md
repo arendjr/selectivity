@@ -5,6 +5,7 @@ CHANGELOG
 
 - Fix #180: Existing selection highlighted by default on multi-value search results (thanks to
   @ahamid).
+- Fix #177: Don't close dropdown when clicking scrollbar (thanks to @JEkedorff).
 
 ## 3.0.3
 

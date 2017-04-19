@@ -617,9 +617,11 @@ extend(Selectivity.prototype, {
     /**
      * @private
      */
-    _mouseleave: function() {
+    _mouseleave: function(event) {
 
-        toggleClass(this.el, 'hover', false);
+        if (event.fromElement === this.el) {
+            toggleClass(this.el, 'hover', false);
+        }
     },
 
     /**
