@@ -356,7 +356,9 @@ TestUtil.createReactTest(
 
         test.ok(container.firstChild.classList.contains('hover'));
 
-        TestUtil.simulateEvent('.selectivity-multiple-input', 'mouseleave');
+        TestUtil.simulateEvent('.selectivity-multiple-input', 'mouseleave', {
+            fromElement: container.firstChild
+        });
 
         test.equal(container.firstChild.classList.contains('hover'), false);
     }

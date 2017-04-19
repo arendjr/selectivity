@@ -294,7 +294,9 @@ TestUtil.createJQueryTest(
 
         test.ok($input.hasClass('hover'));
 
-        TestUtil.simulateEvent('.selectivity-multiple-input', 'mouseleave');
+        TestUtil.simulateEvent('.selectivity-multiple-input', 'mouseleave', {
+            fromElement: $input[0]
+        });
 
         test.equal($input.hasClass('hover'), false);
     }

@@ -297,7 +297,9 @@ TestUtil.createReactTest(
 
         test.ok(container.firstChild.classList.contains('hover'));
 
-        TestUtil.simulateEvent(container.firstChild, 'mouseleave');
+        TestUtil.simulateEvent(container.firstChild, 'mouseleave', {
+            fromElement: container.firstChild
+        });
 
         test.equal(container.firstChild.classList.contains('hover'), false);
     }

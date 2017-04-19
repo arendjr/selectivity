@@ -267,7 +267,7 @@ TestUtil.createJQueryTest(
 
         test.ok($input.hasClass('hover'));
 
-        TestUtil.simulateEvent($input[0], 'mouseleave');
+        TestUtil.simulateEvent($input[0], 'mouseleave', { fromElement: $input[0] });
 
         test.equal($input.hasClass('hover'), false);
     }
