@@ -274,6 +274,18 @@ TestUtil.createJQueryTest(
 );
 
 TestUtil.createJQueryTest(
+    'jquery/single: test required option',
+    ['inputs/single', 'templates'],
+    function(test, $input) {
+        $input.selectivity({
+            required: true
+        });
+
+        test.equal($input[0].querySelector('input').required, true);
+    }
+);
+
+TestUtil.createJQueryTest(
     'jquery/single: test click and mouse over',
     ['inputs/single', 'dropdown', 'templates'],
     { async: true },

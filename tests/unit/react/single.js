@@ -304,6 +304,17 @@ TestUtil.createReactTest(
 );
 
 TestUtil.createReactTest(
+    'react/single: test required option',
+    ['inputs/single', 'templates'],
+    { required: true },
+    function(SelectivityReact, test, ref) {
+        var el = ref._reactInternalInstance._hostContainerInfo._node;
+
+        test.equal(el.querySelector('input').required, true);
+    }
+);
+
+TestUtil.createReactTest(
     'react/single: test click and mouse over',
     ['inputs/single', 'dropdown', 'templates'],
     { async: true, defaultValue: 'Amsterdam' },
