@@ -93,14 +93,12 @@ TestUtil.createReactTest(
     'react/single: test initial value',
     ['inputs/single', 'templates'],
     { defaultValue: 'Amsterdam', items: ['Amsterdam', 'Antwerp', 'Athens'] },
-    function(SelectivityReact, test, ref) {
-        var el = ref._reactInternalInstance._hostContainerInfo._node;
-
+    function(SelectivityReact, test, ref, container, $) {
         test.deepEqual(ref.getData(), { id: 'Amsterdam', text: 'Amsterdam' });
 
         test.deepEqual(ref.getValue(), 'Amsterdam');
 
-        test.equal(el.querySelector('input').value, 'Amsterdam');
+        test.equal($('input')[0].value, 'Amsterdam');
     }
 );
 
@@ -311,10 +309,8 @@ TestUtil.createReactTest(
     'react/single: test required option',
     ['inputs/single', 'templates'],
     { required: true },
-    function(SelectivityReact, test, ref) {
-        var el = ref._reactInternalInstance._hostContainerInfo._node;
-
-        test.equal(el.querySelector('input').required, true);
+    function(SelectivityReact, test, ref, container, $) {
+        test.equal($('input')[0].required, true);
     }
 );
 
