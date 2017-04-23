@@ -93,10 +93,12 @@ TestUtil.createReactTest(
     'react/single: test initial value',
     ['inputs/single', 'templates'],
     { defaultValue: 'Amsterdam', items: ['Amsterdam', 'Antwerp', 'Athens'] },
-    function(SelectivityReact, test, ref) {
+    function(SelectivityReact, test, ref, container, $) {
         test.deepEqual(ref.getData(), { id: 'Amsterdam', text: 'Amsterdam' });
 
         test.deepEqual(ref.getValue(), 'Amsterdam');
+
+        test.equal($('input')[0].value, 'Amsterdam');
     }
 );
 
@@ -302,6 +304,15 @@ TestUtil.createReactTest(
         });
 
         test.equal(container.firstChild.classList.contains('hover'), false);
+    }
+);
+
+TestUtil.createReactTest(
+    'react/single: test required option',
+    ['inputs/single', 'templates'],
+    { required: true },
+    function(SelectivityReact, test, ref, container, $) {
+        test.equal($('input')[0].required, true);
     }
 );
 

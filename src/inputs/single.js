@@ -121,6 +121,7 @@ var callSuper = Selectivity.inherits(SingleInput, Selectivity, {
             removable: this.options.allowClear && !this.options.readOnly
         }, this._data) : { placeholder: this.options.placeholder });
 
+        this.el.querySelector('input').value = this._value;
         this.$('.selectivity-single-result-container').innerHTML = this.template(template, options);
     },
 

@@ -79,6 +79,8 @@ TestUtil.createJQueryTest(
         test.deepEqual($input.selectivity('data'), { id: 'Amsterdam', text: 'Amsterdam' });
 
         test.deepEqual($input.selectivity('value'), 'Amsterdam');
+
+        test.equal($input[0].querySelector('input').value, 'Amsterdam');
     }
 );
 
@@ -270,6 +272,18 @@ TestUtil.createJQueryTest(
         TestUtil.simulateEvent($input[0], 'mouseleave', { fromElement: $input[0] });
 
         test.equal($input.hasClass('hover'), false);
+    }
+);
+
+TestUtil.createJQueryTest(
+    'jquery/single: test required option',
+    ['inputs/single', 'templates'],
+    function(test, $input) {
+        $input.selectivity({
+            required: true
+        });
+
+        test.equal($input[0].querySelector('input').required, true);
     }
 );
 
