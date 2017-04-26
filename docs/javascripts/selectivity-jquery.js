@@ -1,6 +1,6 @@
 /**
  * @license
- * Selectivity.js 3.0.1 <https://arendjr.github.io/selectivity/>
+ * Selectivity.js 3.0.4 <https://arendjr.github.io/selectivity/>
  * Copyright (c) 2014-2016 Arend van Beelen jr.
  *           (c) 2016 Speakap BV
  * Available under MIT license <https://github.com/arendjr/selectivity/blob/master/LICENSE>
@@ -59,8 +59,7 @@ function baseGetTag(value) {
   if (value == null) {
     return value === undefined ? undefinedTag : nullTag;
   }
-  value = Object(value);
-  return (symToStringTag && symToStringTag in value)
+  return (symToStringTag && symToStringTag in Object(value))
     ? getRawTag(value)
     : objectToString(value);
 }
@@ -1256,7 +1255,8 @@ extend(SelectivityDropdown.prototype, {
             this.resultsContainer.innerHTML = '';
         }
 
-        var resultsHtml = this.renderItems(this.selectivity.filterResults(results));
+        var filteredResults = this.selectivity.filterResults(results);
+        var resultsHtml = this.renderItems(filteredResults);
         if (options.hasMore) {
             resultsHtml += this.selectivity.template('loadMore');
         } else if (!resultsHtml && !options.add) {
@@ -1276,7 +1276,7 @@ extend(SelectivityDropdown.prototype, {
             }
         } else if (this.options.highlightFirstItem !== false &&
                    (!options.add || this.loadMoreHighlighted)) {
-            this._highlightFirstItem(results);
+            this._highlightFirstItem(filteredResults);
         }
 
         this.position();
@@ -2441,6 +2441,7 @@ var callSuper = Selectivity.inherits(SingleInput, Selectivity, {
             removable: this.options.allowClear && !this.options.readOnly
         }, this._data) : { placeholder: this.options.placeholder });
 
+        this.el.querySelector('input').value = this._value;
         this.$('.selectivity-single-result-container').innerHTML = this.template(template, options);
     },
 
@@ -4393,6 +4394,8 @@ extend(Selectivity.prototype, {
         var items = this.items;
         if (items) {
             return Selectivity.findNestedById(items, id);
+        } else if (id === null) {
+            return null;
         } else {
             return { id: id, text: '' + id };
         }
@@ -4821,9 +4824,11 @@ extend(Selectivity.prototype, {
     /**
      * @private
      */
-    _mouseleave: function() {
+    _mouseleave: function(event) {
 
-        toggleClass(this.el, 'hover', false);
+        if (event.fromElement === this.el) {
+            toggleClass(this.el, 'hover', false);
+        }
     },
 
     /**
@@ -5279,13 +5284,17 @@ Selectivity.Templates = {
      * 'selectivity-single-result-container' which is the element containing the selected item or
      * the placeholder.
      */
-    singleSelectInput: (
-        '<div class="selectivity-single-select">' +
-            '<input type="text" class="selectivity-single-select-input">' +
-            '<div class="selectivity-single-result-container"></div>' +
-            '<i class="fa fa-sort-desc selectivity-caret"></i>' +
-        '</div>'
-    ),
+    singleSelectInput: function(options) {
+        return (
+            '<div class="selectivity-single-select">' +
+                '<input type="text" class="selectivity-single-select-input"' +
+                    (options.required ? ' required' : '') +
+                '>' +
+                '<div class="selectivity-single-result-container"></div>' +
+                '<i class="fa fa-sort-desc selectivity-caret"></i>' +
+            '</div>'
+        );
+    },
 
     /**
      * Renders the placeholder for single-select input boxes.

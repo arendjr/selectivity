@@ -1,7 +1,7 @@
 CHANGELOG
 =========
 
-## master
+## 3.0.4
 
 - Improved compatibility with React 15.5 (no more deprecation warnings).
 - Improved HTML5 validation support (#188, thanks to @r4z3c).
