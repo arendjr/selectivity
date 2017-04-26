@@ -41,7 +41,7 @@ function listener(selectivity, input) {
                 el = dropdown.$('.selectivity-load-more');
             }
 
-            if (el) {
+            if (el && el.scrollIntoView) {
                 el.scrollIntoView(delta < 0);
             }
         }
