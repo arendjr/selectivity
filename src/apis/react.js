@@ -1,8 +1,9 @@
 'use strict';
 
+var createReactClass = require('create-react-class');
 var extend = require('lodash/extend');
+var PropTypes = require('prop-types');
 var React = require('react');
-var PropTypes = React.PropTypes;
 
 var Selectivity = require('../selectivity');
 
@@ -70,7 +71,7 @@ function propsToOptions(props) {
     return options;
 }
 
-var SelectivityReact = React.createClass({
+var SelectivityReact = createReactClass({
 
     displayName: 'Selectivity',
 

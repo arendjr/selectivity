@@ -3,6 +3,7 @@ CHANGELOG
 
 ## master
 
+- Improved compatibility with React 15.5 (no more deprecation warnings).
 - Improved HTML5 validation support (#188, thanks to @r4z3c).
 - Fix #180: Existing selection highlighted by default on multi-value search results (thanks to
   @ahamid).
