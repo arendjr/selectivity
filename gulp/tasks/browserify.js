@@ -88,7 +88,8 @@ module.exports = function() {
 
     if (argv.commonJs) {
         if (argv.reactLibs) {
-            stream = stream.pipe(replace(/window.createReactClass/g, 'require("create-react-class")'));
+            stream = stream.pipe(replace(/window.createReactClass/g,
+                                 'require("create-react-class")'));
             stream = stream.pipe(replace(/window.PropTypes/g, 'require("prop-types")'));
         }
         stream = stream.pipe(replace(/window\.jQuery \|\| window\.Zepto/g, 'require("jquery")'));
