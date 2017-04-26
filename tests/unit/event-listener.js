@@ -1,6 +1,6 @@
 'use strict';
 
-var jsdom = require('jsdom');
+var JSDOM = require('jsdom').JSDOM;
 var tape = require('tape');
 
 var EventListener = require('../../src/event-listener');
@@ -8,9 +8,10 @@ var EventListener = require('../../src/event-listener');
 tape('event-listener: it supports listeners on the root', function(test) {
     test.plan(1);
 
-    jsdom.env({
-        file: 'tests/resources/testcase-event-listener.html',
-        onload: function(window) {
+    JSDOM.fromFile('tests/resources/testcase-event-listener.html')
+        .then(function(dom) {
+            var window = dom.window;
+
             global.document = window.document;
             global.window = window;
 
@@ -28,16 +29,16 @@ tape('event-listener: it supports listeners on the root', function(test) {
             test.equal(numCallbacksCalled, 1);
 
             window.close();
-        }
-    });
+        });
 });
 
 tape('event-listener: it supports multiple listeners on an element', function(test) {
     test.plan(1);
 
-    jsdom.env({
-        file: 'tests/resources/testcase-event-listener.html',
-        onload: function(window) {
+    JSDOM.fromFile('tests/resources/testcase-event-listener.html')
+        .then(function(dom) {
+            var window = dom.window;
+
             global.document = window.document;
             global.window = window;
 
@@ -60,16 +61,16 @@ tape('event-listener: it supports multiple listeners on an element', function(te
             test.equal(numCallbacksCalled, 2);
 
             window.close();
-        }
-    });
+        });
 });
 
 tape('event-listener: it supports an event map', function(test) {
     test.plan(1);
 
-    jsdom.env({
-        file: 'tests/resources/testcase-event-listener.html',
-        onload: function(window) {
+    JSDOM.fromFile('tests/resources/testcase-event-listener.html')
+        .then(function(dom) {
+            var window = dom.window;
+
             global.document = window.document;
             global.window = window;
 
@@ -93,16 +94,16 @@ tape('event-listener: it supports an event map', function(test) {
             test.equal(numCallbacksCalled, 2);
 
             window.close();
-        }
-    });
+        });
 });
 
 tape('event-listener: it supports stopping the propagation', function(test) {
     test.plan(4);
 
-    jsdom.env({
-        file: 'tests/resources/testcase-event-listener.html',
-        onload: function(window) {
+    JSDOM.fromFile('tests/resources/testcase-event-listener.html')
+        .then(function(dom) {
+            var window = dom.window;
+
             global.document = window.document;
             global.window = window;
 
@@ -136,16 +137,16 @@ tape('event-listener: it supports stopping the propagation', function(test) {
             test.equal(timesCallback2Called, 2);
 
             window.close();
-        }
-    });
+        });
 });
 
 tape('event-listener: it supports unregistering a listener', function(test) {
     test.plan(2);
 
-    jsdom.env({
-        file: 'tests/resources/testcase-event-listener.html',
-        onload: function(window) {
+    JSDOM.fromFile('tests/resources/testcase-event-listener.html')
+        .then(function(dom) {
+            var window = dom.window;
+
             global.document = window.document;
             global.window = window;
 
@@ -168,14 +169,14 @@ tape('event-listener: it supports unregistering a listener', function(test) {
             test.equal(numCallbacksCalled, 1);
 
             window.close();
-        }
-    });
+        });
 });
 
 tape('event-listener: it supports unregistering a non-registered listener', function(test) {
-    jsdom.env({
-        file: 'tests/resources/testcase-event-listener.html',
-        onload: function(window) {
+    JSDOM.fromFile('tests/resources/testcase-event-listener.html')
+        .then(function(dom) {
+            var window = dom.window;
+
             global.document = window.document;
             global.window = window;
 
@@ -187,16 +188,16 @@ tape('event-listener: it supports unregistering a non-registered listener', func
             window.close();
 
             test.end();
-        }
-    });
+        });
 });
 
 tape('event-listener: it supports capturing an event', function(test) {
     test.plan(1);
 
-    jsdom.env({
-        file: 'tests/resources/testcase-event-listener.html',
-        onload: function(window) {
+    JSDOM.fromFile('tests/resources/testcase-event-listener.html')
+        .then(function(dom) {
+            var window = dom.window;
+
             global.document = window.document;
             global.window = window;
 
@@ -214,16 +215,16 @@ tape('event-listener: it supports capturing an event', function(test) {
             test.equal(numCallbacksCalled, 1);
 
             window.close();
-        }
-    });
+        });
 });
 
 tape('event-listener: it has a destructor', function(test) {
     test.plan(2);
 
-    jsdom.env({
-        file: 'tests/resources/testcase-event-listener.html',
-        onload: function(window) {
+    JSDOM.fromFile('tests/resources/testcase-event-listener.html')
+        .then(function(dom) {
+            var window = dom.window;
+
             global.document = window.document;
             global.window = window;
 
@@ -246,6 +247,5 @@ tape('event-listener: it has a destructor', function(test) {
             test.equal(numCallbacksCalled, 1);
 
             window.close();
-        }
-    });
+        });
 });

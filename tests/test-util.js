@@ -2,7 +2,7 @@
 
 var _ = require('lodash');
 var freshy = require('freshy');
-var jsdom = require('jsdom');
+var JSDOM = require('jsdom').JSDOM;
 var tape = require('tape');
 
 module.exports = {
@@ -32,9 +32,10 @@ module.exports = {
         var indexResource = options.indexResource || 'testcase.html';
 
         tape(name, function(test) {
-            jsdom.env({
-                file: 'tests/resources/' + indexResource,
-                onload: function(window) {
+            JSDOM.fromFile('tests/resources/' + indexResource)
+                .then(function(dom) {
+                    var window = dom.window;
+
                     var end = test.end.bind(test);
                     test.end = function() {
                         modules.forEach(function(module) {
@@ -64,8 +65,7 @@ module.exports = {
                     if (!options.async) {
                         test.end();
                     }
-                }
-            });
+                });
         });
     },
 
@@ -89,9 +89,10 @@ module.exports = {
         var indexResource = props.indexResource || 'testcase.html';
 
         tape(name, function(test) {
-            jsdom.env({
-                file: 'tests/resources/' + indexResource,
-                onload: function(window) {
+            JSDOM.fromFile('tests/resources/' + indexResource)
+                .then(function(dom) {
+                    var window = dom.window;
+
                     var end = test.end.bind(test);
                     test.end = function() {
                         ReactDOM.unmountComponentAtNode(container);
@@ -145,8 +146,7 @@ module.exports = {
                             }
                         }
                     );
-                }
-            });
+                });
         });
     },
 
