@@ -47,6 +47,10 @@ module.exports = function() {
     } else if (argv.api === 'jquery') {
         b.external(['lodash/extend']);
     }
+    if (argv.reactLibs) {
+        b.external('create-react-class');
+        b.external('prop-types');
+    }
 
     b.plugin(collapse);
 
@@ -68,6 +72,12 @@ module.exports = function() {
                                      'require("jquery").extend'));
     }
 
+    if (argv.reactLibs) {
+        stream = stream.pipe(replace(/require\(['"]create-react-class['"]\)/g,
+                                     'window.createReactClass'));
+        stream = stream.pipe(replace(/require\(['"]prop-types['"]\)/g, 'window.PropTypes'));
+    }
+
     stream = stream.pipe(replace(/require\(['"]jquery['"]\)/g, '(window.jQuery || window.Zepto)'));
     stream = stream.pipe(replace(/require\(['"]react['"]\)/g, 'window.React'));
     stream = stream.pipe(replace(/require\(['"]react-dom['"]\)/g, 'window.ReactDOM'));
@@ -77,6 +87,10 @@ module.exports = function() {
     }
 
     if (argv.commonJs) {
+        if (argv.reactLibs) {
+            stream = stream.pipe(replace(/window.createReactClass/g, 'require("create-react-class")'));
+            stream = stream.pipe(replace(/window.PropTypes/g, 'require("prop-types")'));
+        }
         stream = stream.pipe(replace(/window\.jQuery \|\| window\.Zepto/g, 'require("jquery")'));
         stream = stream.pipe(replace(/window\._/g, 'require("lodash")'));
         stream = stream.pipe(replace(/window\.ReactDOM/g, 'require("react-dom")'));

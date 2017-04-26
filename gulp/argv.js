@@ -29,6 +29,11 @@ var argv = yargs
                   'their globals on the window object.',
         type: 'boolean'
     })
+    .option('lodash', {
+        default: false,
+        describe: 'Use lodash as an external dependency, making Selectivity itself even smaller.',
+        type: 'boolean'
+    })
     .option('derequire', {
         default: false,
         describe: 'Renames all calls to require() to avoid conflicts with build systems.',
@@ -45,11 +50,6 @@ var argv = yargs
         describe: 'Export the Selectivity object to the global window object.',
         type: 'boolean'
     })
-    .option('lodash', {
-        default: false,
-        describe: 'Use lodash as an external dependency, making Selectivity itself even smaller.',
-        type: 'boolean'
-    })
     .option('minify', {
         default: false,
         describe: 'Minifies the bundle to reduce file size.',
@@ -60,6 +60,12 @@ var argv = yargs
         describe: 'Comma-separated list of modules to build. See the README.md for a list of ' +
                   'supported modules.',
         type: 'string'
+    })
+    .option('react-libs', {
+        default: false,
+        describe: 'Use all React-related libraries lodash as external dependencies, to prevent ' +
+                  'duplicate copies of create-react-class and prop-types.',
+        type: 'boolean'
     })
     .option('source-map', {
         default: false,
