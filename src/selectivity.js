@@ -618,8 +618,10 @@ extend(Selectivity.prototype, {
      * @private
      */
     _mouseleave: function(event) {
-
-        if (event.fromElement === this.el) {
+        if (event.relatedTarget === null ||
+            (event.relatedTarget !== this.el &&
+            event.relatedTarget.parentElement !== this.el &&
+            this.dropdown && event.relatedTarget.parentElement !== this.dropdown.el)) {
             toggleClass(this.el, 'hover', false);
         }
     },
