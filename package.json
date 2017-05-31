@@ -27,7 +27,7 @@
     "freshy": "^1.0.2",
     "glob": "^7.0.3",
     "gulp": "^3.8.10",
-    "gulp-autoprefixer": "^3.1.0",
+    "gulp-autoprefixer": "^4.0.0",
     "gulp-concat": "^2.4.3",
     "gulp-csso": "^2.0.0",
     "gulp-derequire": "^2.0.0",
@@ -37,17 +37,17 @@
     "gulp-replace": "^0.5.0",
     "gulp-ruby-sass": "^2.0.0",
     "gulp-tape": "0.0.9",
-    "gulp-uglify": "^2.0.0",
+    "gulp-uglify": "^3.0.0",
     "gulp-util": "^3.0.1",
     "jquery": "^3.0.0",
-    "jsdom": "^10.0.0",
+    "jsdom": "^11.0.0",
     "prop-types": "^15.5.0",
     "react": "^15.0.0",
     "react-dom": "^15.0.0",
     "tape": "^4.5.1",
     "vinyl-buffer": "^1.0.0",
     "vinyl-source-stream": "^1.0.0",
-    "yargs": "^7.0.2"
+    "yargs": "^8.0.1"
   },
   "dependencies": {
     "lodash": "^4.0.0"
