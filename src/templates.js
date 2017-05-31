@@ -218,6 +218,8 @@ Selectivity.Templates = {
             '<input type="text" class="selectivity-single-select-input"' +
                 (options.value ? ' value="' + options.value + '"' : '') +
                 (options.required ? ' required' : '') +
+                (options.id ? ' id="' + options.id + '"' : '') +
+                (options.name ? ' name="' + options.name + '"' : '') +
             '>'
         );
 
