@@ -618,8 +618,8 @@ extend(Selectivity.prototype, {
      * @private
      */
     _mouseleave: function(event) {
-
-        if (event.fromElement === this.el) {
+        // If mouseleave happens on any selectivity related element, remove hover class
+        if (!this.el.contains(event.relatedTarget)) {
             toggleClass(this.el, 'hover', false);
         }
     },
