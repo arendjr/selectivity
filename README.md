@@ -1,6 +1,8 @@
 Selectivity.js
 ==============
 
+[![Greenkeeper badge](https://badges.greenkeeper.io/arendjr/selectivity.svg)](https://greenkeeper.io/)
+
 Modular and light-weight selection library.
 
 [![Build Status](https://travis-ci.org/arendjr/selectivity.svg?branch=master)](https://travis-ci.org/arendjr/selectivity)
