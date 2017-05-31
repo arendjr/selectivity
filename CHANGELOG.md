@@ -1,6 +1,10 @@
 CHANGELOG
 =========
 
+## master
+
+- Fix issue where dropdown is hard to close on Firefox (#194, thanks to @dmarchuk).
+
 ## 3.0.4
 
 - Improved compatibility with React 15.5 (no more deprecation warnings).
