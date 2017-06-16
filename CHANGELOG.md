@@ -6,6 +6,10 @@ CHANGELOG
 - Fix #180: Existing selection highlighted by default on multi-value search results (thanks to
   @ahamid).
 
+## 3.0.3.1 (Fork)
+
+- ADDED attributes name and id to hidden input
+
 ## 3.0.3
 
 - Fix issue when a single-value Selectivity input is reset to null throught the React API.
