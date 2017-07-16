@@ -116,9 +116,28 @@ var callSuper = Selectivity.inherits(MultipleInput, Selectivity, {
      */
     filterResults: function(results) {
 
-        return results.filter(function(item) {
+        var filteredResults;
+        var filterItems = function(item) {
             return !Selectivity.findById(this._data, item.id);
-        }, this);
+        };
+        var hasChildren = function(array) {
+            return array.some(function (item) {
+                return !!item.children;
+            });
+        };
+
+        if (hasChildren(results)) {
+            filteredResults = results.map(function(array) {
+                return { id: array.id,
+                    text: array.text,
+                    children: this.filterResults(array.children)
+                };
+            }, this);
+        } else {
+            filteredResults = results.filter(filterItems, this);
+        }
+
+        return filteredResults;
     },
 
     /**
