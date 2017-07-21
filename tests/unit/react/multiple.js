@@ -430,3 +430,29 @@ TestUtil.createReactTest(
         );
     }
 );
+
+TestUtil.createReactTest(
+    'react/multiple: test filtering of children',
+    ['inputs/multiple', 'dropdown', 'templates'],
+    {
+        defaultValue: [3],
+        items: [
+            { text: 'Belgium', children: [{ id: 2, text: 'Antwerp' }] },
+            { text: 'Greece', children: [{ id: 3, text: 'Athens' }] },
+            { text: 'Netherlands', children: [{ id: 1, text: 'Amsterdam' }] }
+        ],
+        multiple: true
+    },
+    function(SelectivityReact, test, ref, container, $) {
+        TestUtil.simulateEvent(container.firstChild, 'click');
+
+        test.equal($('.selectivity-dropdown').length, 1);
+        test.equal($('.selectivity-result-label').length, 3);
+        test.equal($('.selectivity-result-label')[0].textContent, 'Belgium');
+        test.equal($('.selectivity-result-label')[1].textContent, 'Greece');
+        test.equal($('.selectivity-result-label')[2].textContent, 'Netherlands');
+        test.equal($('.selectivity-result-item').length, 2);
+        test.equal($('.selectivity-result-item')[0].textContent, 'Antwerp');
+        test.equal($('.selectivity-result-item')[1].textContent, 'Amsterdam');
+    }
+);

@@ -4,6 +4,7 @@ CHANGELOG
 ## master
 
 - Fix issue where dropdown is hard to close on Firefox (#194, thanks to @dmarchuk).
+- Filter selected children from results (#201, thanks to @ne0guille).
 
 ## 3.0.4
 
