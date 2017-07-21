@@ -8,7 +8,6 @@
  * @param force If true, the class is added. If false, the class is removed.
  */
 module.exports = function(el, className, force) {
-
     if (el) {
         el.classList[force ? 'add' : 'remove'](className);
     }

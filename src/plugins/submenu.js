@@ -9,7 +9,6 @@ var findResultItem = require('../util/find-result-item');
  * Extended dropdown that supports submenus.
  */
 function SubmenuPlugin(selectivity, options) {
-
     /**
      * Optional parent dropdown menu from which this dropdown was opened.
      */
@@ -23,12 +22,10 @@ function SubmenuPlugin(selectivity, options) {
 }
 
 var callSuper = Selectivity.inherits(SubmenuPlugin, Dropdown, {
-
     /**
      * @inherit
      */
     close: function() {
-
         if (this.submenu) {
             this.submenu.close();
         }
@@ -56,7 +53,6 @@ var callSuper = Selectivity.inherits(SubmenuPlugin, Dropdown, {
      *                         Dropdown#highlight().
      */
     highlight: function(item, options) {
-
         options = options || {};
         var reason = options.reason || 'unspecified';
 
@@ -71,7 +67,8 @@ var callSuper = Selectivity.inherits(SubmenuPlugin, Dropdown, {
             } else {
                 clearTimeout(this._closeSubmenuTimeout);
                 this._closeSubmenuTimeout = setTimeout(
-                    this._closeSubmenuAndHighlight.bind(this, item, reason), 100
+                    this._closeSubmenuAndHighlight.bind(this, item, reason),
+                    100
                 );
             }
         } else {
@@ -92,7 +89,6 @@ var callSuper = Selectivity.inherits(SubmenuPlugin, Dropdown, {
      * @inherit
      */
     search: function(term) {
-
         if (this.submenu) {
             var searchInput = this.$('.selectivity-search-input');
             if (searchInput && searchInput === document.activeElement) {
@@ -110,7 +106,6 @@ var callSuper = Selectivity.inherits(SubmenuPlugin, Dropdown, {
      * @inherit
      */
     selectHighlight: function() {
-
         if (this.submenu) {
             this.submenu.selectHighlight();
         } else {
@@ -122,7 +117,6 @@ var callSuper = Selectivity.inherits(SubmenuPlugin, Dropdown, {
      * @inherit
      */
     showResults: function(results, options) {
-
         // makes sure any result item with a submenu that's not explicitly
         // set as selectable becomes unselectable
         function setSelectable(item) {
@@ -146,7 +140,6 @@ var callSuper = Selectivity.inherits(SubmenuPlugin, Dropdown, {
      * @inherit
      */
     triggerClose: function() {
-
         if (this.parentMenu) {
             this.selectivity.triggerEvent('selectivity-close-submenu');
         } else {
@@ -158,7 +151,6 @@ var callSuper = Selectivity.inherits(SubmenuPlugin, Dropdown, {
      * @inherit
      */
     triggerOpen: function() {
-
         if (this.parentMenu) {
             this.selectivity.triggerEvent('selectivity-open-submenu');
         } else {
@@ -170,7 +162,6 @@ var callSuper = Selectivity.inherits(SubmenuPlugin, Dropdown, {
      * @private
      */
     _closeSubmenuAndHighlight: function(item, reason) {
-
         if (this.submenu) {
             this.submenu.close();
         }
@@ -182,12 +173,14 @@ var callSuper = Selectivity.inherits(SubmenuPlugin, Dropdown, {
      * @private
      */
     _doHighlight: function(item, reason) {
-
         callSuper(this, 'highlight', item);
 
         var options = this.selectivity.options;
-        if ((!item.submenu || this.submenu) ||
-            (options.shouldOpenSubmenu && options.shouldOpenSubmenu(item, reason) === false)) {
+        if (
+            !item.submenu ||
+            this.submenu ||
+            (options.shouldOpenSubmenu && options.shouldOpenSubmenu(item, reason) === false)
+        ) {
             return;
         }
 
@@ -227,7 +220,6 @@ var callSuper = Selectivity.inherits(SubmenuPlugin, Dropdown, {
             this.submenu.search('');
         }
     }
-
 });
 
 Selectivity.Dropdown = SubmenuPlugin;

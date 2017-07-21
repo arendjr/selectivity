@@ -20,7 +20,6 @@ var RESULT_ITEM_SELECTOR = '.selectivity-result-item';
 var SCROLL_EVENTS = ['scroll', 'touchend', 'touchmove'];
 
 function findClosestElementMatchingSelector(el, selector) {
-
     while (el && !matchesSelector(el, selector)) {
         el = el.parentElement;
     }
@@ -40,12 +39,13 @@ function findClosestElementMatchingSelector(el, selector) {
  *                showSearchInput - Boolean whether a search input should be shown.
  */
 function SelectivityDropdown(selectivity, options) {
-
-    this.el = parseElement(selectivity.template('dropdown', {
-        dropdownCssClass: selectivity.options.dropdownCssClass,
-        searchInputPlaceholder: selectivity.options.searchInputPlaceholder,
-        showSearchInput: options.showSearchInput
-    }));
+    this.el = parseElement(
+        selectivity.template('dropdown', {
+            dropdownCssClass: selectivity.options.dropdownCssClass,
+            searchInputPlaceholder: selectivity.options.searchInputPlaceholder,
+            showSearchInput: options.showSearchInput
+        })
+    );
 
     /**
      * DOM element to add the results to.
@@ -120,12 +120,10 @@ function SelectivityDropdown(selectivity, options) {
  * Methods.
  */
 extend(SelectivityDropdown.prototype, {
-
     /**
      * Convenience shortcut for this.el.querySelector(selector).
      */
     $: function(selector) {
-
         return this.el.querySelector(selector);
     },
 
@@ -133,7 +131,6 @@ extend(SelectivityDropdown.prototype, {
      * Adds the dropdown to the DOM.
      */
     addToDom: function() {
-
         this.selectivity.el.appendChild(this.el);
     },
 
@@ -141,7 +138,6 @@ extend(SelectivityDropdown.prototype, {
      * Closes the dropdown.
      */
     close: function() {
-
         if (!this._closed) {
             this._closed = true;
 
@@ -164,7 +160,6 @@ extend(SelectivityDropdown.prototype, {
      *                         values: 'current_value', 'first_result', 'hovered'.
      */
     highlight: function(item, options) {
-
         toggleClass(this.$(HIGHLIGHT_SELECTOR), HIGHLIGHT_CLASS, false);
         toggleClass(this.$(getItemSelector(RESULT_ITEM_SELECTOR, item.id)), HIGHLIGHT_CLASS, true);
 
@@ -174,7 +169,7 @@ extend(SelectivityDropdown.prototype, {
         this.selectivity.triggerEvent('selectivity-highlight', {
             item: item,
             id: item.id,
-            reason: options && options.reason || 'unspecified'
+            reason: (options && options.reason) || 'unspecified'
         });
     },
 
@@ -184,7 +179,6 @@ extend(SelectivityDropdown.prototype, {
      * @param item The item to highlight.
      */
     highlightLoadMore: function() {
-
         toggleClass(this.$(HIGHLIGHT_SELECTOR), HIGHLIGHT_CLASS, false);
         toggleClass(this.$(LOAD_MORE_SELECTOR), HIGHLIGHT_CLASS, true);
 
@@ -199,17 +193,16 @@ extend(SelectivityDropdown.prototype, {
      * more results are available.
      */
     loadMore: function() {
-
         removeElement(this.$(LOAD_MORE_SELECTOR));
         this.resultsContainer.innerHTML += this.selectivity.template('loading');
 
         this.options.query({
             callback: function(response) {
                 if (response && response.results) {
-                    this._showResults(
-                        Selectivity.processItems(response.results),
-                        { add: true, hasMore: !!response.more }
-                    );
+                    this._showResults(Selectivity.processItems(response.results), {
+                        add: true,
+                        hasMore: !!response.more
+                    });
                 } else {
                     throw new Error('callback must be passed a response object');
                 }
@@ -225,7 +218,6 @@ extend(SelectivityDropdown.prototype, {
      * Positions the dropdown inside the DOM.
      */
     position: function() {
-
         var position = this.options.position;
         if (position) {
             position(this.el, this.selectivity.el);
@@ -242,17 +234,18 @@ extend(SelectivityDropdown.prototype, {
      * @return HTML-formatted string to display the result items.
      */
     renderItems: function(items) {
-
         var selectivity = this.selectivity;
-        return items.map(function(item) {
-            var result = selectivity.template(item.id ? 'resultItem' : 'resultLabel', item);
-            if (item.children) {
-                result += selectivity.template('resultChildren', {
-                    childrenHtml: this.renderItems(item.children)
-                });
-            }
-            return result;
-        }, this).join('');
+        return items
+            .map(function(item) {
+                var result = selectivity.template(item.id ? 'resultItem' : 'resultLabel', item);
+                if (item.children) {
+                    result += selectivity.template('resultChildren', {
+                        childrenHtml: this.renderItems(item.children)
+                    });
+                }
+                return result;
+            }, this)
+            .join('');
     },
 
     /**
@@ -265,25 +258,29 @@ extend(SelectivityDropdown.prototype, {
      * @param term Term to search for.
      */
     search: function(term) {
-
         this.term = term;
 
         if (this.options.items) {
             term = Selectivity.transformText(term);
             var matcher = this.selectivity.options.matcher || Selectivity.matcher;
-            this._showResults(this.options.items.map(function(item) {
-                return matcher(item, term);
-            }).filter(function(item) {
-                return !!item;
-            }), { term: term });
+            this._showResults(
+                this.options.items
+                    .map(function(item) {
+                        return matcher(item, term);
+                    })
+                    .filter(function(item) {
+                        return !!item;
+                    }),
+                { term: term }
+            );
         } else if (this.options.query) {
             this.options.query({
                 callback: function(response) {
                     if (response && response.results) {
-                        this._showResults(
-                            Selectivity.processItems(response.results),
-                            { hasMore: !!response.more, term: term }
-                        );
+                        this._showResults(Selectivity.processItems(response.results), {
+                            hasMore: !!response.more,
+                            term: term
+                        });
                     } else {
                         throw new Error('callback must be passed a response object');
                     }
@@ -300,7 +297,6 @@ extend(SelectivityDropdown.prototype, {
      * Selects the highlighted item.
      */
     selectHighlight: function() {
-
         if (this.highlightedResult) {
             this.selectItem(this.highlightedResult.id);
         } else if (this.loadMoreHighlighted) {
@@ -314,7 +310,6 @@ extend(SelectivityDropdown.prototype, {
      * @param id ID of the item to select.
      */
     selectItem: function(id) {
-
         var item = Selectivity.findNestedById(this.results, id);
         if (item && !item.disabled && item.selectable !== false) {
             var options = { id: id, item: item };
@@ -334,7 +329,6 @@ extend(SelectivityDropdown.prototype, {
      *                         attacks if you're not careful with escaping user input.
      */
     showError: function(message, options) {
-
         this.resultsContainer.innerHTML = this.selectivity.template('error', {
             escape: !options || options.escape !== false,
             message: message
@@ -353,7 +347,6 @@ extend(SelectivityDropdown.prototype, {
      * Shows a loading indicator in the dropdown.
      */
     showLoading: function() {
-
         this.resultsContainer.innerHTML = this.selectivity.template('loading');
 
         this.hasMore = false;
@@ -377,7 +370,6 @@ extend(SelectivityDropdown.prototype, {
      *                term - The search term for which the results are displayed.
      */
     showResults: function(results, options) {
-
         if (options.add) {
             removeElement(this.$('.selectivity-loading'));
         } else {
@@ -393,7 +385,7 @@ extend(SelectivityDropdown.prototype, {
         }
         this.resultsContainer.innerHTML += resultsHtml;
 
-        this.results = (options.add ? this.results.concat(results) : results);
+        this.results = options.add ? this.results.concat(results) : results;
 
         this.hasMore = options.hasMore;
 
@@ -403,8 +395,10 @@ extend(SelectivityDropdown.prototype, {
             if (item) {
                 this.highlight(item, { reason: 'current_value' });
             }
-        } else if (this.options.highlightFirstItem !== false &&
-                   (!options.add || this.loadMoreHighlighted)) {
+        } else if (
+            this.options.highlightFirstItem !== false &&
+            (!options.add || this.loadMoreHighlighted)
+        ) {
             this._highlightFirstItem(filteredResults);
         }
 
@@ -415,7 +409,6 @@ extend(SelectivityDropdown.prototype, {
      * Triggers the 'selectivity-close' event.
      */
     triggerClose: function() {
-
         this.selectivity.triggerEvent('selectivity-close');
     },
 
@@ -423,7 +416,6 @@ extend(SelectivityDropdown.prototype, {
      * Triggers the 'selectivity-open' event.
      */
     triggerOpen: function() {
-
         this.selectivity.triggerEvent('selectivity-open');
     },
 
@@ -431,7 +423,6 @@ extend(SelectivityDropdown.prototype, {
      * @private
      */
     _attachScrollListeners: function() {
-
         for (var i = 0; i < SCROLL_EVENTS.length; i++) {
             window.addEventListener(SCROLL_EVENTS[i], this.position, true);
         }
@@ -442,7 +433,6 @@ extend(SelectivityDropdown.prototype, {
      * @private
      */
     _highlightFirstItem: function(results) {
-
         function findFirstItem(results) {
             for (var i = 0, length = results.length; i < length; i++) {
                 var result = results[i];
@@ -470,7 +460,6 @@ extend(SelectivityDropdown.prototype, {
      * @private
      */
     _loadMoreClicked: function(event) {
-
         this.loadMore();
 
         stopPropagation(event);
@@ -480,9 +469,12 @@ extend(SelectivityDropdown.prototype, {
      * @private
      */
     _loadMoreHovered: function(event) {
-
-        if (event.screenX === undefined || event.screenX !== this._lastMousePosition.x ||
-            event.screenY === undefined || event.screenY !== this._lastMousePosition.y) {
+        if (
+            event.screenX === undefined ||
+            event.screenX !== this._lastMousePosition.x ||
+            event.screenY === undefined ||
+            event.screenY !== this._lastMousePosition.y
+        ) {
             this.highlightLoadMore();
 
             this._recordMousePosition(event);
@@ -493,7 +485,6 @@ extend(SelectivityDropdown.prototype, {
      * @private
      */
     _recordMousePosition: function(event) {
-
         this._lastMousePosition = { x: event.screenX, y: event.screenY };
     },
 
@@ -501,7 +492,6 @@ extend(SelectivityDropdown.prototype, {
      * @private
      */
     _removeScrollListeners: function() {
-
         for (var i = 0; i < SCROLL_EVENTS.length; i++) {
             window.removeEventListener(SCROLL_EVENTS[i], this.position, true);
         }
@@ -512,7 +502,6 @@ extend(SelectivityDropdown.prototype, {
      * @private
      */
     _resultClicked: function(event) {
-
         this.selectItem(this.selectivity.getRelatedItemId(event));
 
         stopPropagation(event);
@@ -522,9 +511,12 @@ extend(SelectivityDropdown.prototype, {
      * @private
      */
     _resultHovered: function(event) {
-
-        if (!event.screenX || event.screenX !== this._lastMousePosition.x ||
-            !event.screenY || event.screenY !== this._lastMousePosition.y) {
+        if (
+            !event.screenX ||
+            event.screenX !== this._lastMousePosition.x ||
+            !event.screenY ||
+            event.screenY !== this._lastMousePosition.y
+        ) {
             var id = this.selectivity.getRelatedItemId(event);
             var item = Selectivity.findNestedById(this.results, id);
             if (item && !item.disabled) {
@@ -539,7 +531,6 @@ extend(SelectivityDropdown.prototype, {
      * @private
      */
     _scrolled: function() {
-
         var el = this.$(LOAD_MORE_SELECTOR);
         if (el && el.offsetTop - this.resultsContainer.scrollTop < this.el.clientHeight) {
             this.loadMore();
@@ -550,7 +541,6 @@ extend(SelectivityDropdown.prototype, {
      * @private
      */
     _showResults: function(results, options) {
-
         this.showResults(results, extend({ dropdown: this }, options));
     },
 
@@ -558,7 +548,6 @@ extend(SelectivityDropdown.prototype, {
      * @private
      */
     _suppressWheel: function() {
-
         var suppressWheelSelector = this.selectivity.options.suppressWheelSelector;
         if (suppressWheelSelector === null) {
             return;
@@ -569,7 +558,7 @@ extend(SelectivityDropdown.prototype, {
             // Thanks to Troy Alford:
             // http://stackoverflow.com/questions/5802467/prevent-scrolling-of-parent-element
 
-            var delta = (event.deltaMode === 0 ? event.deltaY : event.deltaY * 40);
+            var delta = event.deltaMode === 0 ? event.deltaY : event.deltaY * 40;
             var el = findClosestElementMatchingSelector(event.target, selector);
             var height = el.clientHeight;
             var scrollHeight = el.scrollHeight;
@@ -593,7 +582,6 @@ extend(SelectivityDropdown.prototype, {
             }
         });
     }
-
 });
 
 module.exports = Selectivity.Dropdown = SelectivityDropdown;

@@ -24,32 +24,38 @@ var hasTouch = 'ontouchstart' in window;
  * MultipleInput Constructor.
  */
 function MultipleInput(options) {
+    Selectivity.call(
+        this,
+        extend(
+            {
+                // dropdowns for multiple-value inputs should open below the select box,
+                // unless there is not enough space below, but there is space enough above, then it should
+                // open upwards
+                positionDropdown: function(el, selectEl) {
+                    var rect = selectEl.getBoundingClientRect();
+                    var dropdownHeight = el.clientHeight;
+                    var openUpwards =
+                        rect.bottom + dropdownHeight > window.innerHeight &&
+                        rect.top - dropdownHeight > 0;
 
-    Selectivity.call(this, extend({
-        // dropdowns for multiple-value inputs should open below the select box,
-        // unless there is not enough space below, but there is space enough above, then it should
-        // open upwards
-        positionDropdown: function(el, selectEl) {
-            var rect = selectEl.getBoundingClientRect();
-            var dropdownHeight = el.clientHeight;
-            var openUpwards = (rect.bottom + dropdownHeight > window.innerHeight &&
-                               rect.top - dropdownHeight > 0);
+                    extend(el.style, {
+                        left: rect.left + 'px',
+                        top: (openUpwards ? rect.top - dropdownHeight : rect.bottom) + 'px',
+                        width: rect.width + 'px'
+                    });
+                },
 
-            extend(el.style, {
-                left: rect.left + 'px',
-                top: (openUpwards ? rect.top - dropdownHeight : rect.bottom) + 'px',
-                width: rect.width + 'px'
-            });
-        },
-
-        showSearchInputInDropdown: false
-    }, options));
+                showSearchInputInDropdown: false
+            },
+            options
+        )
+    );
 
     this._reset();
 
     var events = {
-        'change': this.rerenderSelection,
-        'click': this._clicked,
+        change: this.rerenderSelection,
+        click: this._clicked,
         'selectivity-selected': this._resultSelected
     };
     events['change ' + INPUT_SELECTOR] = stopPropagation;
@@ -66,29 +72,30 @@ function MultipleInput(options) {
  * Methods.
  */
 var callSuper = Selectivity.inherits(MultipleInput, Selectivity, {
-
     /**
      * Adds an item to the selection, if it's not selected yet.
      *
      * @param item The item to add. May be an item with 'id' and 'text' properties or just an ID.
      */
     add: function(item) {
-
         var itemIsId = Selectivity.isValidId(item);
-        var id = (itemIsId ? item : this.validateItem(item) && item.id);
+        var id = itemIsId ? item : this.validateItem(item) && item.id;
 
         if (this._value.indexOf(id) === -1) {
             this._value.push(id);
 
             if (itemIsId && this.options.initSelection) {
-                this.options.initSelection([id], function(data) {
-                    if (this._value.indexOf(id) > -1) {
-                        item = this.validateItem(data[0]);
-                        this._data.push(item);
+                this.options.initSelection(
+                    [id],
+                    function(data) {
+                        if (this._value.indexOf(id) > -1) {
+                            item = this.validateItem(data[0]);
+                            this._data.push(item);
 
-                        this.triggerChange({ added: item });
-                    }
-                }.bind(this));
+                            this.triggerChange({ added: item });
+                        }
+                    }.bind(this)
+                );
             } else {
                 if (itemIsId) {
                     item = this.getItemForId(id);
@@ -107,7 +114,6 @@ var callSuper = Selectivity.inherits(MultipleInput, Selectivity, {
      * Clears the data and value.
      */
     clear: function() {
-
         this.setData([]);
     },
 
@@ -115,7 +121,6 @@ var callSuper = Selectivity.inherits(MultipleInput, Selectivity, {
      * @inherit
      */
     filterResults: function(results) {
-
         return results.filter(function(item) {
             return !Selectivity.findById(this._data, item.id);
         }, this);
@@ -131,7 +136,6 @@ var callSuper = Selectivity.inherits(MultipleInput, Selectivity, {
      *         to the IDs.
      */
     getDataForValue: function(value) {
-
         return value.map(this.getItemForId, this).filter(function(item) {
             return !!item;
         });
@@ -146,7 +150,6 @@ var callSuper = Selectivity.inherits(MultipleInput, Selectivity, {
      * @return The corresponding value. Will be an array of IDs.
      */
     getValueForData: function(data) {
-
         return data.map(function(item) {
             return item.id;
         });
@@ -158,7 +161,6 @@ var callSuper = Selectivity.inherits(MultipleInput, Selectivity, {
      * @param item The item to remove. May be an item with 'id' and 'text' properties or just an ID.
      */
     remove: function(item) {
-
         var id = item.id || item;
 
         var removedItem;
@@ -194,7 +196,6 @@ var callSuper = Selectivity.inherits(MultipleInput, Selectivity, {
      * to false.
      */
     rerenderSelection: function(event) {
-
         event = event || {};
 
         if (event.added) {
@@ -232,7 +233,6 @@ var callSuper = Selectivity.inherits(MultipleInput, Selectivity, {
      * @inherit
      */
     search: function(term) {
-
         if (this.options.tokenizer) {
             term = this.options.tokenizer(term, this._data, this.add.bind(this), this.options);
 
@@ -252,7 +252,6 @@ var callSuper = Selectivity.inherits(MultipleInput, Selectivity, {
      * @inherit
      */
     setOptions: function(options) {
-
         var wasEnabled = this.enabled;
 
         callSuper(this, 'setOptions', options);
@@ -271,7 +270,6 @@ var callSuper = Selectivity.inherits(MultipleInput, Selectivity, {
      * @return The validated data. This may differ from the input data.
      */
     validateData: function(data) {
-
         if (data === null) {
             return [];
         } else if (Array.isArray(data)) {
@@ -289,7 +287,6 @@ var callSuper = Selectivity.inherits(MultipleInput, Selectivity, {
      * @return The validated value. This may differ from the input value.
      */
     validateValue: function(value) {
-
         if (value === null) {
             return [];
         } else if (Array.isArray(value)) {
@@ -307,7 +304,6 @@ var callSuper = Selectivity.inherits(MultipleInput, Selectivity, {
      * @private
      */
     _backspacePressed: function() {
-
         if (this.options.backspaceHighlightsBeforeDelete) {
             if (this._highlightedItemId) {
                 this._deletePressed();
@@ -323,7 +319,6 @@ var callSuper = Selectivity.inherits(MultipleInput, Selectivity, {
      * @private
      */
     _clicked: function(event) {
-
         if (this.enabled) {
             if (this.options.showDropdown !== false) {
                 this.open();
@@ -339,7 +334,6 @@ var callSuper = Selectivity.inherits(MultipleInput, Selectivity, {
      * @private
      */
     _createToken: function() {
-
         var term = this.input.value;
         var createTokenItem = this.options.createTokenItem;
 
@@ -355,7 +349,6 @@ var callSuper = Selectivity.inherits(MultipleInput, Selectivity, {
      * @private
      */
     _deletePressed: function() {
-
         if (this._highlightedItemId) {
             this.remove(this._highlightedItemId);
         }
@@ -365,7 +358,6 @@ var callSuper = Selectivity.inherits(MultipleInput, Selectivity, {
      * @private
      */
     _forEachSelectedItem: function(callback) {
-
         Array.prototype.forEach.call(this.el.querySelectorAll(SELECTED_ITEM_SELECTOR), callback);
     },
 
@@ -373,7 +365,6 @@ var callSuper = Selectivity.inherits(MultipleInput, Selectivity, {
      * @private
      */
     _highlightItem: function(id) {
-
         this._highlightedItemId = id;
 
         this._forEachSelectedItem(function(el) {
@@ -389,7 +380,6 @@ var callSuper = Selectivity.inherits(MultipleInput, Selectivity, {
      * @private
      */
     _itemClicked: function(event) {
-
         if (this.enabled) {
             this._highlightItem(this.getRelatedItemId(event));
         }
@@ -399,7 +389,6 @@ var callSuper = Selectivity.inherits(MultipleInput, Selectivity, {
      * @private
      */
     _itemRemoveClicked: function(event) {
-
         this.remove(this.getRelatedItemId(event));
 
         stopPropagation(event);
@@ -409,7 +398,6 @@ var callSuper = Selectivity.inherits(MultipleInput, Selectivity, {
      * @private
      */
     _keyHeld: function(event) {
-
         this._originalValue = this.input.value;
 
         if (getKeyCode(event) === KEY_ENTER && !event.ctrlKey) {
@@ -421,7 +409,6 @@ var callSuper = Selectivity.inherits(MultipleInput, Selectivity, {
      * @private
      */
     _keyReleased: function(event) {
-
         var inputHadText = !!this._originalValue;
         var keyCode = getKeyCode(event);
 
@@ -438,23 +425,32 @@ var callSuper = Selectivity.inherits(MultipleInput, Selectivity, {
      * @private
      */
     _onPaste: function() {
+        setTimeout(
+            function() {
+                this.search(this.input.value);
 
-        setTimeout(function() {
-            this.search(this.input.value);
-
-            this._createToken();
-        }.bind(this), 10);
+                this._createToken();
+            }.bind(this),
+            10
+        );
     },
 
     /**
      * @private
      */
     _renderSelectedItem: function(item) {
-
-        var el = parseElement(this.template('multipleSelectedItem', extend({
-            highlighted: (item.id === this._highlightedItemId),
-            removable: !this.options.readOnly
-        }, item)));
+        var el = parseElement(
+            this.template(
+                'multipleSelectedItem',
+                extend(
+                    {
+                        highlighted: item.id === this._highlightedItemId,
+                        removable: !this.options.readOnly
+                    },
+                    item
+                )
+            )
+        );
 
         this.input.parentNode.insertBefore(el, this.input);
     },
@@ -463,7 +459,6 @@ var callSuper = Selectivity.inherits(MultipleInput, Selectivity, {
      * @private
      */
     _reset: function() {
-
         this.el.innerHTML = this.template('multipleSelectInput', { enabled: this.enabled });
 
         this._highlightedItemId = null;
@@ -477,7 +472,6 @@ var callSuper = Selectivity.inherits(MultipleInput, Selectivity, {
      * @private
      */
     _resultSelected: function(event) {
-
         if (this._value.indexOf(event.id) === -1) {
             this.add(event.item);
         } else {
@@ -489,7 +483,6 @@ var callSuper = Selectivity.inherits(MultipleInput, Selectivity, {
      * @private
      */
     _scrollToBottom: function() {
-
         var inputContainer = this.$(INPUT_SELECTOR + '-container');
         inputContainer.scrollTop = inputContainer.clientHeight;
     },
@@ -498,10 +491,9 @@ var callSuper = Selectivity.inherits(MultipleInput, Selectivity, {
      * @private
      */
     _updateInputWidth: function() {
-
         if (this.enabled) {
-            var inputContent = (this.input.value ||
-                                !this._data.length && this.options.placeholder || '');
+            var inputContent =
+                this.input.value || (!this._data.length && this.options.placeholder) || '';
             this.input.setAttribute('size', inputContent.length + 2);
 
             this.positionDropdown();
@@ -512,15 +504,13 @@ var callSuper = Selectivity.inherits(MultipleInput, Selectivity, {
      * @private
      */
     _updatePlaceholder: function() {
-
-        var placeholder = (!this._data.length && this.options.placeholder || '');
+        var placeholder = (!this._data.length && this.options.placeholder) || '';
         if (this.enabled) {
             this.input.setAttribute('placeholder', placeholder);
         } else {
             this.$('.selectivity-placeholder').textContent = placeholder;
         }
     }
-
 });
 
 module.exports = Selectivity.Inputs.Multiple = MultipleInput;

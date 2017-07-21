@@ -6,7 +6,7 @@ var isString = require('lodash/isString');
 var Selectivity = require('../selectivity');
 
 var EVENT_PROPERTIES = {
-    'change': ['added', 'removed', 'value'],
+    change: ['added', 'removed', 'value'],
     'selectivity-change': ['added', 'removed', 'value'],
     'selectivity-highlight': ['id', 'item'],
     'selectivity-selected': ['id', 'item'],
@@ -16,7 +16,6 @@ var EVENT_PROPERTIES = {
 // create event listeners that will copy the custom properties from the native events
 // to the jQuery events, so jQuery users can use them seamlessly
 function patchEvents($el) {
-
     $.each(EVENT_PROPERTIES, function(eventName, properties) {
         $el.on(eventName, function(event) {
             if (event.originalEvent) {
@@ -51,7 +50,6 @@ function patchEvents($el) {
  *         executed on the first element in the set of matched elements.
  */
 $.fn.selectivity = function selectivity(methodName, options) {
-
     var methodArgs = Array.prototype.slice.call(arguments, 1);
     var result;
 
@@ -60,9 +58,9 @@ $.fn.selectivity = function selectivity(methodName, options) {
 
         if (instance) {
             if (methodName === 'data') {
-                methodName = (methodArgs.length ? 'setData' : 'getData');
+                methodName = methodArgs.length ? 'setData' : 'getData';
             } else if (methodName === 'val' || methodName === 'value') {
-                methodName = (methodArgs.length ? 'setValue' : 'getValue');
+                methodName = methodArgs.length ? 'setValue' : 'getValue';
             } else if (!isString(methodName)) {
                 methodArgs = [methodName];
                 methodName = 'setOptions';
@@ -90,7 +88,7 @@ $.fn.selectivity = function selectivity(methodName, options) {
             }
 
             var Inputs = Selectivity.Inputs;
-            var InputType = (options.inputType || (options.multiple ? 'Multiple' : 'Single'));
+            var InputType = options.inputType || (options.multiple ? 'Multiple' : 'Single');
             if (!$.isFunction(InputType)) {
                 if (Inputs[InputType]) {
                     InputType = Inputs[InputType];
@@ -110,7 +108,7 @@ $.fn.selectivity = function selectivity(methodName, options) {
         }
     });
 
-    return (result === undefined ? this : result);
+    return result === undefined ? this : result;
 };
 
 Selectivity.patchEvents = patchEvents;

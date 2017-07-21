@@ -61,7 +61,6 @@ var otherProps = {
 };
 
 function propsToOptions(props) {
-
     var options = {};
     for (var key in props) {
         if (props.hasOwnProperty(key) && !(key in selectivityCallbacks) && !(key in otherProps)) {
@@ -72,7 +71,6 @@ function propsToOptions(props) {
 }
 
 var SelectivityReact = createReactClass({
-
     displayName: 'Selectivity',
 
     propTypes: extend({}, selectivityOptions, selectivityCallbacks, otherProps),
@@ -81,12 +79,10 @@ var SelectivityReact = createReactClass({
      * Closes the dropdown.
      */
     close: function() {
-
         return this.selectivity.close();
     },
 
     componentDidMount: function() {
-
         var el = this.el;
         var props = this.props;
 
@@ -102,7 +98,7 @@ var SelectivityReact = createReactClass({
         }
 
         var Inputs = Selectivity.Inputs;
-        var InputType = (props.inputType || (props.multiple ? 'Multiple' : 'Single'));
+        var InputType = props.inputType || (props.multiple ? 'Multiple' : 'Single');
         if (typeof InputType !== 'function') {
             if (Inputs[InputType]) {
                 InputType = Inputs[InputType];
@@ -117,9 +113,11 @@ var SelectivityReact = createReactClass({
         if (props.onChange) {
             el.addEventListener('selectivity-change', props.onChange);
         } else if ((props.data || props.value) && !props.readOnly) {
-            throw new Error('Selectivity: You have specified a data or value property without an ' +
-                            'onChange listener. You should use defaultData or defaultValue ' +
-                            'instead.');
+            throw new Error(
+                'Selectivity: You have specified a data or value property without an ' +
+                    'onChange listener. You should use defaultData or defaultValue ' +
+                    'instead.'
+            );
         }
 
         if (props.onDropdownClose) {
@@ -147,7 +145,6 @@ var SelectivityReact = createReactClass({
     },
 
     componentWillReceiveProps: function(nextProps) {
-
         var selectivity = this.selectivity;
 
         selectivity.setOptions(propsToOptions(nextProps));
@@ -155,8 +152,10 @@ var SelectivityReact = createReactClass({
             selectivity.setData(nextProps.data, { triggerChange: false });
             selectivity.rerenderSelection();
         }
-        if (nextProps.value !== this.props.value ||
-            (nextProps.value && nextProps.items !== this.props.items)) {
+        if (
+            nextProps.value !== this.props.value ||
+            (nextProps.value && nextProps.items !== this.props.items)
+        ) {
             selectivity.setValue(nextProps.value, { triggerChange: false });
             selectivity.rerenderSelection();
         }
@@ -166,7 +165,6 @@ var SelectivityReact = createReactClass({
      * Applies focus to the input.
      */
     focus: function() {
-
         this.selectivity.focus();
     },
 
@@ -177,7 +175,6 @@ var SelectivityReact = createReactClass({
      * you should use the getValue() method.
      */
     getData: function() {
-
         return this.selectivity.getData();
     },
 
@@ -188,7 +185,6 @@ var SelectivityReact = createReactClass({
      * interested in the IDs and the text labels, you should use the getData() method.
      */
     getValue: function() {
-
         return this.selectivity.getValue();
     },
 
@@ -196,12 +192,10 @@ var SelectivityReact = createReactClass({
      * Opens the dropdown.
      */
     open: function() {
-
         return this.selectivity.open();
     },
 
     render: function() {
-
         var self = this;
         var props = self.props;
         return React.createElement('div', {
@@ -214,7 +208,6 @@ var SelectivityReact = createReactClass({
             }
         });
     }
-
 });
 
 module.exports = Selectivity.React = SelectivityReact;

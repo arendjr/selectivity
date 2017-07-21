@@ -9,7 +9,6 @@
  * @param DOM element of the result item with the given item ID, or null if not found.
  */
 module.exports = function(resultItems, itemId) {
-
     for (var i = 0, length = resultItems.length; i < length; i++) {
         var resultItem = resultItems[i];
         var resultId = resultItem.getAttribute('data-item-id');

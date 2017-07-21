@@ -11,7 +11,6 @@ var Selectivity = require('./selectivity');
  * non-safe strings should be escaped.
  */
 module.exports = Selectivity.Locale = {
-
     loading: 'Loading...',
     loadMore: 'Load more...',
     noResults: 'No results found',
@@ -31,5 +30,4 @@ module.exports = Selectivity.Locale = {
     noResultsForTerm: function(term) {
         return 'No results for <b>' + escape(term) + '</b>';
     }
-
 };

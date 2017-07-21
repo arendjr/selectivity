@@ -34,9 +34,11 @@ var items = [
 
 function query(options) {
     var limit = 10;
-    var results = (options.term ? items.filter(function(item) {
-        return item.indexOf(options.term) > -1;
-    }) : items);
+    var results = options.term
+        ? items.filter(function(item) {
+              return item.indexOf(options.term) > -1;
+          })
+        : items;
     options.callback({
         results: results.slice(options.offset, options.offset + limit),
         more: results.length > options.offset + limit
@@ -49,7 +51,7 @@ function queryDisabledItems(options) {
             return {
                 id: item,
                 text: item,
-                disabled: (index % 2 === 0)
+                disabled: index % 2 === 0
             };
         }),
         more: false
@@ -75,8 +77,10 @@ TestUtil.createReactTest(
         test.equal($('.selectivity-result-item[data-item-id="Amsterdam"].disabled').length, 1);
         test.equal($('.selectivity-result-item[data-item-id="Antwerp"]:not(.disabled)').length, 1);
         test.equal($('.selectivity-result-item[data-item-id="Athens"].disabled').length, 1);
-        test.equal($('.selectivity-result-item[data-item-id="Barcelona"]:not(.disabled)').length,
-                   1);
+        test.equal(
+            $('.selectivity-result-item[data-item-id="Barcelona"]:not(.disabled)').length,
+            1
+        );
 
         // disabled item should not be selectable
         TestUtil.simulateEvent('.selectivity-result-item[data-item-id="Amsterdam"]', 'click');
@@ -111,8 +115,10 @@ TestUtil.createReactTest(
         test.equal($('.selectivity-result-item[data-item-id="Amsterdam"].disabled').length, 1);
         test.equal($('.selectivity-result-item[data-item-id="Antwerp"]:not(.disabled)').length, 1);
         test.equal($('.selectivity-result-item[data-item-id="Athens"].disabled').length, 1);
-        test.equal($('.selectivity-result-item[data-item-id="Barcelona"]:not(.disabled)').length,
-                   1);
+        test.equal(
+            $('.selectivity-result-item[data-item-id="Barcelona"]:not(.disabled)').length,
+            1
+        );
 
         // disabled item should not be selectable
         TestUtil.simulateEvent('.selectivity-result-item[data-item-id="Amsterdam"]', 'click');
@@ -181,7 +187,6 @@ TestUtil.createReactTest(
         test.equal($('.selectivity-result-item.highlight')[0].textContent, 'Antwerp');
     }
 );
-
 
 TestUtil.createReactTest(
     'react/dropdown: test load more',

@@ -34,9 +34,11 @@ function query() {
     var timeout = 30;
     return function(options) {
         var limit = 10;
-        var results = (options.term ? items.filter(function(item) {
-            return item.indexOf(options.term) > -1;
-        }) : items);
+        var results = options.term
+            ? items.filter(function(item) {
+                  return item.indexOf(options.term) > -1;
+              })
+            : items;
 
         timeout -= 10;
         setTimeout(function() {

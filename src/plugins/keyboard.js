@@ -15,7 +15,6 @@ var KEY_UP_ARROW = 38;
  * Search input listener providing keyboard support for navigating the dropdown.
  */
 function listener(selectivity, input) {
-
     var keydownCanceled = false;
     var closeSubmenu = null;
 
@@ -25,7 +24,6 @@ function listener(selectivity, input) {
      * @param delta Either 1 to move to the next item, or -1 to move to the previous item.
      */
     function moveHighlight(dropdown, delta) {
-
         var results = dropdown.results;
         if (!results.length) {
             return;
@@ -51,7 +49,7 @@ function listener(selectivity, input) {
             return;
         }
 
-        var defaultIndex = (delta > 0 ? 0 : resultItems.length - 1);
+        var defaultIndex = delta > 0 ? 0 : resultItems.length - 1;
         var index = defaultIndex;
         var highlightedResult = dropdown.highlightedResult;
         if (highlightedResult) {
@@ -77,7 +75,6 @@ function listener(selectivity, input) {
     }
 
     function keyHeld(event) {
-
         var dropdown = selectivity.dropdown;
         if (dropdown) {
             var keyCode = getKeyCode(event);
@@ -109,7 +106,6 @@ function listener(selectivity, input) {
     }
 
     function keyReleased(event) {
-
         function open() {
             if (selectivity.options.showDropdown !== false) {
                 selectivity.open();

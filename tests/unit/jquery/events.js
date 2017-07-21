@@ -8,16 +8,18 @@ TestUtil.createJQueryTest(
     function(test, $input) {
         var changeEvent = null;
 
-        $input.selectivity({
-            data: { id: 1, text: 'Amsterdam' },
-            items: [
-                { id: 1, text: 'Amsterdam' },
-                { id: 2, text: 'Antwerp' },
-                { id: 3, text: 'Athens' }
-            ]
-        }).on('change', function(event) {
-            changeEvent = event;
-        });
+        $input
+            .selectivity({
+                data: { id: 1, text: 'Amsterdam' },
+                items: [
+                    { id: 1, text: 'Amsterdam' },
+                    { id: 2, text: 'Antwerp' },
+                    { id: 3, text: 'Athens' }
+                ]
+            })
+            .on('change', function(event) {
+                changeEvent = event;
+            });
 
         $input.selectivity('data', { id: 2, text: 'Antwerp' });
 
@@ -31,16 +33,18 @@ TestUtil.createJQueryTest(
     function(test, $input) {
         var changeEvent = null;
 
-        $input.selectivity({
-            data: { id: 1, text: 'Amsterdam' },
-            items: [
-                { id: 1, text: 'Amsterdam' },
-                { id: 2, text: 'Antwerp' },
-                { id: 3, text: 'Athens' }
-            ]
-        }).on('change', function(event) {
-            changeEvent = event;
-        });
+        $input
+            .selectivity({
+                data: { id: 1, text: 'Amsterdam' },
+                items: [
+                    { id: 1, text: 'Amsterdam' },
+                    { id: 2, text: 'Antwerp' },
+                    { id: 3, text: 'Athens' }
+                ]
+            })
+            .on('change', function(event) {
+                changeEvent = event;
+            });
 
         $input.selectivity('data', { id: 2, text: 'Antwerp' }, { triggerChange: false });
 

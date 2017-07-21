@@ -22,7 +22,7 @@
     "browserify": "^14.0.0",
     "bundle-collapser": "^1.1.0",
     "create-react-class": "^15.5.0",
-    "eslint": "^4.1.0",
+    "eslint": "^4.2.0",
     "faucet": "0.0.1",
     "freshy": "^1.0.2",
     "glob": "^7.0.3",
@@ -50,7 +50,10 @@
     "yargs": "^8.0.1"
   },
   "dependencies": {
-    "lodash": "^4.0.0"
+    "eslint-config-prettier": "^2.3.0",
+    "eslint-plugin-prettier": "^2.1.2",
+    "lodash": "^4.0.0",
+    "prettier": "^1.5.3"
   },
   "keywords": [
     "dropdown",

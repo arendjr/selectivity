@@ -5,8 +5,7 @@ var $ = require('jquery');
 var Selectivity = require('../../selectivity');
 
 function createSelectivityNextToSelectElement($el, options) {
-
-    var data = (options.multiple ? [] : null);
+    var data = options.multiple ? [] : null;
 
     var mapOptions = function() {
         var $this = $(this);
@@ -37,17 +36,17 @@ function createSelectivityNextToSelectElement($el, options) {
         }
     };
 
-    options.allowClear = ('allowClear' in options ? options.allowClear : !$el.prop('required'));
+    options.allowClear = 'allowClear' in options ? options.allowClear : !$el.prop('required');
 
     var items = $el.children('option,optgroup').map(mapOptions).get();
     options.data = data;
 
-    options.items = (options.query ? null : items);
+    options.items = options.query ? null : items;
 
     options.placeholder = options.placeholder || $el.data('placeholder') || '';
 
-    options.tabIndex = (options.tabIndex === undefined ? $el.attr('tabindex') || 0
-                                                       : options.tabIndex);
+    options.tabIndex =
+        options.tabIndex === undefined ? $el.attr('tabindex') || 0 : options.tabIndex;
 
     var classes = ($el.attr('class') || 'selectivity-input').split(' ');
     if (classes.indexOf('selectivity-input') < 0) {
@@ -55,9 +54,9 @@ function createSelectivityNextToSelectElement($el, options) {
     }
 
     var $div = $('<div>').attr({
-        'id': 's9y_' + $el.attr('id'),
-        'class': classes.join(' '),
-        'style': $el.attr('style'),
+        id: 's9y_' + $el.attr('id'),
+        class: classes.join(' '),
+        style: $el.attr('style'),
         'data-name': $el.attr('name')
     });
     $div.insertAfter($el);
@@ -78,7 +77,6 @@ function bindTraditionalSelectEvents(selectivity) {
  * instances.
  */
 Selectivity.OptionListeners.push(function(selectivity, options) {
-
     var $el = $(selectivity.el);
     if ($el.is('select')) {
         if ($el.attr('autofocus')) {

@@ -30,7 +30,6 @@ function renderToString(element) {
  */
 var templateMethod = Selectivity.prototype.template;
 Selectivity.prototype.template = function(templateName, options) {
-
     var template = this.templates[templateName];
     if (isValidElement(template)) {
         return renderToString(template);

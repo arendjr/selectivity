@@ -32,9 +32,11 @@ var items = [
 
 function query(options) {
     var limit = 10;
-    var results = (options.term ? items.filter(function(item) {
-        return item.indexOf(options.term) > -1;
-    }) : items);
+    var results = options.term
+        ? items.filter(function(item) {
+              return item.indexOf(options.term) > -1;
+          })
+        : items;
     options.callback({
         results: results.slice(options.offset, options.offset + limit),
         more: results.length > options.offset + limit
@@ -52,7 +54,7 @@ TestUtil.createJQueryTest(
                         return {
                             id: item,
                             text: item,
-                            disabled: (index % 2 === 0)
+                            disabled: index % 2 === 0
                         };
                     }),
                     more: false
@@ -74,8 +76,10 @@ TestUtil.createJQueryTest(
         test.equal($('.selectivity-result-item[data-item-id="Amsterdam"].disabled').length, 1);
         test.equal($('.selectivity-result-item[data-item-id="Antwerp"]:not(.disabled)').length, 1);
         test.equal($('.selectivity-result-item[data-item-id="Athens"].disabled').length, 1);
-        test.equal($('.selectivity-result-item[data-item-id="Barcelona"]:not(.disabled)').length,
-                   1);
+        test.equal(
+            $('.selectivity-result-item[data-item-id="Barcelona"]:not(.disabled)').length,
+            1
+        );
 
         // disabled item should not be selectable
         $('.selectivity-result-item[data-item-id="Amsterdam"]').click();
@@ -102,7 +106,7 @@ TestUtil.createJQueryTest(
                         return {
                             id: item,
                             text: item,
-                            disabled: (index % 2 === 0)
+                            disabled: index % 2 === 0
                         };
                     }),
                     more: false
@@ -124,8 +128,10 @@ TestUtil.createJQueryTest(
         test.equal($('.selectivity-result-item[data-item-id="Amsterdam"].disabled').length, 1);
         test.equal($('.selectivity-result-item[data-item-id="Antwerp"]:not(.disabled)').length, 1);
         test.equal($('.selectivity-result-item[data-item-id="Athens"].disabled').length, 1);
-        test.equal($('.selectivity-result-item[data-item-id="Barcelona"]:not(.disabled)').length,
-                   1);
+        test.equal(
+            $('.selectivity-result-item[data-item-id="Barcelona"]:not(.disabled)').length,
+            1
+        );
 
         // disabled item should not be selectable
         $('.selectivity-result-item[data-item-id="Amsterdam"]').click();
@@ -146,7 +152,7 @@ TestUtil.createJQueryTest(
     ['inputs/single', 'dropdown', 'templates'],
     function(test, $input, $) {
         $input.selectivity({
-            items: [ 'Amsterdam', 'Antwerp', 'Athens' ]
+            items: ['Amsterdam', 'Antwerp', 'Athens']
         });
 
         test.equal($input.selectivity('val'), null);
@@ -173,7 +179,7 @@ TestUtil.createJQueryTest(
     function(test, $input, $) {
         $input.selectivity({
             multiple: true,
-            items: [ 'Amsterdam', 'Antwerp', 'Athens' ]
+            items: ['Amsterdam', 'Antwerp', 'Athens']
         });
 
         test.deepEqual($input.selectivity('val'), []);
@@ -200,7 +206,6 @@ TestUtil.createJQueryTest(
         test.equal($('.selectivity-result-item.highlight').text(), 'Antwerp');
     }
 );
-
 
 TestUtil.createJQueryTest(
     'jquery/dropdown: test load more with single input',
@@ -259,56 +264,61 @@ TestUtil.createJQueryTest(
 
         TestUtil.simulateEvent($input[0], 'click');
 
-        test.equal($('.selectivity-dropdown').length, 1,
-                   'Dropdown should\'ve opened');
-        test.equal($('.selectivity-result-item').length, 3,
-                   'Three result items should be displayed');
-        test.equal($('.selectivity-load-more').length, 1,
-                   'The load more option should be present');
-        test.equal(offset, 0,
-                   'The specified offset should be 0');
-        test.equal(term, '',
-                   'The specified search term should be the empty string');
+        test.equal($('.selectivity-dropdown').length, 1, "Dropdown should've opened");
+        test.equal(
+            $('.selectivity-result-item').length,
+            3,
+            'Three result items should be displayed'
+        );
+        test.equal($('.selectivity-load-more').length, 1, 'The load more option should be present');
+        test.equal(offset, 0, 'The specified offset should be 0');
+        test.equal(term, '', 'The specified search term should be the empty string');
 
         TestUtil.simulateEvent('.selectivity-load-more', 'click');
 
-        test.equal($('.selectivity-result-item').length, 6,
-                   'Six result items should be displayed');
-        test.equal($('.selectivity-load-more').length, 1,
-                   'The load more option should still be present');
-        test.equal(offset, 3,
-                   'The specified offset should be 3');
-        test.equal(term, '',
-                   'The specified search term should still be the empty string');
+        test.equal($('.selectivity-result-item').length, 6, 'Six result items should be displayed');
+        test.equal(
+            $('.selectivity-load-more').length,
+            1,
+            'The load more option should still be present'
+        );
+        test.equal(offset, 3, 'The specified offset should be 3');
+        test.equal(term, '', 'The specified search term should still be the empty string');
 
         TestUtil.simulateEvent('.selectivity-result-item[data-item-id="Amsterdam"]', 'click');
 
-        test.equal($('.selectivity-dropdown').length, 0,
-                   'Dropdown should\'ve closed');
+        test.equal($('.selectivity-dropdown').length, 0, "Dropdown should've closed");
 
         TestUtil.simulateEvent($input[0], 'click');
 
-        test.equal($('.selectivity-dropdown').length, 1,
-                   'Dropdown should\'ve opened again');
-        test.equal($('.selectivity-result-item').length, 2,
-                   'Two result items should be displayed (Amsterdam is now filtered)');
-        test.equal($('.selectivity-load-more').length, 1,
-                   'The load more option should be present again');
-        test.equal(offset, 0,
-                   'The specified offset should be 0');
-        test.equal(term, '',
-                   'The specified search term should be the empty string');
+        test.equal($('.selectivity-dropdown').length, 1, "Dropdown should've opened again");
+        test.equal(
+            $('.selectivity-result-item').length,
+            2,
+            'Two result items should be displayed (Amsterdam is now filtered)'
+        );
+        test.equal(
+            $('.selectivity-load-more').length,
+            1,
+            'The load more option should be present again'
+        );
+        test.equal(offset, 0, 'The specified offset should be 0');
+        test.equal(term, '', 'The specified search term should be the empty string');
 
         TestUtil.simulateEvent('.selectivity-load-more', 'click');
 
-        test.equal($('.selectivity-result-item').length, 4,
-                   'Four result items should be displayed');
-        test.equal($('.selectivity-load-more').length, 1,
-                   'The load more option should still be present again');
-        test.equal(offset, 3,
-                   'The specified offset should be 3 again');
-        test.equal(term, '',
-                   'The specified search term should still be the empty string');
+        test.equal(
+            $('.selectivity-result-item').length,
+            4,
+            'Four result items should be displayed'
+        );
+        test.equal(
+            $('.selectivity-load-more').length,
+            1,
+            'The load more option should still be present again'
+        );
+        test.equal(offset, 3, 'The specified offset should be 3 again');
+        test.equal(term, '', 'The specified search term should still be the empty string');
     }
 );
 

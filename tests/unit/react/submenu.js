@@ -8,34 +8,45 @@ var TestUtil = require('../../test-util');
 var items = [
     { id: '1', text: 'First Item' },
     { id: '2', text: 'Second Item' },
-    { id: '3', text: 'First Submenu', submenu: { items: [
-        { id: '3-1', text: 'Third Item' },
-        { id: '3-2', text: 'Fourth Item' }
-    ] } },
-    { id: '4', text: 'Second Submenu', submenu: { items: [
-        { id: '4-1', text: 'Fifth Item' },
-        { id: '4-2', text: 'Sixth Item' }
-    ] } }
+    {
+        id: '3',
+        text: 'First Submenu',
+        submenu: {
+            items: [{ id: '3-1', text: 'Third Item' }, { id: '3-2', text: 'Fourth Item' }]
+        }
+    },
+    {
+        id: '4',
+        text: 'Second Submenu',
+        submenu: {
+            items: [{ id: '4-1', text: 'Fifth Item' }, { id: '4-2', text: 'Sixth Item' }]
+        }
+    }
 ];
 
 TestUtil.createReactTest(
     'react/submenu: test search input in submenu in multiple select input',
     ['inputs/multiple', 'plugins/submenu', 'dropdown', 'templates'],
     {
-        items: [{
-            id: 1,
-            text: 'First Item',
-            submenu: {
-                items: [{
-                    id: 2,
-                    text: 'First subitem'
-                }, {
-                    id: 3,
-                    text: 'Second subitem'
-                }],
-                showSearchInput: true
+        items: [
+            {
+                id: 1,
+                text: 'First Item',
+                submenu: {
+                    items: [
+                        {
+                            id: 2,
+                            text: 'First subitem'
+                        },
+                        {
+                            id: 3,
+                            text: 'Second subitem'
+                        }
+                    ],
+                    showSearchInput: true
+                }
             }
-        }],
+        ],
         multiple: true
     },
     function(SelectivityReact, test, ref, container, $) {
@@ -57,48 +68,62 @@ TestUtil.createReactTest(
     'react/submenu: test search in submenu in single select input',
     ['inputs/single', 'plugins/submenu', 'dropdown', 'templates'],
     {
-        items: [{
-            id: 1,
-            text: 'First Item',
-            submenu: {
-                items: [{
-                    id: 2,
-                    text: 'First subitem'
-                }, {
-                    id: 3,
-                    text: 'Second subitem'
-                }],
-                showSearchInput: true
+        items: [
+            {
+                id: 1,
+                text: 'First Item',
+                submenu: {
+                    items: [
+                        {
+                            id: 2,
+                            text: 'First subitem'
+                        },
+                        {
+                            id: 3,
+                            text: 'Second subitem'
+                        }
+                    ],
+                    showSearchInput: true
+                }
             }
-        }]
+        ]
     },
     function(SelectivityReact, test, ref, container, $) {
         TestUtil.simulateEvent(container.firstChild, 'click');
-        test.equal($('.selectivity-result-item').length, 3,
-                   'After opening 3 result items are expected');
+        test.equal(
+            $('.selectivity-result-item').length,
+            3,
+            'After opening 3 result items are expected'
+        );
 
         TestUtil.simulateEvent('.selectivity-result-item[data-item-id="1"]', 'mouseenter');
 
-        test.equal($('.selectivity-dropdown').length, 2,
-                   'There should be 2 dropdowns open');
-        test.equal($('.selectivity-result-item').length, 3,
-                   'With a total of 3 result items');
+        test.equal($('.selectivity-dropdown').length, 2, 'There should be 2 dropdowns open');
+        test.equal($('.selectivity-result-item').length, 3, 'With a total of 3 result items');
 
         $('.selectivity-search-input')[1].value = 'Second';
         TestUtil.simulateEvent($('.selectivity-search-input')[1], 'keyup');
 
-        test.equal($('.selectivity-dropdown').length, 2,
-                   'After searching for "Second" still 2 dropdowns should be open');
-        test.equal($('.selectivity-result-item').length, 2,
-                   'But now only 2 result items remain');
+        test.equal(
+            $('.selectivity-dropdown').length,
+            2,
+            'After searching for "Second" still 2 dropdowns should be open'
+        );
+        test.equal($('.selectivity-result-item').length, 2, 'But now only 2 result items remain');
 
         $('.selectivity-search-input')[1].value = '';
         TestUtil.simulateEvent($('.selectivity-search-input')[1], 'keyup');
 
-        test.equal($('.selectivity-dropdown').length, 2,
-                   'After clearing the search we still have 2 dropdowns');
-        test.equal($('.selectivity-result-item').length, 3,
-                   'And all 3 result items are displayed again');
+        test.equal(
+            $('.selectivity-dropdown').length,
+            2,
+            'After clearing the search we still have 2 dropdowns'
+        );
+        test.equal(
+            $('.selectivity-result-item').length,
+            3,
+            'And all 3 result items are displayed again'
+        );
     }
 );
 

@@ -14,7 +14,6 @@ var CAPTURED_EVENTS = ['blur', 'focus', 'mouseenter', 'mouseleave', 'scroll'];
  * @param context Optional context in which to execute the callbacks.
  */
 function EventListener(el, context) {
-
     this.context = context || null;
 
     this.el = el;
@@ -25,14 +24,12 @@ function EventListener(el, context) {
 }
 
 extend(EventListener.prototype, {
-
     /**
      * Destructor.
      *
      * Removes all event listeners and cleans up all references.
      */
     destruct: function() {
-
         Object.keys(this.events).forEach(function(eventName) {
             var useCapture = CAPTURED_EVENTS.indexOf(eventName) > -1;
             this.el.removeEventListener(eventName, this._onEvent, useCapture);
@@ -50,7 +47,6 @@ extend(EventListener.prototype, {
      * given event and class are discarded.
      */
     off: function(eventName, selector, callback) {
-
         if (!isString(selector)) {
             callback = selector;
             selector = '';
@@ -92,7 +88,6 @@ extend(EventListener.prototype, {
      *     })
      */
     on: function(eventName, selector, callback) {
-
         if (!isString(eventName)) {
             var eventsMap = eventName;
             for (var key in eventsMap) {
@@ -130,7 +125,6 @@ extend(EventListener.prototype, {
     },
 
     _onEvent: function(event) {
-
         var isPropagationStopped = false;
         var stopPropagation = event.stopPropagation;
         event.stopPropagation = function() {
@@ -149,8 +143,11 @@ extend(EventListener.prototype, {
         var events = this.events[event.type.toLowerCase()];
         while (target && target !== this.el && !isPropagationStopped) {
             for (var selector in events) {
-                if (selector && events.hasOwnProperty(selector) &&
-                    matchesSelector(target, selector)) {
+                if (
+                    selector &&
+                    events.hasOwnProperty(selector) &&
+                    matchesSelector(target, selector)
+                ) {
                     callAll(events[selector]);
                 }
             }
@@ -161,7 +158,6 @@ extend(EventListener.prototype, {
             callAll(events['']);
         }
     }
-
 });
 
 module.exports = EventListener;

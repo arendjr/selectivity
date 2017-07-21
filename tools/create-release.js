@@ -22,8 +22,7 @@ var argv = yargs
         type: 'boolean'
     })
     .strict()
-    .wrap(yargs.terminalWidth())
-    .argv;
+    .wrap(yargs.terminalWidth()).argv;
 
 var version = argv._[0];
 var apis = ['jquery', 'react'];
@@ -31,7 +30,6 @@ var tarballDir = 'release/selectivity-' + version;
 var npmDir = 'release/selectivity-npm';
 
 function createTarball() {
-
     console.log('Creating release tarball ' + version + '...');
 
     execSync('npm run build');
@@ -45,14 +43,16 @@ function createTarball() {
 }
 
 function createNpmPackage() {
-
     console.log('Creating NPM package ' + version + '...');
 
-    var allModules = glob.sync('src/**/*.js').map(function(filename) {
-        return filename.slice(4, -3);
-    }).filter(function(module) {
-        return module.slice(-7) !== '-custom';
-    });
+    var allModules = glob
+        .sync('src/**/*.js')
+        .map(function(filename) {
+            return filename.slice(4, -3);
+        })
+        .filter(function(module) {
+            return module.slice(-7) !== '-custom';
+        });
 
     var allDirs = [];
     allModules.forEach(function(module) {
@@ -65,13 +65,25 @@ function createNpmPackage() {
         }
     });
 
-    execSync('cp -R CHANGELOG.md LICENSE README.md ' + allDirs.map(function(dir) {
-        return 'src/' + dir;
-    }).join(' ') + ' ' + allModules.filter(function(module) {
-        return module.indexOf('/') === -1;
-    }).map(function(module) {
-        return 'src/' + module + '.js';
-    }).join(' ') + ' ' + npmDir);
+    execSync(
+        'cp -R CHANGELOG.md LICENSE README.md ' +
+            allDirs
+                .map(function(dir) {
+                    return 'src/' + dir;
+                })
+                .join(' ') +
+            ' ' +
+            allModules
+                .filter(function(module) {
+                    return module.indexOf('/') === -1;
+                })
+                .map(function(module) {
+                    return 'src/' + module + '.js';
+                })
+                .join(' ') +
+            ' ' +
+            npmDir
+    );
 
     execSync('mkdir ' + npmDir + '/styles');
     execSync('cp ' + tarballDir + '/*.css ' + npmDir + '/styles');
@@ -79,14 +91,19 @@ function createNpmPackage() {
     apis.forEach(function(api) {
         fs.writeFileSync(
             npmDir + '/' + api + '.js',
-            allModules.filter(function(module) {
-                return module.indexOf('util/') !== 0 && !apis.some(function(otherApi) {
-                    return otherApi !== api && module.indexOf('/' + otherApi) > -1;
-                });
-            }).map(function(module) {
-                return 'require("./' + module + '");\n';
-            }).join('') +
-            'module.exports=require("./selectivity");\n'
+            allModules
+                .filter(function(module) {
+                    return (
+                        module.indexOf('util/') !== 0 &&
+                        !apis.some(function(otherApi) {
+                            return otherApi !== api && module.indexOf('/' + otherApi) > -1;
+                        })
+                    );
+                })
+                .map(function(module) {
+                    return 'require("./' + module + '");\n';
+                })
+                .join('') + 'module.exports=require("./selectivity");\n'
         );
     });
 

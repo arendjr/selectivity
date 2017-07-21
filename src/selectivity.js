@@ -23,7 +23,6 @@ var toggleClass = require('./util/toggle-class');
  *                        mutually exclusive with 'data'.
  */
 function Selectivity(options) {
-
     /**
      * Reference to the currently open dropdown.
      */
@@ -39,7 +38,7 @@ function Selectivity(options) {
      *
      * This is false when the option readOnly is false or the option removeOnly is false.
      */
-    this.enabled = (!options.readOnly && !options.removeOnly);
+    this.enabled = !options.readOnly && !options.removeOnly;
 
     /**
      * DOM element for the input.
@@ -87,9 +86,9 @@ function Selectivity(options) {
 
     this.events = new EventListener(this.el, this);
     this.events.on({
-        'blur': this._blur,
-        'mouseenter': this._mouseenter,
-        'mouseleave': this._mouseleave,
+        blur: this._blur,
+        mouseenter: this._mouseenter,
+        mouseleave: this._mouseleave,
         'selectivity-close': this._closed
     });
 }
@@ -98,12 +97,10 @@ function Selectivity(options) {
  * Methods.
  */
 extend(Selectivity.prototype, {
-
     /**
      * Convenience shortcut for this.el.querySelector(selector).
      */
     $: function(selector) {
-
         return this.el.querySelector(selector);
     },
 
@@ -111,7 +108,6 @@ extend(Selectivity.prototype, {
      * Closes the dropdown.
      */
     close: function() {
-
         this._clearCloseTimeout();
 
         if (this.dropdown) {
@@ -124,7 +120,6 @@ extend(Selectivity.prototype, {
      * Destroys the Selectivity instance.
      */
     destroy: function() {
-
         this.events.destruct();
 
         var el = this.el;
@@ -145,7 +140,6 @@ extend(Selectivity.prototype, {
      * @return The filtered array.
      */
     filterResults: function(results) {
-
         return results;
     },
 
@@ -153,7 +147,6 @@ extend(Selectivity.prototype, {
      * Applies focus to the input.
      */
     focus: function() {
-
         this._clearCloseTimeout();
 
         this._focusing = true;
@@ -169,7 +162,6 @@ extend(Selectivity.prototype, {
      * Returns the selection data.
      */
     getData: function() {
-
         return this._data;
     },
 
@@ -183,7 +175,6 @@ extend(Selectivity.prototype, {
      *         text labels will be equal to the IDs.
      */
     getItemForId: function(id) {
-
         var items = this.items;
         if (items) {
             return Selectivity.findNestedById(items, id);
@@ -202,7 +193,6 @@ extend(Selectivity.prototype, {
      * @return Item ID or null if no ID could be found.
      */
     getRelatedItemId: function(elementOrEvent) {
-
         var el = elementOrEvent.target || elementOrEvent;
         while (el) {
             if (el.hasAttribute('data-item-id')) {
@@ -231,7 +221,7 @@ extend(Selectivity.prototype, {
                 dropdown = dropdown.submenu;
             }
             var number = parseInt(id, 10);
-            return ('' + number === id ? number : id);
+            return '' + number === id ? number : id;
         }
     },
 
@@ -239,7 +229,6 @@ extend(Selectivity.prototype, {
      * Returns the value of the selection.
      */
     getValue: function() {
-
         return this._value;
     },
 
@@ -256,7 +245,6 @@ extend(Selectivity.prototype, {
      *                         input only to handle keyboard support.
      */
     initInput: function(input, options) {
-
         this.input = input;
 
         var selectivity = this;
@@ -278,7 +266,6 @@ extend(Selectivity.prototype, {
      * Opens the dropdown.
      */
     open: function() {
-
         if (this._opening || this.dropdown || !this.triggerEvent('selectivity-opening')) {
             return;
         }
@@ -291,7 +278,7 @@ extend(Selectivity.prototype, {
                 items: this.items,
                 position: this.options.positionDropdown,
                 query: this.options.query,
-                showSearchInput: (this.options.showSearchInputInDropdown !== false)
+                showSearchInput: this.options.showSearchInputInDropdown !== false
             });
         }
 
@@ -308,7 +295,6 @@ extend(Selectivity.prototype, {
      * (Re-)positions the dropdown.
      */
     positionDropdown: function() {
-
         if (this.dropdown) {
             this.dropdown.position();
         }
@@ -324,7 +310,6 @@ extend(Selectivity.prototype, {
      * @param term Term to search for.
      */
     search: function(term) {
-
         this.open();
 
         if (this.dropdown) {
@@ -348,7 +333,6 @@ extend(Selectivity.prototype, {
      *                                using this option.
      */
     setData: function(newData, options) {
-
         options = options || {};
 
         newData = this.validateData(newData);
@@ -438,7 +422,6 @@ extend(Selectivity.prototype, {
      *                            templates assigned to Selectivity.Templates.
      */
     setOptions: function(options) {
-
         options = options || {};
 
         var selectivity = this;
@@ -447,7 +430,7 @@ extend(Selectivity.prototype, {
         });
 
         if ('items' in options) {
-            this.items = (options.items ? Selectivity.processItems(options.items) : null);
+            this.items = options.items ? Selectivity.processItems(options.items) : null;
         }
         if ('templates' in options) {
             extend(this.templates, options.templates);
@@ -455,7 +438,7 @@ extend(Selectivity.prototype, {
 
         extend(this.options, options);
 
-        this.enabled = (!this.options.readOnly && !this.options.removeOnly);
+        this.enabled = !this.options.readOnly && !this.options.removeOnly;
     },
 
     /**
@@ -479,7 +462,6 @@ extend(Selectivity.prototype, {
      *                                using this option.
      */
     setValue: function(newValue, options) {
-
         options = options || {};
 
         newValue = this.validateValue(newValue);
@@ -487,15 +469,18 @@ extend(Selectivity.prototype, {
         this._value = newValue;
 
         if (this.options.initSelection) {
-            this.options.initSelection(newValue, function(data) {
-                if (this._value === newValue) {
-                    this._data = this.validateData(data);
+            this.options.initSelection(
+                newValue,
+                function(data) {
+                    if (this._value === newValue) {
+                        this._data = this.validateData(data);
 
-                    if (options.triggerChange !== false) {
-                        this.triggerChange();
+                        if (options.triggerChange !== false) {
+                            this.triggerChange();
+                        }
                     }
-                }
-            }.bind(this));
+                }.bind(this)
+            );
         } else {
             this._data = this.getDataForValue(newValue);
 
@@ -514,7 +499,6 @@ extend(Selectivity.prototype, {
      * @return String containing HTML.
      */
     template: function(templateName, options) {
-
         var template = this.templates[templateName];
         if (!template) {
             throw new Error('Unknown template: ' + templateName);
@@ -538,7 +522,6 @@ extend(Selectivity.prototype, {
      * @param Optional additional options added to the event object.
      */
     triggerChange: function(options) {
-
         var data = extend({ value: this._value }, options);
         this.triggerEvent('change', data);
         this.triggerEvent('selectivity-change', data);
@@ -554,7 +537,6 @@ extend(Selectivity.prototype, {
      *         preventDefault() has been called.
      */
     triggerEvent: function(eventName, data) {
-
         var event = document.createEvent('Event');
         event.initEvent(eventName, /* bubbles: */ false, /* cancelable: */ true);
         extend(event, data);
@@ -570,7 +552,6 @@ extend(Selectivity.prototype, {
      * @return The validated item. May differ from the input item.
      */
     validateItem: function(item) {
-
         if (item && Selectivity.isValidId(item.id) && isString(item.text)) {
             return item;
         } else {
@@ -582,7 +563,6 @@ extend(Selectivity.prototype, {
      * @private
      */
     _blur: function() {
-
         if (!this._focusing && !this.el.classList.contains('hover')) {
             // Without the timeout it appears clicks on result items are not always properly
             // handled, especially when the user doesn't click exactly on the text of the result
@@ -597,7 +577,6 @@ extend(Selectivity.prototype, {
      * @private
      */
     _clearCloseTimeout: function() {
-
         if (this._closeTimeout) {
             clearTimeout(this._closeTimeout);
             this._closeTimeout = 0;
@@ -608,7 +587,6 @@ extend(Selectivity.prototype, {
      * @private
      */
     _closed: function() {
-
         this.dropdown = null;
 
         toggleClass(this.el, 'open', false);
@@ -628,10 +606,8 @@ extend(Selectivity.prototype, {
      * @private
      */
     _mouseenter: function() {
-
         toggleClass(this.el, 'hover', true);
     }
-
 });
 
 /**
@@ -688,9 +664,8 @@ Selectivity.Templates = {};
  * @return The item in the array with the given ID, or null if the item was not found.
  */
 Selectivity.findById = function(array, id) {
-
     var index = Selectivity.findIndexById(array, id);
-    return (index > -1 ? array[index] : null);
+    return index > -1 ? array[index] : null;
 };
 
 /**
@@ -702,7 +677,6 @@ Selectivity.findById = function(array, id) {
  * @return The index of the item in the array with the given ID, or -1 if the item was not found.
  */
 Selectivity.findIndexById = function(array, id) {
-
     for (var i = 0, length = array.length; i < length; i++) {
         if (array[i].id === id) {
             return i;
@@ -721,9 +695,9 @@ Selectivity.findIndexById = function(array, id) {
  * @return The item in the array with the given ID, or null if the item was not found.
  */
 Selectivity.findNestedById = function(array, id) {
-
     for (var i = 0, length = array.length; i < length; i++) {
-        var item = array[i], result;
+        var item = array[i],
+            result;
         if (item.id === id) {
             result = item;
         } else if (item.children) {
@@ -751,7 +725,6 @@ Selectivity.findNestedById = function(array, id) {
  *         method. Any arguments past those are passed to the superclass method.
  */
 Selectivity.inherits = function(SubClass, SuperClass, prototype) {
-
     SubClass.prototype = extend(
         Object.create(SuperClass.prototype),
         { constructor: SubClass },
@@ -772,7 +745,6 @@ Selectivity.inherits = function(SubClass, SuperClass, prototype) {
  * @return true if the value is a valid ID, false otherwise.
  */
 Selectivity.isValidId = function(id) {
-
     return typeof id === 'number' || isString(id);
 };
 
@@ -788,16 +760,17 @@ Selectivity.isValidId = function(id) {
  * @return true if the text matches the term, false otherwise.
  */
 Selectivity.matcher = function(item, term) {
-
     var result = null;
     if (Selectivity.transformText(item.text).indexOf(term) > -1) {
         result = item;
     } else if (item.children) {
-        var matchingChildren = item.children.map(function(child) {
-            return Selectivity.matcher(child, term);
-        }).filter(function(child) {
-            return !!child;
-        });
+        var matchingChildren = item.children
+            .map(function(child) {
+                return Selectivity.matcher(child, term);
+            })
+            .filter(function(child) {
+                return !!child;
+            });
         if (matchingChildren.length) {
             result = { id: item.id, text: item.text, children: matchingChildren };
         }
@@ -815,11 +788,9 @@ Selectivity.matcher = function(item, term) {
  * @return Object containing 'id' and 'text' properties.
  */
 Selectivity.processItem = function(item) {
-
     if (Selectivity.isValidId(item)) {
         return { id: item, text: '' + item };
-    } else if (item &&
-               (Selectivity.isValidId(item.id) || item.children) && isString(item.text)) {
+    } else if (item && (Selectivity.isValidId(item.id) || item.children) && isString(item.text)) {
         if (item.children) {
             item.children = Selectivity.processItems(item.children);
         }
@@ -838,7 +809,6 @@ Selectivity.processItem = function(item) {
  * @return Array with items.
  */
 Selectivity.processItems = function(items) {
-
     if (Array.isArray(items)) {
         return items.map(Selectivity.processItem);
     } else {
@@ -855,7 +825,6 @@ Selectivity.processItems = function(items) {
  * @return The transformed string.
  */
 Selectivity.transformText = function(string) {
-
     return string.toLowerCase();
 };
 

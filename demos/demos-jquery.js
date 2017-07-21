@@ -3,44 +3,57 @@
 /* global $ */
 
 function escape(string) {
-    return string ? String(string).replace(/[&<>"']/g, function(match) {
-        return {
-            '&': '&amp;',
-            '<': '&lt;',
-            '>': '&gt;',
-            '"': '&quot;',
-            '\'': '&#39;'
-        }[match];
-    }) : '';
+    return string
+        ? String(string).replace(/[&<>"']/g, function(match) {
+              return {
+                  '&': '&amp;',
+                  '<': '&lt;',
+                  '>': '&gt;',
+                  '"': '&quot;',
+                  "'": '&#39;'
+              }[match];
+          })
+        : '';
 }
 
 $(document).ready(function() {
-
     // ['Amsterdam', 'Antwerp', ...]
-    var cities = $('#single-select-box').find('option').map(function() {
-        return this.textContent;
-    }).get();
+    var cities = $('#single-select-box')
+        .find('option')
+        .map(function() {
+            return this.textContent;
+        })
+        .get();
 
     // [ { text: 'Austria', children: [ { id: 54, text: 'Vienna' } ] }, ... ]
-    var citiesByCountry = $('#multiple-select-box').find('optgroup').map(function() {
-        return {
-            text: this.getAttribute('label'),
-            children: $(this).find('option').map(function() {
-                return {
-                    id: parseInt(this.getAttribute('value'), 10),
-                    text: this.textContent
-                };
-            }).get()
-        };
-    }).get();
+    var citiesByCountry = $('#multiple-select-box')
+        .find('optgroup')
+        .map(function() {
+            return {
+                text: this.getAttribute('label'),
+                children: $(this)
+                    .find('option')
+                    .map(function() {
+                        return {
+                            id: parseInt(this.getAttribute('value'), 10),
+                            text: this.textContent
+                        };
+                    })
+                    .get()
+            };
+        })
+        .get();
 
     // [{ id: 'Amsterdam', timezone: '+01:00' }, ...]
-    var citiesWithTimezone = $('#multiple-select-box').find('option').map(function() {
-        return {
-            id: this.textContent,
-            timezone: this.getAttribute('data-timezone')
-        };
-    }).get();
+    var citiesWithTimezone = $('#multiple-select-box')
+        .find('option')
+        .map(function() {
+            return {
+                id: this.textContent,
+                timezone: this.getAttribute('data-timezone')
+            };
+        })
+        .get();
 
     var transformText = $.Selectivity.transformText;
 
@@ -53,12 +66,16 @@ $(document).ready(function() {
         if (selectivity.el.getAttribute('id') === 'single-input-with-submenus') {
             if (selectivity.dropdown) {
                 var timezone = selectivity.dropdown.highlightedResult.id;
-                results = citiesWithTimezone.filter(function(city) {
-                    return transformText(city.id).indexOf(transformText(term)) > -1 &&
-                           city.timezone === timezone;
-                }).map(function(city) {
-                    return city.id;
-                });
+                results = citiesWithTimezone
+                    .filter(function(city) {
+                        return (
+                            transformText(city.id).indexOf(transformText(term)) > -1 &&
+                            city.timezone === timezone
+                        );
+                    })
+                    .map(function(city) {
+                        return city.id;
+                    });
             } else {
                 query.callback({ more: false, results: [] });
                 return;
@@ -71,12 +88,12 @@ $(document).ready(function() {
         results.sort(function(a, b) {
             a = transformText(a);
             b = transformText(b);
-            var startA = (a.slice(0, term.length) === term),
-                startB = (b.slice(0, term.length) === term);
+            var startA = a.slice(0, term.length) === term,
+                startB = b.slice(0, term.length) === term;
             if (startA) {
-                return (startB ? (a > b ? 1 : -1) : -1);
+                return startB ? (a > b ? 1 : -1) : -1;
             } else {
-                return (startB ? 1 : (a > b ? 1 : -1));
+                return startB ? 1 : a > b ? 1 : -1;
             }
         });
         setTimeout(function() {
@@ -167,7 +184,7 @@ $(document).ready(function() {
                                     description: item.description
                                 };
                             }),
-                            more: (data.total_count > offset + data.items.length)
+                            more: data.total_count > offset + data.items.length
                         };
                     });
             },
@@ -182,13 +199,16 @@ $(document).ready(function() {
         templates: {
             resultItem: function(item) {
                 return (
-                    '<div class="selectivity-result-item" data-item-id="' + item.id + '">' +
-                        '<b>' + escape(item.text) + '</b><br>' +
-                        escape(item.description) +
+                    '<div class="selectivity-result-item" data-item-id="' +
+                    item.id +
+                    '">' +
+                    '<b>' +
+                    escape(item.text) +
+                    '</b><br>' +
+                    escape(item.description) +
                     '</div>'
                 );
             }
         }
     });
-
 });

@@ -15,16 +15,20 @@ TestUtil.createReactTest(
         items: ['Amsterdam <script>', 'Antwerp', 'Athens'],
         templates: {
             singleSelectInput: function() {
-                return div({ className: 'selectivity-single-select react-template' },
+                return div(
+                    { className: 'selectivity-single-select react-template' },
                     input({ type: 'text', className: 'selectivity-single-select-input' }),
                     div({ className: 'selectivity-single-result-container' })
                 );
             },
             singleSelectedItem: function(options) {
-                return span({
-                    className: 'selectivity-single-selected-item',
-                    'data-item-id': options.id
-                }, options.text);
+                return span(
+                    {
+                        className: 'selectivity-single-selected-item',
+                        'data-item-id': options.id
+                    },
+                    options.text
+                );
             }
         }
     },

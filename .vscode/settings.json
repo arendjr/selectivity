@@ -1,6 +1,9 @@
 // Place your settings in this file to overwrite default and user settings.
 {
-    "editor.rulers": [101],
+    "editor.formatOnSave": true,
+    "editor.rulers": [
+        100
+    ],
     "files.exclude": {
         ".DS_Store": true,
         ".git": true,
@@ -8,5 +11,19 @@
         "build": true,
         "node_modules": true
     },
-    "files.trimTrailingWhitespace": true
+    "files.insertFinalNewline": true,
+    "files.trimTrailingWhitespace": true,
+    "prettier.eslintIntegration": true,
+    "prettier.bracketSpacing": true,
+    "prettier.jsxBracketSameLine": true,
+    "prettier.parser": "babylon",
+    "prettier.printWidth": 100,
+    "prettier.semi": true,
+    "prettier.singleQuote": true,
+    "prettier.tabWidth": 4,
+    "prettier.trailingComma": "none",
+    "search.exclude": {
+        "**/.git": true,
+        "**/node_modules": true
+    }
 }

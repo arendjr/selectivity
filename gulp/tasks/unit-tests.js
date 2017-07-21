@@ -6,7 +6,7 @@ var tape = require('gulp-tape');
 var argv = require('yargs').argv;
 
 module.exports = function() {
-
-    return gulp.src('./tests/unit/' + (argv.test || '**/*') + '.js')
+    return gulp
+        .src('./tests/unit/' + (argv.test || '**/*') + '.js')
         .pipe(tape({ reporter: faucet() }));
 };

@@ -7,23 +7,20 @@ TestUtil.createJQueryTest(
     ['inputs/single', 'plugins/keyboard', 'dropdown', 'templates'],
     function(test, $input) {
         $input.selectivity({
-            items: [{
-                text: 'Austria',
-                children: [
-                    { id: 54, text: 'Vienna' }
-                ]
-            }, {
-                text: 'Belgium',
-                children: [
-                    { id: 2, text: 'Antwerp' },
-                    { id: 9, text: 'Brussels' }
-                ]
-            }, {
-                text: 'Bulgaria',
-                children: [
-                    { id: 48, text: 'Sofia' }
-                ]
-            }]
+            items: [
+                {
+                    text: 'Austria',
+                    children: [{ id: 54, text: 'Vienna' }]
+                },
+                {
+                    text: 'Belgium',
+                    children: [{ id: 2, text: 'Antwerp' }, { id: 9, text: 'Brussels' }]
+                },
+                {
+                    text: 'Bulgaria',
+                    children: [{ id: 48, text: 'Sofia' }]
+                }
+            ]
         });
 
         $input.find('.selectivity-single-select').click();
@@ -41,15 +38,17 @@ TestUtil.createJQueryTest(
     function(test, $input) {
         var numChangeEvents = 0;
 
-        $input.selectivity({
-            items: ['Amsterdam', 'Antwerp', 'Athens'],
-            multiple: true
-        }).on('change', function(event) {
-            numChangeEvents++;
+        $input
+            .selectivity({
+                items: ['Amsterdam', 'Antwerp', 'Athens'],
+                multiple: true
+            })
+            .on('change', function(event) {
+                numChangeEvents++;
 
-            test.deepEqual(event.added, { id: 'Amsterdam', text: 'Amsterdam' });
-            test.deepEqual(event.value, ['Amsterdam']);
-        });
+                test.deepEqual(event.added, { id: 'Amsterdam', text: 'Amsterdam' });
+                test.deepEqual(event.value, ['Amsterdam']);
+            });
 
         $input.find('.selectivity-multiple-input').val('Amsterdam');
         TestUtil.simulateEvent('.selectivity-multiple-input', 'keyup');

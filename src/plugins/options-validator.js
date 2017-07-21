@@ -30,7 +30,6 @@ var allowedOptions = {
  * get notified if you're passing invalid options.
  */
 Selectivity.OptionListeners.unshift(function(selectivity, options) {
-
     for (var key in options) {
         if (!options.hasOwnProperty(key)) {
             continue;
@@ -38,17 +37,19 @@ Selectivity.OptionListeners.unshift(function(selectivity, options) {
 
         var value = options[key];
         var type = allowedOptions[key];
-        if (type && !type.split('|').some(function(type) {
-            if (type === 'null') {
-                return value === null;
-            } else if (type === 'array') {
-                return Array.isArray(value);
-            } else {
-                return value !== null && value !== undefined && typeof value === type;
-            }
-        })) {
+        if (
+            type &&
+            !type.split('|').some(function(type) {
+                if (type === 'null') {
+                    return value === null;
+                } else if (type === 'array') {
+                    return Array.isArray(value);
+                } else {
+                    return value !== null && value !== undefined && typeof value === type;
+                }
+            })
+        ) {
             throw new Error(key + ' must be of type ' + type);
         }
     }
-
 });

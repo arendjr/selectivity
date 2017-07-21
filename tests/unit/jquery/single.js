@@ -2,29 +2,24 @@
 
 var TestUtil = require('../../test-util');
 
-TestUtil.createJQueryTest(
-    'jquery/single: test clear',
-    ['inputs/single', 'templates'],
-    function(test, $input) {
-        $input.selectivity({
-            data: { id: 1, text: 'Amsterdam' },
-            items: [
-                { id: 1, text: 'Amsterdam' },
-                { id: 2, text: 'Antwerp' },
-                { id: 3, text: 'Athens' }
-            ]
-        });
+TestUtil.createJQueryTest('jquery/single: test clear', ['inputs/single', 'templates'], function(
+    test,
+    $input
+) {
+    $input.selectivity({
+        data: { id: 1, text: 'Amsterdam' },
+        items: [{ id: 1, text: 'Amsterdam' }, { id: 2, text: 'Antwerp' }, { id: 3, text: 'Athens' }]
+    });
 
-        $input.selectivity('clear');
+    $input.selectivity('clear');
 
-        test.deepEqual($input.selectivity('data'), null);
+    test.deepEqual($input.selectivity('data'), null);
 
-        test.deepEqual($input.selectivity('value'), null);
-    }
-);
+    test.deepEqual($input.selectivity('value'), null);
+});
 
 TestUtil.createJQueryTest(
-    'jquery/single: test don\'t open after clear',
+    "jquery/single: test don't open after clear",
     ['inputs/single', 'dropdown', 'templates'],
     function(test, $input, $) {
         $input.selectivity({
@@ -90,23 +85,20 @@ TestUtil.createJQueryTest(
     function(test, $input) {
         $input.selectivity({
             data: { id: 2, text: 'Antwerp' },
-            items: [{
-                text: 'Austria',
-                children: [
-                    { id: 54, text: 'Vienna' }
-                ]
-            }, {
-                text: 'Belgium',
-                children: [
-                    { id: 2, text: 'Antwerp' },
-                    { id: 9, text: 'Brussels' }
-                ]
-            }, {
-                text: 'Bulgaria',
-                children: [
-                    { id: 48, text: 'Sofia' }
-                ]
-            }]
+            items: [
+                {
+                    text: 'Austria',
+                    children: [{ id: 54, text: 'Vienna' }]
+                },
+                {
+                    text: 'Belgium',
+                    children: [{ id: 2, text: 'Antwerp' }, { id: 9, text: 'Brussels' }]
+                },
+                {
+                    text: 'Bulgaria',
+                    children: [{ id: 48, text: 'Sofia' }]
+                }
+            ]
         });
 
         test.deepEqual($input.selectivity('data'), { id: 2, text: 'Antwerp' });
@@ -121,23 +113,20 @@ TestUtil.createJQueryTest(
     function(test, $input) {
         $input.selectivity({
             value: 2,
-            items: [{
-                text: 'Austria',
-                children: [
-                    { id: 54, text: 'Vienna' }
-                ]
-            }, {
-                text: 'Belgium',
-                children: [
-                    { id: 2, text: 'Antwerp' },
-                    { id: 9, text: 'Brussels' }
-                ]
-            }, {
-                text: 'Bulgaria',
-                children: [
-                    { id: 48, text: 'Sofia' }
-                ]
-            }]
+            items: [
+                {
+                    text: 'Austria',
+                    children: [{ id: 54, text: 'Vienna' }]
+                },
+                {
+                    text: 'Belgium',
+                    children: [{ id: 2, text: 'Antwerp' }, { id: 9, text: 'Brussels' }]
+                },
+                {
+                    text: 'Bulgaria',
+                    children: [{ id: 48, text: 'Sofia' }]
+                }
+            ]
         });
 
         test.deepEqual($input.selectivity('data'), { id: 2, text: 'Antwerp' });
@@ -192,24 +181,23 @@ TestUtil.createJQueryTest(
     }
 );
 
-TestUtil.createJQueryTest(
-    'jquery/single: test set value',
-    ['inputs/single', 'templates'],
-    function(test, $input) {
-        $input.selectivity({
-            items: [ 'Amsterdam', 'Antwerp', 'Athens' ],
-            value: 'Amsterdam'
-        });
+TestUtil.createJQueryTest('jquery/single: test set value', ['inputs/single', 'templates'], function(
+    test,
+    $input
+) {
+    $input.selectivity({
+        items: ['Amsterdam', 'Antwerp', 'Athens'],
+        value: 'Amsterdam'
+    });
 
-        test.deepEqual($input.selectivity('value'), 'Amsterdam');
+    test.deepEqual($input.selectivity('value'), 'Amsterdam');
 
-        $input.selectivity('value', 'Antwerp');
+    $input.selectivity('value', 'Antwerp');
 
-        test.deepEqual($input.selectivity('data'), { id: 'Antwerp', text: 'Antwerp' });
+    test.deepEqual($input.selectivity('data'), { id: 'Antwerp', text: 'Antwerp' });
 
-        test.deepEqual($input.selectivity('value'), 'Antwerp');
-    }
-);
+    test.deepEqual($input.selectivity('value'), 'Antwerp');
+});
 
 TestUtil.createJQueryTest(
     'jquery/single: test set value with init selection',
@@ -341,7 +329,7 @@ TestUtil.createJQueryTest(
 );
 
 TestUtil.createJQueryTest(
-    'jquery/single: test don\'t close when hovering while blur event occurs',
+    "jquery/single: test don't close when hovering while blur event occurs",
     ['inputs/single', 'dropdown', 'templates'],
     function(test, $input, $) {
         $input.selectivity({

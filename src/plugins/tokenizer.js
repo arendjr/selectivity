@@ -5,17 +5,20 @@ var extend = require('lodash/extend');
 var Selectivity = require('../selectivity');
 
 function defaultTokenizer(input, selection, createToken, options) {
-
-    var createTokenItem = options.createTokenItem || function(token) {
-        return token ? { id: token, text: token } : null;
-    };
+    var createTokenItem =
+        options.createTokenItem ||
+        function(token) {
+            return token ? { id: token, text: token } : null;
+        };
 
     var separators = options.tokenSeparators;
 
     function hasToken(input) {
-        return input ? separators.some(function(separator) {
-            return input.indexOf(separator) > -1;
-        }) : false;
+        return input
+            ? separators.some(function(separator) {
+                  return input.indexOf(separator) > -1;
+              })
+            : false;
     }
 
     function takeToken(input) {
@@ -56,7 +59,6 @@ function defaultTokenizer(input, selection, createToken, options) {
  *                                  filters out already selected items.
  */
 Selectivity.OptionListeners.push(function(selectivity, options) {
-
     if (options.tokenSeparators) {
         options.allowedTypes = extend({ tokenSeparators: 'array' }, options.allowedTypes);
 

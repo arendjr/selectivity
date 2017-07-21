@@ -20,11 +20,10 @@ function pick(object, keys) {
 }
 
 function doFetch(ajax, queryOptions) {
-
     var fetch = ajax.fetch || window.fetch;
     var term = queryOptions.term;
 
-    var url = (typeof ajax.url === 'function' ? ajax.url(queryOptions) : ajax.url);
+    var url = typeof ajax.url === 'function' ? ajax.url(queryOptions) : ajax.url;
     if (ajax.params) {
         var params = ajax.params(term, queryOptions.offset || 0);
         for (var key in params) {
@@ -35,8 +34,16 @@ function doFetch(ajax, queryOptions) {
     }
 
     var init = pick(ajax, [
-        'body', 'cache', 'credentials', 'headers', 'integrity', 'method', 'mode', 'redirect',
-        'referrer', 'referrerPolicy'
+        'body',
+        'cache',
+        'credentials',
+        'headers',
+        'integrity',
+        'method',
+        'mode',
+        'redirect',
+        'referrer',
+        'referrerPolicy'
     ]);
 
     fetch(url, init, queryOptions)
@@ -66,10 +73,9 @@ function doFetch(ajax, queryOptions) {
  * Option listener that implements a convenience query function for performing AJAX requests.
  */
 Selectivity.OptionListeners.unshift(function(selectivity, options) {
-
     var ajax = options.ajax;
     if (ajax && ajax.url) {
-        var fetch = (ajax.quietMillis ? debounce(doFetch, ajax.quietMillis) : doFetch);
+        var fetch = ajax.quietMillis ? debounce(doFetch, ajax.quietMillis) : doFetch;
 
         options.query = function(queryOptions) {
             var numCharsNeeded = ajax.minimumInputLength - queryOptions.term.length;

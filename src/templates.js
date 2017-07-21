@@ -15,7 +15,6 @@ var Locale = require('./locale');
  * Every template must return a single root element.
  */
 Selectivity.Templates = {
-
     /**
      * Renders the dropdown.
      *
@@ -31,24 +30,25 @@ Selectivity.Templates = {
      *                                  expected.
      */
     dropdown: function(options) {
-        var extraClass = (options.dropdownCssClass ? ' ' + options.dropdownCssClass : ''),
+        var extraClass = options.dropdownCssClass ? ' ' + options.dropdownCssClass : '',
             searchInput = '';
         if (options.showSearchInput) {
             extraClass += ' has-search-input';
 
             var placeholder = options.searchInputPlaceholder;
-            searchInput = (
+            searchInput =
                 '<div class="selectivity-search-input-container">' +
-                    '<input type="text" class="selectivity-search-input"' +
-                            (placeholder ? ' placeholder="' + escape(placeholder) + '"'
-                                         : '') + '>' +
-                '</div>'
-            );
+                '<input type="text" class="selectivity-search-input"' +
+                (placeholder ? ' placeholder="' + escape(placeholder) + '"' : '') +
+                '>' +
+                '</div>';
         }
         return (
-            '<div class="selectivity-dropdown' + extraClass + '">' +
-                searchInput +
-                '<div class="selectivity-results-container"></div>' +
+            '<div class="selectivity-dropdown' +
+            extraClass +
+            '">' +
+            searchInput +
+            '<div class="selectivity-results-container"></div>' +
             '</div>'
         );
     },
@@ -63,7 +63,7 @@ Selectivity.Templates = {
     error: function(options) {
         return (
             '<div class="selectivity-error">' +
-                (options.escape ? escape(options.message) : options.message) +
+            (options.escape ? escape(options.message) : options.message) +
             '</div>'
         );
     },
@@ -104,11 +104,11 @@ Selectivity.Templates = {
     multipleSelectInput: function(options) {
         return (
             '<div class="selectivity-multiple-input-container">' +
-                (options.enabled ? '<input type="text" autocomplete="off" autocorrect="off" ' +
-                                          'autocapitalize="off" class="selectivity-multiple-input">'
-                                 : '<div class="selectivity-multiple-input ' +
-                                               'selectivity-placeholder"></div>') +
-                '<div class="selectivity-clearfix"></div>' +
+            (options.enabled
+                ? '<input type="text" autocomplete="off" autocorrect="off" ' +
+                  'autocapitalize="off" class="selectivity-multiple-input">'
+                : '<div class="selectivity-multiple-input ' + 'selectivity-placeholder"></div>') +
+            '<div class="selectivity-clearfix"></div>' +
             '</div>'
         );
     },
@@ -130,15 +130,20 @@ Selectivity.Templates = {
      *                text - Text label which the user sees.
      */
     multipleSelectedItem: function(options) {
-        var extraClass = (options.highlighted ? ' highlighted' : '');
+        var extraClass = options.highlighted ? ' highlighted' : '';
         return (
-            '<span class="selectivity-multiple-selected-item' + extraClass + '" ' +
-                  'data-item-id="' + escape(options.id) + '">' +
-                (options.removable ? '<a class="selectivity-multiple-selected-item-remove">' +
-                                         '<i class="fa fa-remove"></i>' +
-                                     '</a>'
-                                   : '') +
-                escape(options.text) +
+            '<span class="selectivity-multiple-selected-item' +
+            extraClass +
+            '" ' +
+            'data-item-id="' +
+            escape(options.id) +
+            '">' +
+            (options.removable
+                ? '<a class="selectivity-multiple-selected-item-remove">' +
+                  '<i class="fa fa-remove"></i>' +
+                  '</a>'
+                : '') +
+            escape(options.text) +
             '</span>'
         );
     },
@@ -152,7 +157,7 @@ Selectivity.Templates = {
     noResults: function(options) {
         return (
             '<div class="selectivity-error">' +
-                (options.term ? Locale.noResultsForTerm(options.term) : Locale.noResults) +
+            (options.term ? Locale.noResultsForTerm(options.term) : Locale.noResults) +
             '</div>'
         );
     },
@@ -184,11 +189,16 @@ Selectivity.Templates = {
      */
     resultItem: function(options) {
         return (
-            '<div class="selectivity-result-item' + (options.disabled ? ' disabled' : '') + '"' +
-                ' data-item-id="' + escape(options.id) + '">' +
-                escape(options.text) +
-                (options.submenu ? '<i class="selectivity-submenu-icon fa fa-chevron-right"></i>'
-                                 : '') +
+            '<div class="selectivity-result-item' +
+            (options.disabled ? ' disabled' : '') +
+            '"' +
+            ' data-item-id="' +
+            escape(options.id) +
+            '">' +
+            escape(options.text) +
+            (options.submenu
+                ? '<i class="selectivity-submenu-icon fa fa-chevron-right"></i>'
+                : '') +
             '</div>'
         );
     },
@@ -216,11 +226,11 @@ Selectivity.Templates = {
     singleSelectInput: function(options) {
         return (
             '<div class="selectivity-single-select">' +
-                '<input type="text" class="selectivity-single-select-input"' +
-                    (options.required ? ' required' : '') +
-                '>' +
-                '<div class="selectivity-single-result-container"></div>' +
-                '<i class="fa fa-sort-desc selectivity-caret"></i>' +
+            '<input type="text" class="selectivity-single-select-input"' +
+            (options.required ? ' required' : '') +
+            '>' +
+            '<div class="selectivity-single-result-container"></div>' +
+            '<i class="fa fa-sort-desc selectivity-caret"></i>' +
             '</div>'
         );
     },
@@ -235,11 +245,7 @@ Selectivity.Templates = {
      *                placeholder - The placeholder text.
      */
     singleSelectPlaceholder: function(options) {
-        return (
-            '<div class="selectivity-placeholder">' +
-                escape(options.placeholder) +
-            '</div>'
-        );
+        return '<div class="selectivity-placeholder">' + escape(options.placeholder) + '</div>';
     },
 
     /**
@@ -257,12 +263,15 @@ Selectivity.Templates = {
     singleSelectedItem: function(options) {
         return (
             '<span class="selectivity-single-selected-item" ' +
-                  'data-item-id="' + escape(options.id) + '">' +
-                (options.removable ? '<a class="selectivity-single-selected-item-remove">' +
-                                         '<i class="fa fa-remove"></i>' +
-                                     '</a>'
-                                   : '') +
-                escape(options.text) +
+            'data-item-id="' +
+            escape(options.id) +
+            '">' +
+            (options.removable
+                ? '<a class="selectivity-single-selected-item-remove">' +
+                  '<i class="fa fa-remove"></i>' +
+                  '</a>'
+                : '') +
+            escape(options.text) +
             '</span>'
         );
     },
@@ -295,10 +304,11 @@ Selectivity.Templates = {
      */
     selectOptionCompliance: function(options) {
         return (
-            '<option value="' + escape(options.id) + '" selected>' +
-                escape(options.text) +
+            '<option value="' +
+            escape(options.id) +
+            '" selected>' +
+            escape(options.text) +
             '</option>'
         );
     }
-
 };

@@ -12,11 +12,7 @@ function onChange(event) {
 
 var data = { id: 1, text: 'Amsterdam' };
 
-var items = [
-    { id: 1, text: 'Amsterdam' },
-    { id: 2, text: 'Antwerp' },
-    { id: 3, text: 'Athens' }
-];
+var items = [{ id: 1, text: 'Amsterdam' }, { id: 2, text: 'Antwerp' }, { id: 3, text: 'Athens' }];
 
 TestUtil.createReactTest(
     'react/events: test change event triggered when result clicked',

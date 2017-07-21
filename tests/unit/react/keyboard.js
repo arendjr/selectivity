@@ -6,23 +6,20 @@ TestUtil.createReactTest(
     'react/keyboard: test select nested item',
     ['inputs/single', 'plugins/keyboard', 'dropdown', 'templates'],
     {
-        items: [{
-            text: 'Austria',
-            children: [
-                { id: 54, text: 'Vienna' }
-            ]
-        }, {
-            text: 'Belgium',
-            children: [
-                { id: 2, text: 'Antwerp' },
-                { id: 9, text: 'Brussels' }
-            ]
-        }, {
-            text: 'Bulgaria',
-            children: [
-                { id: 48, text: 'Sofia' }
-            ]
-        }]
+        items: [
+            {
+                text: 'Austria',
+                children: [{ id: 54, text: 'Vienna' }]
+            },
+            {
+                text: 'Belgium',
+                children: [{ id: 2, text: 'Antwerp' }, { id: 9, text: 'Brussels' }]
+            },
+            {
+                text: 'Bulgaria',
+                children: [{ id: 48, text: 'Sofia' }]
+            }
+        ]
     },
     function(SelectivityReact, test, ref, container, $) {
         TestUtil.simulateEvent('.selectivity-single-select', 'click');

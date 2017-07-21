@@ -7,16 +7,12 @@ var ReactDOM = require('react-dom');
 var TestUtil = require('../../test-util');
 
 TestUtil.createReactTest(
-    'react/single: test don\'t open after clear',
+    "react/single: test don't open after clear",
     ['inputs/single', 'dropdown', 'templates'],
     {
         allowClear: true,
         defaultData: { id: 1, text: 'Amsterdam' },
-        items: [
-            { id: 1, text: 'Amsterdam' },
-            { id: 2, text: 'Antwerp' },
-            { id: 3, text: 'Athens' }
-        ]
+        items: [{ id: 1, text: 'Amsterdam' }, { id: 2, text: 'Antwerp' }, { id: 3, text: 'Athens' }]
     },
     function(SelectivityReact, test, ref, container, $) {
         test.equal(ref.getValue(), 1);
@@ -76,11 +72,7 @@ TestUtil.createReactTest(
     ['inputs/single', 'templates'],
     {
         defaultData: { id: 1, text: 'Amsterdam' },
-        items: [
-            { id: 1, text: 'Amsterdam' },
-            { id: 2, text: 'Antwerp' },
-            { id: 3, text: 'Athens' }
-        ]
+        items: [{ id: 1, text: 'Amsterdam' }, { id: 2, text: 'Antwerp' }, { id: 3, text: 'Athens' }]
     },
     function(SelectivityReact, test, ref) {
         test.deepEqual(ref.getData(), { id: 1, text: 'Amsterdam' });
@@ -102,23 +94,20 @@ TestUtil.createReactTest(
     }
 );
 
-var nestedItems = [{
-    text: 'Austria',
-    children: [
-        { id: 54, text: 'Vienna' }
-    ]
-}, {
-    text: 'Belgium',
-    children: [
-        { id: 2, text: 'Antwerp' },
-        { id: 9, text: 'Brussels' }
-    ]
-}, {
-    text: 'Bulgaria',
-    children: [
-        { id: 48, text: 'Sofia' }
-    ]
-}];
+var nestedItems = [
+    {
+        text: 'Austria',
+        children: [{ id: 54, text: 'Vienna' }]
+    },
+    {
+        text: 'Belgium',
+        children: [{ id: 2, text: 'Antwerp' }, { id: 9, text: 'Brussels' }]
+    },
+    {
+        text: 'Bulgaria',
+        children: [{ id: 48, text: 'Sofia' }]
+    }
+];
 
 TestUtil.createReactTest(
     'react/single: test nested data',
@@ -146,11 +135,7 @@ TestUtil.createReactTest(
     'react/single: test without data',
     ['inputs/single', 'templates'],
     {
-        items: [
-            { id: 1, text: 'Amsterdam' },
-            { id: 2, text: 'Antwerp' },
-            { id: 3, text: 'Athens' }
-        ]
+        items: [{ id: 1, text: 'Amsterdam' }, { id: 2, text: 'Antwerp' }, { id: 3, text: 'Athens' }]
     },
     function(SelectivityReact, test, ref) {
         test.deepEqual(ref.getData(), null);
@@ -267,7 +252,7 @@ TestUtil.createReactTest(
 );
 
 TestUtil.createReactTest(
-    'react/single: test set default value doesn\'t change value',
+    "react/single: test set default value doesn't change value",
     ['inputs/single', 'templates'],
     { async: true, defaultValue: 'Amsterdam', items: ['Amsterdam', 'Antwerp', 'Athens'] },
     function(SelectivityReact, test, ref, container) {
@@ -361,7 +346,7 @@ TestUtil.createReactTest(
 );
 
 TestUtil.createReactTest(
-    'react/single: test don\'t close when hovering while blur event occurs',
+    "react/single: test don't close when hovering while blur event occurs",
     ['inputs/single', 'dropdown', 'templates'],
     { defaultValue: 'Amsterdam', showSearchInputInDropdown: false },
     function(SelectivityReact, test, ref, container) {

@@ -9,7 +9,6 @@ var latestQueryNum = 0;
  * been called afterwards. This prevents responses from remote sources arriving out-of-order.
  */
 Selectivity.OptionListeners.push(function(selectivity, options) {
-
     var query = options.query;
     if (query && !query._async) {
         options.query = function(queryOptions) {

@@ -9,27 +9,32 @@ var stopPropagation = require('../util/stop-propagation');
  * SingleInput Constructor.
  */
 function SingleInput(options) {
+    Selectivity.call(
+        this,
+        extend(
+            {
+                // dropdowns for single-value inputs should open below the select box,
+                // unless there is not enough space below, in which case the dropdown should be moved up
+                // just enough so it fits in the window, but never so much that it reaches above the top
+                positionDropdown: function(el, selectEl) {
+                    var rect = selectEl.getBoundingClientRect();
+                    var dropdownTop = rect.bottom;
 
-    Selectivity.call(this, extend({
-        // dropdowns for single-value inputs should open below the select box,
-        // unless there is not enough space below, in which case the dropdown should be moved up
-        // just enough so it fits in the window, but never so much that it reaches above the top
-        positionDropdown: function(el, selectEl) {
-            var rect = selectEl.getBoundingClientRect();
-            var dropdownTop = rect.bottom;
+                    var deltaUp = Math.min(
+                        Math.max(dropdownTop + el.clientHeight - window.innerHeight, 0),
+                        rect.top + rect.height
+                    );
 
-            var deltaUp = Math.min(
-                Math.max(dropdownTop + el.clientHeight - window.innerHeight, 0),
-                rect.top + rect.height
-            );
-
-            extend(el.style, {
-                left: rect.left + 'px',
-                top: dropdownTop - deltaUp + 'px',
-                width: rect.width + 'px'
-            });
-        }
-    }, options));
+                    extend(el.style, {
+                        left: rect.left + 'px',
+                        top: dropdownTop - deltaUp + 'px',
+                        width: rect.width + 'px'
+                    });
+                }
+            },
+            options
+        )
+    );
 
     this.el.innerHTML = this.template('singleSelectInput', this.options);
 
@@ -40,8 +45,8 @@ function SingleInput(options) {
     }
 
     this.events.on({
-        'change': this.rerenderSelection,
-        'click': this._clicked,
+        change: this.rerenderSelection,
+        click: this._clicked,
         'click .selectivity-search-input': stopPropagation,
         'click .selectivity-single-selected-item-remove': this._itemRemoveClicked,
         'focus .selectivity-single-select-input': this._focused,
@@ -53,12 +58,10 @@ function SingleInput(options) {
  * Methods.
  */
 var callSuper = Selectivity.inherits(SingleInput, Selectivity, {
-
     /**
      * Clears the data and value.
      */
     clear: function() {
-
         this.setData(null);
     },
 
@@ -69,7 +72,6 @@ var callSuper = Selectivity.inherits(SingleInput, Selectivity, {
      *                keepFocus - If true, the focus will remain on the input.
      */
     close: function(options) {
-
         this._closing = true;
 
         callSuper(this, 'close');
@@ -90,7 +92,6 @@ var callSuper = Selectivity.inherits(SingleInput, Selectivity, {
      *         if no items are defined, this method assumes the text label will be equal to the ID.
      */
     getDataForValue: function(value) {
-
         return this.getItemForId(value);
     },
 
@@ -103,8 +104,7 @@ var callSuper = Selectivity.inherits(SingleInput, Selectivity, {
      * @return The corresponding value. Will be an ID or null.
      */
     getValueForData: function(data) {
-
-        return (data ? data.id : null);
+        return data ? data.id : null;
     },
 
     /**
@@ -115,11 +115,15 @@ var callSuper = Selectivity.inherits(SingleInput, Selectivity, {
      * to false.
      */
     rerenderSelection: function() {
-
-        var template = (this._data ? 'singleSelectedItem' : 'singleSelectPlaceholder');
-        var options = (this._data ? extend({
-            removable: this.options.allowClear && !this.options.readOnly
-        }, this._data) : { placeholder: this.options.placeholder });
+        var template = this._data ? 'singleSelectedItem' : 'singleSelectPlaceholder';
+        var options = this._data
+            ? extend(
+                  {
+                      removable: this.options.allowClear && !this.options.readOnly
+                  },
+                  this._data
+              )
+            : { placeholder: this.options.placeholder };
 
         this.el.querySelector('input').value = this._value;
         this.$('.selectivity-single-result-container').innerHTML = this.template(template, options);
@@ -134,8 +138,7 @@ var callSuper = Selectivity.inherits(SingleInput, Selectivity, {
      * @return The validated data. This may differ from the input data.
      */
     validateData: function(data) {
-
-        return (data === null ? data : this.validateItem(data));
+        return data === null ? data : this.validateItem(data);
     },
 
     /**
@@ -146,7 +149,6 @@ var callSuper = Selectivity.inherits(SingleInput, Selectivity, {
      * @return The validated value. This may differ from the input value.
      */
     validateValue: function(value) {
-
         if (value === null || Selectivity.isValidId(value)) {
             return value;
         } else {
@@ -158,7 +160,6 @@ var callSuper = Selectivity.inherits(SingleInput, Selectivity, {
      * @private
      */
     _clicked: function() {
-
         if (this.enabled) {
             if (this.dropdown) {
                 this.close({ keepFocus: true });
@@ -172,9 +173,12 @@ var callSuper = Selectivity.inherits(SingleInput, Selectivity, {
      * @private
      */
     _focused: function() {
-
-        if (this.enabled && !this._closing && !this._opening &&
-            this.options.showDropdown !== false) {
+        if (
+            this.enabled &&
+            !this._closing &&
+            !this._opening &&
+            this.options.showDropdown !== false
+        ) {
             this.open();
         }
     },
@@ -183,7 +187,6 @@ var callSuper = Selectivity.inherits(SingleInput, Selectivity, {
      * @private
      */
     _itemRemoveClicked: function(event) {
-
         this.setData(null);
 
         stopPropagation(event);
@@ -193,12 +196,10 @@ var callSuper = Selectivity.inherits(SingleInput, Selectivity, {
      * @private
      */
     _resultSelected: function(event) {
-
         this.setData(event.item);
 
         this.close({ keepFocus: true });
     }
-
 });
 
 module.exports = Selectivity.Inputs.Single = SingleInput;

@@ -63,10 +63,7 @@ TestUtil.createReactTest(
     'react/multiple: test initial data',
     ['inputs/multiple', 'templates'],
     {
-        defaultData: [
-            { id: 1, text: 'Amsterdam' },
-            { id: 2, text: 'Antwerp' }
-        ],
+        defaultData: [{ id: 1, text: 'Amsterdam' }, { id: 2, text: 'Antwerp' }],
         items: [
             { id: 1, text: 'Amsterdam' },
             { id: 2, text: 'Antwerp' },
@@ -75,10 +72,7 @@ TestUtil.createReactTest(
         multiple: true
     },
     function(SelectivityReact, test, ref) {
-        test.deepEqual(ref.getData(), [
-            { id: 1, text: 'Amsterdam' },
-            { id: 2, text: 'Antwerp' }
-        ]);
+        test.deepEqual(ref.getData(), [{ id: 1, text: 'Amsterdam' }, { id: 2, text: 'Antwerp' }]);
 
         test.deepEqual(ref.getValue(), [1, 2]);
     }
@@ -106,34 +100,25 @@ TestUtil.createReactTest(
     'react/multiple: test nested data',
     ['inputs/multiple', 'templates'],
     {
-        defaultData: [
-            { id: 54, text: 'Vienna' },
-            { id: 2, text: 'Antwerp' }
+        defaultData: [{ id: 54, text: 'Vienna' }, { id: 2, text: 'Antwerp' }],
+        items: [
+            {
+                text: 'Austria',
+                children: [{ id: 54, text: 'Vienna' }]
+            },
+            {
+                text: 'Belgium',
+                children: [{ id: 2, text: 'Antwerp' }, { id: 9, text: 'Brussels' }]
+            },
+            {
+                text: 'Bulgaria',
+                children: [{ id: 48, text: 'Sofia' }]
+            }
         ],
-        items: [{
-            text: 'Austria',
-            children: [
-                { id: 54, text: 'Vienna' }
-            ]
-        }, {
-            text: 'Belgium',
-            children: [
-                { id: 2, text: 'Antwerp' },
-                { id: 9, text: 'Brussels' }
-            ]
-        }, {
-            text: 'Bulgaria',
-            children: [
-                { id: 48, text: 'Sofia' }
-            ]
-        }],
         multiple: true
     },
     function(SelectivityReact, test, ref) {
-        test.deepEqual(ref.getData(), [
-            { id: 54, text: 'Vienna' },
-            { id: 2, text: 'Antwerp' }
-        ]);
+        test.deepEqual(ref.getData(), [{ id: 54, text: 'Vienna' }, { id: 2, text: 'Antwerp' }]);
 
         test.deepEqual(ref.getValue(), [54, 2]);
     }
@@ -160,7 +145,6 @@ TestUtil.createReactTest(
         test.equal($('input').length, 1);
     }
 );
-
 
 TestUtil.createReactTest(
     'react/multiple: test without data and remove-only',
@@ -260,9 +244,11 @@ function initSelection(value, callback) {
         2: 'Antwerp',
         3: 'Athens'
     };
-    callback(value.map(function(id) {
-        return { id: id, text: cities[id] };
-    }));
+    callback(
+        value.map(function(id) {
+            return { id: id, text: cities[id] };
+        })
+    );
 }
 
 TestUtil.createReactTest(
@@ -319,7 +305,7 @@ TestUtil.createReactTest(
 );
 
 TestUtil.createReactTest(
-    'react/multiple: test set default value doesn\'t change value',
+    "react/multiple: test set default value doesn't change value",
     ['inputs/multiple', 'templates'],
     {
         async: true,

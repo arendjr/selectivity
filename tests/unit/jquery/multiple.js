@@ -2,30 +2,26 @@
 
 var TestUtil = require('../../test-util');
 
-TestUtil.createJQueryTest(
-    'jquery/multiple: test clear',
-    ['inputs/multiple', 'templates'],
-    function(test, $input) {
-        $input.selectivity({
-            data: [
-                { id: 1, text: 'Amsterdam' },
-                { id: 2, text: 'Antwerp' }
-            ],
-            items: [
-                { id: 1, text: 'Amsterdam' },
-                { id: 2, text: 'Antwerp' },
-                { id: 3, text: 'Athens' }
-            ],
-            multiple: true
-        });
+TestUtil.createJQueryTest('jquery/multiple: test clear', ['inputs/multiple', 'templates'], function(
+    test,
+    $input
+) {
+    $input.selectivity({
+        data: [{ id: 1, text: 'Amsterdam' }, { id: 2, text: 'Antwerp' }],
+        items: [
+            { id: 1, text: 'Amsterdam' },
+            { id: 2, text: 'Antwerp' },
+            { id: 3, text: 'Athens' }
+        ],
+        multiple: true
+    });
 
-        $input.selectivity('clear');
+    $input.selectivity('clear');
 
-        test.deepEqual($input.selectivity('data'), []);
+    test.deepEqual($input.selectivity('data'), []);
 
-        test.deepEqual($input.selectivity('value'), []);
-    }
-);
+    test.deepEqual($input.selectivity('value'), []);
+});
 
 TestUtil.createJQueryTest(
     'jquery/multiple: test click after search',
@@ -86,10 +82,7 @@ TestUtil.createJQueryTest(
     ['inputs/multiple', 'templates'],
     function(test, $input) {
         $input.selectivity({
-            data: [
-                { id: 1, text: 'Amsterdam' },
-                { id: 2, text: 'Antwerp' }
-            ],
+            data: [{ id: 1, text: 'Amsterdam' }, { id: 2, text: 'Antwerp' }],
             items: [
                 { id: 1, text: 'Amsterdam' },
                 { id: 2, text: 'Antwerp' },
@@ -131,27 +124,21 @@ TestUtil.createJQueryTest(
     ['inputs/multiple', 'templates'],
     function(test, $input) {
         $input.selectivity({
-            data: [
-                { id: 54, text: 'Vienna' },
-                { id: 2, text: 'Antwerp' }
+            data: [{ id: 54, text: 'Vienna' }, { id: 2, text: 'Antwerp' }],
+            items: [
+                {
+                    text: 'Austria',
+                    children: [{ id: 54, text: 'Vienna' }]
+                },
+                {
+                    text: 'Belgium',
+                    children: [{ id: 2, text: 'Antwerp' }, { id: 9, text: 'Brussels' }]
+                },
+                {
+                    text: 'Bulgaria',
+                    children: [{ id: 48, text: 'Sofia' }]
+                }
             ],
-            items: [{
-                text: 'Austria',
-                children: [
-                    { id: 54, text: 'Vienna' }
-                ]
-            }, {
-                text: 'Belgium',
-                children: [
-                    { id: 2, text: 'Antwerp' },
-                    { id: 9, text: 'Brussels' }
-                ]
-            }, {
-                text: 'Bulgaria',
-                children: [
-                    { id: 48, text: 'Sofia' }
-                ]
-            }],
             multiple: true
         });
 
@@ -187,16 +174,18 @@ TestUtil.createJQueryTest(
     'jquery/multiple: test remove-only',
     ['inputs/multiple', 'templates'],
     function(test, $input) {
-        $input.selectivity({
-            items: [
-                { id: 1, text: 'Amsterdam' },
-                { id: 2, text: 'Antwerp' },
-                { id: 3, text: 'Athens' }
-            ],
-            multiple: true
-        }).selectivity('setOptions', {
-            removeOnly: true
-        });
+        $input
+            .selectivity({
+                items: [
+                    { id: 1, text: 'Amsterdam' },
+                    { id: 2, text: 'Antwerp' },
+                    { id: 3, text: 'Athens' }
+                ],
+                multiple: true
+            })
+            .selectivity('setOptions', {
+                removeOnly: true
+            });
 
         test.equal($input.find('input').length, 0);
     }
@@ -236,9 +225,11 @@ TestUtil.createJQueryTest(
                     2: 'Antwerp',
                     3: 'Athens'
                 };
-                callback(value.map(function(id) {
-                    return { id: id, text: cities[id] };
-                }));
+                callback(
+                    value.map(function(id) {
+                        return { id: id, text: cities[id] };
+                    })
+                );
             },
             multiple: true,
             value: [1]

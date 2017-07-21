@@ -4,13 +4,12 @@ var TestUtil = require('../../test-util');
 
 var FAKE_URL = 'http://localhost/my-endpoint';
 
-var expectedDOM = (
+var expectedDOM =
     '<div class="selectivity-results-container">' +
-        '<div class="selectivity-result-item highlight" data-item-id="1">Amsterdam</div>' +
-        '<div class="selectivity-result-item" data-item-id="2">Antwerp</div>' +
-        '<div class="selectivity-result-item" data-item-id="3">Athens</div>' +
-    '</div>'
-);
+    '<div class="selectivity-result-item highlight" data-item-id="1">Amsterdam</div>' +
+    '<div class="selectivity-result-item" data-item-id="2">Antwerp</div>' +
+    '<div class="selectivity-result-item" data-item-id="3">Athens</div>' +
+    '</div>';
 
 var actualUrl;
 
