@@ -120,7 +120,7 @@ TestUtil.createJQueryTest(
     ['inputs/multiple', 'plugins/jquery/traditional', 'templates'],
     { indexResource: 'testcase-traditional-multiple.html' },
     function(test, $input) {
-        test.plan(15);
+        test.plan(19);
 
         var $originalInput = $input;
 
@@ -135,7 +135,7 @@ TestUtil.createJQueryTest(
             if (changeEvents === 0) {
                 test.deepEqual(event.value, ['3', '4', '1']);
                 test.deepEqual(event.added, { id: '1', text: 'foo bar' });
-            } else {
+            } else if (changeEvents === 1) {
                 test.deepEqual(event.value, ['3', '4', '1', '2']);
                 test.deepEqual(event.added, { id: '2', text: 'foo bar' });
             }
@@ -146,7 +146,7 @@ TestUtil.createJQueryTest(
             if (changeEvents === 0) {
                 test.deepEqual(event.value, ['3', '4', '1']);
                 test.deepEqual(event.added, { id: '1', text: 'foo bar' });
-            } else {
+            } else if (changeEvents === 1) {
                 test.deepEqual(event.value, ['3', '4', '1', '2']);
                 test.deepEqual(event.added, { id: '2', text: 'foo bar' });
             }
@@ -169,6 +169,13 @@ TestUtil.createJQueryTest(
         test.equal(originalChangeEvents, 2);
         test.deepEqual($originalInput.val(), ['1', '2', '3', '4']);
         test.deepEqual($input.selectivity('value'), ['3', '4', '1', '2']);
+
+        $input.selectivity('remove', '2');
+
+        test.equal(changeEvents, 3);
+        test.equal(originalChangeEvents, 3);
+        test.deepEqual($originalInput.val(), ['1', '3', '4']);
+        test.deepEqual($input.selectivity('value'), ['3', '4', '1']);
     }
 );
 
