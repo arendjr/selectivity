@@ -1,6 +1,6 @@
 'use strict';
 
-var extend = require('lodash/extend');
+var assign = require('lodash/assign');
 
 var Selectivity = require('../selectivity');
 var stopPropagation = require('../util/stop-propagation');
@@ -11,7 +11,7 @@ var stopPropagation = require('../util/stop-propagation');
 function SingleInput(options) {
     Selectivity.call(
         this,
-        extend(
+        assign(
             {
                 // dropdowns for single-value inputs should open below the select box,
                 // unless there is not enough space below, in which case the dropdown should be moved up
@@ -25,7 +25,7 @@ function SingleInput(options) {
                         rect.top + rect.height
                     );
 
-                    extend(el.style, {
+                    assign(el.style, {
                         left: rect.left + 'px',
                         top: dropdownTop - deltaUp + 'px',
                         width: rect.width + 'px'
@@ -117,7 +117,7 @@ var callSuper = Selectivity.inherits(SingleInput, Selectivity, {
     rerenderSelection: function() {
         var template = this._data ? 'singleSelectedItem' : 'singleSelectPlaceholder';
         var options = this._data
-            ? extend(
+            ? assign(
                   {
                       removable: this.options.allowClear && !this.options.readOnly
                   },
