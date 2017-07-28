@@ -21,8 +21,9 @@
     "browser-sync": "^2.14.0",
     "browserify": "^14.0.0",
     "bundle-collapser": "^1.1.0",
-    "create-react-class": "^15.5.0",
     "eslint": "^4.2.0",
+    "eslint-config-prettier": "^2.3.0",
+    "eslint-plugin-prettier": "^2.1.2",
     "faucet": "0.0.1",
     "freshy": "^1.0.2",
     "glob": "^7.0.3",
@@ -41,19 +42,17 @@
     "gulp-util": "^3.0.1",
     "jquery": "^3.0.0",
     "jsdom": "^11.0.0",
+    "prettier": "^1.5.3",
     "prop-types": "^15.5.0",
-    "react": "^15.0.0",
-    "react-dom": "^15.0.0",
+    "react": "^15.0.0 || ^16.0.0",
+    "react-dom": "^15.0.0 || ^16.0.0",
     "tape": "^4.5.1",
     "vinyl-buffer": "^1.0.0",
     "vinyl-source-stream": "^1.0.0",
     "yargs": "^8.0.1"
   },
   "dependencies": {
-    "eslint-config-prettier": "^2.3.0",
-    "eslint-plugin-prettier": "^2.1.2",
-    "lodash": "^4.0.0",
-    "prettier": "^1.5.3"
+    "lodash": "^4.0.0"
   },
   "keywords": [
     "dropdown",

@@ -1,6 +1,6 @@
 'use strict';
 
-var extend = require('lodash/extend');
+var assign = require('lodash/assign');
 
 var MultipleInput = require('./multiple');
 var Selectivity = require('../selectivity');
@@ -126,7 +126,7 @@ function emailTokenizer(input, selection, createToken) {
 function EmailInput(options) {
     MultipleInput.call(
         this,
-        extend(
+        assign(
             {
                 createTokenItem: createEmailItem,
                 showDropdown: false,

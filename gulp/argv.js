@@ -35,7 +35,7 @@ var argv = yargs
     })
     .option('lodash', {
         default: false,
-        describe: 'Use lodash as an external dependency, making Selectivity itself even smaller.',
+        describe: 'Make lodash an external dependency, making Selectivity itself even smaller.',
         type: 'boolean'
     })
     .option('derequire', {
@@ -70,8 +70,8 @@ var argv = yargs
     .option('react-libs', {
         default: false,
         describe:
-            'Use all React-related libraries lodash as external dependencies, to prevent ' +
-            'duplicate copies of create-react-class and prop-types.',
+            'Make all React-related libraries external dependencies, to prevent duplicate copies ' +
+            'of prop-types.',
         type: 'boolean'
     })
     .option('source-map', {

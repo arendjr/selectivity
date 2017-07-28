@@ -177,7 +177,7 @@ module.exports = {
         }
 
         var event = new window[eventInterface](eventName, eventData);
-        _.extend(event, eventData);
+        _.assign(event, eventData);
         el.dispatchEvent(event);
     }
 };

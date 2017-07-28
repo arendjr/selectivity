@@ -1,6 +1,6 @@
 'use strict';
 
-var extend = require('lodash/extend');
+var assign = require('lodash/assign');
 var isString = require('lodash/isString');
 
 var Selectivity = require('../selectivity');
@@ -26,7 +26,7 @@ var hasTouch = 'ontouchstart' in window;
 function MultipleInput(options) {
     Selectivity.call(
         this,
-        extend(
+        assign(
             {
                 // dropdowns for multiple-value inputs should open below the select box,
                 // unless there is not enough space below, but there is space enough above, then it should
@@ -38,7 +38,7 @@ function MultipleInput(options) {
                         rect.bottom + dropdownHeight > window.innerHeight &&
                         rect.top - dropdownHeight > 0;
 
-                    extend(el.style, {
+                    assign(el.style, {
                         left: rect.left + 'px',
                         top: (openUpwards ? rect.top - dropdownHeight : rect.bottom) + 'px',
                         width: rect.width + 'px'
@@ -455,7 +455,7 @@ var callSuper = Selectivity.inherits(MultipleInput, Selectivity, {
         var el = parseElement(
             this.template(
                 'multipleSelectedItem',
-                extend(
+                assign(
                     {
                         highlighted: item.id === this._highlightedItemId,
                         removable: !this.options.readOnly

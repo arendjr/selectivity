@@ -1,7 +1,6 @@
 'use strict';
 
-var createReactClass = require('create-react-class');
-var extend = require('lodash/extend');
+var assign = require('lodash/assign');
 var PropTypes = require('prop-types');
 var React = require('react');
 
@@ -70,11 +69,15 @@ function propsToOptions(props) {
     return options;
 }
 
-var SelectivityReact = createReactClass({
-    displayName: 'Selectivity',
+function SelectivityReact(props) {
+    React.Component.call(this, props);
+}
 
-    propTypes: extend({}, selectivityOptions, selectivityCallbacks, otherProps),
+SelectivityReact.displayName = 'Selectivity';
 
+SelectivityReact.propTypes = assign({}, selectivityOptions, selectivityCallbacks, otherProps);
+
+Selectivity.inherits(SelectivityReact, React.Component, {
     /**
      * Closes the dropdown.
      */

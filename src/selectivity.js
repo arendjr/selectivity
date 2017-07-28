@@ -1,6 +1,6 @@
 'use strict';
 
-var extend = require('lodash/extend');
+var assign = require('lodash/assign');
 var isString = require('lodash/isString');
 
 var EventListener = require('./event-listener');
@@ -67,7 +67,7 @@ function Selectivity(options) {
      *
      * Custom templates can be specified in the options object.
      */
-    this.templates = extend({}, Selectivity.Templates);
+    this.templates = assign({}, Selectivity.Templates);
 
     /**
      * The last used search term.
@@ -96,7 +96,7 @@ function Selectivity(options) {
 /**
  * Methods.
  */
-extend(Selectivity.prototype, {
+assign(Selectivity.prototype, {
     /**
      * Convenience shortcut for this.el.querySelector(selector).
      */
@@ -433,10 +433,10 @@ extend(Selectivity.prototype, {
             this.items = options.items ? Selectivity.processItems(options.items) : null;
         }
         if ('templates' in options) {
-            extend(this.templates, options.templates);
+            assign(this.templates, options.templates);
         }
 
-        extend(this.options, options);
+        assign(this.options, options);
 
         this.enabled = !this.options.readOnly && !this.options.removeOnly;
     },
@@ -522,7 +522,7 @@ extend(Selectivity.prototype, {
      * @param Optional additional options added to the event object.
      */
     triggerChange: function(options) {
-        var data = extend({ value: this._value }, options);
+        var data = assign({ value: this._value }, options);
         this.triggerEvent('change', data);
         this.triggerEvent('selectivity-change', data);
     },
@@ -539,7 +539,7 @@ extend(Selectivity.prototype, {
     triggerEvent: function(eventName, data) {
         var event = document.createEvent('Event');
         event.initEvent(eventName, /* bubbles: */ false, /* cancelable: */ true);
-        extend(event, data);
+        assign(event, data);
         this.el.dispatchEvent(event);
         return !event.defaultPrevented;
     },
@@ -725,7 +725,7 @@ Selectivity.findNestedById = function(array, id) {
  *         method. Any arguments past those are passed to the superclass method.
  */
 Selectivity.inherits = function(SubClass, SuperClass, prototype) {
-    SubClass.prototype = extend(
+    SubClass.prototype = assign(
         Object.create(SuperClass.prototype),
         { constructor: SubClass },
         prototype

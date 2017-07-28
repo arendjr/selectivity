@@ -1,6 +1,6 @@
 'use strict';
 
-var extend = require('lodash/extend');
+var assign = require('lodash/assign');
 
 var EventListener = require('./event-listener');
 var getItemSelector = require('./util/get-item-selector');
@@ -119,7 +119,7 @@ function SelectivityDropdown(selectivity, options) {
 /**
  * Methods.
  */
-extend(SelectivityDropdown.prototype, {
+assign(SelectivityDropdown.prototype, {
     /**
      * Convenience shortcut for this.el.querySelector(selector).
      */
@@ -541,7 +541,7 @@ extend(SelectivityDropdown.prototype, {
      * @private
      */
     _showResults: function(results, options) {
-        this.showResults(results, extend({ dropdown: this }, options));
+        this.showResults(results, assign({ dropdown: this }, options));
     },
 
     /**

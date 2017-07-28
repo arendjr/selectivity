@@ -1,6 +1,6 @@
 'use strict';
 
-var extend = require('lodash/extend');
+var assign = require('lodash/assign');
 
 var Selectivity = require('../selectivity');
 
@@ -60,7 +60,7 @@ function defaultTokenizer(input, selection, createToken, options) {
  */
 Selectivity.OptionListeners.push(function(selectivity, options) {
     if (options.tokenSeparators) {
-        options.allowedTypes = extend({ tokenSeparators: 'array' }, options.allowedTypes);
+        options.allowedTypes = assign({ tokenSeparators: 'array' }, options.allowedTypes);
 
         options.tokenizer = options.tokenizer || defaultTokenizer;
     }

@@ -14,7 +14,7 @@ var uglify = require('gulp-uglify');
 
 var argv = require('../argv');
 
-var LODASH_METHODS = ['debounce', 'escape', 'extend', 'isString'];
+var LODASH_METHODS = ['assign', 'debounce', 'escape', 'isString'];
 
 module.exports = function() {
     var b = browserify({ debug: argv['source-map'] === true, standalone: 'selectivity' });
@@ -48,10 +48,9 @@ module.exports = function() {
             })
         );
     } else if (argv.api === 'jquery') {
-        b.external(['lodash/extend']);
+        b.external(['lodash/assign']);
     }
     if (argv.reactLibs) {
-        b.external('create-react-class');
         b.external('prop-types');
     }
 
@@ -76,14 +75,11 @@ module.exports = function() {
         stream = stream.pipe(replace(/require\(['"]lodash\/(\w+)['"]\)/g, 'window._.$1'));
     } else if (argv.api === 'jquery') {
         stream = stream.pipe(
-            replace(/require\(['"]lodash\/extend['"]\)/g, 'require("jquery").extend')
+            replace(/require\(['"]lodash\/assign['"]\)/g, 'require("jquery").extend')
         );
     }
 
     if (argv.reactLibs) {
-        stream = stream.pipe(
-            replace(/require\(['"]create-react-class['"]\)/g, 'window.createReactClass')
-        );
         stream = stream.pipe(replace(/require\(['"]prop-types['"]\)/g, 'window.PropTypes'));
     }
 
@@ -97,9 +93,6 @@ module.exports = function() {
 
     if (argv.commonJs) {
         if (argv.reactLibs) {
-            stream = stream.pipe(
-                replace(/window.createReactClass/g, 'require("create-react-class")')
-            );
             stream = stream.pipe(replace(/window.PropTypes/g, 'require("prop-types")'));
         }
         stream = stream.pipe(replace(/window\.jQuery \|\| window\.Zepto/g, 'require("jquery")'));

@@ -1,6 +1,6 @@
 'use strict';
 
-var extend = require('lodash/extend');
+var assign = require('lodash/assign');
 var isString = require('lodash/isString');
 
 var matchesSelector = require('./util/matches-selector');
@@ -23,7 +23,7 @@ function EventListener(el, context) {
     this._onEvent = this._onEvent.bind(this);
 }
 
-extend(EventListener.prototype, {
+assign(EventListener.prototype, {
     /**
      * Destructor.
      *
