@@ -20,8 +20,9 @@ function pick(object, keys) {
 }
 
 function doFetch(ajax, queryOptions) {
+    var isServer = typeof window === 'undefined';
 
-    var fetch = ajax.fetch || window.fetch;
+    var fetch = ajax.fetch || (!isServer ? window.fetch : null);
     var term = queryOptions.term;
 
     var url = (typeof ajax.url === 'function' ? ajax.url(queryOptions) : ajax.url);

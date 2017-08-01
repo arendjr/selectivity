@@ -431,11 +431,15 @@ extend(SelectivityDropdown.prototype, {
      * @private
      */
     _attachScrollListeners: function() {
+        var isServer = typeof window === 'undefined';
 
-        for (var i = 0; i < SCROLL_EVENTS.length; i++) {
-            window.addEventListener(SCROLL_EVENTS[i], this.position, true);
+
+        if (!isServer) {
+            for (var i = 0; i < SCROLL_EVENTS.length; i++) {
+                window.addEventListener(SCROLL_EVENTS[i], this.position, true);
+            }
+            window.addEventListener('resize', this.position);
         }
-        window.addEventListener('resize', this.position);
     },
 
     /**
@@ -501,11 +505,14 @@ extend(SelectivityDropdown.prototype, {
      * @private
      */
     _removeScrollListeners: function() {
+        var isServer = typeof window === 'undefined';
 
-        for (var i = 0; i < SCROLL_EVENTS.length; i++) {
-            window.removeEventListener(SCROLL_EVENTS[i], this.position, true);
+        if (!isServer) {
+            for (var i = 0; i < SCROLL_EVENTS.length; i++) {
+                window.removeEventListener(SCROLL_EVENTS[i], this.position, true);
+            }
+            window.removeEventListener('resize', this.position);
         }
-        window.removeEventListener('resize', this.position);
     },
 
     /**

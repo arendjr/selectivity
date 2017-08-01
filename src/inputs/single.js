@@ -15,11 +15,12 @@ function SingleInput(options) {
         // unless there is not enough space below, in which case the dropdown should be moved up
         // just enough so it fits in the window, but never so much that it reaches above the top
         positionDropdown: function(el, selectEl) {
+            var isServer = typeof window === 'undefined';
             var rect = selectEl.getBoundingClientRect();
             var dropdownTop = rect.bottom;
 
             var deltaUp = Math.min(
-                Math.max(dropdownTop + el.clientHeight - window.innerHeight, 0),
+                Math.max(dropdownTop + el.clientHeight - (!isServer ? window.innerHeight : 0), 0),
                 rect.top + rect.height
             );
 

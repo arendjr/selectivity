@@ -15,10 +15,12 @@ var KEY_BACKSPACE = 8;
 var KEY_DELETE = 46;
 var KEY_ENTER = 13;
 
+var isServer = typeof window === 'undefined';
+
 var INPUT_SELECTOR = '.selectivity-multiple-input';
 var SELECTED_ITEM_SELECTOR = '.selectivity-multiple-selected-item';
 
-var hasTouch = 'ontouchstart' in window;
+var hasTouch = !isServer ? 'ontouchstart' in window : null;
 
 /**
  * MultipleInput Constructor.
@@ -32,7 +34,9 @@ function MultipleInput(options) {
         positionDropdown: function(el, selectEl) {
             var rect = selectEl.getBoundingClientRect();
             var dropdownHeight = el.clientHeight;
-            var openUpwards = (rect.bottom + dropdownHeight > window.innerHeight &&
+            var isServer = typeof window === 'undefined';
+            var openUpwards =
+                (rect.bottom + dropdownHeight > (!isServer ? window.innerHeight : 0) &&
                                rect.top - dropdownHeight > 0);
 
             extend(el.style, {
