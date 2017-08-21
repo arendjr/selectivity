@@ -1,6 +1,6 @@
 /**
  * @license
- * Selectivity.js 3.0.4 <https://arendjr.github.io/selectivity/>
+ * Selectivity.js 3.0.5 <https://arendjr.github.io/selectivity/>
  * Copyright (c) 2014-2016 Arend van Beelen jr.
  *           (c) 2016 Speakap BV
  * Available under MIT license <https://github.com/arendjr/selectivity/blob/master/LICENSE>
@@ -757,7 +757,7 @@ var isString = _dereq_(16);
 var Selectivity = _dereq_(38);
 
 var EVENT_PROPERTIES = {
-    'change': ['added', 'removed', 'value'],
+    change: ['added', 'removed', 'value'],
     'selectivity-change': ['added', 'removed', 'value'],
     'selectivity-highlight': ['id', 'item'],
     'selectivity-selected': ['id', 'item'],
@@ -767,7 +767,6 @@ var EVENT_PROPERTIES = {
 // create event listeners that will copy the custom properties from the native events
 // to the jQuery events, so jQuery users can use them seamlessly
 function patchEvents($el) {
-
     $.each(EVENT_PROPERTIES, function(eventName, properties) {
         $el.on(eventName, function(event) {
             if (event.originalEvent) {
@@ -802,7 +801,6 @@ function patchEvents($el) {
  *         executed on the first element in the set of matched elements.
  */
 $.fn.selectivity = function selectivity(methodName, options) {
-
     var methodArgs = Array.prototype.slice.call(arguments, 1);
     var result;
 
@@ -811,9 +809,9 @@ $.fn.selectivity = function selectivity(methodName, options) {
 
         if (instance) {
             if (methodName === 'data') {
-                methodName = (methodArgs.length ? 'setData' : 'getData');
+                methodName = methodArgs.length ? 'setData' : 'getData';
             } else if (methodName === 'val' || methodName === 'value') {
-                methodName = (methodArgs.length ? 'setValue' : 'getValue');
+                methodName = methodArgs.length ? 'setValue' : 'getValue';
             } else if (!isString(methodName)) {
                 methodArgs = [methodName];
                 methodName = 'setOptions';
@@ -841,7 +839,7 @@ $.fn.selectivity = function selectivity(methodName, options) {
             }
 
             var Inputs = Selectivity.Inputs;
-            var InputType = (options.inputType || (options.multiple ? 'Multiple' : 'Single'));
+            var InputType = options.inputType || (options.multiple ? 'Multiple' : 'Single');
             if (!$.isFunction(InputType)) {
                 if (Inputs[InputType]) {
                     InputType = Inputs[InputType];
@@ -861,7 +859,7 @@ $.fn.selectivity = function selectivity(methodName, options) {
         }
     });
 
-    return (result === undefined ? this : result);
+    return result === undefined ? this : result;
 };
 
 Selectivity.patchEvents = patchEvents;
@@ -871,7 +869,7 @@ $.Selectivity = Selectivity;
 },{"16":16,"38":38,"jquery":"jquery"}],22:[function(_dereq_,module,exports){
 'use strict';
 
-var extend = (window.jQuery || window.Zepto).extend;
+var assign = (window.jQuery || window.Zepto).extend;
 
 var EventListener = _dereq_(23);
 var getItemSelector = _dereq_(41);
@@ -891,7 +889,6 @@ var RESULT_ITEM_SELECTOR = '.selectivity-result-item';
 var SCROLL_EVENTS = ['scroll', 'touchend', 'touchmove'];
 
 function findClosestElementMatchingSelector(el, selector) {
-
     while (el && !matchesSelector(el, selector)) {
         el = el.parentElement;
     }
@@ -911,12 +908,13 @@ function findClosestElementMatchingSelector(el, selector) {
  *                showSearchInput - Boolean whether a search input should be shown.
  */
 function SelectivityDropdown(selectivity, options) {
-
-    this.el = parseElement(selectivity.template('dropdown', {
-        dropdownCssClass: selectivity.options.dropdownCssClass,
-        searchInputPlaceholder: selectivity.options.searchInputPlaceholder,
-        showSearchInput: options.showSearchInput
-    }));
+    this.el = parseElement(
+        selectivity.template('dropdown', {
+            dropdownCssClass: selectivity.options.dropdownCssClass,
+            searchInputPlaceholder: selectivity.options.searchInputPlaceholder,
+            showSearchInput: options.showSearchInput
+        })
+    );
 
     /**
      * DOM element to add the results to.
@@ -990,13 +988,11 @@ function SelectivityDropdown(selectivity, options) {
 /**
  * Methods.
  */
-extend(SelectivityDropdown.prototype, {
-
+assign(SelectivityDropdown.prototype, {
     /**
      * Convenience shortcut for this.el.querySelector(selector).
      */
     $: function(selector) {
-
         return this.el.querySelector(selector);
     },
 
@@ -1004,7 +1000,6 @@ extend(SelectivityDropdown.prototype, {
      * Adds the dropdown to the DOM.
      */
     addToDom: function() {
-
         this.selectivity.el.appendChild(this.el);
     },
 
@@ -1012,7 +1007,6 @@ extend(SelectivityDropdown.prototype, {
      * Closes the dropdown.
      */
     close: function() {
-
         if (!this._closed) {
             this._closed = true;
 
@@ -1035,7 +1029,6 @@ extend(SelectivityDropdown.prototype, {
      *                         values: 'current_value', 'first_result', 'hovered'.
      */
     highlight: function(item, options) {
-
         toggleClass(this.$(HIGHLIGHT_SELECTOR), HIGHLIGHT_CLASS, false);
         toggleClass(this.$(getItemSelector(RESULT_ITEM_SELECTOR, item.id)), HIGHLIGHT_CLASS, true);
 
@@ -1045,7 +1038,7 @@ extend(SelectivityDropdown.prototype, {
         this.selectivity.triggerEvent('selectivity-highlight', {
             item: item,
             id: item.id,
-            reason: options && options.reason || 'unspecified'
+            reason: (options && options.reason) || 'unspecified'
         });
     },
 
@@ -1055,7 +1048,6 @@ extend(SelectivityDropdown.prototype, {
      * @param item The item to highlight.
      */
     highlightLoadMore: function() {
-
         toggleClass(this.$(HIGHLIGHT_SELECTOR), HIGHLIGHT_CLASS, false);
         toggleClass(this.$(LOAD_MORE_SELECTOR), HIGHLIGHT_CLASS, true);
 
@@ -1070,17 +1062,16 @@ extend(SelectivityDropdown.prototype, {
      * more results are available.
      */
     loadMore: function() {
-
         removeElement(this.$(LOAD_MORE_SELECTOR));
         this.resultsContainer.innerHTML += this.selectivity.template('loading');
 
         this.options.query({
             callback: function(response) {
                 if (response && response.results) {
-                    this._showResults(
-                        Selectivity.processItems(response.results),
-                        { add: true, hasMore: !!response.more }
-                    );
+                    this._showResults(Selectivity.processItems(response.results), {
+                        add: true,
+                        hasMore: !!response.more
+                    });
                 } else {
                     throw new Error('callback must be passed a response object');
                 }
@@ -1096,7 +1087,6 @@ extend(SelectivityDropdown.prototype, {
      * Positions the dropdown inside the DOM.
      */
     position: function() {
-
         var position = this.options.position;
         if (position) {
             position(this.el, this.selectivity.el);
@@ -1113,17 +1103,18 @@ extend(SelectivityDropdown.prototype, {
      * @return HTML-formatted string to display the result items.
      */
     renderItems: function(items) {
-
         var selectivity = this.selectivity;
-        return items.map(function(item) {
-            var result = selectivity.template(item.id ? 'resultItem' : 'resultLabel', item);
-            if (item.children) {
-                result += selectivity.template('resultChildren', {
-                    childrenHtml: this.renderItems(item.children)
-                });
-            }
-            return result;
-        }, this).join('');
+        return items
+            .map(function(item) {
+                var result = selectivity.template(item.id ? 'resultItem' : 'resultLabel', item);
+                if (item.children) {
+                    result += selectivity.template('resultChildren', {
+                        childrenHtml: this.renderItems(item.children)
+                    });
+                }
+                return result;
+            }, this)
+            .join('');
     },
 
     /**
@@ -1136,25 +1127,29 @@ extend(SelectivityDropdown.prototype, {
      * @param term Term to search for.
      */
     search: function(term) {
-
         this.term = term;
 
         if (this.options.items) {
             term = Selectivity.transformText(term);
             var matcher = this.selectivity.options.matcher || Selectivity.matcher;
-            this._showResults(this.options.items.map(function(item) {
-                return matcher(item, term);
-            }).filter(function(item) {
-                return !!item;
-            }), { term: term });
+            this._showResults(
+                this.options.items
+                    .map(function(item) {
+                        return matcher(item, term);
+                    })
+                    .filter(function(item) {
+                        return !!item;
+                    }),
+                { term: term }
+            );
         } else if (this.options.query) {
             this.options.query({
                 callback: function(response) {
                     if (response && response.results) {
-                        this._showResults(
-                            Selectivity.processItems(response.results),
-                            { hasMore: !!response.more, term: term }
-                        );
+                        this._showResults(Selectivity.processItems(response.results), {
+                            hasMore: !!response.more,
+                            term: term
+                        });
                     } else {
                         throw new Error('callback must be passed a response object');
                     }
@@ -1171,7 +1166,6 @@ extend(SelectivityDropdown.prototype, {
      * Selects the highlighted item.
      */
     selectHighlight: function() {
-
         if (this.highlightedResult) {
             this.selectItem(this.highlightedResult.id);
         } else if (this.loadMoreHighlighted) {
@@ -1185,7 +1179,6 @@ extend(SelectivityDropdown.prototype, {
      * @param id ID of the item to select.
      */
     selectItem: function(id) {
-
         var item = Selectivity.findNestedById(this.results, id);
         if (item && !item.disabled && item.selectable !== false) {
             var options = { id: id, item: item };
@@ -1205,7 +1198,6 @@ extend(SelectivityDropdown.prototype, {
      *                         attacks if you're not careful with escaping user input.
      */
     showError: function(message, options) {
-
         this.resultsContainer.innerHTML = this.selectivity.template('error', {
             escape: !options || options.escape !== false,
             message: message
@@ -1224,7 +1216,6 @@ extend(SelectivityDropdown.prototype, {
      * Shows a loading indicator in the dropdown.
      */
     showLoading: function() {
-
         this.resultsContainer.innerHTML = this.selectivity.template('loading');
 
         this.hasMore = false;
@@ -1248,7 +1239,6 @@ extend(SelectivityDropdown.prototype, {
      *                term - The search term for which the results are displayed.
      */
     showResults: function(results, options) {
-
         if (options.add) {
             removeElement(this.$('.selectivity-loading'));
         } else {
@@ -1264,7 +1254,7 @@ extend(SelectivityDropdown.prototype, {
         }
         this.resultsContainer.innerHTML += resultsHtml;
 
-        this.results = (options.add ? this.results.concat(results) : results);
+        this.results = options.add ? this.results.concat(results) : results;
 
         this.hasMore = options.hasMore;
 
@@ -1274,8 +1264,10 @@ extend(SelectivityDropdown.prototype, {
             if (item) {
                 this.highlight(item, { reason: 'current_value' });
             }
-        } else if (this.options.highlightFirstItem !== false &&
-                   (!options.add || this.loadMoreHighlighted)) {
+        } else if (
+            this.options.highlightFirstItem !== false &&
+            (!options.add || this.loadMoreHighlighted)
+        ) {
             this._highlightFirstItem(filteredResults);
         }
 
@@ -1286,7 +1278,6 @@ extend(SelectivityDropdown.prototype, {
      * Triggers the 'selectivity-close' event.
      */
     triggerClose: function() {
-
         this.selectivity.triggerEvent('selectivity-close');
     },
 
@@ -1294,7 +1285,6 @@ extend(SelectivityDropdown.prototype, {
      * Triggers the 'selectivity-open' event.
      */
     triggerOpen: function() {
-
         this.selectivity.triggerEvent('selectivity-open');
     },
 
@@ -1302,7 +1292,6 @@ extend(SelectivityDropdown.prototype, {
      * @private
      */
     _attachScrollListeners: function() {
-
         for (var i = 0; i < SCROLL_EVENTS.length; i++) {
             window.addEventListener(SCROLL_EVENTS[i], this.position, true);
         }
@@ -1313,7 +1302,6 @@ extend(SelectivityDropdown.prototype, {
      * @private
      */
     _highlightFirstItem: function(results) {
-
         function findFirstItem(results) {
             for (var i = 0, length = results.length; i < length; i++) {
                 var result = results[i];
@@ -1341,7 +1329,6 @@ extend(SelectivityDropdown.prototype, {
      * @private
      */
     _loadMoreClicked: function(event) {
-
         this.loadMore();
 
         stopPropagation(event);
@@ -1351,9 +1338,12 @@ extend(SelectivityDropdown.prototype, {
      * @private
      */
     _loadMoreHovered: function(event) {
-
-        if (event.screenX === undefined || event.screenX !== this._lastMousePosition.x ||
-            event.screenY === undefined || event.screenY !== this._lastMousePosition.y) {
+        if (
+            event.screenX === undefined ||
+            event.screenX !== this._lastMousePosition.x ||
+            event.screenY === undefined ||
+            event.screenY !== this._lastMousePosition.y
+        ) {
             this.highlightLoadMore();
 
             this._recordMousePosition(event);
@@ -1364,7 +1354,6 @@ extend(SelectivityDropdown.prototype, {
      * @private
      */
     _recordMousePosition: function(event) {
-
         this._lastMousePosition = { x: event.screenX, y: event.screenY };
     },
 
@@ -1372,7 +1361,6 @@ extend(SelectivityDropdown.prototype, {
      * @private
      */
     _removeScrollListeners: function() {
-
         for (var i = 0; i < SCROLL_EVENTS.length; i++) {
             window.removeEventListener(SCROLL_EVENTS[i], this.position, true);
         }
@@ -1383,7 +1371,6 @@ extend(SelectivityDropdown.prototype, {
      * @private
      */
     _resultClicked: function(event) {
-
         this.selectItem(this.selectivity.getRelatedItemId(event));
 
         stopPropagation(event);
@@ -1393,9 +1380,12 @@ extend(SelectivityDropdown.prototype, {
      * @private
      */
     _resultHovered: function(event) {
-
-        if (!event.screenX || event.screenX !== this._lastMousePosition.x ||
-            !event.screenY || event.screenY !== this._lastMousePosition.y) {
+        if (
+            !event.screenX ||
+            event.screenX !== this._lastMousePosition.x ||
+            !event.screenY ||
+            event.screenY !== this._lastMousePosition.y
+        ) {
             var id = this.selectivity.getRelatedItemId(event);
             var item = Selectivity.findNestedById(this.results, id);
             if (item && !item.disabled) {
@@ -1410,7 +1400,6 @@ extend(SelectivityDropdown.prototype, {
      * @private
      */
     _scrolled: function() {
-
         var el = this.$(LOAD_MORE_SELECTOR);
         if (el && el.offsetTop - this.resultsContainer.scrollTop < this.el.clientHeight) {
             this.loadMore();
@@ -1421,15 +1410,13 @@ extend(SelectivityDropdown.prototype, {
      * @private
      */
     _showResults: function(results, options) {
-
-        this.showResults(results, extend({ dropdown: this }, options));
+        this.showResults(results, assign({ dropdown: this }, options));
     },
 
     /**
      * @private
      */
     _suppressWheel: function() {
-
         var suppressWheelSelector = this.selectivity.options.suppressWheelSelector;
         if (suppressWheelSelector === null) {
             return;
@@ -1440,7 +1427,7 @@ extend(SelectivityDropdown.prototype, {
             // Thanks to Troy Alford:
             // http://stackoverflow.com/questions/5802467/prevent-scrolling-of-parent-element
 
-            var delta = (event.deltaMode === 0 ? event.deltaY : event.deltaY * 40);
+            var delta = event.deltaMode === 0 ? event.deltaY : event.deltaY * 40;
             var el = findClosestElementMatchingSelector(event.target, selector);
             var height = el.clientHeight;
             var scrollHeight = el.scrollHeight;
@@ -1464,15 +1451,14 @@ extend(SelectivityDropdown.prototype, {
             }
         });
     }
-
 });
 
 module.exports = Selectivity.Dropdown = SelectivityDropdown;
 
-},{"23":23,"38":38,"41":41,"43":43,"44":44,"45":45,"46":46,"47":47,"lodash/extend":"lodash/extend"}],23:[function(_dereq_,module,exports){
+},{"23":23,"38":38,"41":41,"43":43,"44":44,"45":45,"46":46,"47":47,"lodash/assign":"lodash/assign"}],23:[function(_dereq_,module,exports){
 'use strict';
 
-var extend = (window.jQuery || window.Zepto).extend;
+var assign = (window.jQuery || window.Zepto).extend;
 var isString = _dereq_(16);
 
 var matchesSelector = _dereq_(43);
@@ -1486,7 +1472,6 @@ var CAPTURED_EVENTS = ['blur', 'focus', 'mouseenter', 'mouseleave', 'scroll'];
  * @param context Optional context in which to execute the callbacks.
  */
 function EventListener(el, context) {
-
     this.context = context || null;
 
     this.el = el;
@@ -1496,15 +1481,13 @@ function EventListener(el, context) {
     this._onEvent = this._onEvent.bind(this);
 }
 
-extend(EventListener.prototype, {
-
+assign(EventListener.prototype, {
     /**
      * Destructor.
      *
      * Removes all event listeners and cleans up all references.
      */
     destruct: function() {
-
         Object.keys(this.events).forEach(function(eventName) {
             var useCapture = CAPTURED_EVENTS.indexOf(eventName) > -1;
             this.el.removeEventListener(eventName, this._onEvent, useCapture);
@@ -1522,7 +1505,6 @@ extend(EventListener.prototype, {
      * given event and class are discarded.
      */
     off: function(eventName, selector, callback) {
-
         if (!isString(selector)) {
             callback = selector;
             selector = '';
@@ -1564,7 +1546,6 @@ extend(EventListener.prototype, {
      *     })
      */
     on: function(eventName, selector, callback) {
-
         if (!isString(eventName)) {
             var eventsMap = eventName;
             for (var key in eventsMap) {
@@ -1602,7 +1583,6 @@ extend(EventListener.prototype, {
     },
 
     _onEvent: function(event) {
-
         var isPropagationStopped = false;
         var stopPropagation = event.stopPropagation;
         event.stopPropagation = function() {
@@ -1621,8 +1601,11 @@ extend(EventListener.prototype, {
         var events = this.events[event.type.toLowerCase()];
         while (target && target !== this.el && !isPropagationStopped) {
             for (var selector in events) {
-                if (selector && events.hasOwnProperty(selector) &&
-                    matchesSelector(target, selector)) {
+                if (
+                    selector &&
+                    events.hasOwnProperty(selector) &&
+                    matchesSelector(target, selector)
+                ) {
                     callAll(events[selector]);
                 }
             }
@@ -1633,21 +1616,19 @@ extend(EventListener.prototype, {
             callAll(events['']);
         }
     }
-
 });
 
 module.exports = EventListener;
 
-},{"16":16,"43":43,"lodash/extend":"lodash/extend"}],24:[function(_dereq_,module,exports){
+},{"16":16,"43":43,"lodash/assign":"lodash/assign"}],24:[function(_dereq_,module,exports){
 'use strict';
 
-var extend = (window.jQuery || window.Zepto).extend;
+var assign = (window.jQuery || window.Zepto).extend;
 
 var MultipleInput = _dereq_(25);
 var Selectivity = _dereq_(38);
 
 function isValidEmail(email) {
-
     var atIndex = email.indexOf('@');
     if (atIndex === -1 || email.indexOf(' ') > -1) {
         return false; // email needs to have an '@', and may not contain any spaces
@@ -1660,14 +1641,13 @@ function isValidEmail(email) {
     }
 
     // but if there is a dot after the '@', it must be followed by at least two more characters
-    return (dotIndex > atIndex ? dotIndex < email.length - 2 : true);
+    return dotIndex > atIndex ? dotIndex < email.length - 2 : true;
 }
 
 function lastWord(token, length) {
-
-    length = (length === undefined ? token.length : length);
+    length = length === undefined ? token.length : length;
     for (var i = length - 1; i >= 0; i--) {
-        if ((/\s/).test(token[i])) {
+        if (/\s/.test(token[i])) {
             return token.slice(i + 1, length);
         }
     }
@@ -1675,7 +1655,6 @@ function lastWord(token, length) {
 }
 
 function stripEnclosure(token, enclosure) {
-
     if (token.charAt(0) === enclosure[0] && token.slice(-1) === enclosure[1]) {
         return token.slice(1, -1).trim();
     } else {
@@ -1684,7 +1663,6 @@ function stripEnclosure(token, enclosure) {
 }
 
 function createEmailItem(token) {
-
     var email = lastWord(token);
     var name = token.slice(0, -email.length).trim();
     if (isValidEmail(email)) {
@@ -1692,33 +1670,32 @@ function createEmailItem(token) {
         name = stripEnclosure(name, '""').trim() || email;
         return { id: email, text: name };
     } else {
-        return (token.trim() ? { id: token, text: token } : null);
+        return token.trim() ? { id: token, text: token } : null;
     }
 }
 
 function emailTokenizer(input, selection, createToken) {
-
     function hasToken(input) {
         if (input) {
             for (var i = 0, length = input.length; i < length; i++) {
                 switch (input[i]) {
-                case ';':
-                case ',':
-                case '\n':
-                    return true;
-                case ' ':
-                case '\t':
-                    if (isValidEmail(lastWord(input, i))) {
+                    case ';':
+                    case ',':
+                    case '\n':
                         return true;
-                    }
-                    break;
-                case '"':
-                    do {
-                        i++;
-                    } while (i < length && input[i] !== '"');
-                    break;
-                default:
-                    continue;
+                    case ' ':
+                    case '\t':
+                        if (isValidEmail(lastWord(input, i))) {
+                            return true;
+                        }
+                        break;
+                    case '"':
+                        do {
+                            i++;
+                        } while (i < length && input[i] !== '"');
+                        break;
+                    default:
+                        continue;
                 }
             }
         }
@@ -1728,23 +1705,23 @@ function emailTokenizer(input, selection, createToken) {
     function takeToken(input) {
         for (var i = 0, length = input.length; i < length; i++) {
             switch (input[i]) {
-            case ';':
-            case ',':
-            case '\n':
-                return { term: input.slice(0, i), input: input.slice(i + 1) };
-            case ' ':
-            case '\t':
-                if (isValidEmail(lastWord(input, i))) {
+                case ';':
+                case ',':
+                case '\n':
                     return { term: input.slice(0, i), input: input.slice(i + 1) };
-                }
-                break;
-            case '"':
-                do {
-                    i++;
-                } while (i < length && input[i] !== '"');
-                break;
-            default:
-                continue;
+                case ' ':
+                case '\t':
+                    if (isValidEmail(lastWord(input, i))) {
+                        return { term: input.slice(0, i), input: input.slice(i + 1) };
+                    }
+                    break;
+                case '"':
+                    do {
+                        i++;
+                    } while (i < length && input[i] !== '"');
+                    break;
+                default:
+                    continue;
             }
         }
         return {};
@@ -1770,12 +1747,17 @@ function emailTokenizer(input, selection, createToken) {
  * @param options Options object. Accepts all options from the MultipleInput Constructor.
  */
 function EmailInput(options) {
-
-    MultipleInput.call(this, extend({
-        createTokenItem: createEmailItem,
-        showDropdown: false,
-        tokenizer: emailTokenizer
-    }, options));
+    MultipleInput.call(
+        this,
+        assign(
+            {
+                createTokenItem: createEmailItem,
+                showDropdown: false,
+                tokenizer: emailTokenizer
+            },
+            options
+        )
+    );
 
     this.events.on('blur', function() {
         var input = this.input;
@@ -1789,10 +1771,10 @@ Selectivity.inherits(EmailInput, MultipleInput);
 
 module.exports = Selectivity.Inputs.Email = EmailInput;
 
-},{"25":25,"38":38,"lodash/extend":"lodash/extend"}],25:[function(_dereq_,module,exports){
+},{"25":25,"38":38,"lodash/assign":"lodash/assign"}],25:[function(_dereq_,module,exports){
 'use strict';
 
-var extend = (window.jQuery || window.Zepto).extend;
+var assign = (window.jQuery || window.Zepto).extend;
 var isString = _dereq_(16);
 
 var Selectivity = _dereq_(38);
@@ -1816,32 +1798,38 @@ var hasTouch = 'ontouchstart' in window;
  * MultipleInput Constructor.
  */
 function MultipleInput(options) {
+    Selectivity.call(
+        this,
+        assign(
+            {
+                // dropdowns for multiple-value inputs should open below the select box,
+                // unless there is not enough space below, but there is space enough above, then it should
+                // open upwards
+                positionDropdown: function(el, selectEl) {
+                    var rect = selectEl.getBoundingClientRect();
+                    var dropdownHeight = el.clientHeight;
+                    var openUpwards =
+                        rect.bottom + dropdownHeight > window.innerHeight &&
+                        rect.top - dropdownHeight > 0;
 
-    Selectivity.call(this, extend({
-        // dropdowns for multiple-value inputs should open below the select box,
-        // unless there is not enough space below, but there is space enough above, then it should
-        // open upwards
-        positionDropdown: function(el, selectEl) {
-            var rect = selectEl.getBoundingClientRect();
-            var dropdownHeight = el.clientHeight;
-            var openUpwards = (rect.bottom + dropdownHeight > window.innerHeight &&
-                               rect.top - dropdownHeight > 0);
+                    assign(el.style, {
+                        left: rect.left + 'px',
+                        top: (openUpwards ? rect.top - dropdownHeight : rect.bottom) + 'px',
+                        width: rect.width + 'px'
+                    });
+                },
 
-            extend(el.style, {
-                left: rect.left + 'px',
-                top: (openUpwards ? rect.top - dropdownHeight : rect.bottom) + 'px',
-                width: rect.width + 'px'
-            });
-        },
-
-        showSearchInputInDropdown: false
-    }, options));
+                showSearchInputInDropdown: false
+            },
+            options
+        )
+    );
 
     this._reset();
 
     var events = {
-        'change': this.rerenderSelection,
-        'click': this._clicked,
+        change: this.rerenderSelection,
+        click: this._clicked,
         'selectivity-selected': this._resultSelected
     };
     events['change ' + INPUT_SELECTOR] = stopPropagation;
@@ -1858,29 +1846,30 @@ function MultipleInput(options) {
  * Methods.
  */
 var callSuper = Selectivity.inherits(MultipleInput, Selectivity, {
-
     /**
      * Adds an item to the selection, if it's not selected yet.
      *
      * @param item The item to add. May be an item with 'id' and 'text' properties or just an ID.
      */
     add: function(item) {
-
         var itemIsId = Selectivity.isValidId(item);
-        var id = (itemIsId ? item : this.validateItem(item) && item.id);
+        var id = itemIsId ? item : this.validateItem(item) && item.id;
 
         if (this._value.indexOf(id) === -1) {
             this._value.push(id);
 
             if (itemIsId && this.options.initSelection) {
-                this.options.initSelection([id], function(data) {
-                    if (this._value.indexOf(id) > -1) {
-                        item = this.validateItem(data[0]);
-                        this._data.push(item);
+                this.options.initSelection(
+                    [id],
+                    function(data) {
+                        if (this._value.indexOf(id) > -1) {
+                            item = this.validateItem(data[0]);
+                            this._data.push(item);
 
-                        this.triggerChange({ added: item });
-                    }
-                }.bind(this));
+                            this.triggerChange({ added: item });
+                        }
+                    }.bind(this)
+                );
             } else {
                 if (itemIsId) {
                     item = this.getItemForId(id);
@@ -1899,7 +1888,6 @@ var callSuper = Selectivity.inherits(MultipleInput, Selectivity, {
      * Clears the data and value.
      */
     clear: function() {
-
         this.setData([]);
     },
 
@@ -1907,6 +1895,18 @@ var callSuper = Selectivity.inherits(MultipleInput, Selectivity, {
      * @inherit
      */
     filterResults: function(results) {
+        var hasChildren = results.some(function(item) {
+            return item.children;
+        });
+        if (hasChildren) {
+            results = results.map(function(item) {
+                return {
+                    id: item.id,
+                    text: item.text,
+                    children: this.filterResults(item.children)
+                };
+            }, this);
+        }
 
         return results.filter(function(item) {
             return !Selectivity.findById(this._data, item.id);
@@ -1923,7 +1923,6 @@ var callSuper = Selectivity.inherits(MultipleInput, Selectivity, {
      *         to the IDs.
      */
     getDataForValue: function(value) {
-
         return value.map(this.getItemForId, this).filter(function(item) {
             return !!item;
         });
@@ -1938,7 +1937,6 @@ var callSuper = Selectivity.inherits(MultipleInput, Selectivity, {
      * @return The corresponding value. Will be an array of IDs.
      */
     getValueForData: function(data) {
-
         return data.map(function(item) {
             return item.id;
         });
@@ -1950,7 +1948,6 @@ var callSuper = Selectivity.inherits(MultipleInput, Selectivity, {
      * @param item The item to remove. May be an item with 'id' and 'text' properties or just an ID.
      */
     remove: function(item) {
-
         var id = item.id || item;
 
         var removedItem;
@@ -1986,7 +1983,6 @@ var callSuper = Selectivity.inherits(MultipleInput, Selectivity, {
      * to false.
      */
     rerenderSelection: function(event) {
-
         event = event || {};
 
         if (event.added) {
@@ -2024,7 +2020,6 @@ var callSuper = Selectivity.inherits(MultipleInput, Selectivity, {
      * @inherit
      */
     search: function(term) {
-
         if (this.options.tokenizer) {
             term = this.options.tokenizer(term, this._data, this.add.bind(this), this.options);
 
@@ -2044,7 +2039,6 @@ var callSuper = Selectivity.inherits(MultipleInput, Selectivity, {
      * @inherit
      */
     setOptions: function(options) {
-
         var wasEnabled = this.enabled;
 
         callSuper(this, 'setOptions', options);
@@ -2063,7 +2057,6 @@ var callSuper = Selectivity.inherits(MultipleInput, Selectivity, {
      * @return The validated data. This may differ from the input data.
      */
     validateData: function(data) {
-
         if (data === null) {
             return [];
         } else if (Array.isArray(data)) {
@@ -2081,7 +2074,6 @@ var callSuper = Selectivity.inherits(MultipleInput, Selectivity, {
      * @return The validated value. This may differ from the input value.
      */
     validateValue: function(value) {
-
         if (value === null) {
             return [];
         } else if (Array.isArray(value)) {
@@ -2099,7 +2091,6 @@ var callSuper = Selectivity.inherits(MultipleInput, Selectivity, {
      * @private
      */
     _backspacePressed: function() {
-
         if (this.options.backspaceHighlightsBeforeDelete) {
             if (this._highlightedItemId) {
                 this._deletePressed();
@@ -2115,7 +2106,6 @@ var callSuper = Selectivity.inherits(MultipleInput, Selectivity, {
      * @private
      */
     _clicked: function(event) {
-
         if (this.enabled) {
             if (this.options.showDropdown !== false) {
                 this.open();
@@ -2131,7 +2121,6 @@ var callSuper = Selectivity.inherits(MultipleInput, Selectivity, {
      * @private
      */
     _createToken: function() {
-
         var term = this.input.value;
         var createTokenItem = this.options.createTokenItem;
 
@@ -2147,7 +2136,6 @@ var callSuper = Selectivity.inherits(MultipleInput, Selectivity, {
      * @private
      */
     _deletePressed: function() {
-
         if (this._highlightedItemId) {
             this.remove(this._highlightedItemId);
         }
@@ -2157,7 +2145,6 @@ var callSuper = Selectivity.inherits(MultipleInput, Selectivity, {
      * @private
      */
     _forEachSelectedItem: function(callback) {
-
         Array.prototype.forEach.call(this.el.querySelectorAll(SELECTED_ITEM_SELECTOR), callback);
     },
 
@@ -2165,7 +2152,6 @@ var callSuper = Selectivity.inherits(MultipleInput, Selectivity, {
      * @private
      */
     _highlightItem: function(id) {
-
         this._highlightedItemId = id;
 
         this._forEachSelectedItem(function(el) {
@@ -2181,7 +2167,6 @@ var callSuper = Selectivity.inherits(MultipleInput, Selectivity, {
      * @private
      */
     _itemClicked: function(event) {
-
         if (this.enabled) {
             this._highlightItem(this.getRelatedItemId(event));
         }
@@ -2191,7 +2176,6 @@ var callSuper = Selectivity.inherits(MultipleInput, Selectivity, {
      * @private
      */
     _itemRemoveClicked: function(event) {
-
         this.remove(this.getRelatedItemId(event));
 
         stopPropagation(event);
@@ -2201,7 +2185,6 @@ var callSuper = Selectivity.inherits(MultipleInput, Selectivity, {
      * @private
      */
     _keyHeld: function(event) {
-
         this._originalValue = this.input.value;
 
         if (getKeyCode(event) === KEY_ENTER && !event.ctrlKey) {
@@ -2213,7 +2196,6 @@ var callSuper = Selectivity.inherits(MultipleInput, Selectivity, {
      * @private
      */
     _keyReleased: function(event) {
-
         var inputHadText = !!this._originalValue;
         var keyCode = getKeyCode(event);
 
@@ -2230,23 +2212,32 @@ var callSuper = Selectivity.inherits(MultipleInput, Selectivity, {
      * @private
      */
     _onPaste: function() {
+        setTimeout(
+            function() {
+                this.search(this.input.value);
 
-        setTimeout(function() {
-            this.search(this.input.value);
-
-            this._createToken();
-        }.bind(this), 10);
+                this._createToken();
+            }.bind(this),
+            10
+        );
     },
 
     /**
      * @private
      */
     _renderSelectedItem: function(item) {
-
-        var el = parseElement(this.template('multipleSelectedItem', extend({
-            highlighted: (item.id === this._highlightedItemId),
-            removable: !this.options.readOnly
-        }, item)));
+        var el = parseElement(
+            this.template(
+                'multipleSelectedItem',
+                assign(
+                    {
+                        highlighted: item.id === this._highlightedItemId,
+                        removable: !this.options.readOnly
+                    },
+                    item
+                )
+            )
+        );
 
         this.input.parentNode.insertBefore(el, this.input);
     },
@@ -2255,7 +2246,6 @@ var callSuper = Selectivity.inherits(MultipleInput, Selectivity, {
      * @private
      */
     _reset: function() {
-
         this.el.innerHTML = this.template('multipleSelectInput', { enabled: this.enabled });
 
         this._highlightedItemId = null;
@@ -2269,7 +2259,6 @@ var callSuper = Selectivity.inherits(MultipleInput, Selectivity, {
      * @private
      */
     _resultSelected: function(event) {
-
         if (this._value.indexOf(event.id) === -1) {
             this.add(event.item);
         } else {
@@ -2281,7 +2270,6 @@ var callSuper = Selectivity.inherits(MultipleInput, Selectivity, {
      * @private
      */
     _scrollToBottom: function() {
-
         var inputContainer = this.$(INPUT_SELECTOR + '-container');
         inputContainer.scrollTop = inputContainer.clientHeight;
     },
@@ -2290,10 +2278,9 @@ var callSuper = Selectivity.inherits(MultipleInput, Selectivity, {
      * @private
      */
     _updateInputWidth: function() {
-
         if (this.enabled) {
-            var inputContent = (this.input.value ||
-                                !this._data.length && this.options.placeholder || '');
+            var inputContent =
+                this.input.value || (!this._data.length && this.options.placeholder) || '';
             this.input.setAttribute('size', inputContent.length + 2);
 
             this.positionDropdown();
@@ -2304,23 +2291,21 @@ var callSuper = Selectivity.inherits(MultipleInput, Selectivity, {
      * @private
      */
     _updatePlaceholder: function() {
-
-        var placeholder = (!this._data.length && this.options.placeholder || '');
+        var placeholder = (!this._data.length && this.options.placeholder) || '';
         if (this.enabled) {
             this.input.setAttribute('placeholder', placeholder);
         } else {
             this.$('.selectivity-placeholder').textContent = placeholder;
         }
     }
-
 });
 
 module.exports = Selectivity.Inputs.Multiple = MultipleInput;
 
-},{"16":16,"38":38,"41":41,"42":42,"44":44,"45":45,"46":46,"47":47,"lodash/extend":"lodash/extend"}],26:[function(_dereq_,module,exports){
+},{"16":16,"38":38,"41":41,"42":42,"44":44,"45":45,"46":46,"47":47,"lodash/assign":"lodash/assign"}],26:[function(_dereq_,module,exports){
 'use strict';
 
-var extend = (window.jQuery || window.Zepto).extend;
+var assign = (window.jQuery || window.Zepto).extend;
 
 var Selectivity = _dereq_(38);
 var stopPropagation = _dereq_(46);
@@ -2329,27 +2314,32 @@ var stopPropagation = _dereq_(46);
  * SingleInput Constructor.
  */
 function SingleInput(options) {
+    Selectivity.call(
+        this,
+        assign(
+            {
+                // Dropdowns for single-value inputs should open below the select box, unless there
+                // is not enough space below, in which case the dropdown should be moved up just
+                // enough so it fits in the window, but never so much that it reaches above the top.
+                positionDropdown: function(el, selectEl) {
+                    var rect = selectEl.getBoundingClientRect();
+                    var dropdownTop = rect.bottom;
 
-    Selectivity.call(this, extend({
-        // dropdowns for single-value inputs should open below the select box,
-        // unless there is not enough space below, in which case the dropdown should be moved up
-        // just enough so it fits in the window, but never so much that it reaches above the top
-        positionDropdown: function(el, selectEl) {
-            var rect = selectEl.getBoundingClientRect();
-            var dropdownTop = rect.bottom;
+                    var deltaUp = Math.min(
+                        Math.max(dropdownTop + el.clientHeight - window.innerHeight, 0),
+                        rect.top + rect.height
+                    );
 
-            var deltaUp = Math.min(
-                Math.max(dropdownTop + el.clientHeight - window.innerHeight, 0),
-                rect.top + rect.height
-            );
-
-            extend(el.style, {
-                left: rect.left + 'px',
-                top: dropdownTop - deltaUp + 'px',
-                width: rect.width + 'px'
-            });
-        }
-    }, options));
+                    assign(el.style, {
+                        left: rect.left + 'px',
+                        top: dropdownTop - deltaUp + 'px',
+                        width: rect.width + 'px'
+                    });
+                }
+            },
+            options
+        )
+    );
 
     this.el.innerHTML = this.template('singleSelectInput', this.options);
 
@@ -2360,8 +2350,8 @@ function SingleInput(options) {
     }
 
     this.events.on({
-        'change': this.rerenderSelection,
-        'click': this._clicked,
+        change: this.rerenderSelection,
+        click: this._clicked,
         'click .selectivity-search-input': stopPropagation,
         'click .selectivity-single-selected-item-remove': this._itemRemoveClicked,
         'focus .selectivity-single-select-input': this._focused,
@@ -2373,12 +2363,10 @@ function SingleInput(options) {
  * Methods.
  */
 var callSuper = Selectivity.inherits(SingleInput, Selectivity, {
-
     /**
      * Clears the data and value.
      */
     clear: function() {
-
         this.setData(null);
     },
 
@@ -2389,7 +2377,6 @@ var callSuper = Selectivity.inherits(SingleInput, Selectivity, {
      *                keepFocus - If true, the focus will remain on the input.
      */
     close: function(options) {
-
         this._closing = true;
 
         callSuper(this, 'close');
@@ -2410,7 +2397,6 @@ var callSuper = Selectivity.inherits(SingleInput, Selectivity, {
      *         if no items are defined, this method assumes the text label will be equal to the ID.
      */
     getDataForValue: function(value) {
-
         return this.getItemForId(value);
     },
 
@@ -2423,8 +2409,7 @@ var callSuper = Selectivity.inherits(SingleInput, Selectivity, {
      * @return The corresponding value. Will be an ID or null.
      */
     getValueForData: function(data) {
-
-        return (data ? data.id : null);
+        return data ? data.id : null;
     },
 
     /**
@@ -2435,11 +2420,15 @@ var callSuper = Selectivity.inherits(SingleInput, Selectivity, {
      * to false.
      */
     rerenderSelection: function() {
-
-        var template = (this._data ? 'singleSelectedItem' : 'singleSelectPlaceholder');
-        var options = (this._data ? extend({
-            removable: this.options.allowClear && !this.options.readOnly
-        }, this._data) : { placeholder: this.options.placeholder });
+        var template = this._data ? 'singleSelectedItem' : 'singleSelectPlaceholder';
+        var options = this._data
+            ? assign(
+                  {
+                      removable: this.options.allowClear && !this.options.readOnly
+                  },
+                  this._data
+              )
+            : { placeholder: this.options.placeholder };
 
         this.el.querySelector('input').value = this._value;
         this.$('.selectivity-single-result-container').innerHTML = this.template(template, options);
@@ -2454,8 +2443,7 @@ var callSuper = Selectivity.inherits(SingleInput, Selectivity, {
      * @return The validated data. This may differ from the input data.
      */
     validateData: function(data) {
-
-        return (data === null ? data : this.validateItem(data));
+        return data === null ? data : this.validateItem(data);
     },
 
     /**
@@ -2466,7 +2454,6 @@ var callSuper = Selectivity.inherits(SingleInput, Selectivity, {
      * @return The validated value. This may differ from the input value.
      */
     validateValue: function(value) {
-
         if (value === null || Selectivity.isValidId(value)) {
             return value;
         } else {
@@ -2478,7 +2465,6 @@ var callSuper = Selectivity.inherits(SingleInput, Selectivity, {
      * @private
      */
     _clicked: function() {
-
         if (this.enabled) {
             if (this.dropdown) {
                 this.close({ keepFocus: true });
@@ -2492,9 +2478,12 @@ var callSuper = Selectivity.inherits(SingleInput, Selectivity, {
      * @private
      */
     _focused: function() {
-
-        if (this.enabled && !this._closing && !this._opening &&
-            this.options.showDropdown !== false) {
+        if (
+            this.enabled &&
+            !this._closing &&
+            !this._opening &&
+            this.options.showDropdown !== false
+        ) {
             this.open();
         }
     },
@@ -2503,7 +2492,6 @@ var callSuper = Selectivity.inherits(SingleInput, Selectivity, {
      * @private
      */
     _itemRemoveClicked: function(event) {
-
         this.setData(null);
 
         stopPropagation(event);
@@ -2513,17 +2501,15 @@ var callSuper = Selectivity.inherits(SingleInput, Selectivity, {
      * @private
      */
     _resultSelected: function(event) {
-
         this.setData(event.item);
 
         this.close({ keepFocus: true });
     }
-
 });
 
 module.exports = Selectivity.Inputs.Single = SingleInput;
 
-},{"38":38,"46":46,"lodash/extend":"lodash/extend"}],27:[function(_dereq_,module,exports){
+},{"38":38,"46":46,"lodash/assign":"lodash/assign"}],27:[function(_dereq_,module,exports){
 'use strict';
 
 var escape = _dereq_(12);
@@ -2537,7 +2523,6 @@ var Selectivity = _dereq_(38);
  * non-safe strings should be escaped.
  */
 module.exports = Selectivity.Locale = {
-
     loading: 'Loading...',
     loadMore: 'Load more...',
     noResults: 'No results found',
@@ -2557,7 +2542,6 @@ module.exports = Selectivity.Locale = {
     noResultsForTerm: function(term) {
         return 'No results for <b>' + escape(term) + '</b>';
     }
-
 };
 
 },{"12":12,"38":38}],28:[function(_dereq_,module,exports){
@@ -2583,11 +2567,10 @@ function pick(object, keys) {
 }
 
 function doFetch(ajax, queryOptions) {
-
     var fetch = ajax.fetch || window.fetch;
     var term = queryOptions.term;
 
-    var url = (typeof ajax.url === 'function' ? ajax.url(queryOptions) : ajax.url);
+    var url = typeof ajax.url === 'function' ? ajax.url(queryOptions) : ajax.url;
     if (ajax.params) {
         var params = ajax.params(term, queryOptions.offset || 0);
         for (var key in params) {
@@ -2598,8 +2581,16 @@ function doFetch(ajax, queryOptions) {
     }
 
     var init = pick(ajax, [
-        'body', 'cache', 'credentials', 'headers', 'integrity', 'method', 'mode', 'redirect',
-        'referrer', 'referrerPolicy'
+        'body',
+        'cache',
+        'credentials',
+        'headers',
+        'integrity',
+        'method',
+        'mode',
+        'redirect',
+        'referrer',
+        'referrerPolicy'
     ]);
 
     fetch(url, init, queryOptions)
@@ -2629,10 +2620,9 @@ function doFetch(ajax, queryOptions) {
  * Option listener that implements a convenience query function for performing AJAX requests.
  */
 Selectivity.OptionListeners.unshift(function(selectivity, options) {
-
     var ajax = options.ajax;
     if (ajax && ajax.url) {
-        var fetch = (ajax.quietMillis ? debounce(doFetch, ajax.quietMillis) : doFetch);
+        var fetch = ajax.quietMillis ? debounce(doFetch, ajax.quietMillis) : doFetch;
 
         options.query = function(queryOptions) {
             var numCharsNeeded = ajax.minimumInputLength - queryOptions.term.length;
@@ -2658,7 +2648,6 @@ var latestQueryNum = 0;
  * been called afterwards. This prevents responses from remote sources arriving out-of-order.
  */
 Selectivity.OptionListeners.push(function(selectivity, options) {
-
     var query = options.query;
     if (query && !query._async) {
         options.query = function(queryOptions) {
@@ -2688,844 +2677,844 @@ Selectivity.OptionListeners.push(function(selectivity, options) {
 
 var DIACRITICS = {
     '\u24B6': 'A',
-    '\uFF21': 'A',
-    '\u00C0': 'A',
-    '\u00C1': 'A',
-    '\u00C2': 'A',
-    '\u1EA6': 'A',
-    '\u1EA4': 'A',
-    '\u1EAA': 'A',
-    '\u1EA8': 'A',
-    '\u00C3': 'A',
-    '\u0100': 'A',
-    '\u0102': 'A',
-    '\u1EB0': 'A',
-    '\u1EAE': 'A',
-    '\u1EB4': 'A',
-    '\u1EB2': 'A',
-    '\u0226': 'A',
-    '\u01E0': 'A',
-    '\u00C4': 'A',
-    '\u01DE': 'A',
-    '\u1EA2': 'A',
-    '\u00C5': 'A',
-    '\u01FA': 'A',
-    '\u01CD': 'A',
-    '\u0200': 'A',
-    '\u0202': 'A',
-    '\u1EA0': 'A',
-    '\u1EAC': 'A',
-    '\u1EB6': 'A',
-    '\u1E00': 'A',
-    '\u0104': 'A',
-    '\u023A': 'A',
-    '\u2C6F': 'A',
-    '\uA732': 'AA',
-    '\u00C6': 'AE',
-    '\u01FC': 'AE',
-    '\u01E2': 'AE',
-    '\uA734': 'AO',
-    '\uA736': 'AU',
-    '\uA738': 'AV',
-    '\uA73A': 'AV',
-    '\uA73C': 'AY',
+    Ａ: 'A',
+    À: 'A',
+    Á: 'A',
+    Â: 'A',
+    Ầ: 'A',
+    Ấ: 'A',
+    Ẫ: 'A',
+    Ẩ: 'A',
+    Ã: 'A',
+    Ā: 'A',
+    Ă: 'A',
+    Ằ: 'A',
+    Ắ: 'A',
+    Ẵ: 'A',
+    Ẳ: 'A',
+    Ȧ: 'A',
+    Ǡ: 'A',
+    Ä: 'A',
+    Ǟ: 'A',
+    Ả: 'A',
+    Å: 'A',
+    Ǻ: 'A',
+    Ǎ: 'A',
+    Ȁ: 'A',
+    Ȃ: 'A',
+    Ạ: 'A',
+    Ậ: 'A',
+    Ặ: 'A',
+    Ḁ: 'A',
+    Ą: 'A',
+    Ⱥ: 'A',
+    Ɐ: 'A',
+    Ꜳ: 'AA',
+    Æ: 'AE',
+    Ǽ: 'AE',
+    Ǣ: 'AE',
+    Ꜵ: 'AO',
+    Ꜷ: 'AU',
+    Ꜹ: 'AV',
+    Ꜻ: 'AV',
+    Ꜽ: 'AY',
     '\u24B7': 'B',
-    '\uFF22': 'B',
-    '\u1E02': 'B',
-    '\u1E04': 'B',
-    '\u1E06': 'B',
-    '\u0243': 'B',
-    '\u0182': 'B',
-    '\u0181': 'B',
+    Ｂ: 'B',
+    Ḃ: 'B',
+    Ḅ: 'B',
+    Ḇ: 'B',
+    Ƀ: 'B',
+    Ƃ: 'B',
+    Ɓ: 'B',
     '\u24B8': 'C',
-    '\uFF23': 'C',
-    '\u0106': 'C',
-    '\u0108': 'C',
-    '\u010A': 'C',
-    '\u010C': 'C',
-    '\u00C7': 'C',
-    '\u1E08': 'C',
-    '\u0187': 'C',
-    '\u023B': 'C',
-    '\uA73E': 'C',
+    Ｃ: 'C',
+    Ć: 'C',
+    Ĉ: 'C',
+    Ċ: 'C',
+    Č: 'C',
+    Ç: 'C',
+    Ḉ: 'C',
+    Ƈ: 'C',
+    Ȼ: 'C',
+    Ꜿ: 'C',
     '\u24B9': 'D',
-    '\uFF24': 'D',
-    '\u1E0A': 'D',
-    '\u010E': 'D',
-    '\u1E0C': 'D',
-    '\u1E10': 'D',
-    '\u1E12': 'D',
-    '\u1E0E': 'D',
-    '\u0110': 'D',
-    '\u018B': 'D',
-    '\u018A': 'D',
-    '\u0189': 'D',
-    '\uA779': 'D',
-    '\u01F1': 'DZ',
-    '\u01C4': 'DZ',
-    '\u01F2': 'Dz',
-    '\u01C5': 'Dz',
+    Ｄ: 'D',
+    Ḋ: 'D',
+    Ď: 'D',
+    Ḍ: 'D',
+    Ḑ: 'D',
+    Ḓ: 'D',
+    Ḏ: 'D',
+    Đ: 'D',
+    Ƌ: 'D',
+    Ɗ: 'D',
+    Ɖ: 'D',
+    Ꝺ: 'D',
+    Ǳ: 'DZ',
+    Ǆ: 'DZ',
+    ǲ: 'Dz',
+    ǅ: 'Dz',
     '\u24BA': 'E',
-    '\uFF25': 'E',
-    '\u00C8': 'E',
-    '\u00C9': 'E',
-    '\u00CA': 'E',
-    '\u1EC0': 'E',
-    '\u1EBE': 'E',
-    '\u1EC4': 'E',
-    '\u1EC2': 'E',
-    '\u1EBC': 'E',
-    '\u0112': 'E',
-    '\u1E14': 'E',
-    '\u1E16': 'E',
-    '\u0114': 'E',
-    '\u0116': 'E',
-    '\u00CB': 'E',
-    '\u1EBA': 'E',
-    '\u011A': 'E',
-    '\u0204': 'E',
-    '\u0206': 'E',
-    '\u1EB8': 'E',
-    '\u1EC6': 'E',
-    '\u0228': 'E',
-    '\u1E1C': 'E',
-    '\u0118': 'E',
-    '\u1E18': 'E',
-    '\u1E1A': 'E',
-    '\u0190': 'E',
-    '\u018E': 'E',
+    Ｅ: 'E',
+    È: 'E',
+    É: 'E',
+    Ê: 'E',
+    Ề: 'E',
+    Ế: 'E',
+    Ễ: 'E',
+    Ể: 'E',
+    Ẽ: 'E',
+    Ē: 'E',
+    Ḕ: 'E',
+    Ḗ: 'E',
+    Ĕ: 'E',
+    Ė: 'E',
+    Ë: 'E',
+    Ẻ: 'E',
+    Ě: 'E',
+    Ȅ: 'E',
+    Ȇ: 'E',
+    Ẹ: 'E',
+    Ệ: 'E',
+    Ȩ: 'E',
+    Ḝ: 'E',
+    Ę: 'E',
+    Ḙ: 'E',
+    Ḛ: 'E',
+    Ɛ: 'E',
+    Ǝ: 'E',
     '\u24BB': 'F',
-    '\uFF26': 'F',
-    '\u1E1E': 'F',
-    '\u0191': 'F',
-    '\uA77B': 'F',
+    Ｆ: 'F',
+    Ḟ: 'F',
+    Ƒ: 'F',
+    Ꝼ: 'F',
     '\u24BC': 'G',
-    '\uFF27': 'G',
-    '\u01F4': 'G',
-    '\u011C': 'G',
-    '\u1E20': 'G',
-    '\u011E': 'G',
-    '\u0120': 'G',
-    '\u01E6': 'G',
-    '\u0122': 'G',
-    '\u01E4': 'G',
-    '\u0193': 'G',
-    '\uA7A0': 'G',
-    '\uA77D': 'G',
-    '\uA77E': 'G',
+    Ｇ: 'G',
+    Ǵ: 'G',
+    Ĝ: 'G',
+    Ḡ: 'G',
+    Ğ: 'G',
+    Ġ: 'G',
+    Ǧ: 'G',
+    Ģ: 'G',
+    Ǥ: 'G',
+    Ɠ: 'G',
+    Ꞡ: 'G',
+    Ᵹ: 'G',
+    Ꝿ: 'G',
     '\u24BD': 'H',
-    '\uFF28': 'H',
-    '\u0124': 'H',
-    '\u1E22': 'H',
-    '\u1E26': 'H',
-    '\u021E': 'H',
-    '\u1E24': 'H',
-    '\u1E28': 'H',
-    '\u1E2A': 'H',
-    '\u0126': 'H',
-    '\u2C67': 'H',
-    '\u2C75': 'H',
-    '\uA78D': 'H',
+    Ｈ: 'H',
+    Ĥ: 'H',
+    Ḣ: 'H',
+    Ḧ: 'H',
+    Ȟ: 'H',
+    Ḥ: 'H',
+    Ḩ: 'H',
+    Ḫ: 'H',
+    Ħ: 'H',
+    Ⱨ: 'H',
+    Ⱶ: 'H',
+    Ɥ: 'H',
     '\u24BE': 'I',
-    '\uFF29': 'I',
-    '\u00CC': 'I',
-    '\u00CD': 'I',
-    '\u00CE': 'I',
-    '\u0128': 'I',
-    '\u012A': 'I',
-    '\u012C': 'I',
-    '\u0130': 'I',
-    '\u00CF': 'I',
-    '\u1E2E': 'I',
-    '\u1EC8': 'I',
-    '\u01CF': 'I',
-    '\u0208': 'I',
-    '\u020A': 'I',
-    '\u1ECA': 'I',
-    '\u012E': 'I',
-    '\u1E2C': 'I',
-    '\u0197': 'I',
+    Ｉ: 'I',
+    Ì: 'I',
+    Í: 'I',
+    Î: 'I',
+    Ĩ: 'I',
+    Ī: 'I',
+    Ĭ: 'I',
+    İ: 'I',
+    Ï: 'I',
+    Ḯ: 'I',
+    Ỉ: 'I',
+    Ǐ: 'I',
+    Ȉ: 'I',
+    Ȋ: 'I',
+    Ị: 'I',
+    Į: 'I',
+    Ḭ: 'I',
+    Ɨ: 'I',
     '\u24BF': 'J',
-    '\uFF2A': 'J',
-    '\u0134': 'J',
-    '\u0248': 'J',
+    Ｊ: 'J',
+    Ĵ: 'J',
+    Ɉ: 'J',
     '\u24C0': 'K',
-    '\uFF2B': 'K',
-    '\u1E30': 'K',
-    '\u01E8': 'K',
-    '\u1E32': 'K',
-    '\u0136': 'K',
-    '\u1E34': 'K',
-    '\u0198': 'K',
-    '\u2C69': 'K',
-    '\uA740': 'K',
-    '\uA742': 'K',
-    '\uA744': 'K',
-    '\uA7A2': 'K',
+    Ｋ: 'K',
+    Ḱ: 'K',
+    Ǩ: 'K',
+    Ḳ: 'K',
+    Ķ: 'K',
+    Ḵ: 'K',
+    Ƙ: 'K',
+    Ⱪ: 'K',
+    Ꝁ: 'K',
+    Ꝃ: 'K',
+    Ꝅ: 'K',
+    Ꞣ: 'K',
     '\u24C1': 'L',
-    '\uFF2C': 'L',
-    '\u013F': 'L',
-    '\u0139': 'L',
-    '\u013D': 'L',
-    '\u1E36': 'L',
-    '\u1E38': 'L',
-    '\u013B': 'L',
-    '\u1E3C': 'L',
-    '\u1E3A': 'L',
-    '\u0141': 'L',
-    '\u023D': 'L',
-    '\u2C62': 'L',
-    '\u2C60': 'L',
-    '\uA748': 'L',
-    '\uA746': 'L',
-    '\uA780': 'L',
-    '\u01C7': 'LJ',
-    '\u01C8': 'Lj',
+    Ｌ: 'L',
+    Ŀ: 'L',
+    Ĺ: 'L',
+    Ľ: 'L',
+    Ḷ: 'L',
+    Ḹ: 'L',
+    Ļ: 'L',
+    Ḽ: 'L',
+    Ḻ: 'L',
+    Ł: 'L',
+    Ƚ: 'L',
+    Ɫ: 'L',
+    Ⱡ: 'L',
+    Ꝉ: 'L',
+    Ꝇ: 'L',
+    Ꞁ: 'L',
+    Ǉ: 'LJ',
+    ǈ: 'Lj',
     '\u24C2': 'M',
-    '\uFF2D': 'M',
-    '\u1E3E': 'M',
-    '\u1E40': 'M',
-    '\u1E42': 'M',
-    '\u2C6E': 'M',
-    '\u019C': 'M',
+    Ｍ: 'M',
+    Ḿ: 'M',
+    Ṁ: 'M',
+    Ṃ: 'M',
+    Ɱ: 'M',
+    Ɯ: 'M',
     '\u24C3': 'N',
-    '\uFF2E': 'N',
-    '\u01F8': 'N',
-    '\u0143': 'N',
-    '\u00D1': 'N',
-    '\u1E44': 'N',
-    '\u0147': 'N',
-    '\u1E46': 'N',
-    '\u0145': 'N',
-    '\u1E4A': 'N',
-    '\u1E48': 'N',
-    '\u0220': 'N',
-    '\u019D': 'N',
-    '\uA790': 'N',
-    '\uA7A4': 'N',
-    '\u01CA': 'NJ',
-    '\u01CB': 'Nj',
+    Ｎ: 'N',
+    Ǹ: 'N',
+    Ń: 'N',
+    Ñ: 'N',
+    Ṅ: 'N',
+    Ň: 'N',
+    Ṇ: 'N',
+    Ņ: 'N',
+    Ṋ: 'N',
+    Ṉ: 'N',
+    Ƞ: 'N',
+    Ɲ: 'N',
+    Ꞑ: 'N',
+    Ꞥ: 'N',
+    Ǌ: 'NJ',
+    ǋ: 'Nj',
     '\u24C4': 'O',
-    '\uFF2F': 'O',
-    '\u00D2': 'O',
-    '\u00D3': 'O',
-    '\u00D4': 'O',
-    '\u1ED2': 'O',
-    '\u1ED0': 'O',
-    '\u1ED6': 'O',
-    '\u1ED4': 'O',
-    '\u00D5': 'O',
-    '\u1E4C': 'O',
-    '\u022C': 'O',
-    '\u1E4E': 'O',
-    '\u014C': 'O',
-    '\u1E50': 'O',
-    '\u1E52': 'O',
-    '\u014E': 'O',
-    '\u022E': 'O',
-    '\u0230': 'O',
-    '\u00D6': 'O',
-    '\u022A': 'O',
-    '\u1ECE': 'O',
-    '\u0150': 'O',
-    '\u01D1': 'O',
-    '\u020C': 'O',
-    '\u020E': 'O',
-    '\u01A0': 'O',
-    '\u1EDC': 'O',
-    '\u1EDA': 'O',
-    '\u1EE0': 'O',
-    '\u1EDE': 'O',
-    '\u1EE2': 'O',
-    '\u1ECC': 'O',
-    '\u1ED8': 'O',
-    '\u01EA': 'O',
-    '\u01EC': 'O',
-    '\u00D8': 'O',
-    '\u01FE': 'O',
-    '\u0186': 'O',
-    '\u019F': 'O',
-    '\uA74A': 'O',
-    '\uA74C': 'O',
-    '\u01A2': 'OI',
-    '\uA74E': 'OO',
-    '\u0222': 'OU',
+    Ｏ: 'O',
+    Ò: 'O',
+    Ó: 'O',
+    Ô: 'O',
+    Ồ: 'O',
+    Ố: 'O',
+    Ỗ: 'O',
+    Ổ: 'O',
+    Õ: 'O',
+    Ṍ: 'O',
+    Ȭ: 'O',
+    Ṏ: 'O',
+    Ō: 'O',
+    Ṑ: 'O',
+    Ṓ: 'O',
+    Ŏ: 'O',
+    Ȯ: 'O',
+    Ȱ: 'O',
+    Ö: 'O',
+    Ȫ: 'O',
+    Ỏ: 'O',
+    Ő: 'O',
+    Ǒ: 'O',
+    Ȍ: 'O',
+    Ȏ: 'O',
+    Ơ: 'O',
+    Ờ: 'O',
+    Ớ: 'O',
+    Ỡ: 'O',
+    Ở: 'O',
+    Ợ: 'O',
+    Ọ: 'O',
+    Ộ: 'O',
+    Ǫ: 'O',
+    Ǭ: 'O',
+    Ø: 'O',
+    Ǿ: 'O',
+    Ɔ: 'O',
+    Ɵ: 'O',
+    Ꝋ: 'O',
+    Ꝍ: 'O',
+    Ƣ: 'OI',
+    Ꝏ: 'OO',
+    Ȣ: 'OU',
     '\u24C5': 'P',
-    '\uFF30': 'P',
-    '\u1E54': 'P',
-    '\u1E56': 'P',
-    '\u01A4': 'P',
-    '\u2C63': 'P',
-    '\uA750': 'P',
-    '\uA752': 'P',
-    '\uA754': 'P',
+    Ｐ: 'P',
+    Ṕ: 'P',
+    Ṗ: 'P',
+    Ƥ: 'P',
+    Ᵽ: 'P',
+    Ꝑ: 'P',
+    Ꝓ: 'P',
+    Ꝕ: 'P',
     '\u24C6': 'Q',
-    '\uFF31': 'Q',
-    '\uA756': 'Q',
-    '\uA758': 'Q',
-    '\u024A': 'Q',
+    Ｑ: 'Q',
+    Ꝗ: 'Q',
+    Ꝙ: 'Q',
+    Ɋ: 'Q',
     '\u24C7': 'R',
-    '\uFF32': 'R',
-    '\u0154': 'R',
-    '\u1E58': 'R',
-    '\u0158': 'R',
-    '\u0210': 'R',
-    '\u0212': 'R',
-    '\u1E5A': 'R',
-    '\u1E5C': 'R',
-    '\u0156': 'R',
-    '\u1E5E': 'R',
-    '\u024C': 'R',
-    '\u2C64': 'R',
-    '\uA75A': 'R',
-    '\uA7A6': 'R',
-    '\uA782': 'R',
+    Ｒ: 'R',
+    Ŕ: 'R',
+    Ṙ: 'R',
+    Ř: 'R',
+    Ȑ: 'R',
+    Ȓ: 'R',
+    Ṛ: 'R',
+    Ṝ: 'R',
+    Ŗ: 'R',
+    Ṟ: 'R',
+    Ɍ: 'R',
+    Ɽ: 'R',
+    Ꝛ: 'R',
+    Ꞧ: 'R',
+    Ꞃ: 'R',
     '\u24C8': 'S',
-    '\uFF33': 'S',
-    '\u1E9E': 'S',
-    '\u015A': 'S',
-    '\u1E64': 'S',
-    '\u015C': 'S',
-    '\u1E60': 'S',
-    '\u0160': 'S',
-    '\u1E66': 'S',
-    '\u1E62': 'S',
-    '\u1E68': 'S',
-    '\u0218': 'S',
-    '\u015E': 'S',
-    '\u2C7E': 'S',
-    '\uA7A8': 'S',
-    '\uA784': 'S',
+    Ｓ: 'S',
+    ẞ: 'S',
+    Ś: 'S',
+    Ṥ: 'S',
+    Ŝ: 'S',
+    Ṡ: 'S',
+    Š: 'S',
+    Ṧ: 'S',
+    Ṣ: 'S',
+    Ṩ: 'S',
+    Ș: 'S',
+    Ş: 'S',
+    Ȿ: 'S',
+    Ꞩ: 'S',
+    Ꞅ: 'S',
     '\u24C9': 'T',
-    '\uFF34': 'T',
-    '\u1E6A': 'T',
-    '\u0164': 'T',
-    '\u1E6C': 'T',
-    '\u021A': 'T',
-    '\u0162': 'T',
-    '\u1E70': 'T',
-    '\u1E6E': 'T',
-    '\u0166': 'T',
-    '\u01AC': 'T',
-    '\u01AE': 'T',
-    '\u023E': 'T',
-    '\uA786': 'T',
-    '\uA728': 'TZ',
+    Ｔ: 'T',
+    Ṫ: 'T',
+    Ť: 'T',
+    Ṭ: 'T',
+    Ț: 'T',
+    Ţ: 'T',
+    Ṱ: 'T',
+    Ṯ: 'T',
+    Ŧ: 'T',
+    Ƭ: 'T',
+    Ʈ: 'T',
+    Ⱦ: 'T',
+    Ꞇ: 'T',
+    Ꜩ: 'TZ',
     '\u24CA': 'U',
-    '\uFF35': 'U',
-    '\u00D9': 'U',
-    '\u00DA': 'U',
-    '\u00DB': 'U',
-    '\u0168': 'U',
-    '\u1E78': 'U',
-    '\u016A': 'U',
-    '\u1E7A': 'U',
-    '\u016C': 'U',
-    '\u00DC': 'U',
-    '\u01DB': 'U',
-    '\u01D7': 'U',
-    '\u01D5': 'U',
-    '\u01D9': 'U',
-    '\u1EE6': 'U',
-    '\u016E': 'U',
-    '\u0170': 'U',
-    '\u01D3': 'U',
-    '\u0214': 'U',
-    '\u0216': 'U',
-    '\u01AF': 'U',
-    '\u1EEA': 'U',
-    '\u1EE8': 'U',
-    '\u1EEE': 'U',
-    '\u1EEC': 'U',
-    '\u1EF0': 'U',
-    '\u1EE4': 'U',
-    '\u1E72': 'U',
-    '\u0172': 'U',
-    '\u1E76': 'U',
-    '\u1E74': 'U',
-    '\u0244': 'U',
+    Ｕ: 'U',
+    Ù: 'U',
+    Ú: 'U',
+    Û: 'U',
+    Ũ: 'U',
+    Ṹ: 'U',
+    Ū: 'U',
+    Ṻ: 'U',
+    Ŭ: 'U',
+    Ü: 'U',
+    Ǜ: 'U',
+    Ǘ: 'U',
+    Ǖ: 'U',
+    Ǚ: 'U',
+    Ủ: 'U',
+    Ů: 'U',
+    Ű: 'U',
+    Ǔ: 'U',
+    Ȕ: 'U',
+    Ȗ: 'U',
+    Ư: 'U',
+    Ừ: 'U',
+    Ứ: 'U',
+    Ữ: 'U',
+    Ử: 'U',
+    Ự: 'U',
+    Ụ: 'U',
+    Ṳ: 'U',
+    Ų: 'U',
+    Ṷ: 'U',
+    Ṵ: 'U',
+    Ʉ: 'U',
     '\u24CB': 'V',
-    '\uFF36': 'V',
-    '\u1E7C': 'V',
-    '\u1E7E': 'V',
-    '\u01B2': 'V',
-    '\uA75E': 'V',
-    '\u0245': 'V',
-    '\uA760': 'VY',
+    Ｖ: 'V',
+    Ṽ: 'V',
+    Ṿ: 'V',
+    Ʋ: 'V',
+    Ꝟ: 'V',
+    Ʌ: 'V',
+    Ꝡ: 'VY',
     '\u24CC': 'W',
-    '\uFF37': 'W',
-    '\u1E80': 'W',
-    '\u1E82': 'W',
-    '\u0174': 'W',
-    '\u1E86': 'W',
-    '\u1E84': 'W',
-    '\u1E88': 'W',
-    '\u2C72': 'W',
+    Ｗ: 'W',
+    Ẁ: 'W',
+    Ẃ: 'W',
+    Ŵ: 'W',
+    Ẇ: 'W',
+    Ẅ: 'W',
+    Ẉ: 'W',
+    Ⱳ: 'W',
     '\u24CD': 'X',
-    '\uFF38': 'X',
-    '\u1E8A': 'X',
-    '\u1E8C': 'X',
+    Ｘ: 'X',
+    Ẋ: 'X',
+    Ẍ: 'X',
     '\u24CE': 'Y',
-    '\uFF39': 'Y',
-    '\u1EF2': 'Y',
-    '\u00DD': 'Y',
-    '\u0176': 'Y',
-    '\u1EF8': 'Y',
-    '\u0232': 'Y',
-    '\u1E8E': 'Y',
-    '\u0178': 'Y',
-    '\u1EF6': 'Y',
-    '\u1EF4': 'Y',
-    '\u01B3': 'Y',
-    '\u024E': 'Y',
-    '\u1EFE': 'Y',
+    Ｙ: 'Y',
+    Ỳ: 'Y',
+    Ý: 'Y',
+    Ŷ: 'Y',
+    Ỹ: 'Y',
+    Ȳ: 'Y',
+    Ẏ: 'Y',
+    Ÿ: 'Y',
+    Ỷ: 'Y',
+    Ỵ: 'Y',
+    Ƴ: 'Y',
+    Ɏ: 'Y',
+    Ỿ: 'Y',
     '\u24CF': 'Z',
-    '\uFF3A': 'Z',
-    '\u0179': 'Z',
-    '\u1E90': 'Z',
-    '\u017B': 'Z',
-    '\u017D': 'Z',
-    '\u1E92': 'Z',
-    '\u1E94': 'Z',
-    '\u01B5': 'Z',
-    '\u0224': 'Z',
-    '\u2C7F': 'Z',
-    '\u2C6B': 'Z',
-    '\uA762': 'Z',
+    Ｚ: 'Z',
+    Ź: 'Z',
+    Ẑ: 'Z',
+    Ż: 'Z',
+    Ž: 'Z',
+    Ẓ: 'Z',
+    Ẕ: 'Z',
+    Ƶ: 'Z',
+    Ȥ: 'Z',
+    Ɀ: 'Z',
+    Ⱬ: 'Z',
+    Ꝣ: 'Z',
     '\u24D0': 'a',
-    '\uFF41': 'a',
-    '\u1E9A': 'a',
-    '\u00E0': 'a',
-    '\u00E1': 'a',
-    '\u00E2': 'a',
-    '\u1EA7': 'a',
-    '\u1EA5': 'a',
-    '\u1EAB': 'a',
-    '\u1EA9': 'a',
-    '\u00E3': 'a',
-    '\u0101': 'a',
-    '\u0103': 'a',
-    '\u1EB1': 'a',
-    '\u1EAF': 'a',
-    '\u1EB5': 'a',
-    '\u1EB3': 'a',
-    '\u0227': 'a',
-    '\u01E1': 'a',
-    '\u00E4': 'a',
-    '\u01DF': 'a',
-    '\u1EA3': 'a',
-    '\u00E5': 'a',
-    '\u01FB': 'a',
-    '\u01CE': 'a',
-    '\u0201': 'a',
-    '\u0203': 'a',
-    '\u1EA1': 'a',
-    '\u1EAD': 'a',
-    '\u1EB7': 'a',
-    '\u1E01': 'a',
-    '\u0105': 'a',
-    '\u2C65': 'a',
-    '\u0250': 'a',
-    '\uA733': 'aa',
-    '\u00E6': 'ae',
-    '\u01FD': 'ae',
-    '\u01E3': 'ae',
-    '\uA735': 'ao',
-    '\uA737': 'au',
-    '\uA739': 'av',
-    '\uA73B': 'av',
-    '\uA73D': 'ay',
+    ａ: 'a',
+    ẚ: 'a',
+    à: 'a',
+    á: 'a',
+    â: 'a',
+    ầ: 'a',
+    ấ: 'a',
+    ẫ: 'a',
+    ẩ: 'a',
+    ã: 'a',
+    ā: 'a',
+    ă: 'a',
+    ằ: 'a',
+    ắ: 'a',
+    ẵ: 'a',
+    ẳ: 'a',
+    ȧ: 'a',
+    ǡ: 'a',
+    ä: 'a',
+    ǟ: 'a',
+    ả: 'a',
+    å: 'a',
+    ǻ: 'a',
+    ǎ: 'a',
+    ȁ: 'a',
+    ȃ: 'a',
+    ạ: 'a',
+    ậ: 'a',
+    ặ: 'a',
+    ḁ: 'a',
+    ą: 'a',
+    ⱥ: 'a',
+    ɐ: 'a',
+    ꜳ: 'aa',
+    æ: 'ae',
+    ǽ: 'ae',
+    ǣ: 'ae',
+    ꜵ: 'ao',
+    ꜷ: 'au',
+    ꜹ: 'av',
+    ꜻ: 'av',
+    ꜽ: 'ay',
     '\u24D1': 'b',
-    '\uFF42': 'b',
-    '\u1E03': 'b',
-    '\u1E05': 'b',
-    '\u1E07': 'b',
-    '\u0180': 'b',
-    '\u0183': 'b',
-    '\u0253': 'b',
+    ｂ: 'b',
+    ḃ: 'b',
+    ḅ: 'b',
+    ḇ: 'b',
+    ƀ: 'b',
+    ƃ: 'b',
+    ɓ: 'b',
     '\u24D2': 'c',
-    '\uFF43': 'c',
-    '\u0107': 'c',
-    '\u0109': 'c',
-    '\u010B': 'c',
-    '\u010D': 'c',
-    '\u00E7': 'c',
-    '\u1E09': 'c',
-    '\u0188': 'c',
-    '\u023C': 'c',
-    '\uA73F': 'c',
-    '\u2184': 'c',
+    ｃ: 'c',
+    ć: 'c',
+    ĉ: 'c',
+    ċ: 'c',
+    č: 'c',
+    ç: 'c',
+    ḉ: 'c',
+    ƈ: 'c',
+    ȼ: 'c',
+    ꜿ: 'c',
+    ↄ: 'c',
     '\u24D3': 'd',
-    '\uFF44': 'd',
-    '\u1E0B': 'd',
-    '\u010F': 'd',
-    '\u1E0D': 'd',
-    '\u1E11': 'd',
-    '\u1E13': 'd',
-    '\u1E0F': 'd',
-    '\u0111': 'd',
-    '\u018C': 'd',
-    '\u0256': 'd',
-    '\u0257': 'd',
-    '\uA77A': 'd',
-    '\u01F3': 'dz',
-    '\u01C6': 'dz',
+    ｄ: 'd',
+    ḋ: 'd',
+    ď: 'd',
+    ḍ: 'd',
+    ḑ: 'd',
+    ḓ: 'd',
+    ḏ: 'd',
+    đ: 'd',
+    ƌ: 'd',
+    ɖ: 'd',
+    ɗ: 'd',
+    ꝺ: 'd',
+    ǳ: 'dz',
+    ǆ: 'dz',
     '\u24D4': 'e',
-    '\uFF45': 'e',
-    '\u00E8': 'e',
-    '\u00E9': 'e',
-    '\u00EA': 'e',
-    '\u1EC1': 'e',
-    '\u1EBF': 'e',
-    '\u1EC5': 'e',
-    '\u1EC3': 'e',
-    '\u1EBD': 'e',
-    '\u0113': 'e',
-    '\u1E15': 'e',
-    '\u1E17': 'e',
-    '\u0115': 'e',
-    '\u0117': 'e',
-    '\u00EB': 'e',
-    '\u1EBB': 'e',
-    '\u011B': 'e',
-    '\u0205': 'e',
-    '\u0207': 'e',
-    '\u1EB9': 'e',
-    '\u1EC7': 'e',
-    '\u0229': 'e',
-    '\u1E1D': 'e',
-    '\u0119': 'e',
-    '\u1E19': 'e',
-    '\u1E1B': 'e',
-    '\u0247': 'e',
-    '\u025B': 'e',
-    '\u01DD': 'e',
+    ｅ: 'e',
+    è: 'e',
+    é: 'e',
+    ê: 'e',
+    ề: 'e',
+    ế: 'e',
+    ễ: 'e',
+    ể: 'e',
+    ẽ: 'e',
+    ē: 'e',
+    ḕ: 'e',
+    ḗ: 'e',
+    ĕ: 'e',
+    ė: 'e',
+    ë: 'e',
+    ẻ: 'e',
+    ě: 'e',
+    ȅ: 'e',
+    ȇ: 'e',
+    ẹ: 'e',
+    ệ: 'e',
+    ȩ: 'e',
+    ḝ: 'e',
+    ę: 'e',
+    ḙ: 'e',
+    ḛ: 'e',
+    ɇ: 'e',
+    ɛ: 'e',
+    ǝ: 'e',
     '\u24D5': 'f',
-    '\uFF46': 'f',
-    '\u1E1F': 'f',
-    '\u0192': 'f',
-    '\uA77C': 'f',
+    ｆ: 'f',
+    ḟ: 'f',
+    ƒ: 'f',
+    ꝼ: 'f',
     '\u24D6': 'g',
-    '\uFF47': 'g',
-    '\u01F5': 'g',
-    '\u011D': 'g',
-    '\u1E21': 'g',
-    '\u011F': 'g',
-    '\u0121': 'g',
-    '\u01E7': 'g',
-    '\u0123': 'g',
-    '\u01E5': 'g',
-    '\u0260': 'g',
-    '\uA7A1': 'g',
-    '\u1D79': 'g',
-    '\uA77F': 'g',
+    ｇ: 'g',
+    ǵ: 'g',
+    ĝ: 'g',
+    ḡ: 'g',
+    ğ: 'g',
+    ġ: 'g',
+    ǧ: 'g',
+    ģ: 'g',
+    ǥ: 'g',
+    ɠ: 'g',
+    ꞡ: 'g',
+    ᵹ: 'g',
+    ꝿ: 'g',
     '\u24D7': 'h',
-    '\uFF48': 'h',
-    '\u0125': 'h',
-    '\u1E23': 'h',
-    '\u1E27': 'h',
-    '\u021F': 'h',
-    '\u1E25': 'h',
-    '\u1E29': 'h',
-    '\u1E2B': 'h',
-    '\u1E96': 'h',
-    '\u0127': 'h',
-    '\u2C68': 'h',
-    '\u2C76': 'h',
-    '\u0265': 'h',
-    '\u0195': 'hv',
+    ｈ: 'h',
+    ĥ: 'h',
+    ḣ: 'h',
+    ḧ: 'h',
+    ȟ: 'h',
+    ḥ: 'h',
+    ḩ: 'h',
+    ḫ: 'h',
+    ẖ: 'h',
+    ħ: 'h',
+    ⱨ: 'h',
+    ⱶ: 'h',
+    ɥ: 'h',
+    ƕ: 'hv',
     '\u24D8': 'i',
-    '\uFF49': 'i',
-    '\u00EC': 'i',
-    '\u00ED': 'i',
-    '\u00EE': 'i',
-    '\u0129': 'i',
-    '\u012B': 'i',
-    '\u012D': 'i',
-    '\u00EF': 'i',
-    '\u1E2F': 'i',
-    '\u1EC9': 'i',
-    '\u01D0': 'i',
-    '\u0209': 'i',
-    '\u020B': 'i',
-    '\u1ECB': 'i',
-    '\u012F': 'i',
-    '\u1E2D': 'i',
-    '\u0268': 'i',
-    '\u0131': 'i',
+    ｉ: 'i',
+    ì: 'i',
+    í: 'i',
+    î: 'i',
+    ĩ: 'i',
+    ī: 'i',
+    ĭ: 'i',
+    ï: 'i',
+    ḯ: 'i',
+    ỉ: 'i',
+    ǐ: 'i',
+    ȉ: 'i',
+    ȋ: 'i',
+    ị: 'i',
+    į: 'i',
+    ḭ: 'i',
+    ɨ: 'i',
+    ı: 'i',
     '\u24D9': 'j',
-    '\uFF4A': 'j',
-    '\u0135': 'j',
-    '\u01F0': 'j',
-    '\u0249': 'j',
+    ｊ: 'j',
+    ĵ: 'j',
+    ǰ: 'j',
+    ɉ: 'j',
     '\u24DA': 'k',
-    '\uFF4B': 'k',
-    '\u1E31': 'k',
-    '\u01E9': 'k',
-    '\u1E33': 'k',
-    '\u0137': 'k',
-    '\u1E35': 'k',
-    '\u0199': 'k',
-    '\u2C6A': 'k',
-    '\uA741': 'k',
-    '\uA743': 'k',
-    '\uA745': 'k',
-    '\uA7A3': 'k',
+    ｋ: 'k',
+    ḱ: 'k',
+    ǩ: 'k',
+    ḳ: 'k',
+    ķ: 'k',
+    ḵ: 'k',
+    ƙ: 'k',
+    ⱪ: 'k',
+    ꝁ: 'k',
+    ꝃ: 'k',
+    ꝅ: 'k',
+    ꞣ: 'k',
     '\u24DB': 'l',
-    '\uFF4C': 'l',
-    '\u0140': 'l',
-    '\u013A': 'l',
-    '\u013E': 'l',
-    '\u1E37': 'l',
-    '\u1E39': 'l',
-    '\u013C': 'l',
-    '\u1E3D': 'l',
-    '\u1E3B': 'l',
-    '\u017F': 'l',
-    '\u0142': 'l',
-    '\u019A': 'l',
-    '\u026B': 'l',
-    '\u2C61': 'l',
-    '\uA749': 'l',
-    '\uA781': 'l',
-    '\uA747': 'l',
-    '\u01C9': 'lj',
+    ｌ: 'l',
+    ŀ: 'l',
+    ĺ: 'l',
+    ľ: 'l',
+    ḷ: 'l',
+    ḹ: 'l',
+    ļ: 'l',
+    ḽ: 'l',
+    ḻ: 'l',
+    ſ: 'l',
+    ł: 'l',
+    ƚ: 'l',
+    ɫ: 'l',
+    ⱡ: 'l',
+    ꝉ: 'l',
+    ꞁ: 'l',
+    ꝇ: 'l',
+    ǉ: 'lj',
     '\u24DC': 'm',
-    '\uFF4D': 'm',
-    '\u1E3F': 'm',
-    '\u1E41': 'm',
-    '\u1E43': 'm',
-    '\u0271': 'm',
-    '\u026F': 'm',
+    ｍ: 'm',
+    ḿ: 'm',
+    ṁ: 'm',
+    ṃ: 'm',
+    ɱ: 'm',
+    ɯ: 'm',
     '\u24DD': 'n',
-    '\uFF4E': 'n',
-    '\u01F9': 'n',
-    '\u0144': 'n',
-    '\u00F1': 'n',
-    '\u1E45': 'n',
-    '\u0148': 'n',
-    '\u1E47': 'n',
-    '\u0146': 'n',
-    '\u1E4B': 'n',
-    '\u1E49': 'n',
-    '\u019E': 'n',
-    '\u0272': 'n',
-    '\u0149': 'n',
-    '\uA791': 'n',
-    '\uA7A5': 'n',
-    '\u01CC': 'nj',
+    ｎ: 'n',
+    ǹ: 'n',
+    ń: 'n',
+    ñ: 'n',
+    ṅ: 'n',
+    ň: 'n',
+    ṇ: 'n',
+    ņ: 'n',
+    ṋ: 'n',
+    ṉ: 'n',
+    ƞ: 'n',
+    ɲ: 'n',
+    ŉ: 'n',
+    ꞑ: 'n',
+    ꞥ: 'n',
+    ǌ: 'nj',
     '\u24DE': 'o',
-    '\uFF4F': 'o',
-    '\u00F2': 'o',
-    '\u00F3': 'o',
-    '\u00F4': 'o',
-    '\u1ED3': 'o',
-    '\u1ED1': 'o',
-    '\u1ED7': 'o',
-    '\u1ED5': 'o',
-    '\u00F5': 'o',
-    '\u1E4D': 'o',
-    '\u022D': 'o',
-    '\u1E4F': 'o',
-    '\u014D': 'o',
-    '\u1E51': 'o',
-    '\u1E53': 'o',
-    '\u014F': 'o',
-    '\u022F': 'o',
-    '\u0231': 'o',
-    '\u00F6': 'o',
-    '\u022B': 'o',
-    '\u1ECF': 'o',
-    '\u0151': 'o',
-    '\u01D2': 'o',
-    '\u020D': 'o',
-    '\u020F': 'o',
-    '\u01A1': 'o',
-    '\u1EDD': 'o',
-    '\u1EDB': 'o',
-    '\u1EE1': 'o',
-    '\u1EDF': 'o',
-    '\u1EE3': 'o',
-    '\u1ECD': 'o',
-    '\u1ED9': 'o',
-    '\u01EB': 'o',
-    '\u01ED': 'o',
-    '\u00F8': 'o',
-    '\u01FF': 'o',
-    '\u0254': 'o',
-    '\uA74B': 'o',
-    '\uA74D': 'o',
-    '\u0275': 'o',
-    '\u01A3': 'oi',
-    '\u0223': 'ou',
-    '\uA74F': 'oo',
+    ｏ: 'o',
+    ò: 'o',
+    ó: 'o',
+    ô: 'o',
+    ồ: 'o',
+    ố: 'o',
+    ỗ: 'o',
+    ổ: 'o',
+    õ: 'o',
+    ṍ: 'o',
+    ȭ: 'o',
+    ṏ: 'o',
+    ō: 'o',
+    ṑ: 'o',
+    ṓ: 'o',
+    ŏ: 'o',
+    ȯ: 'o',
+    ȱ: 'o',
+    ö: 'o',
+    ȫ: 'o',
+    ỏ: 'o',
+    ő: 'o',
+    ǒ: 'o',
+    ȍ: 'o',
+    ȏ: 'o',
+    ơ: 'o',
+    ờ: 'o',
+    ớ: 'o',
+    ỡ: 'o',
+    ở: 'o',
+    ợ: 'o',
+    ọ: 'o',
+    ộ: 'o',
+    ǫ: 'o',
+    ǭ: 'o',
+    ø: 'o',
+    ǿ: 'o',
+    ɔ: 'o',
+    ꝋ: 'o',
+    ꝍ: 'o',
+    ɵ: 'o',
+    ƣ: 'oi',
+    ȣ: 'ou',
+    ꝏ: 'oo',
     '\u24DF': 'p',
-    '\uFF50': 'p',
-    '\u1E55': 'p',
-    '\u1E57': 'p',
-    '\u01A5': 'p',
-    '\u1D7D': 'p',
-    '\uA751': 'p',
-    '\uA753': 'p',
-    '\uA755': 'p',
+    ｐ: 'p',
+    ṕ: 'p',
+    ṗ: 'p',
+    ƥ: 'p',
+    ᵽ: 'p',
+    ꝑ: 'p',
+    ꝓ: 'p',
+    ꝕ: 'p',
     '\u24E0': 'q',
-    '\uFF51': 'q',
-    '\u024B': 'q',
-    '\uA757': 'q',
-    '\uA759': 'q',
+    ｑ: 'q',
+    ɋ: 'q',
+    ꝗ: 'q',
+    ꝙ: 'q',
     '\u24E1': 'r',
-    '\uFF52': 'r',
-    '\u0155': 'r',
-    '\u1E59': 'r',
-    '\u0159': 'r',
-    '\u0211': 'r',
-    '\u0213': 'r',
-    '\u1E5B': 'r',
-    '\u1E5D': 'r',
-    '\u0157': 'r',
-    '\u1E5F': 'r',
-    '\u024D': 'r',
-    '\u027D': 'r',
-    '\uA75B': 'r',
-    '\uA7A7': 'r',
-    '\uA783': 'r',
+    ｒ: 'r',
+    ŕ: 'r',
+    ṙ: 'r',
+    ř: 'r',
+    ȑ: 'r',
+    ȓ: 'r',
+    ṛ: 'r',
+    ṝ: 'r',
+    ŗ: 'r',
+    ṟ: 'r',
+    ɍ: 'r',
+    ɽ: 'r',
+    ꝛ: 'r',
+    ꞧ: 'r',
+    ꞃ: 'r',
     '\u24E2': 's',
-    '\uFF53': 's',
-    '\u00DF': 's',
-    '\u015B': 's',
-    '\u1E65': 's',
-    '\u015D': 's',
-    '\u1E61': 's',
-    '\u0161': 's',
-    '\u1E67': 's',
-    '\u1E63': 's',
-    '\u1E69': 's',
-    '\u0219': 's',
-    '\u015F': 's',
-    '\u023F': 's',
-    '\uA7A9': 's',
-    '\uA785': 's',
-    '\u1E9B': 's',
+    ｓ: 's',
+    ß: 's',
+    ś: 's',
+    ṥ: 's',
+    ŝ: 's',
+    ṡ: 's',
+    š: 's',
+    ṧ: 's',
+    ṣ: 's',
+    ṩ: 's',
+    ș: 's',
+    ş: 's',
+    ȿ: 's',
+    ꞩ: 's',
+    ꞅ: 's',
+    ẛ: 's',
     '\u24E3': 't',
-    '\uFF54': 't',
-    '\u1E6B': 't',
-    '\u1E97': 't',
-    '\u0165': 't',
-    '\u1E6D': 't',
-    '\u021B': 't',
-    '\u0163': 't',
-    '\u1E71': 't',
-    '\u1E6F': 't',
-    '\u0167': 't',
-    '\u01AD': 't',
-    '\u0288': 't',
-    '\u2C66': 't',
-    '\uA787': 't',
-    '\uA729': 'tz',
+    ｔ: 't',
+    ṫ: 't',
+    ẗ: 't',
+    ť: 't',
+    ṭ: 't',
+    ț: 't',
+    ţ: 't',
+    ṱ: 't',
+    ṯ: 't',
+    ŧ: 't',
+    ƭ: 't',
+    ʈ: 't',
+    ⱦ: 't',
+    ꞇ: 't',
+    ꜩ: 'tz',
     '\u24E4': 'u',
-    '\uFF55': 'u',
-    '\u00F9': 'u',
-    '\u00FA': 'u',
-    '\u00FB': 'u',
-    '\u0169': 'u',
-    '\u1E79': 'u',
-    '\u016B': 'u',
-    '\u1E7B': 'u',
-    '\u016D': 'u',
-    '\u00FC': 'u',
-    '\u01DC': 'u',
-    '\u01D8': 'u',
-    '\u01D6': 'u',
-    '\u01DA': 'u',
-    '\u1EE7': 'u',
-    '\u016F': 'u',
-    '\u0171': 'u',
-    '\u01D4': 'u',
-    '\u0215': 'u',
-    '\u0217': 'u',
-    '\u01B0': 'u',
-    '\u1EEB': 'u',
-    '\u1EE9': 'u',
-    '\u1EEF': 'u',
-    '\u1EED': 'u',
-    '\u1EF1': 'u',
-    '\u1EE5': 'u',
-    '\u1E73': 'u',
-    '\u0173': 'u',
-    '\u1E77': 'u',
-    '\u1E75': 'u',
-    '\u0289': 'u',
+    ｕ: 'u',
+    ù: 'u',
+    ú: 'u',
+    û: 'u',
+    ũ: 'u',
+    ṹ: 'u',
+    ū: 'u',
+    ṻ: 'u',
+    ŭ: 'u',
+    ü: 'u',
+    ǜ: 'u',
+    ǘ: 'u',
+    ǖ: 'u',
+    ǚ: 'u',
+    ủ: 'u',
+    ů: 'u',
+    ű: 'u',
+    ǔ: 'u',
+    ȕ: 'u',
+    ȗ: 'u',
+    ư: 'u',
+    ừ: 'u',
+    ứ: 'u',
+    ữ: 'u',
+    ử: 'u',
+    ự: 'u',
+    ụ: 'u',
+    ṳ: 'u',
+    ų: 'u',
+    ṷ: 'u',
+    ṵ: 'u',
+    ʉ: 'u',
     '\u24E5': 'v',
-    '\uFF56': 'v',
-    '\u1E7D': 'v',
-    '\u1E7F': 'v',
-    '\u028B': 'v',
-    '\uA75F': 'v',
-    '\u028C': 'v',
-    '\uA761': 'vy',
+    ｖ: 'v',
+    ṽ: 'v',
+    ṿ: 'v',
+    ʋ: 'v',
+    ꝟ: 'v',
+    ʌ: 'v',
+    ꝡ: 'vy',
     '\u24E6': 'w',
-    '\uFF57': 'w',
-    '\u1E81': 'w',
-    '\u1E83': 'w',
-    '\u0175': 'w',
-    '\u1E87': 'w',
-    '\u1E85': 'w',
-    '\u1E98': 'w',
-    '\u1E89': 'w',
-    '\u2C73': 'w',
+    ｗ: 'w',
+    ẁ: 'w',
+    ẃ: 'w',
+    ŵ: 'w',
+    ẇ: 'w',
+    ẅ: 'w',
+    ẘ: 'w',
+    ẉ: 'w',
+    ⱳ: 'w',
     '\u24E7': 'x',
-    '\uFF58': 'x',
-    '\u1E8B': 'x',
-    '\u1E8D': 'x',
+    ｘ: 'x',
+    ẋ: 'x',
+    ẍ: 'x',
     '\u24E8': 'y',
-    '\uFF59': 'y',
-    '\u1EF3': 'y',
-    '\u00FD': 'y',
-    '\u0177': 'y',
-    '\u1EF9': 'y',
-    '\u0233': 'y',
-    '\u1E8F': 'y',
-    '\u00FF': 'y',
-    '\u1EF7': 'y',
-    '\u1E99': 'y',
-    '\u1EF5': 'y',
-    '\u01B4': 'y',
-    '\u024F': 'y',
-    '\u1EFF': 'y',
+    ｙ: 'y',
+    ỳ: 'y',
+    ý: 'y',
+    ŷ: 'y',
+    ỹ: 'y',
+    ȳ: 'y',
+    ẏ: 'y',
+    ÿ: 'y',
+    ỷ: 'y',
+    ẙ: 'y',
+    ỵ: 'y',
+    ƴ: 'y',
+    ɏ: 'y',
+    ỿ: 'y',
     '\u24E9': 'z',
-    '\uFF5A': 'z',
-    '\u017A': 'z',
-    '\u1E91': 'z',
-    '\u017C': 'z',
-    '\u017E': 'z',
-    '\u1E93': 'z',
-    '\u1E95': 'z',
-    '\u01B6': 'z',
-    '\u0225': 'z',
-    '\u0240': 'z',
-    '\u2C6C': 'z',
-    '\uA763': 'z',
-    '\u0386': '\u0391',
-    '\u0388': '\u0395',
-    '\u0389': '\u0397',
-    '\u038A': '\u0399',
-    '\u03AA': '\u0399',
-    '\u038C': '\u039F',
-    '\u038E': '\u03A5',
-    '\u03AB': '\u03A5',
-    '\u038F': '\u03A9',
-    '\u03AC': '\u03B1',
-    '\u03AD': '\u03B5',
-    '\u03AE': '\u03B7',
-    '\u03AF': '\u03B9',
-    '\u03CA': '\u03B9',
-    '\u0390': '\u03B9',
-    '\u03CC': '\u03BF',
-    '\u03CD': '\u03C5',
-    '\u03CB': '\u03C5',
-    '\u03B0': '\u03C5',
-    '\u03C9': '\u03C9',
-    '\u03C2': '\u03C3'
+    ｚ: 'z',
+    ź: 'z',
+    ẑ: 'z',
+    ż: 'z',
+    ž: 'z',
+    ẓ: 'z',
+    ẕ: 'z',
+    ƶ: 'z',
+    ȥ: 'z',
+    ɀ: 'z',
+    ⱬ: 'z',
+    ꝣ: 'z',
+    Ά: '\u0391',
+    Έ: '\u0395',
+    Ή: '\u0397',
+    Ί: '\u0399',
+    Ϊ: '\u0399',
+    Ό: '\u039F',
+    Ύ: '\u03A5',
+    Ϋ: '\u03A5',
+    Ώ: '\u03A9',
+    ά: '\u03B1',
+    έ: '\u03B5',
+    ή: '\u03B7',
+    ί: '\u03B9',
+    ϊ: '\u03B9',
+    ΐ: '\u03B9',
+    ό: '\u03BF',
+    ύ: '\u03C5',
+    ϋ: '\u03C5',
+    ΰ: '\u03C5',
+    ω: '\u03C9',
+    ς: '\u03C3'
 };
 
 var Selectivity = _dereq_(38);
@@ -3558,23 +3547,31 @@ var Selectivity = _dereq_(38);
  * Option listener that implements a convenience query function for performing AJAX requests.
  */
 Selectivity.OptionListeners.unshift(function(selectivity, options) {
-
     var ajax = options.ajax;
     if (ajax && ajax.url && !ajax.fetch && $.Deferred) {
         ajax.fetch = function(url, init) {
             return $.ajax(url, {
-                cache: (init.cache !== 'no-cache'),
+                cache: init.cache !== 'no-cache',
                 headers: init.headers || null,
                 method: init.method || 'GET',
-                xhrFields: (init.credentials === 'include' ? { withCredentials: true } : null)
-            }).then(function(data) {
-                return { results: $.map(data, function(result) {
-                    return result;
-                }), more: false };
-            }, function(jqXHR, textStatus, errorThrown) {
-                throw new Error('AJAX request returned: ' + textStatus +
-                                (errorThrown ? ', ' + errorThrown : ''));
-            });
+                xhrFields: init.credentials === 'include' ? { withCredentials: true } : null
+            }).then(
+                function(data) {
+                    return {
+                        results: $.map(data, function(result) {
+                            return result;
+                        }),
+                        more: false
+                    };
+                },
+                function(jqXHR, textStatus, errorThrown) {
+                    throw new Error(
+                        'AJAX request returned: ' +
+                            textStatus +
+                            (errorThrown ? ', ' + errorThrown : '')
+                    );
+                }
+            );
         };
     }
 });
@@ -3587,8 +3584,7 @@ var $ = (window.jQuery || window.Zepto);
 var Selectivity = _dereq_(38);
 
 function createSelectivityNextToSelectElement($el, options) {
-
-    var data = (options.multiple ? [] : null);
+    var data = options.multiple ? [] : null;
 
     var mapOptions = function() {
         var $this = $(this);
@@ -3619,17 +3615,17 @@ function createSelectivityNextToSelectElement($el, options) {
         }
     };
 
-    options.allowClear = ('allowClear' in options ? options.allowClear : !$el.prop('required'));
+    options.allowClear = 'allowClear' in options ? options.allowClear : !$el.prop('required');
 
     var items = $el.children('option,optgroup').map(mapOptions).get();
     options.data = data;
 
-    options.items = (options.query ? null : items);
+    options.items = options.query ? null : items;
 
     options.placeholder = options.placeholder || $el.data('placeholder') || '';
 
-    options.tabIndex = (options.tabIndex === undefined ? $el.attr('tabindex') || 0
-                                                       : options.tabIndex);
+    options.tabIndex =
+        options.tabIndex === undefined ? $el.attr('tabindex') || 0 : options.tabIndex;
 
     var classes = ($el.attr('class') || 'selectivity-input').split(' ');
     if (classes.indexOf('selectivity-input') < 0) {
@@ -3637,9 +3633,9 @@ function createSelectivityNextToSelectElement($el, options) {
     }
 
     var $div = $('<div>').attr({
-        'id': 's9y_' + $el.attr('id'),
-        'class': classes.join(' '),
-        'style': $el.attr('style'),
+        id: 's9y_' + $el.attr('id'),
+        class: classes.join(' '),
+        style: $el.attr('style'),
         'data-name': $el.attr('name')
     });
     $div.insertAfter($el);
@@ -3660,7 +3656,6 @@ function bindTraditionalSelectEvents(selectivity) {
  * instances.
  */
 Selectivity.OptionListeners.push(function(selectivity, options) {
-
     var $el = $(selectivity.el);
     if ($el.is('select')) {
         if ($el.attr('autofocus')) {
@@ -3696,7 +3691,6 @@ var KEY_UP_ARROW = 38;
  * Search input listener providing keyboard support for navigating the dropdown.
  */
 function listener(selectivity, input) {
-
     var keydownCanceled = false;
     var closeSubmenu = null;
 
@@ -3706,7 +3700,6 @@ function listener(selectivity, input) {
      * @param delta Either 1 to move to the next item, or -1 to move to the previous item.
      */
     function moveHighlight(dropdown, delta) {
-
         var results = dropdown.results;
         if (!results.length) {
             return;
@@ -3722,7 +3715,7 @@ function listener(selectivity, input) {
                 el = dropdown.$('.selectivity-load-more');
             }
 
-            if (el) {
+            if (el && el.scrollIntoView) {
                 el.scrollIntoView(delta < 0);
             }
         }
@@ -3732,7 +3725,7 @@ function listener(selectivity, input) {
             return;
         }
 
-        var defaultIndex = (delta > 0 ? 0 : resultItems.length - 1);
+        var defaultIndex = delta > 0 ? 0 : resultItems.length - 1;
         var index = defaultIndex;
         var highlightedResult = dropdown.highlightedResult;
         if (highlightedResult) {
@@ -3758,7 +3751,6 @@ function listener(selectivity, input) {
     }
 
     function keyHeld(event) {
-
         var dropdown = selectivity.dropdown;
         if (dropdown) {
             var keyCode = getKeyCode(event);
@@ -3790,7 +3782,6 @@ function listener(selectivity, input) {
     }
 
     function keyReleased(event) {
-
         function open() {
             if (selectivity.options.showDropdown !== false) {
                 selectivity.open();
@@ -3875,7 +3866,6 @@ var allowedOptions = {
  * get notified if you're passing invalid options.
  */
 Selectivity.OptionListeners.unshift(function(selectivity, options) {
-
     for (var key in options) {
         if (!options.hasOwnProperty(key)) {
             continue;
@@ -3883,19 +3873,21 @@ Selectivity.OptionListeners.unshift(function(selectivity, options) {
 
         var value = options[key];
         var type = allowedOptions[key];
-        if (type && !type.split('|').some(function(type) {
-            if (type === 'null') {
-                return value === null;
-            } else if (type === 'array') {
-                return Array.isArray(value);
-            } else {
-                return value !== null && value !== undefined && typeof value === type;
-            }
-        })) {
+        if (
+            type &&
+            !type.split('|').some(function(type) {
+                if (type === 'null') {
+                    return value === null;
+                } else if (type === 'array') {
+                    return Array.isArray(value);
+                } else {
+                    return value !== null && value !== undefined && typeof value === type;
+                }
+            })
+        ) {
             throw new Error(key + ' must be of type ' + type);
         }
     }
-
 });
 
 },{"38":38}],35:[function(_dereq_,module,exports){
@@ -3910,7 +3902,6 @@ var findResultItem = _dereq_(40);
  * Extended dropdown that supports submenus.
  */
 function SubmenuPlugin(selectivity, options) {
-
     /**
      * Optional parent dropdown menu from which this dropdown was opened.
      */
@@ -3924,12 +3915,10 @@ function SubmenuPlugin(selectivity, options) {
 }
 
 var callSuper = Selectivity.inherits(SubmenuPlugin, Dropdown, {
-
     /**
      * @inherit
      */
     close: function() {
-
         if (this.submenu) {
             this.submenu.close();
         }
@@ -3957,7 +3946,6 @@ var callSuper = Selectivity.inherits(SubmenuPlugin, Dropdown, {
      *                         Dropdown#highlight().
      */
     highlight: function(item, options) {
-
         options = options || {};
         var reason = options.reason || 'unspecified';
 
@@ -3972,7 +3960,8 @@ var callSuper = Selectivity.inherits(SubmenuPlugin, Dropdown, {
             } else {
                 clearTimeout(this._closeSubmenuTimeout);
                 this._closeSubmenuTimeout = setTimeout(
-                    this._closeSubmenuAndHighlight.bind(this, item, reason), 100
+                    this._closeSubmenuAndHighlight.bind(this, item, reason),
+                    100
                 );
             }
         } else {
@@ -3993,7 +3982,6 @@ var callSuper = Selectivity.inherits(SubmenuPlugin, Dropdown, {
      * @inherit
      */
     search: function(term) {
-
         if (this.submenu) {
             var searchInput = this.$('.selectivity-search-input');
             if (searchInput && searchInput === document.activeElement) {
@@ -4011,7 +3999,6 @@ var callSuper = Selectivity.inherits(SubmenuPlugin, Dropdown, {
      * @inherit
      */
     selectHighlight: function() {
-
         if (this.submenu) {
             this.submenu.selectHighlight();
         } else {
@@ -4023,7 +4010,6 @@ var callSuper = Selectivity.inherits(SubmenuPlugin, Dropdown, {
      * @inherit
      */
     showResults: function(results, options) {
-
         // makes sure any result item with a submenu that's not explicitly
         // set as selectable becomes unselectable
         function setSelectable(item) {
@@ -4047,7 +4033,6 @@ var callSuper = Selectivity.inherits(SubmenuPlugin, Dropdown, {
      * @inherit
      */
     triggerClose: function() {
-
         if (this.parentMenu) {
             this.selectivity.triggerEvent('selectivity-close-submenu');
         } else {
@@ -4059,7 +4044,6 @@ var callSuper = Selectivity.inherits(SubmenuPlugin, Dropdown, {
      * @inherit
      */
     triggerOpen: function() {
-
         if (this.parentMenu) {
             this.selectivity.triggerEvent('selectivity-open-submenu');
         } else {
@@ -4071,7 +4055,6 @@ var callSuper = Selectivity.inherits(SubmenuPlugin, Dropdown, {
      * @private
      */
     _closeSubmenuAndHighlight: function(item, reason) {
-
         if (this.submenu) {
             this.submenu.close();
         }
@@ -4083,12 +4066,14 @@ var callSuper = Selectivity.inherits(SubmenuPlugin, Dropdown, {
      * @private
      */
     _doHighlight: function(item, reason) {
-
         callSuper(this, 'highlight', item);
 
         var options = this.selectivity.options;
-        if ((!item.submenu || this.submenu) ||
-            (options.shouldOpenSubmenu && options.shouldOpenSubmenu(item, reason) === false)) {
+        if (
+            !item.submenu ||
+            this.submenu ||
+            (options.shouldOpenSubmenu && options.shouldOpenSubmenu(item, reason) === false)
+        ) {
             return;
         }
 
@@ -4116,8 +4101,15 @@ var callSuper = Selectivity.inherits(SubmenuPlugin, Dropdown, {
                             left = rect.left - width + 10;
                         }
 
+                        // Move the submenu up so it fits in the window, if necessary and possible.
+                        var submenuTop = resultItem.getBoundingClientRect().top;
+                        var deltaUp = Math.min(
+                            Math.max(submenuTop + el.clientHeight - window.innerHeight, 0),
+                            rect.top + rect.height
+                        );
+
                         el.style.left = left + 'px';
-                        el.style.top = resultItem.getBoundingClientRect().top + 'px';
+                        el.style.top = submenuTop - deltaUp + 'px';
                         el.style.width = width + 'px';
                     }
                 },
@@ -4128,7 +4120,6 @@ var callSuper = Selectivity.inherits(SubmenuPlugin, Dropdown, {
             this.submenu.search('');
         }
     }
-
 });
 
 Selectivity.Dropdown = SubmenuPlugin;
@@ -4138,22 +4129,25 @@ module.exports = SubmenuPlugin;
 },{"22":22,"38":38,"40":40}],36:[function(_dereq_,module,exports){
 'use strict';
 
-var extend = (window.jQuery || window.Zepto).extend;
+var assign = (window.jQuery || window.Zepto).extend;
 
 var Selectivity = _dereq_(38);
 
 function defaultTokenizer(input, selection, createToken, options) {
-
-    var createTokenItem = options.createTokenItem || function(token) {
-        return token ? { id: token, text: token } : null;
-    };
+    var createTokenItem =
+        options.createTokenItem ||
+        function(token) {
+            return token ? { id: token, text: token } : null;
+        };
 
     var separators = options.tokenSeparators;
 
     function hasToken(input) {
-        return input ? separators.some(function(separator) {
-            return input.indexOf(separator) > -1;
-        }) : false;
+        return input
+            ? separators.some(function(separator) {
+                  return input.indexOf(separator) > -1;
+              })
+            : false;
     }
 
     function takeToken(input) {
@@ -4194,20 +4188,19 @@ function defaultTokenizer(input, selection, createToken, options) {
  *                                  filters out already selected items.
  */
 Selectivity.OptionListeners.push(function(selectivity, options) {
-
     if (options.tokenSeparators) {
-        options.allowedTypes = extend({ tokenSeparators: 'array' }, options.allowedTypes);
+        options.allowedTypes = assign({ tokenSeparators: 'array' }, options.allowedTypes);
 
         options.tokenizer = options.tokenizer || defaultTokenizer;
     }
 });
 
-},{"38":38,"lodash/extend":"lodash/extend"}],37:[function(_dereq_,module,exports){
+},{"38":38,"lodash/assign":"lodash/assign"}],37:[function(_dereq_,module,exports){
 _dereq_(22);_dereq_(24);_dereq_(25);_dereq_(26);_dereq_(27);_dereq_(28);_dereq_(29);_dereq_(30);_dereq_(31);_dereq_(32);_dereq_(33);_dereq_(34);_dereq_(35);_dereq_(36);_dereq_(39);_dereq_(21);
 },{"21":21,"22":22,"24":24,"25":25,"26":26,"27":27,"28":28,"29":29,"30":30,"31":31,"32":32,"33":33,"34":34,"35":35,"36":36,"39":39}],38:[function(_dereq_,module,exports){
 'use strict';
 
-var extend = (window.jQuery || window.Zepto).extend;
+var assign = (window.jQuery || window.Zepto).extend;
 var isString = _dereq_(16);
 
 var EventListener = _dereq_(23);
@@ -4230,7 +4223,6 @@ var toggleClass = _dereq_(47);
  *                        mutually exclusive with 'data'.
  */
 function Selectivity(options) {
-
     /**
      * Reference to the currently open dropdown.
      */
@@ -4246,7 +4238,7 @@ function Selectivity(options) {
      *
      * This is false when the option readOnly is false or the option removeOnly is false.
      */
-    this.enabled = (!options.readOnly && !options.removeOnly);
+    this.enabled = !options.readOnly && !options.removeOnly;
 
     /**
      * DOM element for the input.
@@ -4275,7 +4267,7 @@ function Selectivity(options) {
      *
      * Custom templates can be specified in the options object.
      */
-    this.templates = extend({}, Selectivity.Templates);
+    this.templates = assign({}, Selectivity.Templates);
 
     /**
      * The last used search term.
@@ -4294,9 +4286,9 @@ function Selectivity(options) {
 
     this.events = new EventListener(this.el, this);
     this.events.on({
-        'blur': this._blur,
-        'mouseenter': this._mouseenter,
-        'mouseleave': this._mouseleave,
+        blur: this._blur,
+        mouseenter: this._mouseenter,
+        mouseleave: this._mouseleave,
         'selectivity-close': this._closed
     });
 }
@@ -4304,13 +4296,11 @@ function Selectivity(options) {
 /**
  * Methods.
  */
-extend(Selectivity.prototype, {
-
+assign(Selectivity.prototype, {
     /**
      * Convenience shortcut for this.el.querySelector(selector).
      */
     $: function(selector) {
-
         return this.el.querySelector(selector);
     },
 
@@ -4318,7 +4308,6 @@ extend(Selectivity.prototype, {
      * Closes the dropdown.
      */
     close: function() {
-
         this._clearCloseTimeout();
 
         if (this.dropdown) {
@@ -4331,7 +4320,6 @@ extend(Selectivity.prototype, {
      * Destroys the Selectivity instance.
      */
     destroy: function() {
-
         this.events.destruct();
 
         var el = this.el;
@@ -4352,7 +4340,6 @@ extend(Selectivity.prototype, {
      * @return The filtered array.
      */
     filterResults: function(results) {
-
         return results;
     },
 
@@ -4360,7 +4347,6 @@ extend(Selectivity.prototype, {
      * Applies focus to the input.
      */
     focus: function() {
-
         this._clearCloseTimeout();
 
         this._focusing = true;
@@ -4376,7 +4362,6 @@ extend(Selectivity.prototype, {
      * Returns the selection data.
      */
     getData: function() {
-
         return this._data;
     },
 
@@ -4390,7 +4375,6 @@ extend(Selectivity.prototype, {
      *         text labels will be equal to the IDs.
      */
     getItemForId: function(id) {
-
         var items = this.items;
         if (items) {
             return Selectivity.findNestedById(items, id);
@@ -4409,7 +4393,6 @@ extend(Selectivity.prototype, {
      * @return Item ID or null if no ID could be found.
      */
     getRelatedItemId: function(elementOrEvent) {
-
         var el = elementOrEvent.target || elementOrEvent;
         while (el) {
             if (el.hasAttribute('data-item-id')) {
@@ -4438,7 +4421,7 @@ extend(Selectivity.prototype, {
                 dropdown = dropdown.submenu;
             }
             var number = parseInt(id, 10);
-            return ('' + number === id ? number : id);
+            return '' + number === id ? number : id;
         }
     },
 
@@ -4446,7 +4429,6 @@ extend(Selectivity.prototype, {
      * Returns the value of the selection.
      */
     getValue: function() {
-
         return this._value;
     },
 
@@ -4463,7 +4445,6 @@ extend(Selectivity.prototype, {
      *                         input only to handle keyboard support.
      */
     initInput: function(input, options) {
-
         this.input = input;
 
         var selectivity = this;
@@ -4485,7 +4466,6 @@ extend(Selectivity.prototype, {
      * Opens the dropdown.
      */
     open: function() {
-
         if (this._opening || this.dropdown || !this.triggerEvent('selectivity-opening')) {
             return;
         }
@@ -4498,7 +4478,7 @@ extend(Selectivity.prototype, {
                 items: this.items,
                 position: this.options.positionDropdown,
                 query: this.options.query,
-                showSearchInput: (this.options.showSearchInputInDropdown !== false)
+                showSearchInput: this.options.showSearchInputInDropdown !== false
             });
         }
 
@@ -4515,7 +4495,6 @@ extend(Selectivity.prototype, {
      * (Re-)positions the dropdown.
      */
     positionDropdown: function() {
-
         if (this.dropdown) {
             this.dropdown.position();
         }
@@ -4531,7 +4510,6 @@ extend(Selectivity.prototype, {
      * @param term Term to search for.
      */
     search: function(term) {
-
         this.open();
 
         if (this.dropdown) {
@@ -4555,7 +4533,6 @@ extend(Selectivity.prototype, {
      *                                using this option.
      */
     setData: function(newData, options) {
-
         options = options || {};
 
         newData = this.validateData(newData);
@@ -4645,7 +4622,6 @@ extend(Selectivity.prototype, {
      *                            templates assigned to Selectivity.Templates.
      */
     setOptions: function(options) {
-
         options = options || {};
 
         var selectivity = this;
@@ -4654,15 +4630,15 @@ extend(Selectivity.prototype, {
         });
 
         if ('items' in options) {
-            this.items = (options.items ? Selectivity.processItems(options.items) : null);
+            this.items = options.items ? Selectivity.processItems(options.items) : null;
         }
         if ('templates' in options) {
-            extend(this.templates, options.templates);
+            assign(this.templates, options.templates);
         }
 
-        extend(this.options, options);
+        assign(this.options, options);
 
-        this.enabled = (!this.options.readOnly && !this.options.removeOnly);
+        this.enabled = !this.options.readOnly && !this.options.removeOnly;
     },
 
     /**
@@ -4686,7 +4662,6 @@ extend(Selectivity.prototype, {
      *                                using this option.
      */
     setValue: function(newValue, options) {
-
         options = options || {};
 
         newValue = this.validateValue(newValue);
@@ -4694,15 +4669,18 @@ extend(Selectivity.prototype, {
         this._value = newValue;
 
         if (this.options.initSelection) {
-            this.options.initSelection(newValue, function(data) {
-                if (this._value === newValue) {
-                    this._data = this.validateData(data);
+            this.options.initSelection(
+                newValue,
+                function(data) {
+                    if (this._value === newValue) {
+                        this._data = this.validateData(data);
 
-                    if (options.triggerChange !== false) {
-                        this.triggerChange();
+                        if (options.triggerChange !== false) {
+                            this.triggerChange();
+                        }
                     }
-                }
-            }.bind(this));
+                }.bind(this)
+            );
         } else {
             this._data = this.getDataForValue(newValue);
 
@@ -4721,7 +4699,6 @@ extend(Selectivity.prototype, {
      * @return String containing HTML.
      */
     template: function(templateName, options) {
-
         var template = this.templates[templateName];
         if (!template) {
             throw new Error('Unknown template: ' + templateName);
@@ -4745,8 +4722,7 @@ extend(Selectivity.prototype, {
      * @param Optional additional options added to the event object.
      */
     triggerChange: function(options) {
-
-        var data = extend({ value: this._value }, options);
+        var data = assign({ value: this._value }, options);
         this.triggerEvent('change', data);
         this.triggerEvent('selectivity-change', data);
     },
@@ -4761,10 +4737,9 @@ extend(Selectivity.prototype, {
      *         preventDefault() has been called.
      */
     triggerEvent: function(eventName, data) {
-
         var event = document.createEvent('Event');
         event.initEvent(eventName, /* bubbles: */ false, /* cancelable: */ true);
-        extend(event, data);
+        assign(event, data);
         this.el.dispatchEvent(event);
         return !event.defaultPrevented;
     },
@@ -4777,7 +4752,6 @@ extend(Selectivity.prototype, {
      * @return The validated item. May differ from the input item.
      */
     validateItem: function(item) {
-
         if (item && Selectivity.isValidId(item.id) && isString(item.text)) {
             return item;
         } else {
@@ -4789,7 +4763,6 @@ extend(Selectivity.prototype, {
      * @private
      */
     _blur: function() {
-
         if (!this._focusing && !this.el.classList.contains('hover')) {
             // Without the timeout it appears clicks on result items are not always properly
             // handled, especially when the user doesn't click exactly on the text of the result
@@ -4804,7 +4777,6 @@ extend(Selectivity.prototype, {
      * @private
      */
     _clearCloseTimeout: function() {
-
         if (this._closeTimeout) {
             clearTimeout(this._closeTimeout);
             this._closeTimeout = 0;
@@ -4815,7 +4787,6 @@ extend(Selectivity.prototype, {
      * @private
      */
     _closed: function() {
-
         this.dropdown = null;
 
         toggleClass(this.el, 'open', false);
@@ -4825,8 +4796,8 @@ extend(Selectivity.prototype, {
      * @private
      */
     _mouseleave: function(event) {
-
-        if (event.fromElement === this.el) {
+        // If mouseleave happens on any selectivity related element, remove hover class
+        if (!this.el.contains(event.relatedTarget)) {
             toggleClass(this.el, 'hover', false);
         }
     },
@@ -4835,10 +4806,8 @@ extend(Selectivity.prototype, {
      * @private
      */
     _mouseenter: function() {
-
         toggleClass(this.el, 'hover', true);
     }
-
 });
 
 /**
@@ -4895,9 +4864,8 @@ Selectivity.Templates = {};
  * @return The item in the array with the given ID, or null if the item was not found.
  */
 Selectivity.findById = function(array, id) {
-
     var index = Selectivity.findIndexById(array, id);
-    return (index > -1 ? array[index] : null);
+    return index > -1 ? array[index] : null;
 };
 
 /**
@@ -4909,7 +4877,6 @@ Selectivity.findById = function(array, id) {
  * @return The index of the item in the array with the given ID, or -1 if the item was not found.
  */
 Selectivity.findIndexById = function(array, id) {
-
     for (var i = 0, length = array.length; i < length; i++) {
         if (array[i].id === id) {
             return i;
@@ -4928,9 +4895,9 @@ Selectivity.findIndexById = function(array, id) {
  * @return The item in the array with the given ID, or null if the item was not found.
  */
 Selectivity.findNestedById = function(array, id) {
-
     for (var i = 0, length = array.length; i < length; i++) {
-        var item = array[i], result;
+        var item = array[i],
+            result;
         if (item.id === id) {
             result = item;
         } else if (item.children) {
@@ -4958,8 +4925,7 @@ Selectivity.findNestedById = function(array, id) {
  *         method. Any arguments past those are passed to the superclass method.
  */
 Selectivity.inherits = function(SubClass, SuperClass, prototype) {
-
-    SubClass.prototype = extend(
+    SubClass.prototype = assign(
         Object.create(SuperClass.prototype),
         { constructor: SubClass },
         prototype
@@ -4979,7 +4945,6 @@ Selectivity.inherits = function(SubClass, SuperClass, prototype) {
  * @return true if the value is a valid ID, false otherwise.
  */
 Selectivity.isValidId = function(id) {
-
     return typeof id === 'number' || isString(id);
 };
 
@@ -4995,16 +4960,17 @@ Selectivity.isValidId = function(id) {
  * @return true if the text matches the term, false otherwise.
  */
 Selectivity.matcher = function(item, term) {
-
     var result = null;
     if (Selectivity.transformText(item.text).indexOf(term) > -1) {
         result = item;
     } else if (item.children) {
-        var matchingChildren = item.children.map(function(child) {
-            return Selectivity.matcher(child, term);
-        }).filter(function(child) {
-            return !!child;
-        });
+        var matchingChildren = item.children
+            .map(function(child) {
+                return Selectivity.matcher(child, term);
+            })
+            .filter(function(child) {
+                return !!child;
+            });
         if (matchingChildren.length) {
             result = { id: item.id, text: item.text, children: matchingChildren };
         }
@@ -5022,11 +4988,9 @@ Selectivity.matcher = function(item, term) {
  * @return Object containing 'id' and 'text' properties.
  */
 Selectivity.processItem = function(item) {
-
     if (Selectivity.isValidId(item)) {
         return { id: item, text: '' + item };
-    } else if (item &&
-               (Selectivity.isValidId(item.id) || item.children) && isString(item.text)) {
+    } else if (item && (Selectivity.isValidId(item.id) || item.children) && isString(item.text)) {
         if (item.children) {
             item.children = Selectivity.processItems(item.children);
         }
@@ -5045,7 +5009,6 @@ Selectivity.processItem = function(item) {
  * @return Array with items.
  */
 Selectivity.processItems = function(items) {
-
     if (Array.isArray(items)) {
         return items.map(Selectivity.processItem);
     } else {
@@ -5062,13 +5025,12 @@ Selectivity.processItems = function(items) {
  * @return The transformed string.
  */
 Selectivity.transformText = function(string) {
-
     return string.toLowerCase();
 };
 
 module.exports = Selectivity;
 
-},{"16":16,"23":23,"47":47,"lodash/extend":"lodash/extend"}],39:[function(_dereq_,module,exports){
+},{"16":16,"23":23,"47":47,"lodash/assign":"lodash/assign"}],39:[function(_dereq_,module,exports){
 'use strict';
 
 var escape = _dereq_(12);
@@ -5086,7 +5048,6 @@ var Locale = _dereq_(27);
  * Every template must return a single root element.
  */
 Selectivity.Templates = {
-
     /**
      * Renders the dropdown.
      *
@@ -5102,24 +5063,25 @@ Selectivity.Templates = {
      *                                  expected.
      */
     dropdown: function(options) {
-        var extraClass = (options.dropdownCssClass ? ' ' + options.dropdownCssClass : ''),
+        var extraClass = options.dropdownCssClass ? ' ' + options.dropdownCssClass : '',
             searchInput = '';
         if (options.showSearchInput) {
             extraClass += ' has-search-input';
 
             var placeholder = options.searchInputPlaceholder;
-            searchInput = (
+            searchInput =
                 '<div class="selectivity-search-input-container">' +
-                    '<input type="text" class="selectivity-search-input"' +
-                            (placeholder ? ' placeholder="' + escape(placeholder) + '"'
-                                         : '') + '>' +
-                '</div>'
-            );
+                '<input type="text" class="selectivity-search-input"' +
+                (placeholder ? ' placeholder="' + escape(placeholder) + '"' : '') +
+                '>' +
+                '</div>';
         }
         return (
-            '<div class="selectivity-dropdown' + extraClass + '">' +
-                searchInput +
-                '<div class="selectivity-results-container"></div>' +
+            '<div class="selectivity-dropdown' +
+            extraClass +
+            '">' +
+            searchInput +
+            '<div class="selectivity-results-container"></div>' +
             '</div>'
         );
     },
@@ -5134,7 +5096,7 @@ Selectivity.Templates = {
     error: function(options) {
         return (
             '<div class="selectivity-error">' +
-                (options.escape ? escape(options.message) : options.message) +
+            (options.escape ? escape(options.message) : options.message) +
             '</div>'
         );
     },
@@ -5175,11 +5137,11 @@ Selectivity.Templates = {
     multipleSelectInput: function(options) {
         return (
             '<div class="selectivity-multiple-input-container">' +
-                (options.enabled ? '<input type="text" autocomplete="off" autocorrect="off" ' +
-                                          'autocapitalize="off" class="selectivity-multiple-input">'
-                                 : '<div class="selectivity-multiple-input ' +
-                                               'selectivity-placeholder"></div>') +
-                '<div class="selectivity-clearfix"></div>' +
+            (options.enabled
+                ? '<input type="text" autocomplete="off" autocorrect="off" ' +
+                  'autocapitalize="off" class="selectivity-multiple-input">'
+                : '<div class="selectivity-multiple-input ' + 'selectivity-placeholder"></div>') +
+            '<div class="selectivity-clearfix"></div>' +
             '</div>'
         );
     },
@@ -5201,15 +5163,20 @@ Selectivity.Templates = {
      *                text - Text label which the user sees.
      */
     multipleSelectedItem: function(options) {
-        var extraClass = (options.highlighted ? ' highlighted' : '');
+        var extraClass = options.highlighted ? ' highlighted' : '';
         return (
-            '<span class="selectivity-multiple-selected-item' + extraClass + '" ' +
-                  'data-item-id="' + escape(options.id) + '">' +
-                (options.removable ? '<a class="selectivity-multiple-selected-item-remove">' +
-                                         '<i class="fa fa-remove"></i>' +
-                                     '</a>'
-                                   : '') +
-                escape(options.text) +
+            '<span class="selectivity-multiple-selected-item' +
+            extraClass +
+            '" ' +
+            'data-item-id="' +
+            escape(options.id) +
+            '">' +
+            (options.removable
+                ? '<a class="selectivity-multiple-selected-item-remove">' +
+                  '<i class="fa fa-remove"></i>' +
+                  '</a>'
+                : '') +
+            escape(options.text) +
             '</span>'
         );
     },
@@ -5223,7 +5190,7 @@ Selectivity.Templates = {
     noResults: function(options) {
         return (
             '<div class="selectivity-error">' +
-                (options.term ? Locale.noResultsForTerm(options.term) : Locale.noResults) +
+            (options.term ? Locale.noResultsForTerm(options.term) : Locale.noResults) +
             '</div>'
         );
     },
@@ -5255,11 +5222,16 @@ Selectivity.Templates = {
      */
     resultItem: function(options) {
         return (
-            '<div class="selectivity-result-item' + (options.disabled ? ' disabled' : '') + '"' +
-                ' data-item-id="' + escape(options.id) + '">' +
-                escape(options.text) +
-                (options.submenu ? '<i class="selectivity-submenu-icon fa fa-chevron-right"></i>'
-                                 : '') +
+            '<div class="selectivity-result-item' +
+            (options.disabled ? ' disabled' : '') +
+            '"' +
+            ' data-item-id="' +
+            escape(options.id) +
+            '">' +
+            escape(options.text) +
+            (options.submenu
+                ? '<i class="selectivity-submenu-icon fa fa-chevron-right"></i>'
+                : '') +
             '</div>'
         );
     },
@@ -5287,11 +5259,11 @@ Selectivity.Templates = {
     singleSelectInput: function(options) {
         return (
             '<div class="selectivity-single-select">' +
-                '<input type="text" class="selectivity-single-select-input"' +
-                    (options.required ? ' required' : '') +
-                '>' +
-                '<div class="selectivity-single-result-container"></div>' +
-                '<i class="fa fa-sort-desc selectivity-caret"></i>' +
+            '<input type="text" class="selectivity-single-select-input"' +
+            (options.required ? ' required' : '') +
+            '>' +
+            '<div class="selectivity-single-result-container"></div>' +
+            '<i class="fa fa-sort-desc selectivity-caret"></i>' +
             '</div>'
         );
     },
@@ -5306,11 +5278,7 @@ Selectivity.Templates = {
      *                placeholder - The placeholder text.
      */
     singleSelectPlaceholder: function(options) {
-        return (
-            '<div class="selectivity-placeholder">' +
-                escape(options.placeholder) +
-            '</div>'
-        );
+        return '<div class="selectivity-placeholder">' + escape(options.placeholder) + '</div>';
     },
 
     /**
@@ -5328,12 +5296,15 @@ Selectivity.Templates = {
     singleSelectedItem: function(options) {
         return (
             '<span class="selectivity-single-selected-item" ' +
-                  'data-item-id="' + escape(options.id) + '">' +
-                (options.removable ? '<a class="selectivity-single-selected-item-remove">' +
-                                         '<i class="fa fa-remove"></i>' +
-                                     '</a>'
-                                   : '') +
-                escape(options.text) +
+            'data-item-id="' +
+            escape(options.id) +
+            '">' +
+            (options.removable
+                ? '<a class="selectivity-single-selected-item-remove">' +
+                  '<i class="fa fa-remove"></i>' +
+                  '</a>'
+                : '') +
+            escape(options.text) +
             '</span>'
         );
     },
@@ -5366,12 +5337,13 @@ Selectivity.Templates = {
      */
     selectOptionCompliance: function(options) {
         return (
-            '<option value="' + escape(options.id) + '" selected>' +
-                escape(options.text) +
+            '<option value="' +
+            escape(options.id) +
+            '" selected>' +
+            escape(options.text) +
             '</option>'
         );
     }
-
 };
 
 },{"12":12,"27":27,"38":38}],40:[function(_dereq_,module,exports){
@@ -5386,7 +5358,6 @@ Selectivity.Templates = {
  * @param DOM element of the result item with the given item ID, or null if not found.
  */
 module.exports = function(resultItems, itemId) {
-
     for (var i = 0, length = resultItems.length; i < length; i++) {
         var resultItem = resultItems[i];
         var resultId = resultItem.getAttribute('data-item-id');
@@ -5407,7 +5378,6 @@ module.exports = function(resultItems, itemId) {
  * @param id ID of the item to select.
  */
 module.exports = function(selector, id) {
-
     var quotedId = '"' + ('' + id).replace(/\\/g, '\\\\').replace(/"/g, '\\"') + '"';
     return selector + '[data-item-id=' + quotedId + ']';
 };
@@ -5419,7 +5389,6 @@ module.exports = function(selector, id) {
  * Returns the keyCode value of the given event.
  */
 module.exports = function(event) {
-
     return event.which || event.keyCode || 0;
 };
 
@@ -5430,9 +5399,8 @@ module.exports = function(event) {
  * Returns whether the given element matches the given selector.
  */
 module.exports = function(el, selector) {
-
-    var method = el.matches || el.webkitMatchesSelector ||
-                 el.mozMatchesSelector || el.msMatchesSelector;
+    var method =
+        el.matches || el.webkitMatchesSelector || el.mozMatchesSelector || el.msMatchesSelector;
     return method.call(el, selector);
 };
 
@@ -5445,7 +5413,6 @@ module.exports = function(el, selector) {
  * @param html HTML representation of the element to parse.
  */
 module.exports = function(html) {
-
     var div = document.createElement('div');
     div.innerHTML = html;
     return div.firstChild;
@@ -5460,7 +5427,6 @@ module.exports = function(html) {
  * @param el The element to remove.
  */
 module.exports = function(el) {
-
     if (el && el.parentNode) {
         el.parentNode.removeChild(el);
     }
@@ -5475,7 +5441,6 @@ module.exports = function(el) {
  * @param event The event to stop from propagating.
  */
 module.exports = function(event) {
-
     event.stopPropagation();
 };
 
@@ -5490,7 +5455,6 @@ module.exports = function(event) {
  * @param force If true, the class is added. If false, the class is removed.
  */
 module.exports = function(el, className, force) {
-
     if (el) {
         el.classList[force ? 'add' : 'remove'](className);
     }

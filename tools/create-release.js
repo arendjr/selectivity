@@ -113,7 +113,7 @@ function createNpmPackage() {
     fs.writeFileSync(npmDir + '/package.json', JSON.stringify(packageJson, null, 2));
 
     if (argv.publish) {
-        execSync('pushd ' + npmDir + '; npm publish .; popd');
+        execSync('cd ' + npmDir + '; npm publish .; cd ../..');
     }
 }
 
