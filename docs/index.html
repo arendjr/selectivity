@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 
-  <head>
+<head>
     <meta charset='utf-8'>
     <meta http-equiv="X-UA-Compatible" content="chrome=1">
     <meta name="description" content="Selectivity.js : Modular and light-weight selection library">
@@ -11,90 +11,92 @@
     <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css">
 
     <title>selectivity</title>
-  </head>
+</head>
 
-  <body>
+<body>
 
     <!-- HEADER -->
     <div id="header_wrap" class="outer">
         <header class="inner">
-          <a id="forkme_banner" href="https://github.com/arendjr/selectivity">View on GitHub</a>
+            <a id="forkme_banner" href="https://github.com/arendjr/selectivity">View on GitHub</a>
 
-          <h1 id="project_title">Selectivity.js</h1>
-          <h2 id="project_tagline">Modular and light-weight selection library</h2>
+            <h1 id="project_title">Selectivity.js</h1>
+            <h2 id="project_tagline">Modular and light-weight selection library</h2>
 
             <section id="downloads">
-              <a class="tar_download_link" href="https://github.com/arendjr/selectivity/releases/download/3.0.4/selectivity-3.0.4.tar.gz">Download this project as a tar.gz file</a>
+                <a class="tar_download_link" href="https://github.com/arendjr/selectivity/releases/download/3.0.5/selectivity-3.0.5.tar.gz">Download this project as a tar.gz file</a>
             </section>
         </header>
     </div>
 
-<!-- MAIN CONTENT -->
-<div id="main_content_wrap" class="outer">
-<section id="main_content" class="inner">
+    <!-- MAIN CONTENT -->
+    <div id="main_content_wrap" class="outer">
+        <section id="main_content" class="inner">
 
-<h1>Benefits</h1>
+            <h1>Benefits</h1>
 
-<ul>
-<li><b>Rich UI.</b> Select boxes made by Selectivity have rich functionality, work out of the box and
-are customizable.</li>
-<li><b>Modular.</b> Selectivity's modular approach is aimed to make it easy to create custom builds with
-just the features that you care about and to easily swap modules for custom ones.</li>
-<li><b>Light-weight.</b> Selectivity.js is smaller than comparable selection libraries, even if you're
-using a build with all features packed in.</li>
-<li><b>Compatibility.</b> Selectivity.js can be used without any external libraries, but also offers a
-jQuery build that is compatible with both jQuery (including custom builds without Sizzle) and Zepto.js,
-and a build that is compatible with React. It's your choice how you want to use it.</li>
-</ul>
+            <ul>
+                <li><b>Rich UI.</b> Select boxes made by Selectivity have rich functionality, work out of the box and are customizable.</li>
+                <li><b>Modular.</b> Selectivity's modular approach is aimed to make it easy to create custom builds with just
+                    the features that you care about and to easily swap modules for custom ones.</li>
+                <li><b>Light-weight.</b> Selectivity.js is smaller than comparable selection libraries, even if you're using
+                    a build with all features packed in.</li>
+                <li><b>Compatibility.</b> Selectivity.js can be used without any external libraries, but also offers a jQuery
+                    build that is compatible with both jQuery (including custom builds without Sizzle) and Zepto.js, and
+                    a build that is compatible with React. It's your choice how you want to use it.</li>
+            </ul>
 
-<h1>
-<a id="examples" class="anchor" href="#examples" aria-hidden="true"></a>Examples</h1>
+            <h1>
+                <a id="examples" class="anchor" href="#examples" aria-hidden="true"></a>Examples</h1>
 
-<h2>
-<a id="select-a-single-city" class="anchor" href="#select-a-single-city" aria-hidden="true"></a>Select a single city</h2>
+            <h2>
+                <a id="select-a-single-city" class="anchor" href="#select-a-single-city" aria-hidden="true"></a>Select a
+                single city</h2>
 
-<p></p>
+            <p></p>
 
-<div id="example-1" class="selectivity-input example-input"></div>
+            <div id="example-1" class="selectivity-input example-input"></div>
 
-<div class="code-block">
-    <pre class="example-code react">
+            <div class="code-block">
+                <pre class="example-code react">
 <code>&lt;<span class="tag">Selectivity.React</span>
     <span class="attribute">allowClear</span>={true}
     <span class="attribute">items</span>={[<span class="string">'Amsterdam'</span>, <span class="string">'Antwerp'</span><span class="comment">/*, ...*/</span>]}
     <span class="attribute">placeholder</span>=<span class="string">'No city selected'</span>
 /&gt;</code>
     </pre>
-    <pre class="example-code jquery active">
+                <pre class="example-code jquery active">
 <code>$(<span class="string">'#example-1'</span>).selectivity({
     allowClear: true,
     items: [<span class="string">'Amsterdam'</span>, <span class="string">'Antwerp'</span><span class="comment">/*, ...*/</span>],
     placeholder: <span class="string">'No city selected'</span>
 });</code>
     </pre>
-    <div class="handles-container">
-        <div class="handles">
-            <div class="handle react">React</div><div class="handle jquery active">jQuery</div>
-        </div>
-    </div>
-</div>
+                <div class="handles-container">
+                    <div class="handles">
+                        <div class="handle react">React</div>
+                        <div class="handle jquery active">jQuery</div>
+                    </div>
+                </div>
+            </div>
 
-<h2>
-<a id="select-multiple-cities" class="anchor" href="#select-multiple-cities" aria-hidden="true"></a>Select multiple cities</h2>
+            <h2>
+                <a id="select-multiple-cities" class="anchor" href="#select-multiple-cities" aria-hidden="true"></a>Select
+                multiple cities</h2>
 
-<p></p>
+            <p></p>
 
-<div id="example-2" class="selectivity-input example-input"></div>
+            <div id="example-2" class="selectivity-input example-input"></div>
 
-<div class="code-block">
-    <pre class="example-code react">
+            <div class="code-block">
+                <pre class="example-code react">
 <code>&lt;<span class="tag">Selectivity.React</span>
     <span class="attribute">items</span>={[<span class="string">'Amsterdam'</span>, <span class="string">'Antwerp'</span><span class="comment">/*, ...*/</span>]}
     <span class="attribute">multiple</span>={true}
     <span class="attribute">placeholder</span>=<span class="string">'Type to search a city'</span>
 /&gt;</code>
     </pre>
-    <pre class="example-code jquery active">
+                <pre class="example-code jquery active">
 <code>$(<span class="string">'#example-2'</span>).selectivity({
     items: [<span class="string">'Amsterdam'</span>, <span class="string">'Antwerp'</span><span class="comment">/*, ...*/</span>],
     multiple: true,
@@ -102,22 +104,24 @@ and a build that is compatible with React. It's your choice how you want to use 
 });
 </code>
     </pre>
-    <div class="handles-container">
-        <div class="handles">
-            <div class="handle react">React</div><div class="handle jquery active">jQuery</div>
-        </div>
-    </div>
-</div>
+                <div class="handles-container">
+                    <div class="handles">
+                        <div class="handle react">React</div>
+                        <div class="handle jquery active">jQuery</div>
+                    </div>
+                </div>
+            </div>
 
-<h2>
-<a id="select-a-city-by-country" class="anchor" href="#select-a-city-by-country" aria-hidden="true"></a>Select a city by country</h2>
+            <h2>
+                <a id="select-a-city-by-country" class="anchor" href="#select-a-city-by-country" aria-hidden="true"></a>Select
+                a city by country</h2>
 
-<p></p>
+            <p></p>
 
-<div id="example-3" class="selectivity-input example-input"></div>
+            <div id="example-3" class="selectivity-input example-input"></div>
 
-<div class="code-block">
-    <pre class="example-code react">
+            <div class="code-block">
+                <pre class="example-code react">
 <code>&lt;<span class="tag">Selectivity.React</span>
     <span class="attribute">allowClear</span>={true}
     <span class="attribute">items</span>={[{
@@ -127,7 +131,7 @@ and a build that is compatible with React. It's your choice how you want to use 
     <span class="attribute">placeholder</span>=<span class="string">'No city selected'</span>
 /&gt;</code>
     </pre>
-    <pre class="example-code jquery active">
+                <pre class="example-code jquery active">
 <code>$(<span class="string">'#example-3'</span>).selectivity({
     allowClear: true,
     items: [{
@@ -138,22 +142,24 @@ and a build that is compatible with React. It's your choice how you want to use 
 });
 </code>
     </pre>
-    <div class="handles-container">
-        <div class="handles">
-            <div class="handle react">React</div><div class="handle jquery active">jQuery</div>
-        </div>
-    </div>
-</div>
+                <div class="handles-container">
+                    <div class="handles">
+                        <div class="handle react">React</div>
+                        <div class="handle jquery active">jQuery</div>
+                    </div>
+                </div>
+            </div>
 
-<h2>
-<a id="select-a-city-by-timezone" class="anchor" href="#select-a-city-by-timezone" aria-hidden="true"></a>Select a city by timezone</h2>
+            <h2>
+                <a id="select-a-city-by-timezone" class="anchor" href="#select-a-city-by-timezone" aria-hidden="true"></a>Select
+                a city by timezone</h2>
 
-<p></p>
+            <p></p>
 
-<div id="example-4" class="selectivity-input example-input"></div>
+            <div id="example-4" class="selectivity-input example-input"></div>
 
-<div class="code-block">
-    <pre class="example-code react">
+            <div class="code-block">
+                <pre class="example-code react">
 <code>&lt;<span class="tag">Selectivity.React</span>
     <span class="attribute">allowClear</span>={true}
     <span class="attribute">items</span>={[{
@@ -171,7 +177,7 @@ and a build that is compatible with React. It's your choice how you want to use 
     <span class="attribute">showSearchInputInDropdown</span>={false}
 /&gt;</code>
     </pre>
-    <pre class="example-code jquery active">
+                <pre class="example-code jquery active">
 <code>$(<span class="string">'#example-4'</span>).selectivity({
     allowClear: true,
     items: [{
@@ -190,51 +196,55 @@ and a build that is compatible with React. It's your choice how you want to use 
 });
 </code>
     </pre>
-    <div class="handles-container">
-        <div class="handles">
-            <div class="handle react">React</div><div class="handle jquery active">jQuery</div>
-        </div>
-    </div>
-</div>
+                <div class="handles-container">
+                    <div class="handles">
+                        <div class="handle react">React</div>
+                        <div class="handle jquery active">jQuery</div>
+                    </div>
+                </div>
+            </div>
 
-<h2>
-<a id="enter-one-or-more-email-addresses" class="anchor" href="#enter-one-or-more-email-addresses" aria-hidden="true"></a>Enter one or more email addresses</h2>
+            <h2>
+                <a id="enter-one-or-more-email-addresses" class="anchor" href="#enter-one-or-more-email-addresses" aria-hidden="true"></a>Enter
+                one or more email addresses</h2>
 
-<p></p>
+            <p></p>
 
-<div id="example-5" class="selectivity-input example-input"></div>
+            <div id="example-5" class="selectivity-input example-input"></div>
 
-<div class="code-block">
-    <pre class="example-code react">
+            <div class="code-block">
+                <pre class="example-code react">
 <code>&lt;<span class="tag">Selectivity.React</span>
     <span class="attribute">inputType</span>=<span class="string">'Email'</span>
     <span class="attribute">placeholder</span>=<span class="string">'Type or paste email addresses'</span>
 /&gt;</code>
     </pre>
-    <pre class="example-code jquery active">
+                <pre class="example-code jquery active">
 <code>$(<span class="string">'#example-5'</span>).selectivity({
     inputType: <span class="string">'Email'</span>,
     placeholder: <span class="string">'Type or paste email addresses'</span>
 });</code>
     </pre>
-    <div class="handles-container">
-        <div class="handles">
-            <div class="handle react">React</div><div class="handle jquery active">jQuery</div>
-        </div>
-    </div>
-</div>
+                <div class="handles-container">
+                    <div class="handles">
+                        <div class="handle react">React</div>
+                        <div class="handle jquery active">jQuery</div>
+                    </div>
+                </div>
+            </div>
 
-<h2>
-<a id="search-for-repository" class="anchor" href="#search-for-repository" aria-hidden="true"></a>Search a GitHub repository</h2>
+            <h2>
+                <a id="search-for-repository" class="anchor" href="#search-for-repository" aria-hidden="true"></a>Search
+                a GitHub repository</h2>
 
-<p><i>Note: If this example stops working, please wait a few minutes. There is an active rate-limit in the GitHub API.</i></p>
+            <p><i>Note: If this example stops working, please wait a few minutes. There is an active rate-limit in the GitHub API.</i></p>
 
-<div id="example-6" class="selectivity-input example-input"></div>
+            <div id="example-6" class="selectivity-input example-input"></div>
 
-<pre class="example-code"></pre>
+            <pre class="example-code"></pre>
 
-<div class="code-block">
-    <pre class="example-code react">
+            <div class="code-block">
+                <pre class="example-code react">
 <code>&lt;<span class="tag">Selectivity.React</span>
     <span class="attribute">ajax</span>={{
         url: <span class="string">'https://api.github.com/search/repositories'</span>,
@@ -280,7 +290,7 @@ and a build that is compatible with React. It's your choice how you want to use 
     }}
 /&gt;</code>
     </pre>
-    <pre class="example-code jquery active">
+                <pre class="example-code jquery active">
 <code>$(<span class="string">'#example-6'</span>).selectivity({
     ajax: {
         url: <span class="string">'https://api.github.com/search/repositories'</span>,
@@ -318,692 +328,664 @@ and a build that is compatible with React. It's your choice how you want to use 
     }
 });</code>
     </pre>
-    <div class="handles-container">
-        <div class="handles">
-            <div class="handle react">React</div><div class="handle jquery active">jQuery</div>
-        </div>
-    </div>
-</div>
+                <div class="handles-container">
+                    <div class="handles">
+                        <div class="handle react">React</div>
+                        <div class="handle jquery active">jQuery</div>
+                    </div>
+                </div>
+            </div>
 
-<h1>
-<a id="setup" class="anchor" href="#setup" aria-hidden="true"></a>Setup</h1>
+            <h1>
+                <a id="setup" class="anchor" href="#setup" aria-hidden="true"></a>Setup</h1>
 
-<p>For setup instructions, please see the
-    <a href="https://github.com/arendjr/selectivity#setup">GitHub project page</a>.</p>
+            <p>For setup instructions, please see the
+                <a href="https://github.com/arendjr/selectivity#setup">GitHub project page</a>.</p>
 
-<h1>
-<a id="api" class="anchor" href="#api" aria-hidden="true"></a>API</h1>
+            <h1>
+                <a id="api" class="anchor" href="#api" aria-hidden="true"></a>API</h1>
 
-<p>Older references: <a href="reference-v2.html">v2</a></p>
+            <p>Older references: <a href="reference-v2.html">v2</a></p>
 
-<h2>jQuery</h2>
+            <h2>jQuery</h2>
 
-<p>Call <code>$(selector).selectivity(options)</code> to initialize a Selectivity instance on the
-    element specified by the given selector. The element should be a <code>&lt;div&gt;</code>
-    element which will be used as container to render the Selectivity control in. If the element is
-    a <code>&lt;select&gt;</code> element instead, this element will be used for initializing some
-    of the options below after which it is replaced with a <code>&lt;div&gt;</code> element to
-    contain the Selectivity control.</p>
+            <p>Call <code>$(selector).selectivity(options)</code> to initialize a Selectivity instance on the element specified
+                by the given selector. The element should be a <code>&lt;div&gt;</code> element which will be used as container
+                to render the Selectivity control in. If the element is a <code>&lt;select&gt;</code> element instead, this
+                element will be used for initializing some of the options below after which it is replaced with a <code>&lt;div&gt;</code>                element to contain the Selectivity control.</p>
 
-<h2>React</h2>
+            <h2>React</h2>
 
-<p>Render a Selectivity component as follows:</p>
+            <p>Render a Selectivity component as follows:</p>
 
-<p><code>&lt;Selectivity.React {...options} /&gt;</code></p>
+            <p><code>&lt;Selectivity.React {...options} /&gt;</code></p>
 
-<p>This will create a <code>&lt;div&gt;</code> element in which the Selectivity control itself is
-    rendered. Note that besides the options documented below, also some generic attributes for
-    <i>divs</i> are allowed on this element (<code>className</code>, <code>onClick</code>,
-    <code>onInput</code>, <code>style</code>, ...).</p>
+            <p>This will create a <code>&lt;div&gt;</code> element in which the Selectivity control itself is rendered. Note
+                that besides the options documented below, also some generic attributes for
+                <i>divs</i> are allowed on this element (<code>className</code>, <code>onClick</code>,
+                <code>onInput</code>, <code>style</code>, ...).</p>
 
-<h2>Options</h2>
+            <h2>Options</h2>
 
-<p>The following options are supported:</p>
+            <p>The following options are supported:</p>
 
-<table>
-    <thead>
-        <tr>
-            <th>Option</th>
-            <th>Type</th>
-            <th>Description</th>
-        </tr>
-    </thead>
-    <tbody>
-        <tr>
-            <td>ajax</td>
-            <td><code>Object</code></td>
-            <td>This object is used for convenience for loading result items through AJAX requests
-                from a remote resource. Below is an overview of properties that may be set on this
-                object. Any other properties on this object are passed directly to the <i>fetch</i>
-                method (see below).
+            <table>
+                <thead>
+                    <tr>
+                        <th>Option</th>
+                        <th>Type</th>
+                        <th>Description</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>ajax</td>
+                        <td><code>Object</code></td>
+                        <td>This object is used for convenience for loading result items through AJAX requests from a remote
+                            resource. Below is an overview of properties that may be set on this object. Any other properties
+                            on this object are passed directly to the <i>fetch</i> method (see below).
 
-                <dl>
-                    <dt><b>fetch</b></dt>
-                    <dd>The function to use for fetching the AJAX results. By default,
-                        <a href="https://developer.mozilla.org/en-US/docs/Web/API/GlobalFetch/fetch"><code>window.fetch()</code></a>
-                        is used, unless you use a jQuery build. If you use a jQuery build, it will
-                        automatically replace the default with a wrapper that uses
-                        <code>$.ajax()</code> internally. If you don't use a jQuery build, you are
-                        encouraged to ship a polyfill for <code>window.fetch()</code>, because not
-                        all browsers support this yet (or you can always specify this property to
-                        implement custom fetch logic).<br>
-                        <br>
-                        If you implement this callback yourself, make sure you can accept the same
-                        parameters as <code>window.fetch()</code>. In addition, you will receive a
-                        third parameter which matches the parameter to the <code>query()</code>
-                        function documented below.<br>
-                        <br>
-                        Make sure you return a Promise that resolves to either a
-                        <a href="https://developer.mozilla.org/en-US/docs/Web/API/Response"><code>Response</code></a>
-                        object, an <code>Array</code> with result items, or an object with a
-                        <code>results</code> array and an optional <code>more</code> boolean. The
-                        latter case is further documented on the <code>query()</code> function
-                        below.</dd>
+                            <dl>
+                                <dt><b>fetch</b></dt>
+                                <dd>The function to use for fetching the AJAX results. By default,
+                                    <a href="https://developer.mozilla.org/en-US/docs/Web/API/GlobalFetch/fetch"><code>window.fetch()</code></a>                                    is used, unless you use a jQuery build. If you use a jQuery build, it will automatically
+                                    replace the default with a wrapper that uses
+                                    <code>$.ajax()</code> internally. If you don't use a jQuery build, you are encouraged
+                                    to ship a polyfill for <code>window.fetch()</code>, because not all browsers support
+                                    this yet (or you can always specify this property to implement custom fetch logic).<br>
+                                    <br> If you implement this callback yourself, make sure you can accept the same parameters
+                                    as <code>window.fetch()</code>. In addition, you will receive a third parameter which
+                                    matches the parameter to the <code>query()</code> function documented below.<br>
+                                    <br> Make sure you return a Promise that resolves to either a
+                                    <a href="https://developer.mozilla.org/en-US/docs/Web/API/Response"><code>Response</code></a>                                    object, an <code>Array</code> with result items, or an object with a
+                                    <code>results</code> array and an optional <code>more</code> boolean. The latter case
+                                    is further documented on the <code>query()</code> function below.
+                                </dd>
 
-                    <dt><b>formatError</b></dt>
-                    <dd>Function that returns an HTML-formatted error message in case of an AJAX
-                        error. By default, <code>Selectivity.Locale.ajaxError</code> is used. The
-                        function receives two parameters: <code>term</code> and <code>error</code>.
-                        The first is the term being searched for while the latter is the error
-                        object that resulted from the failed request. Please be aware that because
-                        the function returns raw HTML, you are responsible for properly escaping
-                        any output to prevent XSS attacks.</dd>
+                                <dt><b>formatError</b></dt>
+                                <dd>Function that returns an HTML-formatted error message in case of an AJAX error. By default,
+                                    <code>Selectivity.Locale.ajaxError</code> is used. The function receives two parameters:
+                                    <code>term</code> and <code>error</code>. The first is the term being searched for while
+                                    the latter is the error object that resulted from the failed request. Please be aware
+                                    that because the function returns raw HTML, you are responsible for properly escaping
+                                    any output to prevent XSS attacks.</dd>
 
-                    <dt><b>minimumInputLength</b></dt>
-                    <dd>An integer that specifies the minimum amount of characters required before
-                        an actual AJAX query will be performed.</dd>
+                                <dt><b>minimumInputLength</b></dt>
+                                <dd>An integer that specifies the minimum amount of characters required before an actual AJAX
+                                    query will be performed.</dd>
 
-                    <dt><b>params</b></dt>
-                    <dd>Function that should return an object with additional query parameters to be
-                        added to the URL. Receives <code>term</code> and <code>offset</code>
-                        parameters. The term is a search term to search for and the offset is an
-                        integer of results that should be skipped for pagination.</dd>
+                                <dt><b>params</b></dt>
+                                <dd>Function that should return an object with additional query parameters to be added to the
+                                    URL. Receives <code>term</code> and <code>offset</code> parameters. The term is a search
+                                    term to search for and the offset is an integer of results that should be skipped for
+                                    pagination.</dd>
 
-                    <dt><b>quietMillis</b></dt>
-                    <dd>Number of milliseconds to wait before submitting AJAX requests when the user
-                        is entering a search term. It is advised to use some number around 200 to
-                        300 (milliseconds) to not delay results too much, while not submitting too
-                        many requests while the user is typing.</dd>
+                                <dt><b>quietMillis</b></dt>
+                                <dd>Number of milliseconds to wait before submitting AJAX requests when the user is entering
+                                    a search term. It is advised to use some number around 200 to 300 (milliseconds) to not
+                                    delay results too much, while not submitting too many requests while the user is typing.</dd>
 
-                    <dt>url</dt>
-                    <dd>URL to send the AJAX requests to. This can be given either as a string or as
-                        a function returning a string. If a function is given, it is passed an
-                        <code>options</code> object with <code>offset</code> and <code>term</code>
-                        properties, just like the <code>query</code> method documented below. Note
-                        the URL does not need to contain (all) query parameters, as those can be
-                        specified using the <code>params</code> option.</dd>
-                </dl>
-            </td>
-        </tr>
-        <tr>
-            <td>allowClear</td>
-            <td><code>Boolean</code></td>
-            <td>Set to <code>true</code> to allow the selection to be cleared. This option only
-                applies to single-value inputs.<br>
-                <br>
-                If you have used a <code>&lt;select&gt;</code> element to initialize the Selectivity
-                instance, this option defaults to <code>true</code> unless the element has a
-                <code>required</code> attribute.</td>
-        </tr>
-        <tr>
-            <td>backspace<wbr>Highlights<wbr>BeforeDelete</td>
-            <td><code>Boolean</code></td>
-            <td>If set to <code>true</code>, when the user enters a backspace while there is no text
-                in the search field but there are selected items, the last selected item will be
-                highlighted and when a second backspace is entered the item is deleted. If
-                <code>false</code>, the item gets deleted on the first backspace. The default value
-                is <code>false</code>.</td>
-        </tr>
-        <tr>
-            <td>closeOnSelect</td>
-            <td><code>Boolean</code></td>
-            <td>Set to <code>false</code> to keep the dropdown open after the user has selected an
-                item. This is useful if you want to allow the user to quickly select multiple items.
-                The default value is <code>true</code>.</td>
-        </tr>
-        <tr>
-            <td>createTokenItem</td>
-            <td><code>Function</code></td>
-            <td>Function to create a new item from a user's search term. This is used to turn the
-                term into an item when dropdowns are disabled and the user presses Enter. It is also
-                used by the default tokenizer to create items for individual tokens. The function
-                receives a <code>token</code> parameter which is the search term (or part of a
-                search term) to create an item for and must return an item object with
-                <code>id</code> and <code>text</code> properties or <code>null</code> if no token
-                can be created from the term. The default is a function that returns an item where
-                the ID and text both match the term for any non-empty string and which returns
-                <code>null</code> otherwise.<br>
-                <br>
-                This option only applies to multiple-value inputs.</td>
-        </tr>
-        <tr>
-            <td>data</td>
-            <td><code>Object</code> or <code>Array</code></td>
-            <td>Initial selection data to set. This should be an object with <code>id</code> and
-                <code>text</code> properties in the case of input type 'Single', or an array of such
-                objects otherwise. This option is mutually exclusive with <code>value</code>.<br>
-                <br>
-                If you're using the React API, you must also specify the <code>onChange</code>
-                listener to get updates when the data changes, or use <code>defaultData</code>
-                instead.</td>
-        </tr>
-        <tr>
-            <td>defaultData *(React only)*</td>
-            <td><code>Object</code> or <code>Array</code></td>
-            <td>Initial selection data to set. This should be an object with <code>id</code> and
-                <code>text</code> properties in the case of input type 'Single', or an array of such
-                objects otherwise. This option is mutually exclusive with
-                <code>defaultValue</code>.<br>
-                <br>
-                Unlike <code>data</code>, any changes to this property are not reflected on the data
-                of the Selectivity instance.</td>
-        </tr>
-        <tr>
-            <td>defaultValue *(React only)*</td>
-            <td><code>ID</code> or <code>Array</code></td>
-            <td>Initial value to set. This should be an ID (string or number) in the case of input
-                type 'Single', or array of IDs otherwise. This property is mutually exclusive with
-                <code>defaultData</code>.<br>
-                <br>
-                Unlike <code>value</code>, any changes to this property are not reflected on the
-                value of the Selectivity instance.</td>
-        </tr>
-        <tr>
-            <td>dropdown</td>
-            <td><code>Function</code></td>
-            <td>Custom dropdown implementation to use for this instance.</td>
-        </tr>
-        <tr>
-            <td>dropdownCssClass</td>
-            <td><code>String</code></td>
-            <td>Optional CSS class to add to the dropdown's top-level element.</td>
-        </tr>
-        <tr>
-            <td>initSelection</td>
-            <td><code>Function</code></td>
-            <td>Function to map values by ID to selection data. This function receives two
-                arguments, <code>value</code> and <code>callback</code>. The value is the current
-                value of the selection, which is an ID or an array of IDs, depending on the input
-                type. The callback should be invoked with an object containing <code>id</code> and
-                <code>text</code> properties, or an array of such objects (again, depending on the
-                input type).</td>
-        </tr>
-        <tr>
-            <td>inputType</td>
-            <td><code>String</code> or <code>Function</code></td>
-            <td>The input type to use. Default input types include 'Multiple', 'Single' and 'Email',
-                but you can add custom input types to the <code>Selectivity.Inputs</code> map or
-                just specify one here as a function. The default value is 'Single', unless
-                <code>multiple</code> is <code>true</code> in which case it is 'Multiple'.<br>
-                <br>
-                <b>Note:</b> This option cannot be switched after the instance is created.</td>
-        </tr>
-        <tr>
-            <td>items</td>
-            <td><code>Array</code></td>
-            <td>Array of items from which to select. Should be an array of objects with
-                <code>id</code> and <code>text</code> properties. As convenience, you may also pass
-                an array of strings, in which case the same string is used for both the ID and the
-                text. Items may be nested by adding a <code>children</code> property to any item,
-                whose value should be another array of items. Items that have children may omit
-                having an ID.<br>
-                <br>
-                If <code>items</code> are specified, all items are expected to be available locally
-                and all selection operations operate on this local array only. If omitted, items are
-                not available locally, and the <code>query</code> option should be provided to fetch
-                data.<br>
-                <br>
-                If you have used a <code>&lt;select&gt;</code> element to initialize the
-                Selectivity instance, its <code>&lt;option&gt;</code> and
-                <code>&lt;optgroup&gt;</code> elements are used to initialize the items array.</td>
-        </tr>
-        <tr>
-            <td>matcher</td>
-            <td><code>Function</code></td>
-            <td>Function to determine whether text matches a given search term. Note this function
-                is only used if you have specified an array of items. Receives two arguments:
-                <code>term</code> and <code>text</code>. The term is the search term, which for
-                performance reasons has always been already processed using
-                <code>Selectivity.transformText()</code>. The text is the text that should match the
-                search term.<br>
-                <br>
-                The function should return <code>true</code> if the text matches the term, and
-                <code>false</code> otherwise.</td>
-        </tr>
-        <tr>
-            <td>multiple</td>
-            <td><code>boolean</code></td>
-            <td>May be set to <code>true</code> as short-hand for specifying
-                <code>inputType: 'Multiple'</code>.<br>
-                <br>
-                If you have used a <code>&lt;select&gt;</code> element to initialize the Selectivity
-                instance, this option is set to <code>true</code> when the element has a
-                <code>multiple</code> attribute.<br>
-                <br>
-                <b>Note:</b> This option cannot be switched after the instance is created.</td>
-        </tr>
-        <tr>
-            <td>placeholder</td>
-            <td><code>String</code></td>
-            <td>Placeholder text to display when the element has no focus and selected items.<br>
-                <br>
-                If you have used a <code>&lt;select&gt;</code> element to initialize the Selectivity
-                instance, this option may be set through the <code>data-placeholder</code>
-                attribute.</td>
-        </tr>
-        <tr>
-            <td>positionDropdown</td>
-            <td><code>Function</code></td>
-            <td>Function to position the dropdown. Receives <code>dropdownEl</code> (the element to
-                be positioned) and <code>selectEl</code> (the element of the Selectivity instance)
-                as arguments. The default implementation positions the dropdown element under the
-                Selectivity instance's element and gives it the same width as well.</td>
-        </tr>
-        <tr>
-            <td>query</td>
-            <td><code>Function</code></td>
-            <td>Function to use for querying items. Receives a single object with the following
-                properties:
+                                <dt>url</dt>
+                                <dd>URL to send the AJAX requests to. This can be given either as a string or as a function returning
+                                    a string. If a function is given, it is passed an
+                                    <code>options</code> object with <code>offset</code> and <code>term</code> properties,
+                                    just like the <code>query</code> method documented below. Note the URL does not need
+                                    to contain (all) query parameters, as those can be specified using the <code>params</code>                                    option.</dd>
+                            </dl>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>allowClear</td>
+                        <td><code>Boolean</code></td>
+                        <td>Set to <code>true</code> to allow the selection to be cleared. This option only applies to single-value
+                            inputs.<br>
+                            <br> If you have used a <code>&lt;select&gt;</code> element to initialize the Selectivity instance,
+                            this option defaults to <code>true</code> unless the element has a
+                            <code>required</code> attribute.</td>
+                    </tr>
+                    <tr>
+                        <td>backspace
+                            <wbr>Highlights
+                            <wbr>BeforeDelete</td>
+                        <td><code>Boolean</code></td>
+                        <td>If set to <code>true</code>, when the user enters a backspace while there is no text in the search
+                            field but there are selected items, the last selected item will be highlighted and when a second
+                            backspace is entered the item is deleted. If
+                            <code>false</code>, the item gets deleted on the first backspace. The default value is <code>false</code>.</td>
+                    </tr>
+                    <tr>
+                        <td>closeOnSelect</td>
+                        <td><code>Boolean</code></td>
+                        <td>Set to <code>false</code> to keep the dropdown open after the user has selected an item. This is
+                            useful if you want to allow the user to quickly select multiple items. The default value is <code>true</code>.</td>
+                    </tr>
+                    <tr>
+                        <td>createTokenItem</td>
+                        <td><code>Function</code></td>
+                        <td>Function to create a new item from a user's search term. This is used to turn the term into an item
+                            when dropdowns are disabled and the user presses Enter. It is also used by the default tokenizer
+                            to create items for individual tokens. The function receives a <code>token</code> parameter which
+                            is the search term (or part of a search term) to create an item for and must return an item object
+                            with
+                            <code>id</code> and <code>text</code> properties or <code>null</code> if no token can be created
+                            from the term. The default is a function that returns an item where the ID and text both match
+                            the term for any non-empty string and which returns
+                            <code>null</code> otherwise.<br>
+                            <br> This option only applies to multiple-value inputs.</td>
+                    </tr>
+                    <tr>
+                        <td>data</td>
+                        <td><code>Object</code> or <code>Array</code></td>
+                        <td>Initial selection data to set. This should be an object with <code>id</code> and
+                            <code>text</code> properties in the case of input type 'Single', or an array of such objects
+                            otherwise. This option is mutually exclusive with <code>value</code>.<br>
+                            <br> If you're using the React API, you must also specify the <code>onChange</code> listener
+                            to get updates when the data changes, or use <code>defaultData</code> instead.
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>defaultData *(React only)*</td>
+                        <td><code>Object</code> or <code>Array</code></td>
+                        <td>Initial selection data to set. This should be an object with <code>id</code> and
+                            <code>text</code> properties in the case of input type 'Single', or an array of such objects
+                            otherwise. This option is mutually exclusive with
+                            <code>defaultValue</code>.<br>
+                            <br> Unlike <code>data</code>, any changes to this property are not reflected on the data of
+                            the Selectivity instance.</td>
+                    </tr>
+                    <tr>
+                        <td>defaultValue *(React only)*</td>
+                        <td><code>ID</code> or <code>Array</code></td>
+                        <td>Initial value to set. This should be an ID (string or number) in the case of input type 'Single',
+                            or array of IDs otherwise. This property is mutually exclusive with
+                            <code>defaultData</code>.<br>
+                            <br> Unlike <code>value</code>, any changes to this property are not reflected on the value of
+                            the Selectivity instance.</td>
+                    </tr>
+                    <tr>
+                        <td>dropdown</td>
+                        <td><code>Function</code></td>
+                        <td>Custom dropdown implementation to use for this instance.</td>
+                    </tr>
+                    <tr>
+                        <td>dropdownCssClass</td>
+                        <td><code>String</code></td>
+                        <td>Optional CSS class to add to the dropdown's top-level element.</td>
+                    </tr>
+                    <tr>
+                        <td>initSelection</td>
+                        <td><code>Function</code></td>
+                        <td>Function to map values by ID to selection data. This function receives two arguments, <code>value</code>                            and <code>callback</code>. The value is the current value of the selection, which is an ID or
+                            an array of IDs, depending on the input type. The callback should be invoked with an object containing
+                            <code>id</code> and
+                            <code>text</code> properties, or an array of such objects (again, depending on the input type).</td>
+                    </tr>
+                    <tr>
+                        <td>inputType</td>
+                        <td><code>String</code> or <code>Function</code></td>
+                        <td>The input type to use. Default input types include 'Multiple', 'Single' and 'Email', but you can
+                            add custom input types to the <code>Selectivity.Inputs</code> map or just specify one here as
+                            a function. The default value is 'Single', unless
+                            <code>multiple</code> is <code>true</code> in which case it is 'Multiple'.<br>
+                            <br>
+                            <b>Note:</b> This option cannot be switched after the instance is created.</td>
+                    </tr>
+                    <tr>
+                        <td>items</td>
+                        <td><code>Array</code></td>
+                        <td>Array of items from which to select. Should be an array of objects with
+                            <code>id</code> and <code>text</code> properties. As convenience, you may also pass an array
+                            of strings, in which case the same string is used for both the ID and the text. Items may be
+                            nested by adding a <code>children</code> property to any item, whose value should be another
+                            array of items. Items that have children may omit having an ID.<br>
+                            <br> If <code>items</code> are specified, all items are expected to be available locally and
+                            all selection operations operate on this local array only. If omitted, items are not available
+                            locally, and the <code>query</code> option should be provided to fetch data.
+                            <br>
+                            <br> If you have used a <code>&lt;select&gt;</code> element to initialize the Selectivity instance,
+                            its <code>&lt;option&gt;</code> and
+                            <code>&lt;optgroup&gt;</code> elements are used to initialize the items array.</td>
+                    </tr>
+                    <tr>
+                        <td>matcher</td>
+                        <td><code>Function</code></td>
+                        <td>Function to determine whether text matches a given search term. Note this function is only used if
+                            you have specified an array of items. Receives two arguments:
+                            <code>term</code> and <code>text</code>. The term is the search term, which for performance reasons
+                            has always been already processed using
+                            <code>Selectivity.transformText()</code>. The text is the text that should match the search term.<br>
+                            <br> The function should return <code>true</code> if the text matches the term, and
+                            <code>false</code> otherwise.</td>
+                    </tr>
+                    <tr>
+                        <td>multiple</td>
+                        <td><code>boolean</code></td>
+                        <td>May be set to <code>true</code> as short-hand for specifying
+                            <code>inputType: 'Multiple'</code>.<br>
+                            <br> If you have used a <code>&lt;select&gt;</code> element to initialize the Selectivity instance,
+                            this option is set to <code>true</code> when the element has a
+                            <code>multiple</code> attribute.<br>
+                            <br>
+                            <b>Note:</b> This option cannot be switched after the instance is created.</td>
+                    </tr>
+                    <tr>
+                        <td>placeholder</td>
+                        <td><code>String</code></td>
+                        <td>Placeholder text to display when the element has no focus and selected items.<br>
+                            <br> If you have used a <code>&lt;select&gt;</code> element to initialize the Selectivity instance,
+                            this option may be set through the <code>data-placeholder</code> attribute.
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>positionDropdown</td>
+                        <td><code>Function</code></td>
+                        <td>Function to position the dropdown. Receives <code>dropdownEl</code> (the element to be positioned)
+                            and <code>selectEl</code> (the element of the Selectivity instance) as arguments. The default
+                            implementation positions the dropdown element under the Selectivity instance's element and gives
+                            it the same width as well.</td>
+                    </tr>
+                    <tr>
+                        <td>query</td>
+                        <td><code>Function</code></td>
+                        <td>Function to use for querying items. Receives a single object with the following properties:
 
-                <dl>
-                    <dt><b>callback</b></dt>
-                    <dd>This is the function that should be invoked when the results are available.
-                        It should be passed a single object with <code>results</code> and
-                        <code>more</code> properties. The first is an array with result items in the
-                        same format as the <code>items</code> option and the latter is an optional
-                        boolean that may be set to <code>true</code> to indicate more results are
-                        available through pagination.</dd>
-                    <dt><b>error</b></dt>
-                    <dd>Another function that may be called to indicate the query operation failed.
-                        You should pass it a message which will be displayed to the user. Optionally
-                        you can pass an options object as the second argument, which may have an
-                        <code>escape</code> property which, if set to <code>false</code>, indicates
-                        the message contains raw HTML and should not be escaped. Be aware this does
-                        make you responsible for properly escaping user input to avoid XSS
-                        attacks.</dd>
-                    <dt>offset</dt>
-                    <dd>An integer that indicates how many results should be skipped when returning
-                        more results. This is used to implement pagination.</dd>
-                    <dt>term</dt>
-                    <dd>The search term the user is searching for. Unlike with the
-                        <code>matcher</code> function, the term has not been processed using
-                        <code>Selectivity.transformText()</code>.</dd>
-                </dl>
+                            <dl>
+                                <dt><b>callback</b></dt>
+                                <dd>This is the function that should be invoked when the results are available. It should be
+                                    passed a single object with <code>results</code> and
+                                    <code>more</code> properties. The first is an array with result items in the same format
+                                    as the <code>items</code> option and the latter is an optional boolean that may be set
+                                    to <code>true</code> to indicate more results are available through pagination.</dd>
+                                <dt><b>error</b></dt>
+                                <dd>Another function that may be called to indicate the query operation failed. You should pass
+                                    it a message which will be displayed to the user. Optionally you can pass an options
+                                    object as the second argument, which may have an
+                                    <code>escape</code> property which, if set to <code>false</code>, indicates the message
+                                    contains raw HTML and should not be escaped. Be aware this does make you responsible
+                                    for properly escaping user input to avoid XSS attacks.
+                                </dd>
+                                <dt>offset</dt>
+                                <dd>An integer that indicates how many results should be skipped when returning more results.
+                                    This is used to implement pagination.</dd>
+                                <dt>term</dt>
+                                <dd>The search term the user is searching for. Unlike with the
+                                    <code>matcher</code> function, the term has not been processed using
+                                    <code>Selectivity.transformText()</code>.</dd>
+                            </dl>
 
-                This option is ignored if the <code>items</code> option is used.</td>
-        </tr>
-        <tr>
-            <td>readOnly</td>
-            <td><code>Boolean</code></td>
-            <td>If <code>true</code>, disables any modification of the input.</td>
-        </tr>
-        <tr>
-            <td>removeOnly</td>
-            <td><code>Boolean</code></td>
-            <td>If <code>true</code>, disables any modification of the input except removing of
-                selected items.</td>
-        </tr>
-        <tr>
-            <td>shouldOpenSubmenu</td>
-            <td><code>Function</code></td>
-            <td>Callback to invoke whenever a result item is highlighted that will decide whether a
-                submenu should be opened. Receives two parameters:
+                            This option is ignored if the <code>items</code> option is used.</td>
+                    </tr>
+                    <tr>
+                        <td>readOnly</td>
+                        <td><code>Boolean</code></td>
+                        <td>If <code>true</code>, disables any modification of the input.</td>
+                    </tr>
+                    <tr>
+                        <td>removeOnly</td>
+                        <td><code>Boolean</code></td>
+                        <td>If <code>true</code>, disables any modification of the input except removing of selected items.</td>
+                    </tr>
+                    <tr>
+                        <td>shouldOpenSubmenu</td>
+                        <td><code>Function</code></td>
+                        <td>Callback to invoke whenever a result item is highlighted that will decide whether a submenu should
+                            be opened. Receives two parameters:
 
-                <dl>
-                    <dt><b>item</b></dt>
-                    <dd>The currently highlighted result item.</dd>
-                    <dt><b>reason</b></dt>
-                    <dd>The reason why the item is being highlighted. Possible values:
-                        <code>'current_value'</code> (the item is being highlighted because it is
-                        the current value of the input), <code>'first_result'</code> (highlighted
-                        because it is the first result in the dropdown), <code>'hovered'</code>
-                        (the user hovered over the item).</dd>
-                </dl>
+                            <dl>
+                                <dt><b>item</b></dt>
+                                <dd>The currently highlighted result item.</dd>
+                                <dt><b>reason</b></dt>
+                                <dd>The reason why the item is being highlighted. Possible values:
+                                    <code>'current_value'</code> (the item is being highlighted because it is the current
+                                    value of the input), <code>'first_result'</code> (highlighted because it is the first
+                                    result in the dropdown), <code>'hovered'</code> (the user hovered over the item).</dd>
+                            </dl>
 
-                This function is only called for items for which a submenu is defined.
-            </td>
-        </tr>
-        <tr>
-            <td>showDropdown</td>
-            <td><code>Boolean</code></td>
-            <td>Set to <code>false</code> if you don't want to use any dropdown (you can still open
-                it programmatically using <code>open()</code>).</td>
-        </tr>
-        <tr>
-            <td>show<wbr>SearchInput<wbr>InDropdown</td>
-            <td><code>Boolean</code></td>
-            <td>Set to <code>false</code> to remove the search input used in dropdowns. This option
-                only applies to single-value inputs, as multiple-value inputs don't have the search
-                input in the dropdown to begin with. The default is <code>true</code>.</td>
-        </tr>
-        <tr>
-            <td>suppress<wbr>WheelSelector</td>
-            <td><code>String</code> or <code>null</code></td>
-            <td>The Selectivity Dropdown by default suppresses wheel events so that any scrolling
-                in the dropdown doesn't affect the scroll position of the page. Through this option
-                you can select which selector should be monited for scroll events to suppress. Set
-                it to <code>null</code> to disable suppressing of mousewheel events altogether. The
-                default value is <code>".selectivity-results-container"</code>.</td>
-        </tr>
-        <tr>
-            <td>templates</td>
-            <td><code>Object</code></td>
-            <td>Object with instance-specific templates to override the global templates assigned to
-                <code>selectivity.Templates</code>. Inline documentation for the templates is provided
-                in <a href="https://github.com/arendjr/selectivity/blob/master/src/templates.js">src/templates.js</a>.</td>
-        </tr>
-        <tr>
-            <td>tokenizer</td>
-            <td><code>Function</code></td>
-            <td>Function for tokenizing search terms. Will receive the <code>input</code> (the input
-                string to tokenize), <code>selection</code> (the current selection data),
-                <code>createToken</code> (callback to create a token from the search terms, should
-                be passed an item object with <code>id</code> and <code>text</code> properties) and
-                <code>options</code> (the options set on the Selectivity instance) arguments. Any string
-                returned by the tokenizer function is treated as the remainder of untokenized input.
-                This option only applies to multiple-value inputs.</td>
-        </tr>
-        <tr>
-            <td>tokenSeparators</td>
-            <td><code>Array</code></td>
-            <td>Array of string separators which are used to separate the search term into tokens.
-                If specified and the tokenizer property is not set, the tokenizer property will be
-                set to a function which splits the search term into tokens separated by any of the
-                given separators. The tokens will be converted into selectable items using the
-                <code>createTokenItem</code> function. The default tokenizer also filters out
-                already selected items. This option only applies to multiple-value inputs.</td>
-        </tr>
-        <tr>
-            <td>value</td>
-            <td><code>ID</code> or <code>Array</code></td>
-            <td>Initial value to set. This should be an ID (string or number) in the case of input
-                type 'Single', or array of IDs otherwise. This property is mutually exclusive with
-                <code>data</code>.<br>
-                <br>
-                If you're using the React API, you must also specify the <code>onChange</code>
-                listener to get updates when the data changes, or use <code>defaultValue</code>
-                instead.</td>
-        </tr>
-    </tbody>
-</table>
+                            This function is only called for items for which a submenu is defined.
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>showDropdown</td>
+                        <td><code>Boolean</code></td>
+                        <td>Set to <code>false</code> if you don't want to use any dropdown (you can still open it programmatically
+                            using <code>open()</code>).</td>
+                    </tr>
+                    <tr>
+                        <td>show
+                            <wbr>SearchInput
+                            <wbr>InDropdown</td>
+                        <td><code>Boolean</code></td>
+                        <td>Set to <code>false</code> to remove the search input used in dropdowns. This option only applies
+                            to single-value inputs, as multiple-value inputs don't have the search input in the dropdown
+                            to begin with. The default is <code>true</code>.</td>
+                    </tr>
+                    <tr>
+                        <td>suppress
+                            <wbr>WheelSelector</td>
+                        <td><code>String</code> or <code>null</code></td>
+                        <td>The Selectivity Dropdown by default suppresses wheel events so that any scrolling in the dropdown
+                            doesn't affect the scroll position of the page. Through this option you can select which selector
+                            should be monited for scroll events to suppress. Set it to <code>null</code> to disable suppressing
+                            of mousewheel events altogether. The default value is <code>".selectivity-results-container"</code>.</td>
+                    </tr>
+                    <tr>
+                        <td>templates</td>
+                        <td><code>Object</code></td>
+                        <td>Object with instance-specific templates to override the global templates assigned to
+                            <code>selectivity.Templates</code>. Inline documentation for the templates is provided in
+                            <a
+                                href="https://github.com/arendjr/selectivity/blob/master/src/templates.js">src/templates.js</a>.</td>
+                    </tr>
+                    <tr>
+                        <td>tokenizer</td>
+                        <td><code>Function</code></td>
+                        <td>Function for tokenizing search terms. Will receive the <code>input</code> (the input string to tokenize),
+                            <code>selection</code> (the current selection data),
+                            <code>createToken</code> (callback to create a token from the search terms, should be passed
+                            an item object with <code>id</code> and <code>text</code> properties) and
+                            <code>options</code> (the options set on the Selectivity instance) arguments. Any string returned
+                            by the tokenizer function is treated as the remainder of untokenized input. This option only
+                            applies to multiple-value inputs.</td>
+                    </tr>
+                    <tr>
+                        <td>tokenSeparators</td>
+                        <td><code>Array</code></td>
+                        <td>Array of string separators which are used to separate the search term into tokens. If specified and
+                            the tokenizer property is not set, the tokenizer property will be set to a function which splits
+                            the search term into tokens separated by any of the given separators. The tokens will be converted
+                            into selectable items using the
+                            <code>createTokenItem</code> function. The default tokenizer also filters out already selected
+                            items. This option only applies to multiple-value inputs.</td>
+                    </tr>
+                    <tr>
+                        <td>value</td>
+                        <td><code>ID</code> or <code>Array</code></td>
+                        <td>Initial value to set. This should be an ID (string or number) in the case of input type 'Single',
+                            or array of IDs otherwise. This property is mutually exclusive with
+                            <code>data</code>.<br>
+                            <br> If you're using the React API, you must also specify the <code>onChange</code> listener
+                            to get updates when the data changes, or use <code>defaultValue</code> instead.
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
 
-<h1>
-<a id="methods" class="anchor" href="#methods" aria-hidden="true"></a>Methods</h1>
+            <h1>
+                <a id="methods" class="anchor" href="#methods" aria-hidden="true"></a>Methods</h1>
 
-<p>If you're using the jQuery API, methods are invoked by passing the name of the method, followed
-    by any arguments, to the <code>selectivity()</code> function. Example:<p>
+            <p>If you're using the jQuery API, methods are invoked by passing the name of the method, followed by any arguments,
+                to the <code>selectivity()</code> function. Example:
+                <p>
 
-<p><code>$(selector).selectivity(<span class="string">'data'</span>, { id: 1, text: <span class="string">'Amsterdam'</span> })</code></p>
+                    <p><code>$(selector).selectivity(<span class="string">'data'</span>, { id: 1, text: <span class="string">'Amsterdam'</span> })</code></p>
 
-<p>If you're using the React API, the methods to use are somewhat limited, because you are expected
-    to use the component declaratively as much as possible. But for those methods available, you can
-    call them like ordinary methods if you have a reference to the component instance:
+                    <p>If you're using the React API, the methods to use are somewhat limited, because you are expected to use
+                        the component declaratively as much as possible. But for those methods available, you can call them
+                        like ordinary methods if you have a reference to the component instance:
 
-<p><code>this.refs.selectivity.getData()</code></p>
+                        <p><code>this.refs.selectivity.getData()</code></p>
 
-<h2>add</h2>
-<p><i>(jQuery only, multiple-value inputs only)</i></p>
+                        <h2>add</h2>
+                        <p><i>(jQuery only, multiple-value inputs only)</i></p>
 
-<p>Adds an item to the selection.</p>
+                        <p>Adds an item to the selection.</p>
 
-<table>
-    <thead>
-        <tr>
-            <th>Argument</th>
-            <th>Type</th>
-            <th>Description</th>
-        </tr>
-    </thead>
-    <tbody>
-        <tr>
-            <td>item</td>
-            <td><code>ID</code> or <code>Object</code></td>
-            <td>The item to add, either as ID or object with <code>id</code> and <code>text</code>
-                properties.</td>
-        </tr>
-    </tbody>
-</table>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Argument</th>
+                                    <th>Type</th>
+                                    <th>Description</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>item</td>
+                                    <td><code>ID</code> or <code>Object</code></td>
+                                    <td>The item to add, either as ID or object with <code>id</code> and <code>text</code> properties.
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
 
-<p><b>Examples:</b></p>
+                        <p><b>Examples:</b></p>
 
-<p><code>$(selector).selectivity(<span class="string">'add'</span>, 1)</code></p>
+                        <p><code>$(selector).selectivity(<span class="string">'add'</span>, 1)</code></p>
 
-<p><code>$(selector).selectivity(<span class="string">'add'</span>, { id: 1, text: <span class="string">'Amsterdam'</span> })</code></p>
+                        <p><code>$(selector).selectivity(<span class="string">'add'</span>, { id: 1, text: <span class="string">'Amsterdam'</span> })</code></p>
 
-<h2>clear</h2>
-<p><i>(jQuery only)</i></p>
+                        <h2>clear</h2>
+                        <p><i>(jQuery only)</i></p>
 
-<p>Clears the selection.</p>
+                        <p>Clears the selection.</p>
 
-<p><b>Example:</b></p>
+                        <p><b>Example:</b></p>
 
-<p><code>$(selector).selectivity(<span class="string">'clear'</span>)</code></p>
+                        <p><code>$(selector).selectivity(<span class="string">'clear'</span>)</code></p>
 
-<h2>close</h2>
+                        <h2>close</h2>
 
-<p>Closes the dropdown.</p>
+                        <p>Closes the dropdown.</p>
 
-<h2>data</h2>
-<p><i>(React: Only getData() is provided)</i></p>
+                        <h2>data</h2>
+                        <p><i>(React: Only getData() is provided)</i></p>
 
-<p>Sets or gets the data of the selection. If no argument is given, the current data is returned.
-    Otherwise, the data is set to the argument given.</p>
+                        <p>Sets or gets the data of the selection. If no argument is given, the current data is returned. Otherwise,
+                            the data is set to the argument given.</p>
 
-<p>When new data is set, the appropriate <code>change</code> event is automatically
-    generated, unless <code>triggerChange</code> is set to <code>false</code>.</p>
+                        <p>When new data is set, the appropriate <code>change</code> event is automatically generated, unless
+                            <code>triggerChange</code> is set to <code>false</code>.</p>
 
-<table>
-    <thead>
-        <tr>
-            <th>Argument</th>
-            <th>Type</th>
-            <th>Description</th>
-        </tr>
-    </thead>
-    <tbody>
-        <tr>
-            <td>data</td>
-            <td><code>Object</code> or <code>Array</code></td>
-            <td>The new data to set, either as object with <code>id</code> and <code>text</code>
-                properties (for single-value inputs) or as array of such objects (for multiple-value
-                inputs).</td>
-        </tr>
-        <tr>
-            <td>options</td>
-            <td><code>Object</code></td>
-            <td>Optional options object. May contain the following property:
-                <dl>
-                    <dt><b>triggerChange</b></dt>
-                    <dd>Set to <code>false</code> to suppress the <code>change</code> event. Note
-                        this will also cause the UI to not update automatically; so you may want to
-                        call <code>rerenderSelection()</code> manually when using this option.</dd>
-                </dl>
-            </td>
-        </tr>
-    </tbody>
-</table>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Argument</th>
+                                    <th>Type</th>
+                                    <th>Description</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>data</td>
+                                    <td><code>Object</code> or <code>Array</code></td>
+                                    <td>The new data to set, either as object with <code>id</code> and <code>text</code> properties
+                                        (for single-value inputs) or as array of such objects (for multiple-value inputs).
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>options</td>
+                                    <td><code>Object</code></td>
+                                    <td>Optional options object. May contain the following property:
+                                        <dl>
+                                            <dt><b>triggerChange</b></dt>
+                                            <dd>Set to <code>false</code> to suppress the <code>change</code> event. Note this
+                                                will also cause the UI to not update automatically; so you may want to call
+                                                <code>rerenderSelection()</code> manually when using this option.</dd>
+                                        </dl>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
 
-<p><b>Examples:</b></p>
+                        <p><b>Examples:</b></p>
 
-<pre class="api-example"><code><span class="comment">// returns the current data with jQuery:</span>
+                        <pre class="api-example"><code><span class="comment">// returns the current data with jQuery:</span>
 $(selector).selectivity(<span class="string">'data'</span>)</code></pre>
 
-<pre class="api-example"><code><span class="comment">// sets new data on a single-value input:</span>
+                        <pre class="api-example"><code><span class="comment">// sets new data on a single-value input:</span>
 $(selector).selectivity(<span class="string">'data'</span>, { id: 1, text: <span class="string">'Amsterdam'</span> })</code></pre>
 
-<pre class="api-example"><code><span class="comment">// sets new data on a multiple-value input:</span>
+                        <pre class="api-example"><code><span class="comment">// sets new data on a multiple-value input:</span>
 $(selector).selectivity(<span class="string">'data'</span>, [{ id: 1, text: <span class="string">'Amsterdam'</span> }, { id: 2, text: <span class="string">'Antwerp'</span> }])</code></pre>
 
-<pre class="api-example"><code><span class="comment">// returns the current data with React:</span>
+                        <pre class="api-example"><code><span class="comment">// returns the current data with React:</span>
 this.refs.selectivity.getData()</code></pre>
 
-<h2>destroy</h2>
-<p><i>(jQuery only)</i></p>
+                        <h2>destroy</h2>
+                        <p><i>(jQuery only)</i></p>
 
-<p>Destroys the Selectivity instance.</p>
+                        <p>Destroys the Selectivity instance.</p>
 
-<p><b>Note:</b> If you had initialized your Selectivity instance from a <code>&lt;select&gt;</code>
-element, that element is gone forever and you won't get it back by destroying the Selectivity
-instance.
+                        <p><b>Note:</b> If you had initialized your Selectivity instance from a <code>&lt;select&gt;</code>                            element, that element is gone forever and you won't get it back by destroying the Selectivity
+                            instance.
 
-<h2>focus</h2>
+                            <h2>focus</h2>
 
-<p>Focuses the search input.</p>
+                            <p>Focuses the search input.</p>
 
-<h2>open</h2>
+                            <h2>open</h2>
 
-<p>Opens the dropdown.</p>
+                            <p>Opens the dropdown.</p>
 
-<h2>remove</h2>
-<p><i>(jQuery only, multiple-value inputs only)</i></p>
+                            <h2>remove</h2>
+                            <p><i>(jQuery only, multiple-value inputs only)</i></p>
 
-<p>Removes an item from the selection.</p>
+                            <p>Removes an item from the selection.</p>
 
-<table>
-    <thead>
-        <tr>
-            <th>Argument</th>
-            <th>Type</th>
-            <th>Description</th>
-        </tr>
-    </thead>
-    <tbody>
-        <tr>
-            <td>item</td>
-            <td><code>ID</code> or <code>Object</code></td>
-            <td>The item to remove, either as ID or object with <code>id</code> and
-                <code>text</code> properties.</td>
-        </tr>
-    </tbody>
-</table>
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Argument</th>
+                                        <th>Type</th>
+                                        <th>Description</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>item</td>
+                                        <td><code>ID</code> or <code>Object</code></td>
+                                        <td>The item to remove, either as ID or object with <code>id</code> and
+                                            <code>text</code> properties.</td>
+                                    </tr>
+                                </tbody>
+                            </table>
 
-<p><b>Examples:</b></p>
+                            <p><b>Examples:</b></p>
 
-<p><code>$(selector).selectivity(<span class="string">'remove'</span>, 1)</code></p>
+                            <p><code>$(selector).selectivity(<span class="string">'remove'</span>, 1)</code></p>
 
-<p><code>$(selector).selectivity(<span class="string">'remove'</span>, { id: 1, text: <span class="string">'Amsterdam'</span> })</code></p>
+                            <p><code>$(selector).selectivity(<span class="string">'remove'</span>, { id: 1, text: <span class="string">'Amsterdam'</span> })</code></p>
 
-<h2>rerenderSelection</h2>
-<p><i>(jQuery only)</i></p>
+                            <h2>rerenderSelection</h2>
+                            <p><i>(jQuery only)</i></p>
 
-<p>Re-renders the selection.</p>
+                            <p>Re-renders the selection.</p>
 
-<p>Normally the UI is automatically updated whenever the selection changes, but you may want to call
-call this method explicitly if you've updated the selection with the <code>triggerChange</code>
-option set to <code>false</code>.</p>
+                            <p>Normally the UI is automatically updated whenever the selection changes, but you may want to
+                                call call this method explicitly if you've updated the selection with the <code>triggerChange</code>                                option set to <code>false</code>.</p>
 
-<h2>setOptions</h2>
-<p><i>(jQuery only)</i></p>
+                            <h2>setOptions</h2>
+                            <p><i>(jQuery only)</i></p>
 
-<p>Sets one or more options of the Selectivity instance.</p>
+                            <p>Sets one or more options of the Selectivity instance.</p>
 
-<table>
-    <thead>
-        <tr>
-            <th>Argument</th>
-            <th>Type</th>
-            <th>Description</th>
-        </tr>
-    </thead>
-    <tbody>
-        <tr>
-            <td>options</td>
-            <td><code>Object</code></td>
-            <td>Object with one or more options. All options that can be passed to the constructor
-                are valid, with the exception of <code>data</code> and <code>value</code>.</td>
-        </tr>
-    </tbody>
-</table>
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Argument</th>
+                                        <th>Type</th>
+                                        <th>Description</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>options</td>
+                                        <td><code>Object</code></td>
+                                        <td>Object with one or more options. All options that can be passed to the constructor
+                                            are valid, with the exception of <code>data</code> and <code>value</code>.</td>
+                                    </tr>
+                                </tbody>
+                            </table>
 
-<p><b>Example:</b></p>
+                            <p><b>Example:</b></p>
 
-<p><code>$(selector).selectivity(<span class="string">'setOptions'</span>, { readOnly: true })</code></p>
+                            <p><code>$(selector).selectivity(<span class="string">'setOptions'</span>, { readOnly: true })</code></p>
 
-<h2>value / val</h2>
-<p><i>(React: Only getValue() is provided)</i></p>
+                            <h2>value / val</h2>
+                            <p><i>(React: Only getValue() is provided)</i></p>
 
-<p>Sets or gets the value of the selection. If no argument is given, the current value is returned.
-    Otherwise, the value is set to the argument given.</p>
+                            <p>Sets or gets the value of the selection. If no argument is given, the current value is returned.
+                                Otherwise, the value is set to the argument given.</p>
 
-<p><b>Note:</b> When setting the value of the selection, the full data (including the
-    <code>text</code> properties) is updated as well. In order to detect the right text for the
-    ID(s), Selectivity will inspect the <code>items</code> array to look up the corresponding
-    item(s). If no items have been provided, it is assumed the text should be equal to the ID. If
-    this is not what you want, you may want to pass the <code>initSelection</code> option to the
-    Selectivity instance to override this process.</p>
+                            <p><b>Note:</b> When setting the value of the selection, the full data (including the
+                                <code>text</code> properties) is updated as well. In order to detect the right text for the
+                                ID(s), Selectivity will inspect the <code>items</code> array to look up the corresponding
+                                item(s). If no items have been provided, it is assumed the text should be equal to the ID.
+                                If this is not what you want, you may want to pass the <code>initSelection</code> option
+                                to the Selectivity instance to override this process.</p>
 
-<p>When a new value is set, the appropriate <code>change</code> event is automatically
-    generated, unless <code>triggerChange</code> is set to <code>false</code>.</p>
+                            <p>When a new value is set, the appropriate <code>change</code> event is automatically generated,
+                                unless <code>triggerChange</code> is set to <code>false</code>.</p>
 
-<table>
-    <thead>
-        <tr>
-            <th>Argument</th>
-            <th>Type</th>
-            <th>Description</th>
-        </tr>
-    </thead>
-    <tbody>
-        <tr>
-            <td>value</td>
-            <td><code>ID</code> or <code>Array</code></td>
-            <td>The new value to set, either as single ID (for single-value inputs) or an array of
-                IDs (for multiple-value inputs).</td>
-        </tr>
-        <tr>
-            <td>options</td>
-            <td><code>Object</code></td>
-            <td>Optional options object. May contain the following property:
-                <dl>
-                    <dt><b>triggerChange</b></dt>
-                    <dd>Set to <code>false</code> to suppress the <code>change</code> event. Note
-                        this will also cause the UI to not update automatically; so you may want to
-                        call <code>rerenderSelection()</code> manually when using this option.</dd>
-                </dl>
-            </td>
-        </tr>
-    </tbody>
-</table>
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Argument</th>
+                                        <th>Type</th>
+                                        <th>Description</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>value</td>
+                                        <td><code>ID</code> or <code>Array</code></td>
+                                        <td>The new value to set, either as single ID (for single-value inputs) or an array of
+                                            IDs (for multiple-value inputs).</td>
+                                    </tr>
+                                    <tr>
+                                        <td>options</td>
+                                        <td><code>Object</code></td>
+                                        <td>Optional options object. May contain the following property:
+                                            <dl>
+                                                <dt><b>triggerChange</b></dt>
+                                                <dd>Set to <code>false</code> to suppress the <code>change</code> event. Note
+                                                    this will also cause the UI to not update automatically; so you may want
+                                                    to call <code>rerenderSelection()</code> manually when using this option.</dd>
+                                            </dl>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
 
-<p><b>Examples:</b></p>
+                            <p><b>Examples:</b></p>
 
-<pre class="api-example"><code><span class="comment">// returns the current value with jQuery:</span>
+                            <pre class="api-example"><code><span class="comment">// returns the current value with jQuery:</span>
 $(selector).selectivity(<span class="string">'value'</span>)</code></pre>
 
-<pre class="api-example"><code>$(selector).selectivity(<span class="string">'val'</span>)</code></pre>
+                            <pre class="api-example"><code>$(selector).selectivity(<span class="string">'val'</span>)</code></pre>
 
-<pre class="api-example"><code><span class="comment">// sets a new value on a single-value input:</span>
+                            <pre class="api-example"><code><span class="comment">// sets a new value on a single-value input:</span>
 $(selector).selectivity(<span class="string">'value'</span>, 1)</code></pre>
 
-<pre class="api-example"><code><span class="comment">// sets a new value on a multiple-value input:</span>
+                            <pre class="api-example"><code><span class="comment">// sets a new value on a multiple-value input:</span>
 $(selector).selectivity(<span class="string">'value'</span>, [1, 2])</code></pre>
 
-<pre class="api-example"><code><span class="comment">// returns the current value with React:</span>
+                            <pre class="api-example"><code><span class="comment">// returns the current value with React:</span>
 this.refs.selectivity.getValue()</code></pre>
 
 
-<h1>
-<a id="events" class="anchor" href="#events" aria-hidden="true"></a>Events</h1>
+                            <h1>
+                                <a id="events" class="anchor" href="#events" aria-hidden="true"></a>Events</h1>
 
-<p>All of these events are emitted on the element to which the Selectivity instance is attached and
-    can be listened to using jQuery's <code>on()</code> method.</p>
+                            <p>All of these events are emitted on the element to which the Selectivity instance is attached
+                                and can be listened to using jQuery's <code>on()</code> method.</p>
 
-<p><b>Note:</b> If you have used a <code>&lt;select&gt;</code> element for initializing the
-    Selectivity instance, you should realize it is replaced by a <code>&lt;div&gt;</code> element
-    after the initialization. Any events will be triggered on the latter.</p>
+                            <p><b>Note:</b> If you have used a <code>&lt;select&gt;</code> element for initializing the Selectivity
+                                instance, you should realize it is replaced by a <code>&lt;div&gt;</code> element after the
+                                initialization. Any events will be triggered on the latter.</p>
 
-<table>
-    <thead>
-        <tr>
-            <th>Event</th>
-            <th>Description</th>
-        </tr>
-    </thead>
-    <tbody>
-        <tr>
-            <td class="nowrap">
-                <code>"change"</code><br>
-                <i>(React: onChange)<i>
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Event</th>
+                                        <th>Description</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td class="nowrap">
+                                            <code>"change"</code><br>
+                                            <i>(React: onChange)<i>
             </td>
             <td>Emitted when the selection has been changed. The event object will contain the
                 following properties:
@@ -1023,92 +1005,93 @@ this.refs.selectivity.getValue()</code></pre>
             <td class="nowrap">
                 <code>"selectivity-close"</code><br>
                 <i>(React: onDropdownClose)</i>
-            </td>
-            <td>Emitted when the dropdown is closed.</td>
-        </tr>
-        <tr>
-            <td class="nowrap">
-                <code>"selectivity-highlight"</code><br>
-                <i>(React: onHighlight)</i>
-            </td>
-            <td>Emitted when an item in the dropdown is highlighted. The event object will contain
-                the following properties:
-                <dl>
-                    <dt><b>id</b></dt>
-                    <dd>The ID of the item being highlighted.</dd>
-                    <dt><b>item</b></dt>
-                    <dd>The item being highlighted.</dd>
-                </dl>
-            </td>
-        </tr>
-        <tr>
-            <td class="nowrap">
-                <code>"selectivity-open"</code><br>
-                <i>(React: onDropdownOpen)</i>
-            </td>
-            <td>Emitted when the dropdown is opened.</td>
-        </tr>
-        <tr>
-            <td class="nowrap">
-                <code>"selectivity-opening"</code><br>
-                <i>(React: onDropdownOpening)</i>
-            </td>
-            <td>Emitted when the dropdown is about to be opened. You can call
-                <code>preventDefault()</code> on the event object to cancel the opening of the
-                dropdown.</td>
-        </tr>
-        <tr>
-            <td class="nowrap">
-                <code>"selectivity-selected"</code><br>
-                <i>(React: onSelect)</i>
-            </td>
-            <td>Emitted when an item has been selected. The event object will contain the following
-                properties:
-                <dl>
-                    <dt><b>id</b></dt>
-                    <dd>The ID of the item being selected.</dd>
-                    <dt><b>item</b></dt>
-                    <dd>The item being selected.</dd>
-                </dl>
-            </td>
-        </tr>
-        <tr>
-            <td class="nowrap">
-                <code>"selectivity-selecting"</code><br>
-                <i>(React: onSelecting)</i>
-            </td>
-            <td>Emitted when an item is about to be selected. You can call
-                <code>preventDefault()</code> on on the event object to prevent the item from being
-                selected. The event object will contain the following properties:
-                <dl>
-                    <dt><b>id</b></dt>
-                    <dd>The ID of the item being selected.</dd>
-                    <dt><b>item</b></dt>
-                    <dd>The item being selected.</dd>
-                </dl>
-            </td>
-        </tr>
-    </tbody>
-</table>
+                                        </td>
+                                        <td>Emitted when the dropdown is closed.</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="nowrap">
+                                            <code>"selectivity-highlight"</code><br>
+                                            <i>(React: onHighlight)</i>
+                                        </td>
+                                        <td>Emitted when an item in the dropdown is highlighted. The event object will contain
+                                            the following properties:
+                                            <dl>
+                                                <dt><b>id</b></dt>
+                                                <dd>The ID of the item being highlighted.</dd>
+                                                <dt><b>item</b></dt>
+                                                <dd>The item being highlighted.</dd>
+                                            </dl>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="nowrap">
+                                            <code>"selectivity-open"</code><br>
+                                            <i>(React: onDropdownOpen)</i>
+                                        </td>
+                                        <td>Emitted when the dropdown is opened.</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="nowrap">
+                                            <code>"selectivity-opening"</code><br>
+                                            <i>(React: onDropdownOpening)</i>
+                                        </td>
+                                        <td>Emitted when the dropdown is about to be opened. You can call
+                                            <code>preventDefault()</code> on the event object to cancel the opening of the
+                                            dropdown.
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="nowrap">
+                                            <code>"selectivity-selected"</code><br>
+                                            <i>(React: onSelect)</i>
+                                        </td>
+                                        <td>Emitted when an item has been selected. The event object will contain the following
+                                            properties:
+                                            <dl>
+                                                <dt><b>id</b></dt>
+                                                <dd>The ID of the item being selected.</dd>
+                                                <dt><b>item</b></dt>
+                                                <dd>The item being selected.</dd>
+                                            </dl>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="nowrap">
+                                            <code>"selectivity-selecting"</code><br>
+                                            <i>(React: onSelecting)</i>
+                                        </td>
+                                        <td>Emitted when an item is about to be selected. You can call
+                                            <code>preventDefault()</code> on on the event object to prevent the item from
+                                            being selected. The event object will contain the following properties:
+                                            <dl>
+                                                <dt><b>id</b></dt>
+                                                <dd>The ID of the item being selected.</dd>
+                                                <dt><b>item</b></dt>
+                                                <dd>The item being selected.</dd>
+                                            </dl>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
 
-<h1>
-<a id="events" class="anchor" href="#more-information" aria-hidden="true"></a>More information</h1>
+                            <h1>
+                                <a id="events" class="anchor" href="#more-information" aria-hidden="true"></a>More information</h1>
 
-<p>For more information, see the <a href="https://github.com/arendjr/selectivity/">GitHub page</a>.</p>
+                            <p>For more information, see the <a href="https://github.com/arendjr/selectivity/">GitHub page</a>.</p>
 
-</section>
-</div>
+        </section>
+    </div>
 
     <!-- FOOTER  -->
     <div id="footer_wrap" class="outer">
-      <footer class="inner">
-        <p class="copyright">Selectivity.js maintained by <a href="https://github.com/arendjr">arendjr</a>.
-            Sponsored by <a href="https://www.speakap.com/">Speakap</a>.</p>
-      </footer>
+        <footer class="inner">
+            <p class="copyright">Selectivity.js maintained by <a href="https://github.com/arendjr">arendjr</a>. Sponsored by <a href="https://www.speakap.com/">Speakap</a>.</p>
+        </footer>
     </div>
 
     <script src="javascripts/jquery.js"></script>
     <script src="javascripts/selectivity-jquery.js"></script>
     <script src="javascripts/main.js"></script>
-  </body>
+</body>
+
 </html>
