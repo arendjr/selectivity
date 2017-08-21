@@ -208,8 +208,15 @@ var callSuper = Selectivity.inherits(SubmenuPlugin, Dropdown, {
                             left = rect.left - width + 10;
                         }
 
+                        // Move the submenu up so it fits in the window, if necessary and possible.
+                        var submenuTop = resultItem.getBoundingClientRect().top;
+                        var deltaUp = Math.min(
+                            Math.max(submenuTop + el.clientHeight - window.innerHeight, 0),
+                            rect.top + rect.height
+                        );
+
                         el.style.left = left + 'px';
-                        el.style.top = resultItem.getBoundingClientRect().top + 'px';
+                        el.style.top = submenuTop - deltaUp + 'px';
                         el.style.width = width + 'px';
                     }
                 },

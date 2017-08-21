@@ -13,9 +13,9 @@ function SingleInput(options) {
         this,
         assign(
             {
-                // dropdowns for single-value inputs should open below the select box,
-                // unless there is not enough space below, in which case the dropdown should be moved up
-                // just enough so it fits in the window, but never so much that it reaches above the top
+                // Dropdowns for single-value inputs should open below the select box, unless there
+                // is not enough space below, in which case the dropdown should be moved up just
+                // enough so it fits in the window, but never so much that it reaches above the top.
                 positionDropdown: function(el, selectEl) {
                     var rect = selectEl.getBoundingClientRect();
                     var dropdownTop = rect.bottom;
