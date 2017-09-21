@@ -496,7 +496,8 @@ assign(Selectivity.prototype, {
      * @param templateName Name of the template to process.
      * @param options Options to pass to the template.
      *
-     * @return String containing HTML.
+     * @return String containing HTML or ReactElement if template is a function returning
+     *         ReactElement.
      */
     template: function(templateName, options) {
         var template = this.templates[templateName];
@@ -505,11 +506,12 @@ assign(Selectivity.prototype, {
         }
 
         if (typeof template === 'function') {
-            return template(options);
+            var templateResult = template(options);
+            return typeof templateResult === 'string' ? templateResult.trim() : templateResult;
         } else if (template.render) {
-            return template.render(options);
+            return template.render(options).trim();
         } else {
-            return template.toString();
+            return template.toString().trim();
         }
     },
 
