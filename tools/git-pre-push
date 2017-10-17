@@ -1,4 +1,3 @@
 #!/bin/sh
 
-# Run gulp to check the build is not broken
-npm run lint && gulp unit-tests
+yarn test

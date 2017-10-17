@@ -2,4 +2,4 @@ language: node_js
 node_js:
   - "6"
 before_script:
-  - npm install -g gulp
+  - npm install -g yarn
