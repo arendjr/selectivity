@@ -70,8 +70,18 @@ TestUtil.createJQueryTest(
         test.equal($('.selectivity-result-item').length, 25);
         test.equal($('.selectivity-load-more').length, 0);
 
-        test.equal($('.selectivity-result-item').first().text(), 'Amsterdam');
-        test.equal($('.selectivity-result-item').last().text(), 'Helsinki');
+        test.equal(
+            $('.selectivity-result-item')
+                .first()
+                .text(),
+            'Amsterdam'
+        );
+        test.equal(
+            $('.selectivity-result-item')
+                .last()
+                .text(),
+            'Helsinki'
+        );
 
         test.equal($('.selectivity-result-item[data-item-id="Amsterdam"].disabled').length, 1);
         test.equal($('.selectivity-result-item[data-item-id="Antwerp"]:not(.disabled)').length, 1);
@@ -122,8 +132,18 @@ TestUtil.createJQueryTest(
         test.equal($('.selectivity-result-item').length, 25);
         test.equal($('.selectivity-load-more').length, 0);
 
-        test.equal($('.selectivity-result-item').first().text(), 'Amsterdam');
-        test.equal($('.selectivity-result-item').last().text(), 'Helsinki');
+        test.equal(
+            $('.selectivity-result-item')
+                .first()
+                .text(),
+            'Amsterdam'
+        );
+        test.equal(
+            $('.selectivity-result-item')
+                .last()
+                .text(),
+            'Helsinki'
+        );
 
         test.equal($('.selectivity-result-item[data-item-id="Amsterdam"].disabled').length, 1);
         test.equal($('.selectivity-result-item[data-item-id="Antwerp"]:not(.disabled)').length, 1);
@@ -223,8 +243,18 @@ TestUtil.createJQueryTest(
         test.equal($('.selectivity-result-item').length, 10);
         test.equal($('.selectivity-load-more').length, 1);
 
-        test.equal($('.selectivity-result-item').first().text(), 'Amsterdam');
-        test.equal($('.selectivity-result-item').last().text(), 'Bucharest');
+        test.equal(
+            $('.selectivity-result-item')
+                .first()
+                .text(),
+            'Amsterdam'
+        );
+        test.equal(
+            $('.selectivity-result-item')
+                .last()
+                .text(),
+            'Bucharest'
+        );
 
         $('.selectivity-load-more').click();
 
@@ -238,8 +268,18 @@ TestUtil.createJQueryTest(
         test.equal($('.selectivity-result-item').length, 25);
         test.equal($('.selectivity-load-more').length, 0);
 
-        test.equal($('.selectivity-result-item').first().text(), 'Amsterdam');
-        test.equal($('.selectivity-result-item').last().text(), 'Helsinki');
+        test.equal(
+            $('.selectivity-result-item')
+                .first()
+                .text(),
+            'Amsterdam'
+        );
+        test.equal(
+            $('.selectivity-result-item')
+                .last()
+                .text(),
+            'Helsinki'
+        );
     }
 );
 

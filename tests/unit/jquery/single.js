@@ -173,9 +173,18 @@ TestUtil.createJQueryTest(
         var $dropdown = $('.selectivity-dropdown');
         test.equal($dropdown.length, 1);
         test.equal($dropdown.find('.selectivity-result-item').length, 3);
-        test.equal($dropdown.find('.selectivity-result-item').eq(0).text(), 'Amsterdam');
+        test.equal(
+            $dropdown
+                .find('.selectivity-result-item')
+                .eq(0)
+                .text(),
+            'Amsterdam'
+        );
 
-        $dropdown.find('.selectivity-result-item').eq(0).click();
+        $dropdown
+            .find('.selectivity-result-item')
+            .eq(0)
+            .click();
 
         test.equal($input.selectivity('val'), 1);
     }

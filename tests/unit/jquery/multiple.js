@@ -32,7 +32,10 @@ TestUtil.createJQueryTest(
             multiple: true
         });
 
-        $input.find('.selectivity-multiple-input').click().val('amster');
+        $input
+            .find('.selectivity-multiple-input')
+            .click()
+            .val('amster');
         $('.selectivity-result-item[data-item-id="Amsterdam"]').click();
 
         test.deepEqual($input.selectivity('value'), ['Amsterdam']);
@@ -72,8 +75,18 @@ TestUtil.createJQueryTest(
 
         test.equal($('.selectivity-dropdown').length, 1);
         test.equal($('.selectivity-result-item').length, 2);
-        test.equal($('.selectivity-result-item').first().text(), 'Amsterdam');
-        test.equal($('.selectivity-result-item').last().text(), 'Antwerp');
+        test.equal(
+            $('.selectivity-result-item')
+                .first()
+                .text(),
+            'Amsterdam'
+        );
+        test.equal(
+            $('.selectivity-result-item')
+                .last()
+                .text(),
+            'Antwerp'
+        );
     }
 );
 

@@ -31,14 +31,20 @@ function createSelectivityNextToSelectElement($el, options) {
         } else {
             return {
                 text: $this.attr('label'),
-                children: $this.children('option,optgroup').map(mapOptions).get()
+                children: $this
+                    .children('option,optgroup')
+                    .map(mapOptions)
+                    .get()
             };
         }
     };
 
     options.allowClear = 'allowClear' in options ? options.allowClear : !$el.prop('required');
 
-    var items = $el.children('option,optgroup').map(mapOptions).get();
+    var items = $el
+        .children('option,optgroup')
+        .map(mapOptions)
+        .get();
     options.data = data;
 
     options.items = options.query ? null : items;
@@ -68,7 +74,10 @@ function bindTraditionalSelectEvents(selectivity) {
     var $el = $(selectivity.el);
     $el.on('change', function(event) {
         var value = event.originalEvent.value;
-        $el.prev('select').val($.type(value) === 'array' ? value.slice(0) : value).trigger(event);
+        $el
+            .prev('select')
+            .val($.type(value) === 'array' ? value.slice(0) : value)
+            .trigger(event);
     });
 }
 
