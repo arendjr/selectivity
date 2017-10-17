@@ -1,6 +1,6 @@
 /**
  * @license
- * Selectivity.js 3.0.5 <https://arendjr.github.io/selectivity/>
+ * Selectivity.js 3.0.6 <https://arendjr.github.io/selectivity/>
  * Copyright (c) 2014-2016 Arend van Beelen jr.
  *           (c) 2016 Speakap BV
  * Available under MIT license <https://github.com/arendjr/selectivity/blob/master/LICENSE>
@@ -2341,9 +2341,7 @@ function SingleInput(options) {
         )
     );
 
-    this.el.innerHTML = this.template('singleSelectInput', this.options);
-
-    this.rerenderSelection();
+    this.rerender();
 
     if (options.showSearchInputInDropdown === false) {
         this.initInput(this.$('.selectivity-single-select-input'), { search: false });
@@ -2413,6 +2411,15 @@ var callSuper = Selectivity.inherits(SingleInput, Selectivity, {
     },
 
     /**
+     * Rerenders the entire component.
+     */
+    rerender: function() {
+        this.el.innerHTML = this.template('singleSelectInput', this.options);
+
+        this.rerenderSelection();
+    },
+
+    /**
      * Re-renders the selection.
      *
      * Normally the UI is automatically updated whenever the selection changes, but you may want to
@@ -2432,6 +2439,19 @@ var callSuper = Selectivity.inherits(SingleInput, Selectivity, {
 
         this.el.querySelector('input').value = this._value;
         this.$('.selectivity-single-result-container').innerHTML = this.template(template, options);
+    },
+
+    /**
+     * @inherit
+     */
+    setOptions: function(options) {
+        var wasEnabled = this.enabled;
+
+        callSuper(this, 'setOptions', options);
+
+        if (wasEnabled !== this.enabled) {
+            this.rerender();
+        }
     },
 
     /**
@@ -3610,14 +3630,20 @@ function createSelectivityNextToSelectElement($el, options) {
         } else {
             return {
                 text: $this.attr('label'),
-                children: $this.children('option,optgroup').map(mapOptions).get()
+                children: $this
+                    .children('option,optgroup')
+                    .map(mapOptions)
+                    .get()
             };
         }
     };
 
     options.allowClear = 'allowClear' in options ? options.allowClear : !$el.prop('required');
 
-    var items = $el.children('option,optgroup').map(mapOptions).get();
+    var items = $el
+        .children('option,optgroup')
+        .map(mapOptions)
+        .get();
     options.data = data;
 
     options.items = options.query ? null : items;
@@ -3647,7 +3673,10 @@ function bindTraditionalSelectEvents(selectivity) {
     var $el = $(selectivity.el);
     $el.on('change', function(event) {
         var value = event.originalEvent.value;
-        $el.prev('select').val($.type(value) === 'array' ? value.slice(0) : value).trigger(event);
+        $el
+            .prev('select')
+            .val($.type(value) === 'array' ? value.slice(0) : value)
+            .trigger(event);
     });
 }
 

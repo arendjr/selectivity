@@ -1,7 +1,7 @@
 CHANGELOG
 =========
 
-## master
+## 3.0.6
 
 - Fix updating event listeners after initial render in React API.
 - Rerender single-value inputs when their enabled state changes.
