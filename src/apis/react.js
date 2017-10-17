@@ -59,6 +59,16 @@ var otherProps = {
     value: PropTypes.oneOfType([PropTypes.array, PropTypes.number, PropTypes.string])
 };
 
+var eventMapping = {
+    onChange: 'selectivity-change',
+    onDropdownClose: 'selectivity-close',
+    onDropdownOpen: 'selectivity-open',
+    onDropdownOpening: 'selectivity-opening',
+    onHighlight: 'selectivity-highlight',
+    onSelect: 'selectivity-selected',
+    onSelecting: 'selectivity-selecting'
+};
+
 function propsToOptions(props) {
     var options = {};
     for (var key in props) {
@@ -113,9 +123,17 @@ Selectivity.inherits(SelectivityReact, React.Component, {
         options.element = el;
         el.selectivity = this.selectivity = new InputType(options);
 
-        if (props.onChange) {
-            el.addEventListener('selectivity-change', props.onChange);
-        } else if ((props.data || props.value) && !props.readOnly) {
+        for (var propName in eventMapping) {
+            if (eventMapping.hasOwnProperty(propName)) {
+                var listener = props[propName];
+                if (listener) {
+                    var eventName = eventMapping[propName];
+                    el.addEventListener(eventName, listener);
+                }
+            }
+        }
+
+        if (!props.onChange && (props.data || props.value) && !props.readOnly) {
             throw new Error(
                 'Selectivity: You have specified a data or value property without an ' +
                     'onChange listener. You should use defaultData or defaultValue ' +
@@ -123,27 +141,22 @@ Selectivity.inherits(SelectivityReact, React.Component, {
             );
         }
 
-        if (props.onDropdownClose) {
-            el.addEventListener('selectivity-close', props.onDropdownClose);
-        }
-        if (props.onDropdownOpen) {
-            el.addEventListener('selectivity-open', props.onDropdownOpen);
-        }
-        if (props.onDropdownOpening) {
-            el.addEventListener('selectivity-opening', props.onDropdownOpening);
-        }
-        if (props.onHighlight) {
-            el.addEventListener('selectivity-highlight', props.onHighlight);
-        }
-        if (props.onSelect) {
-            el.addEventListener('selectivity-selected', props.onSelect);
-        }
-        if (props.onSelecting) {
-            el.addEventListener('selectivity-selecting', props.onSelecting);
-        }
-
         if (props.autoFocus) {
             this.focus();
+        }
+    },
+
+    componentDidUpdate: function(prevProps) {
+        for (var propName in eventMapping) {
+            if (eventMapping.hasOwnProperty(propName)) {
+                var listener = this.props[propName];
+                var prevListener = prevProps[propName];
+                if (listener !== prevListener) {
+                    var eventName = eventMapping[propName];
+                    this.el.removeEventListener(eventName, prevListener);
+                    this.el.addEventListener(eventName, listener);
+                }
+            }
         }
     },
 

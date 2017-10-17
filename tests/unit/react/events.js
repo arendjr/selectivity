@@ -5,6 +5,8 @@ var ReactDOM = require('react-dom');
 
 var TestUtil = require('../../test-util');
 
+function noop() {}
+
 var changeEvent;
 function onChange(event) {
     changeEvent = event;
@@ -48,6 +50,37 @@ TestUtil.createReactTest(
             function() {
                 test.equal(ref.getValue(), 2);
                 test.equal(changeEvent, null);
+
+                test.end();
+            }
+        );
+    }
+);
+
+TestUtil.createReactTest(
+    'react/events: test change event called properly when onChange listener changed',
+    ['inputs/single', 'dropdown', 'templates'],
+    { async: true, data: data, items: items, onChange: noop },
+    function(SelectivityReact, test, ref, container) {
+        test.plan(3);
+
+        changeEvent = null;
+
+        ReactDOM.render(
+            React.createElement(SelectivityReact, {
+                data: data,
+                items: items,
+                onChange: onChange
+            }),
+            container,
+            function() {
+                test.equal(changeEvent, null);
+
+                TestUtil.simulateEvent(container.firstChild, 'click');
+                TestUtil.simulateEvent('.selectivity-result-item[data-item-id="2"]', 'click');
+
+                test.equal(ref.getValue(), 2);
+                test.equal(changeEvent.value, 2);
 
                 test.end();
             }
