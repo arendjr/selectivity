@@ -1,6 +1,10 @@
 CHANGELOG
 =========
 
+## master
+
+- Fix updating event listeners after initial render in React API.
+
 ## 3.0.5
 
 - Fix issue where dropdown is hard to close on Firefox (#194, thanks to @dmarchuk).
