@@ -36,9 +36,7 @@ function SingleInput(options) {
         )
     );
 
-    this.el.innerHTML = this.template('singleSelectInput', this.options);
-
-    this.rerenderSelection();
+    this.rerender();
 
     if (options.showSearchInputInDropdown === false) {
         this.initInput(this.$('.selectivity-single-select-input'), { search: false });
@@ -108,6 +106,15 @@ var callSuper = Selectivity.inherits(SingleInput, Selectivity, {
     },
 
     /**
+     * Rerenders the entire component.
+     */
+    rerender: function() {
+        this.el.innerHTML = this.template('singleSelectInput', this.options);
+
+        this.rerenderSelection();
+    },
+
+    /**
      * Re-renders the selection.
      *
      * Normally the UI is automatically updated whenever the selection changes, but you may want to
@@ -127,6 +134,19 @@ var callSuper = Selectivity.inherits(SingleInput, Selectivity, {
 
         this.el.querySelector('input').value = this._value;
         this.$('.selectivity-single-result-container').innerHTML = this.template(template, options);
+    },
+
+    /**
+     * @inherit
+     */
+    setOptions: function(options) {
+        var wasEnabled = this.enabled;
+
+        callSuper(this, 'setOptions', options);
+
+        if (wasEnabled !== this.enabled) {
+            this.rerender();
+        }
     },
 
     /**
