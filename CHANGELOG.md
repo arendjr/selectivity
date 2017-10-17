@@ -1,6 +1,10 @@
 CHANGELOG
 =========
 
+## master
+
+- Trim template results to avoid runtime errors (#210, thanks to @darekzak).
+
 ## 3.0.6
 
 - Fix updating event listeners after initial render in React API.
