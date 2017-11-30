@@ -4,6 +4,7 @@ CHANGELOG
 ## master
 
 - Trim template results to avoid runtime errors (#210, thanks to @darekzak).
+- Fix clear button if item text is too long (#211, thanks to @dmarchuk).
 
 ## 3.0.6
 
