@@ -1,16 +1,9 @@
 'use strict';
 
 var isValidElement = require('react').isValidElement;
-var ReactDOM = require('react-dom');
+var renderToString = require('react-dom/server').renderToString;
 
 var Selectivity = require('../../selectivity');
-
-var div = null;
-function renderToString(element) {
-    div = div || document.createElement('div');
-    ReactDOM.render(element, div);
-    return div.innerHTML;
-}
 
 /**
  * Overrides the Selectivity template() method to support React templates.
