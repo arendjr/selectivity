@@ -37,7 +37,7 @@
         "gulp-nodeunit": "^0.1.0",
         "gulp-replace": "^0.6.0",
         "gulp-ruby-sass": "^3.0.0",
-        "gulp-tape": "0.0.9",
+        "gulp-tape": "0.0.10",
         "gulp-uglify": "^3.0.0",
         "gulp-util": "^3.0.1",
         "jquery": "^3.0.0",
