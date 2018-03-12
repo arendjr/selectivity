@@ -121,18 +121,16 @@ var callSuper = Selectivity.inherits(MultipleInput, Selectivity, {
      * @inherit
      */
     filterResults: function(results) {
-        var hasChildren = results.some(function(item) {
-            return item.children;
-        });
-        if (hasChildren) {
-            results = results.map(function(item) {
-                return {
-                    id: item.id,
-                    text: item.text,
-                    children: this.filterResults(item.children)
-                };
-            }, this);
-        }
+        results = results.map(function(item) {
+            var result = {
+                id: item.id,
+                text: item.text
+            };
+            if (item.children) {
+                result['children'] = this.filterResults(item.children);
+            }
+            return result;
+        }, this);
 
         return results.filter(function(item) {
             return !Selectivity.findById(this._data, item.id);
