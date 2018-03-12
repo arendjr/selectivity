@@ -3,6 +3,7 @@ CHANGELOG
 
 ## master
 
+- Don't crash when some, but not all, result items have children (#227, thanks to @watsab).
 - Trim template results to avoid runtime errors (#210, thanks to @darekzak).
 - Fix clear button if item text is too long (#211, thanks to @dmarchuk).
 
