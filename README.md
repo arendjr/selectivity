@@ -204,6 +204,7 @@ The following modules are available:
 Module                          | Description
 --------------------------------|------------
 **inputs/email**                | Implements the 'Email' input type. This is a special case of the 'Multiple' input type with no dropdown and a specialized tokenizer for recognizing email addresses (including pasted content from address books).
+**inputs/name**                 | Implements the 'Name' input type. This is a special case of the 'Multiple' input type with no dropdown and a specialized tokenizer for recognizing full name.
 **inputs/multiple**             | Implements the 'Multiple' input type. If you only want to use Selectivity with single values, you can leave this out.
 **inputs/single**               | Implements the 'Single' input type. If you only want to use Selectivity with multiple values, you can leave this out.
 **plugins/ajax**                | Convenience module for performing AJAX requests. Needed if you want to use any `ajax` options. If you use this module, you should also include the 'async' module to correctly handle out-of-order replies. This module relies on the presence of the `[fetch()](https://developer.mozilla.org/en-US/docs/Web/API/GlobalFetch/fetch)` method which is only available in modern browsers, so you should either provide a polyfill if you want to support older browsers, or -- if you're creating a jQuery build -- you can use the 'jquery/ajax' module to provide a fallback that uses `$.ajax()` instead.
