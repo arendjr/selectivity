@@ -47,7 +47,6 @@ function nameTokenizer(input, selection, createToken) {
     }
 
     function takeToken(input) {
-        debugger;
         for (var i = 0, length = input.length; i < length; i++) {
             switch (input[i]) {
                 case ';':
