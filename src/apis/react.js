@@ -147,9 +147,12 @@ Selectivity.inherits(SelectivityReact, React.Component, {
     },
 
     componentDidUpdate: function(prevProps) {
+        var props = this.props;
+        var selectivity = this.selectivity;
+
         for (var propName in eventMapping) {
             if (eventMapping.hasOwnProperty(propName)) {
-                var listener = this.props[propName];
+                var listener = props[propName];
                 var prevListener = prevProps[propName];
                 if (listener !== prevListener) {
                     var eventName = eventMapping[propName];
@@ -158,21 +161,14 @@ Selectivity.inherits(SelectivityReact, React.Component, {
                 }
             }
         }
-    },
 
-    componentWillReceiveProps: function(nextProps) {
-        var selectivity = this.selectivity;
-
-        selectivity.setOptions(propsToOptions(nextProps));
-        if (nextProps.data !== this.props.data) {
-            selectivity.setData(nextProps.data, { triggerChange: false });
+        selectivity.setOptions(propsToOptions(props));
+        if (props.data !== prevProps.data) {
+            selectivity.setData(props.data, { triggerChange: false });
             selectivity.rerenderSelection();
         }
-        if (
-            nextProps.value !== this.props.value ||
-            (nextProps.value && nextProps.items !== this.props.items)
-        ) {
-            selectivity.setValue(nextProps.value, { triggerChange: false });
+        if (props.value !== prevProps.value || (props.value && props.items !== props.items)) {
+            selectivity.setValue(props.value, { triggerChange: false });
             selectivity.rerenderSelection();
         }
     },
