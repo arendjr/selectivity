@@ -518,13 +518,17 @@ assign(Selectivity.prototype, {
     /**
      * Triggers the change event.
      *
-     * The event object at least contains the following property:
+     * The event object at least contains the following properties:
+     * data - The new data of the Selectivity instance.
      * value - The new value of the Selectivity instance.
      *
      * @param Optional additional options added to the event object.
+     *
+     * @see getData()
+     * @see getValue()
      */
     triggerChange: function(options) {
-        var data = assign({ value: this._value }, options);
+        var data = assign({ date: this._data, value: this._value }, options);
         this.triggerEvent('change', data);
         this.triggerEvent('selectivity-change', data);
     },
