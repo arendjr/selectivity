@@ -1,9 +1,7 @@
-// Place your settings in this file to overwrite default and user settings.
 {
+    // Place your settings in this file to overwrite default and user settings.
     "editor.formatOnSave": true,
-    "editor.rulers": [
-        100
-    ],
+    "editor.rulers": [100],
     "files.exclude": {
         ".DS_Store": true,
         ".git": true,
@@ -18,6 +16,7 @@
     "prettier.jsxBracketSameLine": true,
     "prettier.parser": "babylon",
     "prettier.printWidth": 100,
+    "prettier.proseWrap": "always",
     "prettier.semi": true,
     "prettier.singleQuote": true,
     "prettier.tabWidth": 4,
