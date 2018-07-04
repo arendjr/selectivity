@@ -62,7 +62,7 @@ TestUtil.createReactTest(
     ['inputs/single', 'dropdown', 'templates'],
     { async: true, data: data, items: items, onChange: noop },
     function(SelectivityReact, test, ref, container) {
-        test.plan(3);
+        test.plan(4);
 
         changeEvent = null;
 
@@ -81,6 +81,7 @@ TestUtil.createReactTest(
 
                 test.equal(ref.getValue(), 2);
                 test.equal(changeEvent.value, 2);
+                test.deepEqual(changeEvent.data, { id: 2, text: 'Antwerp' });
 
                 test.end();
             }

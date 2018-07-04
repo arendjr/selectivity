@@ -79,13 +79,6 @@ var argv = yargs
         describe: 'Adds a source map to the build for debugging.',
         type: 'boolean'
     })
-    .option('test', {
-        default: '',
-        describe:
-            'Specify the name of a specific test to execute in combination with ' +
-            '`gulp unit-tests`.',
-        type: 'string'
-    })
     .strict()
     .wrap(yargs.terminalWidth()).argv;
 

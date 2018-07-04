@@ -9,29 +9,11 @@
             "stopOnEntry": false,
             "args": ["unit-tests"],
             "cwd": "${workspaceRoot}",
-            "preLaunchTask": null,
-            "runtimeExecutable": null,
-            "runtimeArgs": [
-                "--nolazy"
-            ],
+            "protocol": "inspector",
             "env": {
                 "NODE_ENV": "development"
             },
-            "console": "internalConsole",
-            "sourceMaps": false,
-            "outDir": null
-        },
-        {
-            "name": "Attach",
-            "type": "node",
-            "request": "attach",
-            "port": 5858,
-            "address": "localhost",
-            "restart": false,
-            "sourceMaps": false,
-            "outDir": null,
-            "localRoot": "${workspaceRoot}",
-            "remoteRoot": null
+            "console": "internalConsole"
         }
     ]
 }

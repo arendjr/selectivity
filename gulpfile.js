@@ -1,13 +1,6 @@
 'use strict';
 
-var gulp = require('./gulp')([
-    'browserify',
-    'browser-sync',
-    'sass',
-    'unit-tests',
-    'usage',
-    'watch'
-]);
+var gulp = require('./gulp')(['browserify', 'browser-sync', 'sass', 'usage', 'watch']);
 
 gulp.task('default', ['browserify', 'sass']);
 

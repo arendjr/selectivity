@@ -528,7 +528,7 @@ assign(Selectivity.prototype, {
      * @see getValue()
      */
     triggerChange: function(options) {
-        var data = assign({ date: this._data, value: this._value }, options);
+        var data = assign({ data: this._data, value: this._value }, options);
         this.triggerEvent('change', data);
         this.triggerEvent('selectivity-change', data);
     },

@@ -16,7 +16,7 @@ module.exports = {
      *                async - Set to true to indicate the test function is asynchronous and calls
      *                        done() itself.
      * @param fn The actual test function. Receives three arguments:
-     *           test - The nodeunit test instance.
+     *           test - The tape test instance.
      *           $input - jQuery container for the '#selectivity-input' element defined in
      *                    resources/testcase.html.
      *           $ - jQuery instance.
@@ -76,7 +76,7 @@ module.exports = {
      *                async - Set to true to indicate the test function is asynchronous and calls
      *                        done() itself.
      * @param fn The actual test function. Receives three arguments:
-     *           test - The nodeunit test instance.
+     *           test - The tape test instance.
      *           $input - jQuery container for the '#selectivity-input' element defined in
      *                    resources/testcase.html.
      *           $ - jQuery instance.

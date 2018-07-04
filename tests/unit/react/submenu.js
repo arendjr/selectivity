@@ -33,16 +33,7 @@ TestUtil.createReactTest(
                 id: 1,
                 text: 'First Item',
                 submenu: {
-                    items: [
-                        {
-                            id: 2,
-                            text: 'First subitem'
-                        },
-                        {
-                            id: 3,
-                            text: 'Second subitem'
-                        }
-                    ],
+                    items: [{ id: 2, text: 'First subitem' }, { id: 3, text: 'Second subitem' }],
                     showSearchInput: true
                 }
             }
@@ -54,6 +45,10 @@ TestUtil.createReactTest(
         test.deepEqual(ref.getValue(), []);
 
         TestUtil.simulateEvent(container.firstChild, 'click');
+
+        test.equal($('.selectivity-dropdown').length, 1);
+
+        TestUtil.simulateEvent('.selectivity-result-item[data-item-id="1"]', 'mouseenter');
 
         test.equal($('.selectivity-dropdown').length, 2);
 
@@ -73,16 +68,7 @@ TestUtil.createReactTest(
                 id: 1,
                 text: 'First Item',
                 submenu: {
-                    items: [
-                        {
-                            id: 2,
-                            text: 'First subitem'
-                        },
-                        {
-                            id: 3,
-                            text: 'Second subitem'
-                        }
-                    ],
+                    items: [{ id: 2, text: 'First subitem' }, { id: 3, text: 'Second subitem' }],
                     showSearchInput: true
                 }
             }

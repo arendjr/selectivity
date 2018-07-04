@@ -5,6 +5,7 @@ styles/selectivity-custom.sass
 
 .sass-cache
 node_modules
+yarn-error.log
 
 # OS X mess
 .DS_Store

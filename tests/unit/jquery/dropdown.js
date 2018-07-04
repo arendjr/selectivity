@@ -284,7 +284,7 @@ TestUtil.createJQueryTest(
 );
 
 TestUtil.createJQueryTest(
-    'jquery/multiple: test load more with multiple input',
+    'jquery/dropdown: test load more with multiple input',
     ['inputs/multiple', 'dropdown', 'templates'],
     function(test, $input, $) {
         var offset = null;

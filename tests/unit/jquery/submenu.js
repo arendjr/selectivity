@@ -32,14 +32,8 @@ TestUtil.createJQueryTest(
                     text: 'First Item',
                     submenu: {
                         items: [
-                            {
-                                id: 2,
-                                text: 'First subitem'
-                            },
-                            {
-                                id: 3,
-                                text: 'Second subitem'
-                            }
+                            { id: 2, text: 'First subitem' },
+                            { id: 3, text: 'Second subitem' }
                         ],
                         showSearchInput: true
                     }
@@ -51,6 +45,10 @@ TestUtil.createJQueryTest(
         test.equal($('.selectivity-dropdown').length, 0);
 
         TestUtil.simulateEvent($input[0], 'click');
+
+        test.equal($('.selectivity-dropdown').length, 1);
+
+        TestUtil.simulateEvent('.selectivity-result-item[data-item-id="1"]', 'mouseenter');
 
         test.equal($('.selectivity-dropdown').length, 2);
 
@@ -72,14 +70,8 @@ TestUtil.createJQueryTest(
                     text: 'First Item',
                     submenu: {
                         items: [
-                            {
-                                id: 2,
-                                text: 'First subitem'
-                            },
-                            {
-                                id: 3,
-                                text: 'Second subitem'
-                            }
+                            { id: 2, text: 'First subitem' },
+                            { id: 3, text: 'Second subitem' }
                         ],
                         showSearchInput: true
                     }

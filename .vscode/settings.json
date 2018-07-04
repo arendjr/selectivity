@@ -13,6 +13,7 @@
     "files.trimTrailingWhitespace": true,
     "prettier.eslintIntegration": true,
     "prettier.bracketSpacing": true,
+    "prettier.disableLanguages": ["json"],
     "prettier.jsxBracketSameLine": true,
     "prettier.parser": "babylon",
     "prettier.printWidth": 100,
