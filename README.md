@@ -244,9 +244,15 @@ While developing, you can start a development server like this:
 
     $ yarn start [--api=<jquery-or-react>]
 
-You may want to pass the `--source-map` parameter to generate a source map for debugging. Check out
-the various files in the `demos/` directory that are set up to with custom builds as they can be
-used for development.
+You can reach the development server on the URL printed on the console (typically
+http://localhost:3000), and you'll probably want to open one of the demos there:
+
+-   React: http://localhost:3000/demos/custom-react.html (only works if you started with
+    `yarn start --api=react`)
+-   jQuery: http://localhost:3000/demos/custom-jquery.html (only works if you started with
+    `yarn start --api=jquery`)
+-   Zepto: http://localhost:3000/demos/custom-zepto.html (only works if you started with
+    `yarn start --api=jquery`)
 
 ## Unit Tests
 
