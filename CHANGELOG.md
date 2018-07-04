@@ -1,11 +1,12 @@
 # CHANGELOG
 
-## master
+## 3.1.0
 
 -   Add `data` property to `change` events.
 -   Don't crash when some, but not all, result items have children (#227, thanks to @watsab).
 -   Trim template results to avoid runtime errors (#210, thanks to @darekzak).
 -   Fix clear button if item text is too long (#211, thanks to @dmarchuk).
+-   React: Don't use `componentWillReceiveProps()` for forward compatibility with React 17.
 
 ## 3.0.6
 
