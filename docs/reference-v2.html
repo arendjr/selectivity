@@ -296,6 +296,11 @@ jQuery builds without Sizzle.</li>
                 <code>required</code> attribute.</td>
         </tr>
         <tr>
+            <td>allowDuplicates</td>
+            <td><code>Boolean</code></td>
+            <td>If <code>true</code>, enables the addition of duplicate items to the input.</td>
+        </tr>
+        <tr>
             <td>backspace<wbr>Highlights<wbr>BeforeDelete</td>
             <td><code>Boolean</code></td>
             <td>If set to <code>true</code>, when the user enters a backspace while there is no text
@@ -531,6 +536,11 @@ jQuery builds without Sizzle.</li>
                 given separators. The tokens will be converted into selectable items using the
                 <code>createTokenItem</code> function. The default tokenizer also filters out
                 already selected items. This option only applies to multiple-value inputs.</td>
+        </tr>
+        <tr>
+            <td>trimSpaces</td>
+            <td><code>Boolean</code></td>
+            <td>If <code>true</code>, removes whitespace from both sides of the input items.</td>
         </tr>
         <tr>
             <td>value</td>

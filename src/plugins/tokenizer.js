@@ -11,20 +11,28 @@ function defaultTokenizer(input, selection, createToken, options) {
             return token ? { id: token, text: token } : null;
         };
 
+    var duplicates = options.allowDuplicates;
     var separators = options.tokenSeparators;
+    var trim = options.trimSpaces;
 
     function hasToken(input) {
         return input
             ? separators.some(function(separator) {
-                  return input.indexOf(separator) > -1;
+                  return input.trim().indexOf(separator) > -1;
               })
             : false;
     }
 
     function takeToken(input) {
-        for (var i = 0, length = input.length; i < length; i++) {
-            if (separators.indexOf(input[i]) > -1) {
-                return { term: input.slice(0, i), input: input.slice(i + 1) };
+        var trimmedInput = trim ? input.trim() : input;
+        for (var i = 0, length = trimmedInput.length; i < length; i++) {
+            if (separators.indexOf(trimmedInput[i]) > -1) {
+                var _term = trimmedInput.slice(0, i);
+                var _input = trimmedInput.slice(i + 1);
+                return {
+                    term: trim ? _term.trim() : _term,
+                    input: trim ? _input.trim() : _input
+                };
             }
         }
         return {};
@@ -34,7 +42,7 @@ function defaultTokenizer(input, selection, createToken, options) {
         var token = takeToken(input);
         if (token.term) {
             var item = createTokenItem(token.term);
-            if (item && !Selectivity.findById(selection, item.id)) {
+            if (item && (duplicates || !Selectivity.findById(selection, item.id))) {
                 createToken(item);
             }
         }

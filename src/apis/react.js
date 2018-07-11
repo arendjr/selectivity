@@ -7,6 +7,7 @@ var React = require('react');
 var Selectivity = require('../selectivity');
 
 var selectivityOptions = {
+    allowDuplicates: PropTypes.bool,
     ajax: PropTypes.object,
     allowClear: PropTypes.bool,
     backspaceHighlightsBeforeDelete: PropTypes.bool,
@@ -33,7 +34,8 @@ var selectivityOptions = {
     tabIndex: PropTypes.number,
     templates: PropTypes.object,
     tokenizer: PropTypes.func,
-    tokenSeparators: PropTypes.array
+    tokenSeparators: PropTypes.array,
+    trimSpaces: PropTypes.bool
 };
 
 var selectivityCallbacks = {
