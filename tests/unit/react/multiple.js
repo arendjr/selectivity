@@ -394,6 +394,49 @@ TestUtil.createReactTest(
 );
 
 TestUtil.createReactTest(
+    'react/multiple: test trim spaces functionality',
+    ['inputs/multiple', 'plugins/tokenizer', 'templates'],
+    {
+        multiple: true,
+        showDropdown: false,
+        tokenSeparators: [','],
+        trimSpaces: true
+    },
+    function(SelectivityReact, test, ref, container, $) {
+        $('.selectivity-multiple-input')[0].value = ' Amsterdam  , Berlin   , ';
+        TestUtil.simulateEvent('.selectivity-multiple-input', 'keyup');
+
+        test.deepEqual(ref.getData(), [
+            { id: 'Amsterdam', text: 'Amsterdam' },
+            { id: 'Berlin', text: 'Berlin' }
+        ]);
+        test.deepEqual(ref.getValue(), ['Amsterdam', 'Berlin']);
+    }
+);
+
+TestUtil.createReactTest(
+    'react/multiple: test allow duplicates',
+    ['inputs/multiple', 'plugins/tokenizer', 'templates'],
+    {
+        allowDuplicates: true,
+        multiple: true,
+        showDropdown: false,
+        tokenSeparators: [',']
+    },
+    function(SelectivityReact, test, ref, container, $) {
+        $('.selectivity-multiple-input')[0].value = 'Berlin,Amsterdam,Berlin,';
+        TestUtil.simulateEvent('.selectivity-multiple-input', 'keyup');
+
+        test.deepEqual(ref.getData(), [
+            { id: 'Berlin', text: 'Berlin' },
+            { id: 'Amsterdam', text: 'Amsterdam' },
+            { id: 'Berlin', text: 'Berlin' }
+        ]);
+        test.deepEqual(ref.getValue(), ['Berlin', 'Amsterdam', 'Berlin']);
+    }
+);
+
+TestUtil.createReactTest(
     'react/multiple: test read-only input',
     ['inputs/multiple', 'templates'],
     { async: true, multiple: true, onChange: _.noop, value: ['Amsterdam', 'Antwerp'] },

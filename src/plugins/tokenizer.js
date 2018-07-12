@@ -11,7 +11,7 @@ function defaultTokenizer(input, selection, createToken, options) {
             return token ? { id: token, text: token } : null;
         };
 
-    var duplicates = options.allowDuplicates;
+    var allowDuplicates = options.allowDuplicates;
     var separators = options.tokenSeparators;
     var trim = options.trimSpaces;
 
@@ -27,11 +27,11 @@ function defaultTokenizer(input, selection, createToken, options) {
         var trimmedInput = trim ? input.trim() : input;
         for (var i = 0, length = trimmedInput.length; i < length; i++) {
             if (separators.indexOf(trimmedInput[i]) > -1) {
-                var _term = trimmedInput.slice(0, i);
-                var _input = trimmedInput.slice(i + 1);
+                var term = trimmedInput.slice(0, i);
+                input = trimmedInput.slice(i + 1);
                 return {
-                    term: trim ? _term.trim() : _term,
-                    input: trim ? _input.trim() : _input
+                    term: trim ? term.trim() : term,
+                    input: trim ? input.trim() : input
                 };
             }
         }
@@ -42,7 +42,7 @@ function defaultTokenizer(input, selection, createToken, options) {
         var token = takeToken(input);
         if (token.term) {
             var item = createTokenItem(token.term);
-            if (item && (duplicates || !Selectivity.findById(selection, item.id))) {
+            if (item && (allowDuplicates || !Selectivity.findById(selection, item.id))) {
                 createToken(item);
             }
         }

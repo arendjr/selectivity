@@ -386,6 +386,53 @@ TestUtil.createJQueryTest(
 );
 
 TestUtil.createJQueryTest(
+    'jquery/multiple: test trim spaces functionality',
+    ['inputs/multiple', 'plugins/tokenizer', 'templates'],
+    function(test, $input, $) {
+        $input.selectivity({
+            multiple: true,
+            showDropdown: false,
+            tokenSeparators: [','],
+            trimSpaces: true
+        });
+
+        $('.selectivity-multiple-input')[0].value = ' Amsterdam  , Berlin   , ';
+        TestUtil.simulateEvent('.selectivity-multiple-input', 'keyup');
+
+        test.deepEqual($input.selectivity('data'), [
+            { id: 'Amsterdam', text: 'Amsterdam' },
+            { id: 'Berlin', text: 'Berlin' }
+        ]);
+
+        test.deepEqual($input.selectivity('value'), ['Amsterdam', 'Berlin']);
+    }
+);
+
+TestUtil.createJQueryTest(
+    'jquery/multiple: test allow duplicates',
+    ['inputs/multiple', 'plugins/tokenizer', 'templates'],
+    function(test, $input, $) {
+        $input.selectivity({
+            allowDuplicates: true,
+            multiple: true,
+            showDropdown: false,
+            tokenSeparators: [',']
+        });
+
+        $('.selectivity-multiple-input')[0].value = 'Berlin,Amsterdam,Berlin,';
+        TestUtil.simulateEvent('.selectivity-multiple-input', 'keyup');
+
+        test.deepEqual($input.selectivity('data'), [
+            { id: 'Berlin', text: 'Berlin' },
+            { id: 'Amsterdam', text: 'Amsterdam' },
+            { id: 'Berlin', text: 'Berlin' }
+        ]);
+
+        test.deepEqual($input.selectivity('value'), ['Berlin', 'Amsterdam', 'Berlin']);
+    }
+);
+
+TestUtil.createJQueryTest(
     'jquery/multiple: test read-only input',
     ['inputs/multiple', 'templates'],
     function(test, $input, $) {
