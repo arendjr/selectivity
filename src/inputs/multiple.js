@@ -81,7 +81,7 @@ var callSuper = Selectivity.inherits(MultipleInput, Selectivity, {
         var itemIsId = Selectivity.isValidId(item);
         var id = itemIsId ? item : this.validateItem(item) && item.id;
 
-        if (this._value.indexOf(id) === -1) {
+        if (this.options.allowDuplicates || this._value.indexOf(id) === -1) {
             this._value.push(id);
 
             if (itemIsId && this.options.initSelection) {
