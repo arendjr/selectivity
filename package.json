@@ -24,7 +24,7 @@
         "browserify": "^16.0.0",
         "bundle-collapser": "^1.1.0",
         "eslint": "^5.0.0",
-        "eslint-config-prettier": "^2.3.0",
+        "eslint-config-prettier": "^3.0.0",
         "eslint-plugin-prettier": "^2.1.2",
         "faucet": "0.0.1",
         "freshy": "^1.0.2",
