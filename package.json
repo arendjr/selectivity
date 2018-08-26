@@ -30,7 +30,7 @@
         "freshy": "^1.0.2",
         "glob": "^7.0.3",
         "gulp": "^3.8.10",
-        "gulp-autoprefixer": "^5.0.0",
+        "gulp-autoprefixer": "^6.0.0",
         "gulp-concat": "^2.4.3",
         "gulp-csso": "^3.0.0",
         "gulp-derequire": "^2.0.0",
