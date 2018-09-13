@@ -169,7 +169,7 @@ Selectivity.inherits(SelectivityReact, React.Component, {
             selectivity.setData(props.data, { triggerChange: false });
             selectivity.rerenderSelection();
         }
-        if (props.value !== prevProps.value || (props.value && props.items !== props.items)) {
+        if (props.value !== prevProps.value || (props.value && props.items !== prevProps.items)) {
             selectivity.setValue(props.value, { triggerChange: false });
             selectivity.rerenderSelection();
         }
