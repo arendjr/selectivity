@@ -91,13 +91,12 @@ Selectivity.inherits(SelectivityReact, React.Component, {
     /**
      * Closes the dropdown.
      */
-    close: function() {
+    close() {
         return this.selectivity.close();
     },
 
-    componentDidMount: function() {
-        const el = this.el;
-        const props = this.props;
+    componentDidMount() {
+        const { el, props } = this;
 
         const options = propsToOptions(props);
         const data = props.data || props.defaultData;
@@ -146,9 +145,8 @@ Selectivity.inherits(SelectivityReact, React.Component, {
         }
     },
 
-    componentDidUpdate: function(prevProps) {
-        const props = this.props;
-        const selectivity = this.selectivity;
+    componentDidUpdate(prevProps) {
+        const { props, selectivity } = this;
 
         for (const propName in eventMapping) {
             if (has(eventMapping, propName)) {
@@ -176,7 +174,7 @@ Selectivity.inherits(SelectivityReact, React.Component, {
     /**
      * Applies focus to the input.
      */
-    focus: function() {
+    focus() {
         this.selectivity.focus();
     },
 
@@ -186,7 +184,7 @@ Selectivity.inherits(SelectivityReact, React.Component, {
      * The selection data contains both IDs and text labels. If you only want to set or get the IDs,
      * you should use the getValue() method.
      */
-    getData: function() {
+    getData() {
         return this.selectivity.getData();
     },
 
@@ -196,27 +194,26 @@ Selectivity.inherits(SelectivityReact, React.Component, {
      * The value of the selection only concerns the IDs of the selection items. If you are
      * interested in the IDs and the text labels, you should use the getData() method.
      */
-    getValue: function() {
+    getValue() {
         return this.selectivity.getValue();
     },
 
     /**
      * Opens the dropdown.
      */
-    open: function() {
+    open() {
         return this.selectivity.open();
     },
 
-    render: function() {
-        const self = this;
-        const props = self.props;
+    render() {
+        const { props } = this;
         return React.createElement("div", {
             className: props.className,
             onClick: props.onClick,
             onInput: props.onInput,
             style: props.style,
-            ref: function(el) {
-                self.el = el;
+            ref: el => {
+                this.el = el;
             },
         });
     },

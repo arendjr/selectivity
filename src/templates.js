@@ -40,10 +40,7 @@ Selectivity.Templates = {
                     placeholder ? ` placeholder="${escape(placeholder)}"` : ""
                 }>` + `</div>`;
         }
-        return (
-            `<div class="selectivity-dropdown${extraClass}">${searchInput}<div class="selectivity-results-container"></div>` +
-            `</div>`
-        );
+        return `<div class="selectivity-dropdown${extraClass}">${searchInput}<div class="selectivity-results-container"></div></div>`;
     },
 
     /**
@@ -96,8 +93,7 @@ Selectivity.Templates = {
         return (
             `<div class="selectivity-multiple-input-container">${
                 options.enabled
-                    ? '<input type="text" autocomplete="off" autocorrect="off" ' +
-                      'autocapitalize="off" class="selectivity-multiple-input">'
+                    ? '<input type="text" autocomplete="off" autocorrect="off" autocapitalize="off" class="selectivity-multiple-input">'
                     : '<div class="selectivity-multiple-input ' + 'selectivity-placeholder"></div>'
             }<div class="selectivity-clearfix"></div>` + `</div>`
         );
@@ -121,16 +117,13 @@ Selectivity.Templates = {
      */
     multipleSelectedItem(options) {
         const extraClass = options.highlighted ? " highlighted" : "";
-        return (
-            `<span class="selectivity-multiple-selected-item${extraClass}" ` +
-            `data-item-id="${escape(options.id)}">${
-                options.removable
-                    ? '<a class="selectivity-multiple-selected-item-remove">' +
-                      '<i class="fa fa-remove"></i>' +
-                      "</a>"
-                    : ""
-            }${escape(options.text)}</span>`
-        );
+        return `<span class="selectivity-multiple-selected-item${extraClass}" data-item-id="${escape(
+            options.id,
+        )}">${
+            options.removable
+                ? '<a class="selectivity-multiple-selected-item-remove"><i class="fa fa-remove"></i></a>'
+                : ""
+        }${escape(options.text)}</span>`;
     },
 
     /**
@@ -171,14 +164,11 @@ Selectivity.Templates = {
      *                submenu - Truthy if the result item has a menu with subresults.
      */
     resultItem(options) {
-        return (
-            `<div class="selectivity-result-item${options.disabled ? " disabled" : ""}"` +
-            ` data-item-id="${escape(options.id)}">${escape(options.text)}${
-                options.submenu
-                    ? '<i class="selectivity-submenu-icon fa fa-chevron-right"></i>'
-                    : ""
-            }</div>`
-        );
+        return `<div class="selectivity-result-item${
+            options.disabled ? " disabled" : ""
+        }" data-item-id="${escape(options.id)}">${escape(options.text)}${
+            options.submenu ? '<i class="selectivity-submenu-icon fa fa-chevron-right"></i>' : ""
+        }</div>`;
     },
 
     /**
@@ -202,15 +192,10 @@ Selectivity.Templates = {
      * the placeholder.
      */
     singleSelectInput(options) {
-        return (
-            `${'<div class="selectivity-single-select">' +
-                '<input type="text" class="selectivity-single-select-input"'}${
-                options.required ? " required" : ""
-            }>` +
-            `<div class="selectivity-single-result-container"></div>` +
-            `<i class="fa fa-sort-desc selectivity-caret"></i>` +
-            `</div>`
-        );
+        return `${'<div class="selectivity-single-select">' +
+            '<input type="text" class="selectivity-single-select-input"'}${
+            options.required ? " required" : ""
+        }><div class="selectivity-single-result-container"></div><i class="fa fa-sort-desc selectivity-caret"></i></div>`;
     },
 
     /**
@@ -239,13 +224,11 @@ Selectivity.Templates = {
      *                text - Text label which the user sees.
      */
     singleSelectedItem(options) {
-        return `${'<span class="selectivity-single-selected-item" ' + 'data-item-id="'}${escape(
+        return `<span class="selectivity-single-selected-item" data-item-id="${escape(
             options.id,
         )}">${
             options.removable
-                ? '<a class="selectivity-single-selected-item-remove">' +
-                  '<i class="fa fa-remove"></i>' +
-                  "</a>"
+                ? '<a class="selectivity-single-selected-item-remove"><i class="fa fa-remove"></i></a>'
                 : ""
         }${escape(options.text)}</span>`;
     },

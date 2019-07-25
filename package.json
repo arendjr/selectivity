@@ -23,9 +23,12 @@
         "@babel/core": "^7.5.5",
         "@babel/plugin-transform-modules-commonjs": "^7.5.0",
         "@babel/preset-env": "^7.5.5",
+        "@babel/preset-react": "^7.0.0",
         "@babel/register": "^7.5.5",
+        "@types/jest": "^24.0.15",
         "ansi-colors": "^4.1.1",
         "autoprefixer": "^9.6.1",
+        "babel-eslint": "^10.0.2",
         "babel-jest": "^24.8.0",
         "browser-sync": "^2.26.7",
         "enzyme": "^3.10.0",
@@ -62,6 +65,7 @@
         "rollup-plugin-terser": "^5.1.1",
         "rollup-plugin-virtual": "^1.0.1",
         "tape": "^4.11.0",
+        "wait-for-expect": "^1.2.0",
         "yargs": "^13.3.0"
     },
     "dependencies": {
@@ -95,7 +99,9 @@
         "last 5 Android versions"
     ],
     "jest": {
-        "setupTestFrameworkScriptFile": "jest-enzyme",
+        "setupFilesAfterEnv": [
+            "jest-enzyme"
+        ],
         "testEnvironment": "enzyme"
     }
 }
