@@ -1,12 +1,10 @@
-'use strict';
+import PropTypes from "prop-types";
+import React from "react";
 
-var assign = require('lodash/assign');
-var PropTypes = require('prop-types');
-var React = require('react');
+import Selectivity from "../selectivity";
+import { assign, has } from "../util/object";
 
-var Selectivity = require('../selectivity');
-
-var selectivityOptions = {
+const selectivityOptions = {
     allowDuplicates: PropTypes.bool,
     ajax: PropTypes.object,
     allowClear: PropTypes.bool,
@@ -35,20 +33,20 @@ var selectivityOptions = {
     templates: PropTypes.object,
     tokenizer: PropTypes.func,
     tokenSeparators: PropTypes.array,
-    trimSpaces: PropTypes.bool
+    trimSpaces: PropTypes.bool,
 };
 
-var selectivityCallbacks = {
+const selectivityCallbacks = {
     onChange: PropTypes.func,
     onDropdownClose: PropTypes.func,
     onDropdownOpen: PropTypes.func,
     onDropdownOpening: PropTypes.func,
     onHighlight: PropTypes.func,
     onSelect: PropTypes.func,
-    onSelecting: PropTypes.func
+    onSelecting: PropTypes.func,
 };
 
-var otherProps = {
+const otherProps = {
     autoFocus: PropTypes.bool,
     className: PropTypes.string,
     data: PropTypes.oneOfType([PropTypes.array, PropTypes.object]),
@@ -58,34 +56,34 @@ var otherProps = {
     onClick: PropTypes.func,
     onInput: PropTypes.func,
     style: PropTypes.object,
-    value: PropTypes.oneOfType([PropTypes.array, PropTypes.number, PropTypes.string])
+    value: PropTypes.oneOfType([PropTypes.array, PropTypes.number, PropTypes.string]),
 };
 
-var eventMapping = {
-    onChange: 'selectivity-change',
-    onDropdownClose: 'selectivity-close',
-    onDropdownOpen: 'selectivity-open',
-    onDropdownOpening: 'selectivity-opening',
-    onHighlight: 'selectivity-highlight',
-    onSelect: 'selectivity-selected',
-    onSelecting: 'selectivity-selecting'
+const eventMapping = {
+    onChange: "selectivity-change",
+    onDropdownClose: "selectivity-close",
+    onDropdownOpen: "selectivity-open",
+    onDropdownOpening: "selectivity-opening",
+    onHighlight: "selectivity-highlight",
+    onSelect: "selectivity-selected",
+    onSelecting: "selectivity-selecting",
 };
 
 function propsToOptions(props) {
-    var options = {};
-    for (var key in props) {
-        if (props.hasOwnProperty(key) && !(key in selectivityCallbacks) && !(key in otherProps)) {
+    const options = {};
+    for (const key in props) {
+        if (has(props, key) && !(key in selectivityCallbacks) && !(key in otherProps)) {
             options[key] = props[key];
         }
     }
     return options;
 }
 
-function SelectivityReact(props) {
+export default function SelectivityReact(props) {
     React.Component.call(this, props);
 }
 
-SelectivityReact.displayName = 'Selectivity';
+SelectivityReact.displayName = "Selectivity";
 
 SelectivityReact.propTypes = assign({}, selectivityOptions, selectivityCallbacks, otherProps);
 
@@ -98,38 +96,38 @@ Selectivity.inherits(SelectivityReact, React.Component, {
     },
 
     componentDidMount: function() {
-        var el = this.el;
-        var props = this.props;
+        const el = this.el;
+        const props = this.props;
 
-        var options = propsToOptions(props);
-        var data = props.data || props.defaultData;
+        const options = propsToOptions(props);
+        const data = props.data || props.defaultData;
         if (data) {
             options.data = data;
         } else {
-            var value = props.value || props.defaultValue;
+            const value = props.value || props.defaultValue;
             if (value) {
                 options.value = value;
             }
         }
 
-        var Inputs = Selectivity.Inputs;
-        var InputType = props.inputType || (props.multiple ? 'Multiple' : 'Single');
-        if (typeof InputType !== 'function') {
+        const Inputs = Selectivity.Inputs;
+        let InputType = props.inputType || (props.multiple ? "Multiple" : "Single");
+        if (typeof InputType !== "function") {
             if (Inputs[InputType]) {
                 InputType = Inputs[InputType];
             } else {
-                throw new Error('Unknown Selectivity input type: ' + InputType);
+                throw new Error(`Unknown Selectivity input type: ${InputType}`);
             }
         }
 
         options.element = el;
         el.selectivity = this.selectivity = new InputType(options);
 
-        for (var propName in eventMapping) {
-            if (eventMapping.hasOwnProperty(propName)) {
-                var listener = props[propName];
+        for (const propName in eventMapping) {
+            if (has(eventMapping, propName)) {
+                const listener = props[propName];
                 if (listener) {
-                    var eventName = eventMapping[propName];
+                    const eventName = eventMapping[propName];
                     el.addEventListener(eventName, listener);
                 }
             }
@@ -137,9 +135,9 @@ Selectivity.inherits(SelectivityReact, React.Component, {
 
         if (!props.onChange && (props.data || props.value) && !props.readOnly) {
             throw new Error(
-                'Selectivity: You have specified a data or value property without an ' +
-                    'onChange listener. You should use defaultData or defaultValue ' +
-                    'instead.'
+                "Selectivity: You have specified a data or value property without an " +
+                    "onChange listener. You should use defaultData or defaultValue " +
+                    "instead.",
             );
         }
 
@@ -149,15 +147,15 @@ Selectivity.inherits(SelectivityReact, React.Component, {
     },
 
     componentDidUpdate: function(prevProps) {
-        var props = this.props;
-        var selectivity = this.selectivity;
+        const props = this.props;
+        const selectivity = this.selectivity;
 
-        for (var propName in eventMapping) {
-            if (eventMapping.hasOwnProperty(propName)) {
-                var listener = props[propName];
-                var prevListener = prevProps[propName];
+        for (const propName in eventMapping) {
+            if (has(eventMapping, propName)) {
+                const listener = props[propName];
+                const prevListener = prevProps[propName];
                 if (listener !== prevListener) {
-                    var eventName = eventMapping[propName];
+                    const eventName = eventMapping[propName];
                     this.el.removeEventListener(eventName, prevListener);
                     this.el.addEventListener(eventName, listener);
                 }
@@ -210,18 +208,18 @@ Selectivity.inherits(SelectivityReact, React.Component, {
     },
 
     render: function() {
-        var self = this;
-        var props = self.props;
-        return React.createElement('div', {
+        const self = this;
+        const props = self.props;
+        return React.createElement("div", {
             className: props.className,
             onClick: props.onClick,
             onInput: props.onInput,
             style: props.style,
             ref: function(el) {
                 self.el = el;
-            }
+            },
         });
-    }
+    },
 });
 
-module.exports = Selectivity.React = SelectivityReact;
+Selectivity.React = SelectivityReact;

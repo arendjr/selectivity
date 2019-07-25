@@ -1,8 +1,6 @@
-'use strict';
+import escape from "lodash/escape";
 
-var escape = require('lodash/escape');
-
-var Selectivity = require('./selectivity');
+import Selectivity from "./selectivity";
 
 /**
  * Localizable elements of the Selectivity Templates.
@@ -10,24 +8,24 @@ var Selectivity = require('./selectivity');
  * Be aware that these strings are added straight to the HTML output of the templates, so any
  * non-safe strings should be escaped.
  */
-module.exports = Selectivity.Locale = {
-    loading: 'Loading...',
-    loadMore: 'Load more...',
-    noResults: 'No results found',
+export default Selectivity.Locale = {
+    loading: "Loading...",
+    loadMore: "Load more...",
+    noResults: "No results found",
 
-    ajaxError: function(term) {
+    ajaxError(term) {
         if (term) {
-            return 'Failed to fetch results for <b>' + escape(term) + '</b>';
+            return `Failed to fetch results for <b>${escape(term)}</b>`;
         } else {
-            return 'Failed to fetch results';
+            return "Failed to fetch results";
         }
     },
 
-    needMoreCharacters: function(numCharacters) {
-        return 'Enter ' + numCharacters + ' more characters to search';
+    needMoreCharacters(numCharacters) {
+        return `Enter ${numCharacters} more characters to search`;
     },
 
-    noResultsForTerm: function(term) {
-        return 'No results for <b>' + escape(term) + '</b>';
-    }
+    noResultsForTerm(term) {
+        return `No results for <b>${escape(term)}</b>`;
+    },
 };

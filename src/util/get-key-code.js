@@ -1,8 +1,6 @@
-'use strict';
-
 /**
  * Returns the keyCode value of the given event.
  */
-module.exports = function(event) {
+export default function getKeyCode(event) {
     return event.which || event.keyCode || 0;
-};
+}

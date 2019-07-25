@@ -1,480 +1,478 @@
-'use strict';
+const TestUtil = require("../../test-util");
 
-var TestUtil = require('../../test-util');
-
-TestUtil.createJQueryTest('jquery/multiple: test clear', ['inputs/multiple', 'templates'], function(
+TestUtil.createJQueryTest("jquery/multiple: test clear", ["inputs/multiple", "templates"], function(
     test,
-    $input
+    $input,
 ) {
     $input.selectivity({
-        data: [{ id: 1, text: 'Amsterdam' }, { id: 2, text: 'Antwerp' }],
+        data: [{ id: 1, text: "Amsterdam" }, { id: 2, text: "Antwerp" }],
         items: [
-            { id: 1, text: 'Amsterdam' },
-            { id: 2, text: 'Antwerp' },
-            { id: 3, text: 'Athens' }
+            { id: 1, text: "Amsterdam" },
+            { id: 2, text: "Antwerp" },
+            { id: 3, text: "Athens" },
         ],
-        multiple: true
+        multiple: true,
     });
 
-    $input.selectivity('clear');
+    $input.selectivity("clear");
 
-    test.deepEqual($input.selectivity('data'), []);
+    test.deepEqual($input.selectivity("data"), []);
 
-    test.deepEqual($input.selectivity('value'), []);
+    test.deepEqual($input.selectivity("value"), []);
 });
 
 TestUtil.createJQueryTest(
-    'jquery/multiple: test click after search',
-    ['inputs/multiple', 'dropdown', 'templates'],
+    "jquery/multiple: test click after search",
+    ["inputs/multiple", "dropdown", "templates"],
     function(test, $input, $) {
         $input.selectivity({
-            items: ['Amsterdam', 'Antwerp', 'Athens'],
-            multiple: true
+            items: ["Amsterdam", "Antwerp", "Athens"],
+            multiple: true,
         });
 
         $input
-            .find('.selectivity-multiple-input')
+            .find(".selectivity-multiple-input")
             .click()
-            .val('amster');
+            .val("amster");
         $('.selectivity-result-item[data-item-id="Amsterdam"]').click();
 
-        test.deepEqual($input.selectivity('value'), ['Amsterdam']);
-        test.equal($input.find('.selectivity-multiple-input').val(), '');
-    }
+        test.deepEqual($input.selectivity("value"), ["Amsterdam"]);
+        test.equal($input.find(".selectivity-multiple-input").val(), "");
+    },
 );
 
 TestUtil.createJQueryTest(
-    'jquery/multiple: test filter selected items (1)',
-    ['inputs/multiple', 'dropdown', 'templates'],
+    "jquery/multiple: test filter selected items (1)",
+    ["inputs/multiple", "dropdown", "templates"],
     function(test, $input, $) {
         $input.selectivity({
-            items: ['Amsterdam', 'Antwerp', 'Athens'],
+            items: ["Amsterdam", "Antwerp", "Athens"],
             multiple: true,
-            value: ['Amsterdam', 'Athens']
+            value: ["Amsterdam", "Athens"],
         });
 
         $input.click();
 
-        test.equal($('.selectivity-dropdown').length, 1);
-        test.equal($('.selectivity-result-item').length, 1);
-        test.equal($('.selectivity-result-item').text(), 'Antwerp');
-    }
+        test.equal($(".selectivity-dropdown").length, 1);
+        test.equal($(".selectivity-result-item").length, 1);
+        test.equal($(".selectivity-result-item").text(), "Antwerp");
+    },
 );
 
 TestUtil.createJQueryTest(
-    'jquery/multiple: test filter selected items (2)',
-    ['inputs/multiple', 'dropdown', 'templates'],
+    "jquery/multiple: test filter selected items (2)",
+    ["inputs/multiple", "dropdown", "templates"],
     function(test, $input, $) {
         $input.selectivity({
-            items: ['Amsterdam', 'Antwerp', 'Athens'],
+            items: ["Amsterdam", "Antwerp", "Athens"],
             multiple: true,
-            value: ['Athens']
+            value: ["Athens"],
         });
 
         $input.click();
 
-        test.equal($('.selectivity-dropdown').length, 1);
-        test.equal($('.selectivity-result-item').length, 2);
+        test.equal($(".selectivity-dropdown").length, 1);
+        test.equal($(".selectivity-result-item").length, 2);
         test.equal(
-            $('.selectivity-result-item')
+            $(".selectivity-result-item")
                 .first()
                 .text(),
-            'Amsterdam'
+            "Amsterdam",
         );
         test.equal(
-            $('.selectivity-result-item')
+            $(".selectivity-result-item")
                 .last()
                 .text(),
-            'Antwerp'
+            "Antwerp",
         );
-    }
+    },
 );
 
 TestUtil.createJQueryTest(
-    'jquery/multiple: test initial data',
-    ['inputs/multiple', 'templates'],
+    "jquery/multiple: test initial data",
+    ["inputs/multiple", "templates"],
     function(test, $input) {
         $input.selectivity({
-            data: [{ id: 1, text: 'Amsterdam' }, { id: 2, text: 'Antwerp' }],
+            data: [{ id: 1, text: "Amsterdam" }, { id: 2, text: "Antwerp" }],
             items: [
-                { id: 1, text: 'Amsterdam' },
-                { id: 2, text: 'Antwerp' },
-                { id: 3, text: 'Athens' }
+                { id: 1, text: "Amsterdam" },
+                { id: 2, text: "Antwerp" },
+                { id: 3, text: "Athens" },
             ],
-            multiple: true
-        });
-
-        test.deepEqual($input.selectivity('data'), [
-            { id: 1, text: 'Amsterdam' },
-            { id: 2, text: 'Antwerp' }
-        ]);
-
-        test.deepEqual($input.selectivity('value'), [1, 2]);
-    }
-);
-
-TestUtil.createJQueryTest(
-    'jquery/multiple: test initial value',
-    ['inputs/multiple', 'templates'],
-    function(test, $input) {
-        $input.selectivity({
-            items: ['Amsterdam', 'Antwerp', 'Athens'],
             multiple: true,
-            value: ['Amsterdam', 'Antwerp']
         });
 
-        test.deepEqual($input.selectivity('data'), [
-            { id: 'Amsterdam', text: 'Amsterdam' },
-            { id: 'Antwerp', text: 'Antwerp' }
+        test.deepEqual($input.selectivity("data"), [
+            { id: 1, text: "Amsterdam" },
+            { id: 2, text: "Antwerp" },
         ]);
 
-        test.deepEqual($input.selectivity('value'), ['Amsterdam', 'Antwerp']);
-    }
+        test.deepEqual($input.selectivity("value"), [1, 2]);
+    },
 );
 
 TestUtil.createJQueryTest(
-    'jquery/multiple: test nested data',
-    ['inputs/multiple', 'templates'],
+    "jquery/multiple: test initial value",
+    ["inputs/multiple", "templates"],
     function(test, $input) {
         $input.selectivity({
-            data: [{ id: 54, text: 'Vienna' }, { id: 2, text: 'Antwerp' }],
-            items: [
-                {
-                    text: 'Austria',
-                    children: [{ id: 54, text: 'Vienna' }]
-                },
-                {
-                    text: 'Belgium',
-                    children: [{ id: 2, text: 'Antwerp' }, { id: 9, text: 'Brussels' }]
-                },
-                {
-                    text: 'Bulgaria',
-                    children: [{ id: 48, text: 'Sofia' }]
-                }
-            ],
-            multiple: true
+            items: ["Amsterdam", "Antwerp", "Athens"],
+            multiple: true,
+            value: ["Amsterdam", "Antwerp"],
         });
 
-        test.deepEqual($input.selectivity('data'), [
-            { id: 54, text: 'Vienna' },
-            { id: 2, text: 'Antwerp' }
+        test.deepEqual($input.selectivity("data"), [
+            { id: "Amsterdam", text: "Amsterdam" },
+            { id: "Antwerp", text: "Antwerp" },
         ]);
 
-        test.deepEqual($input.selectivity('value'), [54, 2]);
-    }
+        test.deepEqual($input.selectivity("value"), ["Amsterdam", "Antwerp"]);
+    },
 );
 
 TestUtil.createJQueryTest(
-    'jquery/multiple: test without data',
-    ['inputs/multiple', 'templates'],
+    "jquery/multiple: test nested data",
+    ["inputs/multiple", "templates"],
+    function(test, $input) {
+        $input.selectivity({
+            data: [{ id: 54, text: "Vienna" }, { id: 2, text: "Antwerp" }],
+            items: [
+                {
+                    text: "Austria",
+                    children: [{ id: 54, text: "Vienna" }],
+                },
+                {
+                    text: "Belgium",
+                    children: [{ id: 2, text: "Antwerp" }, { id: 9, text: "Brussels" }],
+                },
+                {
+                    text: "Bulgaria",
+                    children: [{ id: 48, text: "Sofia" }],
+                },
+            ],
+            multiple: true,
+        });
+
+        test.deepEqual($input.selectivity("data"), [
+            { id: 54, text: "Vienna" },
+            { id: 2, text: "Antwerp" },
+        ]);
+
+        test.deepEqual($input.selectivity("value"), [54, 2]);
+    },
+);
+
+TestUtil.createJQueryTest(
+    "jquery/multiple: test without data",
+    ["inputs/multiple", "templates"],
     function(test, $input) {
         $input.selectivity({
             items: [
-                { id: 1, text: 'Amsterdam' },
-                { id: 2, text: 'Antwerp' },
-                { id: 3, text: 'Athens' }
+                { id: 1, text: "Amsterdam" },
+                { id: 2, text: "Antwerp" },
+                { id: 3, text: "Athens" },
             ],
-            multiple: true
+            multiple: true,
         });
 
-        test.deepEqual($input.selectivity('data'), []);
+        test.deepEqual($input.selectivity("data"), []);
 
-        test.deepEqual($input.selectivity('value'), []);
-    }
+        test.deepEqual($input.selectivity("value"), []);
+    },
 );
 
 TestUtil.createJQueryTest(
-    'jquery/multiple: test remove-only',
-    ['inputs/multiple', 'templates'],
+    "jquery/multiple: test remove-only",
+    ["inputs/multiple", "templates"],
     function(test, $input) {
         $input
             .selectivity({
                 items: [
-                    { id: 1, text: 'Amsterdam' },
-                    { id: 2, text: 'Antwerp' },
-                    { id: 3, text: 'Athens' }
+                    { id: 1, text: "Amsterdam" },
+                    { id: 2, text: "Antwerp" },
+                    { id: 3, text: "Athens" },
                 ],
-                multiple: true
+                multiple: true,
             })
-            .selectivity('setOptions', {
-                removeOnly: true
+            .selectivity("setOptions", {
+                removeOnly: true,
             });
 
-        test.equal($input.find('input').length, 0);
-    }
+        test.equal($input.find("input").length, 0);
+    },
 );
 
 TestUtil.createJQueryTest(
-    'jquery/multiple: test set value',
-    ['inputs/multiple', 'templates'],
+    "jquery/multiple: test set value",
+    ["inputs/multiple", "templates"],
     function(test, $input) {
         $input.selectivity({
-            items: ['Amsterdam', 'Antwerp', 'Athens'],
+            items: ["Amsterdam", "Antwerp", "Athens"],
             multiple: true,
-            value: ['Amsterdam']
+            value: ["Amsterdam"],
         });
 
-        test.deepEqual($input.selectivity('value'), ['Amsterdam']);
+        test.deepEqual($input.selectivity("value"), ["Amsterdam"]);
 
-        $input.selectivity('value', ['Antwerp', 'Athens']);
+        $input.selectivity("value", ["Antwerp", "Athens"]);
 
-        test.deepEqual($input.selectivity('data'), [
-            { id: 'Antwerp', text: 'Antwerp' },
-            { id: 'Athens', text: 'Athens' }
+        test.deepEqual($input.selectivity("data"), [
+            { id: "Antwerp", text: "Antwerp" },
+            { id: "Athens", text: "Athens" },
         ]);
 
-        test.deepEqual($input.selectivity('value'), ['Antwerp', 'Athens']);
-    }
+        test.deepEqual($input.selectivity("value"), ["Antwerp", "Athens"]);
+    },
 );
 
 TestUtil.createJQueryTest(
-    'jquery/multiple: test set value with init selection',
-    ['inputs/multiple', 'templates'],
+    "jquery/multiple: test set value with init selection",
+    ["inputs/multiple", "templates"],
     function(test, $input) {
         $input.selectivity({
             initSelection: function(value, callback) {
-                var cities = {
-                    1: 'Amsterdam',
-                    2: 'Antwerp',
-                    3: 'Athens'
+                const cities = {
+                    1: "Amsterdam",
+                    2: "Antwerp",
+                    3: "Athens",
                 };
                 callback(
                     value.map(function(id) {
                         return { id: id, text: cities[id] };
-                    })
+                    }),
                 );
             },
             multiple: true,
-            value: [1]
+            value: [1],
         });
 
-        test.deepEqual($input.selectivity('data'), [{ id: 1, text: 'Amsterdam' }]);
+        test.deepEqual($input.selectivity("data"), [{ id: 1, text: "Amsterdam" }]);
 
-        test.deepEqual($input.selectivity('value'), [1]);
+        test.deepEqual($input.selectivity("value"), [1]);
 
-        $input.selectivity('value', [2, 3]);
+        $input.selectivity("value", [2, 3]);
 
-        test.deepEqual($input.selectivity('data'), [
-            { id: 2, text: 'Antwerp' },
-            { id: 3, text: 'Athens' }
+        test.deepEqual($input.selectivity("data"), [
+            { id: 2, text: "Antwerp" },
+            { id: 3, text: "Athens" },
         ]);
 
-        test.deepEqual($input.selectivity('value'), [2, 3]);
-    }
+        test.deepEqual($input.selectivity("value"), [2, 3]);
+    },
 );
 
 TestUtil.createJQueryTest(
-    'jquery/multiple: test set value without items',
-    ['inputs/multiple', 'templates'],
+    "jquery/multiple: test set value without items",
+    ["inputs/multiple", "templates"],
     function(test, $input) {
         $input.selectivity({
             multiple: true,
-            value: ['Amsterdam']
+            value: ["Amsterdam"],
         });
 
-        test.deepEqual($input.selectivity('value'), ['Amsterdam']);
+        test.deepEqual($input.selectivity("value"), ["Amsterdam"]);
 
-        $input.selectivity('value', ['Antwerp', 'Athens']);
+        $input.selectivity("value", ["Antwerp", "Athens"]);
 
-        test.deepEqual($input.selectivity('data'), [
-            { id: 'Antwerp', text: 'Antwerp' },
-            { id: 'Athens', text: 'Athens' }
+        test.deepEqual($input.selectivity("data"), [
+            { id: "Antwerp", text: "Antwerp" },
+            { id: "Athens", text: "Athens" },
         ]);
 
-        test.deepEqual($input.selectivity('value'), ['Antwerp', 'Athens']);
-    }
+        test.deepEqual($input.selectivity("value"), ["Antwerp", "Athens"]);
+    },
 );
 
 TestUtil.createJQueryTest(
-    'jquery/multiple: test mouse over',
-    ['inputs/multiple', 'templates'],
+    "jquery/multiple: test mouse over",
+    ["inputs/multiple", "templates"],
     function(test, $input) {
         $input.selectivity({
             multiple: true,
-            value: ['Amsterdam']
+            value: ["Amsterdam"],
         });
 
-        TestUtil.simulateEvent('.selectivity-multiple-input', 'mouseenter');
+        TestUtil.simulateEvent(".selectivity-multiple-input", "mouseenter");
 
-        test.ok($input.hasClass('hover'));
+        test.ok($input.hasClass("hover"));
 
-        TestUtil.simulateEvent('.selectivity-multiple-input', 'mouseleave', {
-            fromElement: $input[0]
+        TestUtil.simulateEvent(".selectivity-multiple-input", "mouseleave", {
+            fromElement: $input[0],
         });
 
-        test.equal($input.hasClass('hover'), false);
-    }
+        test.equal($input.hasClass("hover"), false);
+    },
 );
 
 TestUtil.createJQueryTest(
-    'jquery/multiple: test click and mouse over',
-    ['inputs/multiple', 'dropdown', 'templates'],
+    "jquery/multiple: test click and mouse over",
+    ["inputs/multiple", "dropdown", "templates"],
     { async: true },
     function(test, $input, $) {
         test.plan(3);
 
         $input.selectivity({
             multiple: true,
-            value: ['Amsterdam']
+            value: ["Amsterdam"],
         });
 
-        $('.selectivity-multiple-input-container').click();
+        $(".selectivity-multiple-input-container").click();
 
-        test.equal($input.attr('class'), 'open');
+        test.equal($input.attr("class"), "open");
 
-        TestUtil.simulateEvent('.selectivity-multiple-input', 'mouseenter');
+        TestUtil.simulateEvent(".selectivity-multiple-input", "mouseenter");
 
-        test.equal($input.attr('class'), 'open hover');
-        $input.selectivity('close');
+        test.equal($input.attr("class"), "open hover");
+        $input.selectivity("close");
 
         setTimeout(function() {
-            test.equal($input.attr('class'), 'hover');
+            test.equal($input.attr("class"), "hover");
             test.end();
         }, 10);
-    }
+    },
 );
 
 TestUtil.createJQueryTest(
-    'jquery/multiple: test blur event after opening',
-    ['inputs/multiple', 'dropdown', 'templates'],
+    "jquery/multiple: test blur event after opening",
+    ["inputs/multiple", "dropdown", "templates"],
     { async: true },
     function(test, $input, $) {
         test.plan(2);
 
         $input.selectivity({
             multiple: true,
-            value: ['Amsterdam']
+            value: ["Amsterdam"],
         });
 
-        $('.selectivity-multiple-input-container').click();
+        $(".selectivity-multiple-input-container").click();
 
-        test.ok($input.hasClass('open'));
+        test.ok($input.hasClass("open"));
 
-        TestUtil.simulateEvent($input[0], 'blur');
+        TestUtil.simulateEvent($input[0], "blur");
 
         setTimeout(function() {
-            test.equal($input.hasClass('open'), false);
+            test.equal($input.hasClass("open"), false);
             test.end();
         }, 200);
-    }
+    },
 );
 
 TestUtil.createJQueryTest(
-    'jquery/multiple: test highlighting a selected item',
-    ['inputs/multiple', 'templates'],
+    "jquery/multiple: test highlighting a selected item",
+    ["inputs/multiple", "templates"],
     function(test, $input, $) {
         $input.selectivity({
             multiple: true,
-            value: ['Amsterdam', 'Antwerp']
+            value: ["Amsterdam", "Antwerp"],
         });
 
-        test.equal($('.selectivity-multiple-selected-item').length, 2);
-        test.equal($('.selectivity-multiple-selected-item.highlighted').length, 0);
+        test.equal($(".selectivity-multiple-selected-item").length, 2);
+        test.equal($(".selectivity-multiple-selected-item.highlighted").length, 0);
 
         TestUtil.simulateEvent(
             '.selectivity-multiple-selected-item[data-item-id="Amsterdam"]',
-            'click'
+            "click",
         );
 
-        test.equal($('.selectivity-multiple-selected-item').length, 2);
-        test.equal($('.selectivity-multiple-selected-item.highlighted').length, 1);
+        test.equal($(".selectivity-multiple-selected-item").length, 2);
+        test.equal($(".selectivity-multiple-selected-item.highlighted").length, 1);
         test.equal(
             $('.selectivity-multiple-selected-item[data-item-id="Amsterdam"].highlighted').length,
-            1
+            1,
         );
-    }
+    },
 );
 
 TestUtil.createJQueryTest(
-    'jquery/multiple: test trim spaces functionality',
-    ['inputs/multiple', 'plugins/tokenizer', 'templates'],
+    "jquery/multiple: test trim spaces functionality",
+    ["inputs/multiple", "plugins/tokenizer", "templates"],
     function(test, $input, $) {
         $input.selectivity({
             multiple: true,
             showDropdown: false,
-            tokenSeparators: [','],
-            trimSpaces: true
+            tokenSeparators: [","],
+            trimSpaces: true,
         });
 
-        $('.selectivity-multiple-input')[0].value = ' Amsterdam  , Berlin   , ';
-        TestUtil.simulateEvent('.selectivity-multiple-input', 'keyup');
+        $(".selectivity-multiple-input")[0].value = " Amsterdam  , Berlin   , ";
+        TestUtil.simulateEvent(".selectivity-multiple-input", "keyup");
 
-        test.deepEqual($input.selectivity('data'), [
-            { id: 'Amsterdam', text: 'Amsterdam' },
-            { id: 'Berlin', text: 'Berlin' }
+        test.deepEqual($input.selectivity("data"), [
+            { id: "Amsterdam", text: "Amsterdam" },
+            { id: "Berlin", text: "Berlin" },
         ]);
 
-        test.deepEqual($input.selectivity('value'), ['Amsterdam', 'Berlin']);
-    }
+        test.deepEqual($input.selectivity("value"), ["Amsterdam", "Berlin"]);
+    },
 );
 
 TestUtil.createJQueryTest(
-    'jquery/multiple: test allow duplicates',
-    ['inputs/multiple', 'plugins/tokenizer', 'templates'],
+    "jquery/multiple: test allow duplicates",
+    ["inputs/multiple", "plugins/tokenizer", "templates"],
     function(test, $input, $) {
         $input.selectivity({
             allowDuplicates: true,
             multiple: true,
             showDropdown: false,
-            tokenSeparators: [',']
+            tokenSeparators: [","],
         });
 
-        $('.selectivity-multiple-input')[0].value = 'Berlin,Amsterdam,Berlin,';
-        TestUtil.simulateEvent('.selectivity-multiple-input', 'keyup');
+        $(".selectivity-multiple-input")[0].value = "Berlin,Amsterdam,Berlin,";
+        TestUtil.simulateEvent(".selectivity-multiple-input", "keyup");
 
-        test.deepEqual($input.selectivity('data'), [
-            { id: 'Berlin', text: 'Berlin' },
-            { id: 'Amsterdam', text: 'Amsterdam' },
-            { id: 'Berlin', text: 'Berlin' }
+        test.deepEqual($input.selectivity("data"), [
+            { id: "Berlin", text: "Berlin" },
+            { id: "Amsterdam", text: "Amsterdam" },
+            { id: "Berlin", text: "Berlin" },
         ]);
 
-        test.deepEqual($input.selectivity('value'), ['Berlin', 'Amsterdam', 'Berlin']);
-    }
+        test.deepEqual($input.selectivity("value"), ["Berlin", "Amsterdam", "Berlin"]);
+    },
 );
 
 TestUtil.createJQueryTest(
-    'jquery/multiple: test read-only input',
-    ['inputs/multiple', 'templates'],
+    "jquery/multiple: test read-only input",
+    ["inputs/multiple", "templates"],
     function(test, $input, $) {
         $input.selectivity({
             multiple: true,
-            value: ['Amsterdam', 'Antwerp']
+            value: ["Amsterdam", "Antwerp"],
         });
 
-        test.equal($('.selectivity-multiple-selected-item').length, 2);
-        test.equal($('.selectivity-multiple-selected-item-remove').length, 2);
+        test.equal($(".selectivity-multiple-selected-item").length, 2);
+        test.equal($(".selectivity-multiple-selected-item-remove").length, 2);
 
-        $input.selectivity('setOptions', { readOnly: true });
+        $input.selectivity("setOptions", { readOnly: true });
 
-        test.equal($('.selectivity-multiple-selected-item').length, 2);
-        test.equal($('.selectivity-multiple-selected-item-remove').length, 0);
+        test.equal($(".selectivity-multiple-selected-item").length, 2);
+        test.equal($(".selectivity-multiple-selected-item-remove").length, 0);
 
-        $input.selectivity('setOptions', { readOnly: false });
+        $input.selectivity("setOptions", { readOnly: false });
 
-        test.equal($('.selectivity-multiple-selected-item').length, 2);
-        test.equal($('.selectivity-multiple-selected-item-remove').length, 2);
-    }
+        test.equal($(".selectivity-multiple-selected-item").length, 2);
+        test.equal($(".selectivity-multiple-selected-item-remove").length, 2);
+    },
 );
 
 TestUtil.createJQueryTest(
-    'jquery/multiple: test input size',
-    ['inputs/multiple', 'templates'],
+    "jquery/multiple: test input size",
+    ["inputs/multiple", "templates"],
     function(test, $input, $) {
         $input.selectivity({
-            items: ['Amsterdam', 'Antwerp', 'Athens'],
+            items: ["Amsterdam", "Antwerp", "Athens"],
             multiple: true,
-            placeholder: 'Select a city'
+            placeholder: "Select a city",
         });
 
-        test.equal($('.selectivity-multiple-input').attr('size'), '15');
+        test.equal($(".selectivity-multiple-input").attr("size"), "15");
 
-        $input.selectivity('value', ['Amsterdam']);
+        $input.selectivity("value", ["Amsterdam"]);
 
-        test.equal($('.selectivity-multiple-input').attr('size'), '2');
+        test.equal($(".selectivity-multiple-input").attr("size"), "2");
 
-        $('.selectivity-multiple-input').val('antw');
-        TestUtil.simulateEvent('.selectivity-multiple-input', 'keyup');
+        $(".selectivity-multiple-input").val("antw");
+        TestUtil.simulateEvent(".selectivity-multiple-input", "keyup");
 
-        test.equal($('.selectivity-multiple-input').attr('size'), '6');
-    }
+        test.equal($(".selectivity-multiple-input").attr("size"), "6");
+    },
 );

@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## 3.2.0
+
+-   Fix #248: Items update should trigger `setValue()` (thanks to @LeoDT).
+-   Upgraded dependencies.
+
 ## 3.1.0
 
 -   Add `data` property to `change` events.

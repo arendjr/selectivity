@@ -1,17 +1,14 @@
-'use strict';
-
-var assign = require('lodash/assign');
-
-var MultipleInput = require('./multiple');
-var Selectivity = require('../selectivity');
+import MultipleInput from "./multiple";
+import Selectivity from "../selectivity";
+import { assign } from "../util/object";
 
 function isValidEmail(email) {
-    var atIndex = email.indexOf('@');
-    if (atIndex === -1 || email.indexOf(' ') > -1) {
+    const atIndex = email.indexOf("@");
+    if (atIndex === -1 || email.indexOf(" ") > -1) {
         return false; // email needs to have an '@', and may not contain any spaces
     }
 
-    var dotIndex = email.lastIndexOf('.');
+    const dotIndex = email.lastIndexOf(".");
     if (dotIndex === -1) {
         // no dot is fine, as long as the '@' is followed by at least two more characters
         return atIndex < email.length - 2;
@@ -23,7 +20,7 @@ function isValidEmail(email) {
 
 function lastWord(token, length) {
     length = length === undefined ? token.length : length;
-    for (var i = length - 1; i >= 0; i--) {
+    for (let i = length - 1; i >= 0; i--) {
         if (/\s/.test(token[i])) {
             return token.slice(i + 1, length);
         }
@@ -40,10 +37,10 @@ function stripEnclosure(token, enclosure) {
 }
 
 function createEmailItem(token) {
-    var email = lastWord(token);
-    var name = token.slice(0, -email.length).trim();
+    let email = lastWord(token);
+    let name = token.slice(0, -email.length).trim();
     if (isValidEmail(email)) {
-        email = stripEnclosure(stripEnclosure(email, '()'), '<>');
+        email = stripEnclosure(stripEnclosure(email, "()"), "<>");
         name = stripEnclosure(name, '""').trim() || email;
         return { id: email, text: name };
     } else {
@@ -54,14 +51,14 @@ function createEmailItem(token) {
 function emailTokenizer(input, selection, createToken) {
     function hasToken(input) {
         if (input) {
-            for (var i = 0, length = input.length; i < length; i++) {
+            for (let i = 0, length = input.length; i < length; i++) {
                 switch (input[i]) {
-                    case ';':
-                    case ',':
-                    case '\n':
+                    case ";":
+                    case ",":
+                    case "\n":
                         return true;
-                    case ' ':
-                    case '\t':
+                    case " ":
+                    case "\t":
                         if (isValidEmail(lastWord(input, i))) {
                             return true;
                         }
@@ -80,14 +77,14 @@ function emailTokenizer(input, selection, createToken) {
     }
 
     function takeToken(input) {
-        for (var i = 0, length = input.length; i < length; i++) {
+        for (let i = 0, length = input.length; i < length; i++) {
             switch (input[i]) {
-                case ';':
-                case ',':
-                case '\n':
+                case ";":
+                case ",":
+                case "\n":
                     return { term: input.slice(0, i), input: input.slice(i + 1) };
-                case ' ':
-                case '\t':
+                case " ":
+                case "\t":
                     if (isValidEmail(lastWord(input, i))) {
                         return { term: input.slice(0, i), input: input.slice(i + 1) };
                     }
@@ -105,9 +102,9 @@ function emailTokenizer(input, selection, createToken) {
     }
 
     while (hasToken(input)) {
-        var token = takeToken(input);
+        const token = takeToken(input);
         if (token.term) {
-            var item = createEmailItem(token.term);
+            const item = createEmailItem(token.term);
             if (item && !(item.id && Selectivity.findById(selection, item.id))) {
                 createToken(item);
             }
@@ -123,21 +120,21 @@ function emailTokenizer(input, selection, createToken) {
  *
  * @param options Options object. Accepts all options from the MultipleInput Constructor.
  */
-function EmailInput(options) {
+export default function EmailInput(options) {
     MultipleInput.call(
         this,
         assign(
             {
                 createTokenItem: createEmailItem,
                 showDropdown: false,
-                tokenizer: emailTokenizer
+                tokenizer: emailTokenizer,
             },
-            options
-        )
+            options,
+        ),
     );
 
-    this.events.on('blur', function() {
-        var input = this.input;
+    this.events.on("blur", function() {
+        const input = this.input;
         if (input && isValidEmail(lastWord(input.value))) {
             this.add(createEmailItem(input.value));
         }
@@ -146,4 +143,4 @@ function EmailInput(options) {
 
 Selectivity.inherits(EmailInput, MultipleInput);
 
-module.exports = Selectivity.Inputs.Email = EmailInput;
+Selectivity.Inputs.Email = EmailInput;

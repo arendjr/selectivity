@@ -1,16 +1,15 @@
-'use strict';
+import debounce from "lodash/debounce";
 
-var debounce = require('lodash/debounce');
-
-var Selectivity = require('../selectivity');
-var Locale = require('../locale');
+import Locale from "../locale";
+import Selectivity from "../selectivity";
+import { has } from "../util/object";
 
 function addUrlParam(url, key, value) {
-    return url + (url.indexOf('?') > -1 ? '&' : '?') + key + '=' + encodeURIComponent(value);
+    return `${url + (url.indexOf("?") > -1 ? "&" : "?") + key}=${encodeURIComponent(value)}`;
 }
 
 function pick(object, keys) {
-    var result = {};
+    const result = {};
     keys.forEach(function(key) {
         if (object[key] !== undefined) {
             result[key] = object[key];
@@ -20,30 +19,30 @@ function pick(object, keys) {
 }
 
 function doFetch(ajax, queryOptions) {
-    var fetch = ajax.fetch || window.fetch;
-    var term = queryOptions.term;
+    const fetch = ajax.fetch || window.fetch;
+    const term = queryOptions.term;
 
-    var url = typeof ajax.url === 'function' ? ajax.url(queryOptions) : ajax.url;
+    let url = typeof ajax.url === "function" ? ajax.url(queryOptions) : ajax.url;
     if (ajax.params) {
-        var params = ajax.params(term, queryOptions.offset || 0);
-        for (var key in params) {
-            if (params.hasOwnProperty(key)) {
+        const params = ajax.params(term, queryOptions.offset || 0);
+        for (const key in params) {
+            if (has(params, key)) {
                 url = addUrlParam(url, key, params[key]);
             }
         }
     }
 
-    var init = pick(ajax, [
-        'body',
-        'cache',
-        'credentials',
-        'headers',
-        'integrity',
-        'method',
-        'mode',
-        'redirect',
-        'referrer',
-        'referrerPolicy'
+    const init = pick(ajax, [
+        "body",
+        "cache",
+        "credentials",
+        "headers",
+        "integrity",
+        "method",
+        "mode",
+        "redirect",
+        "referrer",
+        "referrerPolicy",
     ]);
 
     fetch(url, init, queryOptions)
@@ -53,7 +52,7 @@ function doFetch(ajax, queryOptions) {
             } else if (Array.isArray(response) || response.results) {
                 return response;
             } else {
-                throw new Error('Unexpected AJAX response');
+                throw new Error("Unexpected AJAX response");
             }
         })
         .then(function(response) {
@@ -64,7 +63,7 @@ function doFetch(ajax, queryOptions) {
             }
         })
         .catch(function(error) {
-            var formatError = ajax.formatError || Locale.ajaxError;
+            const formatError = ajax.formatError || Locale.ajaxError;
             queryOptions.error(formatError(term, error), { escape: false });
         });
 }
@@ -73,12 +72,12 @@ function doFetch(ajax, queryOptions) {
  * Option listener that implements a convenience query function for performing AJAX requests.
  */
 Selectivity.OptionListeners.unshift(function(selectivity, options) {
-    var ajax = options.ajax;
+    const ajax = options.ajax;
     if (ajax && ajax.url) {
-        var fetch = ajax.quietMillis ? debounce(doFetch, ajax.quietMillis) : doFetch;
+        const fetch = ajax.quietMillis ? debounce(doFetch, ajax.quietMillis) : doFetch;
 
         options.query = function(queryOptions) {
-            var numCharsNeeded = ajax.minimumInputLength - queryOptions.term.length;
+            const numCharsNeeded = ajax.minimumInputLength - queryOptions.term.length;
             if (numCharsNeeded > 0) {
                 queryOptions.error(Locale.needMoreCharacters(numCharsNeeded));
                 return;

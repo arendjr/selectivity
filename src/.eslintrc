@@ -1,0 +1,17 @@
+{
+    "env": {
+        "browser": true,
+        "es6": false,
+        "node": false
+    },
+    "extends": [
+        "eslint:recommended",
+        "plugin:compat/recommended",
+        "plugin:import/errors",
+        "plugin:import/warnings",
+        "prettier"
+    ],
+    "parserOptions": {
+        "sourceType": "module"
+    }
+}

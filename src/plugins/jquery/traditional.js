@@ -1,22 +1,20 @@
-'use strict';
+import $ from "jquery";
 
-var $ = require('jquery');
-
-var Selectivity = require('../../selectivity');
+import Selectivity from "../../selectivity";
 
 function createSelectivityNextToSelectElement($el, options) {
-    var data = options.multiple ? [] : null;
+    let data = options.multiple ? [] : null;
 
-    var mapOptions = function() {
-        var $this = $(this);
-        if ($this.is('option')) {
-            var text = $this.text();
-            var id = $this.attr('value');
+    function mapOptions() {
+        const $this = $(this);
+        if ($this.is("option")) {
+            const text = $this.text();
+            let id = $this.attr("value");
             if (id === undefined) {
                 id = text;
             }
-            if ($this.prop('selected')) {
-                var item = { id: id, text: text };
+            if ($this.prop("selected")) {
+                const item = { id: id, text: text };
                 if (options.multiple) {
                     data.push(item);
                 } else {
@@ -26,44 +24,44 @@ function createSelectivityNextToSelectElement($el, options) {
 
             return {
                 id: id,
-                text: $this.attr('label') || text
+                text: $this.attr("label") || text,
             };
         } else {
             return {
-                text: $this.attr('label'),
+                text: $this.attr("label"),
                 children: $this
-                    .children('option,optgroup')
+                    .children("option,optgroup")
                     .map(mapOptions)
-                    .get()
+                    .get(),
             };
         }
-    };
+    }
 
-    options.allowClear = 'allowClear' in options ? options.allowClear : !$el.prop('required');
+    options.allowClear = "allowClear" in options ? options.allowClear : !$el.prop("required");
 
-    var items = $el
-        .children('option,optgroup')
+    const items = $el
+        .children("option,optgroup")
         .map(mapOptions)
         .get();
     options.data = data;
 
     options.items = options.query ? null : items;
 
-    options.placeholder = options.placeholder || $el.data('placeholder') || '';
+    options.placeholder = options.placeholder || $el.data("placeholder") || "";
 
     options.tabIndex =
-        options.tabIndex === undefined ? $el.attr('tabindex') || 0 : options.tabIndex;
+        options.tabIndex === undefined ? $el.attr("tabindex") || 0 : options.tabIndex;
 
-    var classes = ($el.attr('class') || 'selectivity-input').split(' ');
-    if (classes.indexOf('selectivity-input') < 0) {
-        classes.push('selectivity-input');
+    const classes = ($el.attr("class") || "selectivity-input").split(" ");
+    if (classes.indexOf("selectivity-input") < 0) {
+        classes.push("selectivity-input");
     }
 
-    var $div = $('<div>').attr({
-        id: 's9y_' + $el.attr('id'),
-        class: classes.join(' '),
-        style: $el.attr('style'),
-        'data-name': $el.attr('name')
+    const $div = $("<div>").attr({
+        id: `s9y_${$el.attr("id")}`,
+        class: classes.join(" "),
+        style: $el.attr("style"),
+        "data-name": $el.attr("name"),
     });
     $div.insertAfter($el);
     $el.hide();
@@ -71,12 +69,11 @@ function createSelectivityNextToSelectElement($el, options) {
 }
 
 function bindTraditionalSelectEvents(selectivity) {
-    var $el = $(selectivity.el);
-    $el.on('change', function(event) {
-        var value = event.originalEvent.value;
-        $el
-            .prev('select')
-            .val($.type(value) === 'array' ? value.slice(0) : value)
+    const $el = $(selectivity.el);
+    $el.on("change", function(event) {
+        const value = event.originalEvent.value;
+        $el.prev("select")
+            .val($.type(value) === "array" ? value.slice(0) : value)
             .trigger(event);
     });
 }
@@ -86,9 +83,9 @@ function bindTraditionalSelectEvents(selectivity) {
  * instances.
  */
 Selectivity.OptionListeners.push(function(selectivity, options) {
-    var $el = $(selectivity.el);
-    if ($el.is('select')) {
-        if ($el.attr('autofocus')) {
+    const $el = $(selectivity.el);
+    if ($el.is("select")) {
+        if ($el.attr("autofocus")) {
             setTimeout(function() {
                 selectivity.focus();
             }, 1);

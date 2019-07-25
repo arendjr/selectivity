@@ -1,50 +1,48 @@
-'use strict';
+const tape = require("tape");
 
-var tape = require('tape');
+const Selectivity = require("../../src/selectivity");
 
-var Selectivity = require('../../src/selectivity');
-
-tape('matcher: test basic matcher', function(test) {
+tape("matcher: test basic matcher", function(test) {
     test.plan(6);
 
-    test.deepEqual(Selectivity.matcher({ id: 1, text: 'Amsterdam' }, 'am'), {
+    test.deepEqual(Selectivity.matcher({ id: 1, text: "Amsterdam" }, "am"), {
         id: 1,
-        text: 'Amsterdam'
+        text: "Amsterdam",
     });
-    test.deepEqual(Selectivity.matcher({ id: 1, text: 'Amsterdam' }, 'sterdam'), {
+    test.deepEqual(Selectivity.matcher({ id: 1, text: "Amsterdam" }, "sterdam"), {
         id: 1,
-        text: 'Amsterdam'
+        text: "Amsterdam",
     });
 
-    test.deepEqual(Selectivity.matcher({ id: 45, text: 'Rotterdam' }, 'am'), {
+    test.deepEqual(Selectivity.matcher({ id: 45, text: "Rotterdam" }, "am"), {
         id: 45,
-        text: 'Rotterdam'
+        text: "Rotterdam",
     });
-    test.deepEqual(Selectivity.matcher({ id: 45, text: 'Rotterdam' }, 'sterdam'), null);
+    test.deepEqual(Selectivity.matcher({ id: 45, text: "Rotterdam" }, "sterdam"), null);
 
-    test.deepEqual(Selectivity.matcher({ id: 29, text: 'Łódź' }, 'łódź'), { id: 29, text: 'Łódź' });
-    test.deepEqual(Selectivity.matcher({ id: 29, text: 'Łódź' }, 'lodz'), null);
+    test.deepEqual(Selectivity.matcher({ id: 29, text: "Łódź" }, "łódź"), { id: 29, text: "Łódź" });
+    test.deepEqual(Selectivity.matcher({ id: 29, text: "Łódź" }, "lodz"), null);
 });
 
-tape('matcher: test diacritics', function(test) {
+tape("matcher: test diacritics", function(test) {
     test.plan(5);
 
-    require('../../src/plugins/diacritics');
+    require("../../src/plugins/diacritics");
 
-    test.deepEqual(Selectivity.matcher({ id: 1, text: 'Amsterdam' }, 'am'), {
+    test.deepEqual(Selectivity.matcher({ id: 1, text: "Amsterdam" }, "am"), {
         id: 1,
-        text: 'Amsterdam'
+        text: "Amsterdam",
     });
-    test.deepEqual(Selectivity.matcher({ id: 1, text: 'Amsterdam' }, 'sterdam'), {
+    test.deepEqual(Selectivity.matcher({ id: 1, text: "Amsterdam" }, "sterdam"), {
         id: 1,
-        text: 'Amsterdam'
+        text: "Amsterdam",
     });
 
-    test.deepEqual(Selectivity.matcher({ id: 45, text: 'Rotterdam' }, 'am'), {
+    test.deepEqual(Selectivity.matcher({ id: 45, text: "Rotterdam" }, "am"), {
         id: 45,
-        text: 'Rotterdam'
+        text: "Rotterdam",
     });
-    test.deepEqual(Selectivity.matcher({ id: 45, text: 'Rotterdam' }, 'sterdam'), null);
+    test.deepEqual(Selectivity.matcher({ id: 45, text: "Rotterdam" }, "sterdam"), null);
 
-    test.deepEqual(Selectivity.matcher({ id: 29, text: 'Łódź' }, 'lodz'), { id: 29, text: 'Łódź' });
+    test.deepEqual(Selectivity.matcher({ id: 29, text: "Łódź" }, "lodz"), { id: 29, text: "Łódź" });
 });

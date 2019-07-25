@@ -1,16 +1,14 @@
-'use strict';
+import $ from "jquery";
+import isString from "lodash/isString";
 
-var $ = require('jquery');
-var isString = require('lodash/isString');
+import Selectivity from "../selectivity";
 
-var Selectivity = require('../selectivity');
-
-var EVENT_PROPERTIES = {
-    change: ['added', 'removed', 'value'],
-    'selectivity-change': ['added', 'removed', 'value'],
-    'selectivity-highlight': ['id', 'item'],
-    'selectivity-selected': ['id', 'item'],
-    'selectivity-selecting': ['id', 'item']
+const EVENT_PROPERTIES = {
+    change: ["added", "removed", "value"],
+    "selectivity-change": ["added", "removed", "value"],
+    "selectivity-highlight": ["id", "item"],
+    "selectivity-selected": ["id", "item"],
+    "selectivity-selecting": ["id", "item"],
 };
 
 // create event listeners that will copy the custom properties from the native events
@@ -50,20 +48,20 @@ function patchEvents($el) {
  *         executed on the first element in the set of matched elements.
  */
 $.fn.selectivity = function selectivity(methodName, options) {
-    var methodArgs = Array.prototype.slice.call(arguments, 1);
-    var result;
+    let methodArgs = Array.prototype.slice.call(arguments, 1);
+    let result;
 
     this.each(function() {
-        var instance = this.selectivity;
+        const instance = this.selectivity;
 
         if (instance) {
-            if (methodName === 'data') {
-                methodName = methodArgs.length ? 'setData' : 'getData';
-            } else if (methodName === 'val' || methodName === 'value') {
-                methodName = methodArgs.length ? 'setValue' : 'getValue';
+            if (methodName === "data") {
+                methodName = methodArgs.length ? "setData" : "getData";
+            } else if (methodName === "val" || methodName === "value") {
+                methodName = methodArgs.length ? "setValue" : "getValue";
             } else if (!isString(methodName)) {
                 methodArgs = [methodName];
-                methodName = 'setOptions';
+                methodName = "setOptions";
             }
 
             if ($.isFunction(instance[methodName])) {
@@ -71,29 +69,29 @@ $.fn.selectivity = function selectivity(methodName, options) {
                     result = instance[methodName].apply(instance, methodArgs);
                 }
             } else {
-                throw new Error('Unknown method: ' + methodName);
+                throw new Error(`Unknown method: ${methodName}`);
             }
         } else if (isString(methodName)) {
-            if (methodName !== 'destroy') {
-                throw new Error('Cannot call method on element without Selectivity instance');
+            if (methodName !== "destroy") {
+                throw new Error("Cannot call method on element without Selectivity instance");
             }
         } else {
             options = $.extend({}, methodName, { element: this });
 
             // this is a one-time hack to facilitate the "traditional" plugin, because
             // the plugin is not able to hook this early into creation of the instance
-            var $this = $(this);
-            if ($this.is('select') && $this.prop('multiple')) {
+            let $this = $(this);
+            if ($this.is("select") && $this.prop("multiple")) {
                 options.multiple = true;
             }
 
-            var Inputs = Selectivity.Inputs;
-            var InputType = options.inputType || (options.multiple ? 'Multiple' : 'Single');
+            const Inputs = Selectivity.Inputs;
+            let InputType = options.inputType || (options.multiple ? "Multiple" : "Single");
             if (!$.isFunction(InputType)) {
                 if (Inputs[InputType]) {
                     InputType = Inputs[InputType];
                 } else {
-                    throw new Error('Unknown Selectivity input type: ' + InputType);
+                    throw new Error(`Unknown Selectivity input type: ${InputType}`);
                 }
             }
 

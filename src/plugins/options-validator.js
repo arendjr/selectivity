@@ -1,28 +1,27 @@
-'use strict';
+import Selectivity from "../selectivity";
+import { has } from "../util/object";
 
-var Selectivity = require('../selectivity');
-
-var allowedOptions = {
-    allowClear: 'boolean',
-    backspaceHighlightsBeforeDelete: 'boolean',
-    closeOnSelect: 'boolean',
-    createTokenItem: 'function',
-    dropdown: 'function|null',
-    initSelection: 'function|null',
-    inputListeners: 'array',
-    items: 'array|null',
-    matcher: 'function|null',
-    placeholder: 'string',
-    positionDropdown: 'function|null',
-    query: 'function|null',
-    readOnly: 'boolean',
-    removeOnly: 'boolean',
-    shouldOpenSubmenu: 'function',
-    showSearchInputInDropdown: 'boolean',
-    suppressWheelSelector: 'string|null',
-    tabIndex: 'number',
-    templates: 'object',
-    tokenizer: 'function'
+const allowedOptions = {
+    allowClear: "boolean",
+    backspaceHighlightsBeforeDelete: "boolean",
+    closeOnSelect: "boolean",
+    createTokenItem: "function",
+    dropdown: "function|null",
+    initSelection: "function|null",
+    inputListeners: "array",
+    items: "array|null",
+    matcher: "function|null",
+    placeholder: "string",
+    positionDropdown: "function|null",
+    query: "function|null",
+    readOnly: "boolean",
+    removeOnly: "boolean",
+    shouldOpenSubmenu: "function",
+    showSearchInputInDropdown: "boolean",
+    suppressWheelSelector: "string|null",
+    tabIndex: "number",
+    templates: "object",
+    tokenizer: "function",
 };
 
 /**
@@ -30,26 +29,26 @@ var allowedOptions = {
  * get notified if you're passing invalid options.
  */
 Selectivity.OptionListeners.unshift(function(selectivity, options) {
-    for (var key in options) {
-        if (!options.hasOwnProperty(key)) {
+    for (const key in options) {
+        if (!has(options, key)) {
             continue;
         }
 
-        var value = options[key];
-        var type = allowedOptions[key];
+        const value = options[key];
+        const type = allowedOptions[key];
         if (
             type &&
-            !type.split('|').some(function(type) {
-                if (type === 'null') {
+            !type.split("|").some(function(type) {
+                if (type === "null") {
                     return value === null;
-                } else if (type === 'array') {
+                } else if (type === "array") {
                     return Array.isArray(value);
                 } else {
                     return value !== null && value !== undefined && typeof value === type;
                 }
             })
         ) {
-            throw new Error(key + ' must be of type ' + type);
+            throw new Error(`${key} must be of type ${type}`);
         }
     }
 });

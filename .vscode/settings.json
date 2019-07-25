@@ -2,6 +2,7 @@
     // Place your settings in this file to overwrite default and user settings.
     "editor.formatOnSave": true,
     "editor.rulers": [100],
+    "eslint.autoFixOnSave": true,
     "files.exclude": {
         ".DS_Store": true,
         ".git": true,
@@ -19,7 +20,7 @@
     "prettier.printWidth": 100,
     "prettier.proseWrap": "always",
     "prettier.semi": true,
-    "prettier.singleQuote": true,
+    "prettier.singleQuote": false,
     "prettier.tabWidth": 4,
     "prettier.trailingComma": "none",
     "search.exclude": {

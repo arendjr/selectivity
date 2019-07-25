@@ -1,9 +1,8 @@
-'use strict';
+const freshy = require("freshy");
+const { JSDOM } = require("jsdom");
+const tape = require("tape");
 
-var _ = require('lodash');
-var freshy = require('freshy');
-var JSDOM = require('jsdom').JSDOM;
-var tape = require('tape');
+require("@babel/register")();
 
 module.exports = {
     /**
@@ -21,26 +20,26 @@ module.exports = {
      *                    resources/testcase.html.
      *           $ - jQuery instance.
      */
-    createJQueryTest: function(name, modules, options, fn) {
+    createJQueryTest(name, modules, options, fn) {
         if (options instanceof Function) {
             fn = options;
             options = {};
         }
 
-        var indexResource = options.indexResource || 'testcase.html';
+        const indexResource = options.indexResource || "testcase.html";
 
         tape(name, function(test) {
-            JSDOM.fromFile('tests/resources/' + indexResource).then(function(dom) {
-                var window = dom.window;
+            JSDOM.fromFile(`tests/resources/${indexResource}`).then(dom => {
+                const window = dom.window;
 
-                var end = test.end.bind(test);
+                const end = test.end.bind(test);
                 test.end = function() {
-                    modules.forEach(function(module) {
-                        freshy.unload('../src/' + module);
-                    });
-                    freshy.unload('../src/apis/jquery');
-                    freshy.unload('../src/selectivity');
-                    freshy.unload('jquery');
+                    for (const module of modules) {
+                        freshy.unload(`../src/${module}`);
+                    }
+                    freshy.unload("../src/apis/jquery");
+                    freshy.unload("../src/selectivity");
+                    freshy.unload("jquery");
 
                     window.close();
                     end();
@@ -49,15 +48,15 @@ module.exports = {
                 global.document = window.document;
                 global.window = window;
 
-                window.$ = window.jQuery = require('jquery');
+                window.$ = window.jQuery = require("jquery");
 
-                require('../src/selectivity');
-                require('../src/apis/jquery');
-                modules.forEach(function(module) {
-                    require('../src/' + module);
-                });
+                require("../src/selectivity");
+                require("../src/apis/jquery");
+                for (const module of modules) {
+                    require(`../src/${module}`);
+                }
 
-                fn(test, window.$('#selectivity-input'), window.$);
+                fn(test, window.$("#selectivity-input"), window.$);
 
                 if (!options.async) {
                     test.end();
@@ -81,51 +80,51 @@ module.exports = {
      *                    resources/testcase.html.
      *           $ - jQuery instance.
      */
-    createReactTest: function(name, modules, props, fn) {
-        var indexResource = props.indexResource || 'testcase.html';
+    createReactTest(name, modules, props, fn) {
+        const indexResource = props.indexResource || "testcase.html";
 
         tape(name, function(test) {
-            JSDOM.fromFile('tests/resources/' + indexResource).then(function(dom) {
-                var window = dom.window;
+            JSDOM.fromFile(`tests/resources/${indexResource}`).then(dom => {
+                const window = dom.window;
 
-                global.console.debug = _.noop;
+                global.console.debug = () => {};
                 global.document = window.document;
                 global.navigator = {
                     userAgent:
-                        'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, ' +
-                        'like Gecko) Chrome/51.0.2704.106 Safari/537.36'
+                        "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, " +
+                        "like Gecko) Chrome/51.0.2704.106 Safari/537.36",
                 };
                 global.window = window;
 
-                window.$ = window.jQuery = require('jquery');
+                window.$ = window.jQuery = require("jquery");
 
-                require('../src/selectivity');
-                modules.forEach(function(module) {
-                    require('../src/' + module);
-                });
+                require("../src/selectivity");
+                for (const module of modules) {
+                    require(`../src/${module}`);
+                }
 
-                var React = require('react');
-                var ReactDOM = require('react-dom');
-                var SelectivityReact = require('../src/apis/react');
+                const React = require("react");
+                const ReactDOM = require("react-dom");
+                const SelectivityReact = require("../src/apis/react");
 
-                var container = document.querySelector('#selectivity-input');
+                const container = document.querySelector("#selectivity-input");
 
-                var end = test.end.bind(test);
+                const end = test.end.bind(test);
                 test.end = function() {
                     ReactDOM.unmountComponentAtNode(container);
 
-                    modules.forEach(function(module) {
-                        freshy.unload('../src/' + module);
-                    });
-                    freshy.unload('../src/apis/react');
-                    freshy.unload('../src/selectivity');
+                    for (const module of modules) {
+                        freshy.unload(`../src/${module}`);
+                    }
+                    freshy.unload("../src/apis/react");
+                    freshy.unload("../src/selectivity");
 
                     window.close();
                     end();
                 };
 
-                var ref = null;
-                props.ref = function(_ref) {
+                let ref = null;
+                props.ref = _ref => {
                     ref = _ref;
                 };
 
@@ -133,14 +132,14 @@ module.exports = {
                     React.createElement(SelectivityReact, props),
                     container,
                     function() {
-                        fn(SelectivityReact, test, ref, container, function(selector) {
-                            return container.querySelectorAll(selector);
-                        });
+                        fn(SelectivityReact, test, ref, container, selector =>
+                            container.querySelectorAll(selector),
+                        );
 
                         if (!props.async) {
                             test.end();
                         }
-                    }
+                    },
                 );
             });
         });
@@ -154,30 +153,30 @@ module.exports = {
      * @param eventName Name of the event to trigger.
      * @param eventData Optional properties to assign to the event.
      */
-    simulateEvent: function(element, eventName, eventData) {
-        var el = element;
-        if (_.isString(el)) {
+    simulateEvent(element, eventName, eventData) {
+        let el = element;
+        if (typeof el === "string") {
             el = document.querySelector(el);
         }
         if (!el) {
-            throw new Error('No such element: ' + element);
+            throw new Error(`No such element: ${element}`);
         }
 
         eventData = eventData || {};
-        var eventInterface = 'Event';
-        if (eventName === 'blur' || eventName === 'focus') {
+        let eventInterface = "Event";
+        if (eventName === "blur" || eventName === "focus") {
             eventData.bubbles = false;
-            eventInterface = 'FocusEvent';
-        } else if (eventName === 'click' || _.startsWith(eventName, 'mouse')) {
-            eventData.bubbles = eventName !== 'mouseenter' && eventName !== 'mouseleave';
-            eventInterface = 'MouseEvent';
-        } else if (_.startsWith(eventName, 'key')) {
+            eventInterface = "FocusEvent";
+        } else if (eventName === "click" || eventName.startsWith("mouse")) {
+            eventData.bubbles = eventName !== "mouseenter" && eventName !== "mouseleave";
+            eventInterface = "MouseEvent";
+        } else if (eventName.startsWith("key")) {
             eventData.bubbles = true;
-            eventInterface = 'KeyboardEvent';
+            eventInterface = "KeyboardEvent";
         }
 
-        var event = new window[eventInterface](eventName, eventData);
-        _.assign(event, eventData);
+        const event = new window[eventInterface](eventName, eventData);
+        Object.assign(event, eventData);
         el.dispatchEvent(event);
-    }
+    },
 };

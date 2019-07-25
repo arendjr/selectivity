@@ -1,19 +1,16 @@
-'use strict';
-
-var assign = require('lodash/assign');
-
-var Selectivity = require('../selectivity');
+import Selectivity from "../selectivity";
+import { assign } from "../util/object";
 
 function defaultTokenizer(input, selection, createToken, options) {
-    var createTokenItem =
+    const createTokenItem =
         options.createTokenItem ||
         function(token) {
             return token ? { id: token, text: token } : null;
         };
 
-    var allowDuplicates = options.allowDuplicates;
-    var separators = options.tokenSeparators;
-    var trim = options.trimSpaces;
+    const allowDuplicates = options.allowDuplicates;
+    const separators = options.tokenSeparators;
+    const trim = options.trimSpaces;
 
     function hasToken(input) {
         return input
@@ -24,14 +21,14 @@ function defaultTokenizer(input, selection, createToken, options) {
     }
 
     function takeToken(input) {
-        var trimmedInput = trim ? input.trim() : input;
-        for (var i = 0, length = trimmedInput.length; i < length; i++) {
+        const trimmedInput = trim ? input.trim() : input;
+        for (let i = 0, length = trimmedInput.length; i < length; i++) {
             if (separators.indexOf(trimmedInput[i]) > -1) {
-                var term = trimmedInput.slice(0, i);
+                const term = trimmedInput.slice(0, i);
                 input = trimmedInput.slice(i + 1);
                 return {
                     term: trim ? term.trim() : term,
-                    input: trim ? input.trim() : input
+                    input: trim ? input.trim() : input,
                 };
             }
         }
@@ -39,9 +36,9 @@ function defaultTokenizer(input, selection, createToken, options) {
     }
 
     while (hasToken(input)) {
-        var token = takeToken(input);
+        const token = takeToken(input);
         if (token.term) {
-            var item = createTokenItem(token.term);
+            const item = createTokenItem(token.term);
             if (item && (allowDuplicates || !Selectivity.findById(selection, item.id))) {
                 createToken(item);
             }
@@ -68,7 +65,7 @@ function defaultTokenizer(input, selection, createToken, options) {
  */
 Selectivity.OptionListeners.push(function(selectivity, options) {
     if (options.tokenSeparators) {
-        options.allowedTypes = assign({ tokenSeparators: 'array' }, options.allowedTypes);
+        options.allowedTypes = assign({ tokenSeparators: "array" }, options.allowedTypes);
 
         options.tokenizer = options.tokenizer || defaultTokenizer;
     }
