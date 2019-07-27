@@ -25,9 +25,8 @@ test("react/ajax: test response as array", async () => {
 
     const fetch = jest.fn().mockResolvedValue(mockResponse);
 
-    const wrapper = mount(<SelectivityReact ajax={{ fetch, url: FAKE_URL }} />);
-    const el = wrapper.getDOMNode();
-    el.dispatchEvent(new MouseEvent("click"));
+    const el = mount(<SelectivityReact ajax={{ fetch, url: FAKE_URL }} />).getDOMNode();
+    el.click();
 
     await waitForExpect(() => {
         expect(fetch).toHaveBeenCalledWith(FAKE_URL, {}, expect.anything());
@@ -46,13 +45,13 @@ test("react/ajax: test response as array with default fetch method", async () =>
 
     window.fetch = jest.fn().mockResolvedValue(mockResponse);
 
-    const wrapper = mount(
+    const el = mount(
         <SelectivityReact
             ajax={{ params: (term, offset) => ({ offset, q: term }), url: FAKE_URL }}
         />,
-    );
-    const el = wrapper.getDOMNode();
-    el.dispatchEvent(new MouseEvent("click"));
+    ).getDOMNode();
+
+    el.click();
 
     await waitForExpect(() => {
         expect(window.fetch).toHaveBeenCalledWith(`${FAKE_URL}?offset=0&q=`, {}, expect.anything());

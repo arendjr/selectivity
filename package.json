@@ -25,12 +25,14 @@
         "@babel/preset-env": "^7.5.5",
         "@babel/preset-react": "^7.0.0",
         "@babel/register": "^7.5.5",
+        "@testing-library/jest-dom": "^4.0.0",
         "@types/jest": "^24.0.15",
         "ansi-colors": "^4.1.1",
         "autoprefixer": "^9.6.1",
         "babel-eslint": "^10.0.2",
         "babel-jest": "^24.8.0",
         "browser-sync": "^2.26.7",
+        "delay": "^4.3.0",
         "enzyme": "^3.10.0",
         "enzyme-adapter-react-16": "^1.14.0",
         "eslint": "^6.1.0",
@@ -100,7 +102,8 @@
     ],
     "jest": {
         "setupFilesAfterEnv": [
-            "jest-enzyme"
+            "jest-enzyme",
+            "<rootDir>/tests/jest-setup.js"
         ],
         "testEnvironment": "enzyme"
     }
