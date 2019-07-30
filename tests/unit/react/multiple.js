@@ -1,240 +1,246 @@
-const _ = require("lodash");
-const React = require("react");
-const ReactDOM = require("react-dom");
+import React from "react";
+import { mount } from "enzyme";
+import { noop } from "lodash";
 
-const TestUtil = require("../../test-util");
+test("react/multiple: test click after search", () => {
+    require("../../../src/inputs/multiple");
+    require("../../../src/dropdown");
+    require("../../../src/templates");
+    const SelectivityReact = require("../../../src/apis/react").default;
 
-TestUtil.createReactTest(
-    "react/multiple: test click after search",
-    ["inputs/multiple", "dropdown", "templates"],
-    {
-        items: ["Amsterdam", "Antwerp", "Athens"],
-        multiple: true,
-    },
-    function(SelectivityReact, test, ref, container, $) {
-        TestUtil.simulateEvent(".selectivity-multiple-input", "click");
-        $(".selectivity-multiple-input")[0].value = "amster";
-        TestUtil.simulateEvent(".selectivity-multiple-input", "keyup");
-        TestUtil.simulateEvent('.selectivity-result-item[data-item-id="Amsterdam"]', "click");
+    const items = ["Amsterdam", "Antwerp", "Athens"];
 
-        test.deepEqual(ref.getValue(), ["Amsterdam"]);
-        test.equal($(".selectivity-multiple-input")[0].value, "");
-    },
-);
+    const el = mount(<SelectivityReact items={items} multiple={true} />).getDOMNode();
 
-TestUtil.createReactTest(
-    "react/multiple: test filter selected items (1)",
-    ["inputs/multiple", "dropdown", "templates"],
-    {
-        defaultValue: ["Amsterdam", "Athens"],
-        items: ["Amsterdam", "Antwerp", "Athens"],
-        multiple: true,
-    },
-    function(SelectivityReact, test, ref, container, $) {
-        TestUtil.simulateEvent(container.firstChild, "click");
+    el.querySelector(".selectivity-multiple-input").click();
+    el.querySelector(".selectivity-multiple-input").value = "amster";
+    el.querySelector(".selectivity-multiple-input").dispatchEvent(new KeyboardEvent("keyup"));
+    el.querySelector('.selectivity-result-item[data-item-id="Amsterdam"]').click();
 
-        test.equal($(".selectivity-dropdown").length, 1);
-        test.equal($(".selectivity-result-item").length, 1);
-        test.equal($(".selectivity-result-item")[0].textContent, "Antwerp");
-    },
-);
+    expect(el.selectivity.getValue()).toEqual(["Amsterdam"]);
+    expect(el.querySelector(".selectivity-multiple-input").value).toBe("");
+});
 
-TestUtil.createReactTest(
-    "react/multiple: test filter selected items (2)",
-    ["inputs/multiple", "dropdown", "templates"],
-    {
-        defaultValue: ["Athens"],
-        items: ["Amsterdam", "Antwerp", "Athens"],
-        multiple: true,
-    },
-    function(SelectivityReact, test, ref, container, $) {
-        TestUtil.simulateEvent(container.firstChild, "click");
+test("react/multiple: test filter selected items (1)", () => {
+    require("../../../src/inputs/multiple");
+    require("../../../src/dropdown");
+    require("../../../src/templates");
+    const SelectivityReact = require("../../../src/apis/react").default;
 
-        test.equal($(".selectivity-dropdown").length, 1);
-        test.equal($(".selectivity-result-item").length, 2);
-        test.equal($(".selectivity-result-item")[0].textContent, "Amsterdam");
-        test.equal($(".selectivity-result-item")[1].textContent, "Antwerp");
-    },
-);
+    const el = mount(
+        <SelectivityReact
+            defaultValue={["Amsterdam", "Athens"]}
+            items={["Amsterdam", "Antwerp", "Athens"]}
+            multiple={true}
+        />,
+    ).getDOMNode();
 
-TestUtil.createReactTest(
-    "react/multiple: test initial data",
-    ["inputs/multiple", "templates"],
-    {
-        defaultData: [{ id: 1, text: "Amsterdam" }, { id: 2, text: "Antwerp" }],
+    el.firstChild.click();
+
+    expect(el.querySelectorAll(".selectivity-dropdown")).toHaveLength(1);
+    expect(el.querySelectorAll(".selectivity-result-item")).toHaveLength(1);
+    expect(el.querySelector(".selectivity-result-item").textContent).toBe("Antwerp");
+});
+
+test("react/multiple: test filter selected items (2)", () => {
+    require("../../../src/inputs/multiple");
+    require("../../../src/dropdown");
+    require("../../../src/templates");
+    const SelectivityReact = require("../../../src/apis/react").default;
+
+    const el = mount(
+        <SelectivityReact
+            defaultValue={["Athens"]}
+            items={["Amsterdam", "Antwerp", "Athens"]}
+            multiple={true}
+        />,
+    ).getDOMNode();
+
+    el.firstChild.click();
+
+    expect(el.querySelectorAll(".selectivity-dropdown")).toHaveLength(1);
+    expect(el.querySelectorAll(".selectivity-result-item")).toHaveLength(2);
+    expect(el.querySelector(".selectivity-result-item:first-child").textContent).toBe("Amsterdam");
+    expect(el.querySelector(".selectivity-result-item:last-child").textContent).toBe("Antwerp");
+});
+
+test("react/multiple: test initial data", () => {
+    require("../../../src/inputs/multiple");
+    require("../../../src/templates");
+    const SelectivityReact = require("../../../src/apis/react").default;
+
+    const el = mount(
+        <SelectivityReact
+            defaultData={[{ id: 1, text: "Amsterdam" }, { id: 2, text: "Antwerp" }]}
+            items={[
+                { id: 1, text: "Amsterdam" },
+                { id: 2, text: "Antwerp" },
+                { id: 3, text: "Athens" },
+            ]}
+            multiple={true}
+        />,
+    ).getDOMNode();
+
+    expect(el.selectivity.getData()).toEqual([
+        { id: 1, text: "Amsterdam" },
+        { id: 2, text: "Antwerp" },
+    ]);
+    expect(el.selectivity.getValue()).toEqual([1, 2]);
+});
+
+test("react/multiple: test initial value", () => {
+    require("../../../src/inputs/multiple");
+    require("../../../src/templates");
+    const SelectivityReact = require("../../../src/apis/react").default;
+
+    const el = mount(
+        <SelectivityReact
+            defaultValue={["Amsterdam", "Antwerp"]}
+            items={["Amsterdam", "Antwerp", "Athens"]}
+            multiple={true}
+        />,
+    ).getDOMNode();
+
+    expect(el.selectivity.getData()).toEqual([
+        { id: "Amsterdam", text: "Amsterdam" },
+        { id: "Antwerp", text: "Antwerp" },
+    ]);
+    expect(el.selectivity.getValue()).toEqual(["Amsterdam", "Antwerp"]);
+});
+
+test("react/multiple: test nested data", () => {
+    require("../../../src/inputs/multiple");
+    require("../../../src/templates");
+    const SelectivityReact = require("../../../src/apis/react").default;
+
+    const el = mount(
+        <SelectivityReact
+            defaultData={[{ id: 54, text: "Vienna" }, { id: 2, text: "Antwerp" }]}
+            items={[
+                { text: "Austria", children: [{ id: 54, text: "Vienna" }] },
+                {
+                    text: "Belgium",
+                    children: [{ id: 2, text: "Antwerp" }, { id: 9, text: "Brussels" }],
+                },
+                { text: "Bulgaria", children: [{ id: 48, text: "Sofia" }] },
+            ]}
+            multiple={true}
+        />,
+    ).getDOMNode();
+
+    expect(el.selectivity.getData()).toEqual([
+        { id: 54, text: "Vienna" },
+        { id: 2, text: "Antwerp" },
+    ]);
+    expect(el.selectivity.getValue()).toEqual([54, 2]);
+});
+
+test("react/multiple: test without data", () => {
+    require("../../../src/inputs/multiple");
+    require("../../../src/templates");
+    const SelectivityReact = require("../../../src/apis/react").default;
+
+    const el = mount(
+        <SelectivityReact
+            items={[
+                { id: 1, text: "Amsterdam" },
+                { id: 2, text: "Antwerp" },
+                { id: 3, text: "Athens" },
+            ]}
+            multiple={true}
+        />,
+    ).getDOMNode();
+
+    expect(el.selectivity.getData()).toEqual([]);
+    expect(el.selectivity.getValue()).toEqual([]);
+    expect(el.selectivity.enabled).toBe(true);
+    expect(el.querySelectorAll("input")).toHaveLength(1);
+});
+
+test("react/multiple: test without data and remove-only", () => {
+    require("../../../src/inputs/multiple");
+    require("../../../src/templates");
+    const SelectivityReact = require("../../../src/apis/react").default;
+
+    const el = mount(
+        <SelectivityReact
+            items={[
+                { id: 1, text: "Amsterdam" },
+                { id: 2, text: "Antwerp" },
+                { id: 3, text: "Athens" },
+            ]}
+            multiple={true}
+            removeOnly={true}
+        />,
+    ).getDOMNode();
+
+    expect(el.selectivity.getData()).toEqual([]);
+    expect(el.selectivity.getValue()).toEqual([]);
+    expect(el.selectivity.enabled).toBe(false);
+    expect(el.querySelectorAll("input")).toHaveLength(0);
+});
+
+test("react/multiple: test setting remove-only after construction", () => {
+    require("../../../src/inputs/multiple");
+    require("../../../src/templates");
+    const SelectivityReact = require("../../../src/apis/react").default;
+
+    const wrapper = mount(
+        <SelectivityReact
+            items={[
+                { id: 1, text: "Amsterdam" },
+                { id: 2, text: "Antwerp" },
+                { id: 3, text: "Athens" },
+            ]}
+            multiple={true}
+        />,
+    );
+
+    const el = wrapper.getDOMNode();
+    expect(el.selectivity.enabled).toBe(true);
+    expect(el.querySelectorAll("input")).toHaveLength(0);
+
+    wrapper.setProps({
         items: [
             { id: 1, text: "Amsterdam" },
             { id: 2, text: "Antwerp" },
             { id: 3, text: "Athens" },
         ],
-        multiple: true,
-    },
-    function(SelectivityReact, test, ref) {
-        test.deepEqual(ref.getData(), [{ id: 1, text: "Amsterdam" }, { id: 2, text: "Antwerp" }]);
-
-        test.deepEqual(ref.getValue(), [1, 2]);
-    },
-);
-
-TestUtil.createReactTest(
-    "react/multiple: test initial value",
-    ["inputs/multiple", "templates"],
-    {
-        defaultValue: ["Amsterdam", "Antwerp"],
-        items: ["Amsterdam", "Antwerp", "Athens"],
-        multiple: true,
-    },
-    function(SelectivityReact, test, ref) {
-        test.deepEqual(ref.getData(), [
-            { id: "Amsterdam", text: "Amsterdam" },
-            { id: "Antwerp", text: "Antwerp" },
-        ]);
-
-        test.deepEqual(ref.getValue(), ["Amsterdam", "Antwerp"]);
-    },
-);
-
-TestUtil.createReactTest(
-    "react/multiple: test nested data",
-    ["inputs/multiple", "templates"],
-    {
-        defaultData: [{ id: 54, text: "Vienna" }, { id: 2, text: "Antwerp" }],
-        items: [
-            {
-                text: "Austria",
-                children: [{ id: 54, text: "Vienna" }],
-            },
-            {
-                text: "Belgium",
-                children: [{ id: 2, text: "Antwerp" }, { id: 9, text: "Brussels" }],
-            },
-            {
-                text: "Bulgaria",
-                children: [{ id: 48, text: "Sofia" }],
-            },
-        ],
-        multiple: true,
-    },
-    function(SelectivityReact, test, ref) {
-        test.deepEqual(ref.getData(), [{ id: 54, text: "Vienna" }, { id: 2, text: "Antwerp" }]);
-
-        test.deepEqual(ref.getValue(), [54, 2]);
-    },
-);
-
-TestUtil.createReactTest(
-    "react/multiple: test without data",
-    ["inputs/multiple", "templates"],
-    {
-        items: [
-            { id: 1, text: "Amsterdam" },
-            { id: 2, text: "Antwerp" },
-            { id: 3, text: "Athens" },
-        ],
-        multiple: true,
-    },
-    function(SelectivityReact, test, ref, container, $) {
-        test.deepEqual(ref.getData(), []);
-
-        test.deepEqual(ref.getValue(), []);
-
-        test.equal(ref.selectivity.enabled, true);
-
-        test.equal($("input").length, 1);
-    },
-);
-
-TestUtil.createReactTest(
-    "react/multiple: test without data and remove-only",
-    ["inputs/multiple", "templates"],
-    {
-        items: [
-            { id: 1, text: "Amsterdam" },
-            { id: 2, text: "Antwerp" },
-            { id: 3, text: "Athens" },
-        ],
-        multiple: true,
         removeOnly: true,
-    },
-    function(SelectivityReact, test, ref, container, $) {
-        test.deepEqual(ref.getData(), []);
+    });
 
-        test.deepEqual(ref.getValue(), []);
+    expect(el.selectivity.enabled).toBe(false);
+    expect(el.querySelectorAll("input")).toHaveLength(0);
+});
 
-        test.equal(ref.selectivity.enabled, false);
+test("react/multiple: test set value", () => {
+    require("../../../src/inputs/multiple");
+    require("../../../src/templates");
+    const SelectivityReact = require("../../../src/apis/react").default;
 
-        test.equal($("input").length, 0);
-    },
-);
+    const wrapper = mount(
+        <SelectivityReact
+            items={["Amsterdam", "Antwerp", "Athens"]}
+            multiple={true}
+            onChange={noop}
+            value={["Amsterdam"]}
+        />,
+    );
 
-TestUtil.createReactTest(
-    "react/multiple: test setting remove-only after construction",
-    ["inputs/multiple", "templates"],
-    {
-        async: true,
-        items: [
-            { id: 1, text: "Amsterdam" },
-            { id: 2, text: "Antwerp" },
-            { id: 3, text: "Athens" },
-        ],
-        multiple: true,
-    },
-    function(SelectivityReact, test, ref, container, $) {
-        test.equal($("input").length, 1);
+    const el = wrapper.getDOMNode();
+    expect(el.selectivity.getValue).toEqual(["Amsterdam"]);
 
-        ReactDOM.render(
-            React.createElement(SelectivityReact, {
-                items: [
-                    { id: 1, text: "Amsterdam" },
-                    { id: 2, text: "Antwerp" },
-                    { id: 3, text: "Athens" },
-                ],
-                removeOnly: true,
-            }),
-            container,
-            function() {
-                test.equal($("input").length, 0);
-
-                test.end();
-            },
-        );
-    },
-);
-
-TestUtil.createReactTest(
-    "react/multiple: test set value",
-    ["inputs/multiple", "templates"],
-    {
-        async: true,
+    wrapper.setProps({
         items: ["Amsterdam", "Antwerp", "Athens"],
-        multiple: true,
-        onChange: _.noop,
-        value: ["Amsterdam"],
-    },
-    function(SelectivityReact, test, ref, container) {
-        test.plan(3);
+        value: ["Antwerp", "Athens"],
+    });
 
-        test.deepEqual(ref.getValue(), ["Amsterdam"]);
-
-        ReactDOM.render(
-            React.createElement(SelectivityReact, {
-                items: ["Amsterdam", "Antwerp", "Athens"],
-                value: ["Antwerp", "Athens"],
-            }),
-            container,
-            function() {
-                test.deepEqual(ref.getData(), [
-                    { id: "Antwerp", text: "Antwerp" },
-                    { id: "Athens", text: "Athens" },
-                ]);
-
-                test.deepEqual(ref.getValue(), ["Antwerp", "Athens"]);
-
-                test.end();
-            },
-        );
-    },
-);
+    expect(el.selectivity.getData()).toEqual([
+        { id: "Antwerp", text: "Antwerp" },
+        { id: "Athens", text: "Athens" },
+    ]);
+    expect(el.selectivity.getValue()).toEqual(["Antwerp", "Athens"]);
+});
 
 function initSelection(value, callback) {
     const cities = {
