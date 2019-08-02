@@ -769,12 +769,8 @@ Selectivity.matcher = function(item, term) {
         result = item;
     } else if (item.children) {
         const matchingChildren = item.children
-            .map(function(child) {
-                return Selectivity.matcher(child, term);
-            })
-            .filter(function(child) {
-                return !!child;
-            });
+            .map(child => Selectivity.matcher(child, term))
+            .filter(child => !!child);
         if (matchingChildren.length) {
             result = { id: item.id, text: item.text, children: matchingChildren };
         }
