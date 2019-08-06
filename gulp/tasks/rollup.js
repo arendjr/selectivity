@@ -99,7 +99,7 @@ function getExternals() {
     const externals = ["jquery", "react", "react-dom"];
 
     if (argv.lodash) {
-        externals.push(...LODASH_METHODS.map(method => `lodash/${method}`));
+        externals.push("lodash");
     } else if (argv.api === "jquery") {
         externals.push("lodash/assign");
     }
