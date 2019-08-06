@@ -1,10 +1,8 @@
-'use strict';
+import isString from "lodash/isString";
 
-var assign = require('lodash/assign');
-var isString = require('lodash/isString');
-
-var EventListener = require('./event-listener');
-var toggleClass = require('./util/toggle-class');
+import EventListener from "./event-listener";
+import { assign } from "./util/object";
+import toggleClass from "./util/toggle-class";
 
 /**
  * Selectivity Base Constructor.
@@ -22,7 +20,7 @@ var toggleClass = require('./util/toggle-class');
  *                value - Initial value to set. This should be an array of IDs. This property is
  *                        mutually exclusive with 'data'.
  */
-function Selectivity(options) {
+export default function Selectivity(options) {
     /**
      * Reference to the currently open dropdown.
      */
@@ -72,7 +70,7 @@ function Selectivity(options) {
     /**
      * The last used search term.
      */
-    this.term = '';
+    this.term = "";
 
     this.setOptions(options);
 
@@ -82,14 +80,14 @@ function Selectivity(options) {
         this.setData(options.data || null, { triggerChange: false });
     }
 
-    this.el.setAttribute('tabindex', options.tabIndex || 0);
+    this.el.setAttribute("tabindex", options.tabIndex || 0);
 
     this.events = new EventListener(this.el, this);
     this.events.on({
         blur: this._blur,
         mouseenter: this._mouseenter,
         mouseleave: this._mouseleave,
-        'selectivity-close': this._closed
+        "selectivity-close": this._closed,
     });
 }
 
@@ -100,14 +98,14 @@ assign(Selectivity.prototype, {
     /**
      * Convenience shortcut for this.el.querySelector(selector).
      */
-    $: function(selector) {
+    $(selector) {
         return this.el.querySelector(selector);
     },
 
     /**
      * Closes the dropdown.
      */
-    close: function() {
+    close() {
         this._clearCloseTimeout();
 
         if (this.dropdown) {
@@ -119,10 +117,10 @@ assign(Selectivity.prototype, {
     /**
      * Destroys the Selectivity instance.
      */
-    destroy: function() {
+    destroy() {
         this.events.destruct();
 
-        var el = this.el;
+        const el = this.el;
         while (el.firstChild) {
             el.removeChild(el.firstChild);
         }
@@ -139,14 +137,14 @@ assign(Selectivity.prototype, {
      *
      * @return The filtered array.
      */
-    filterResults: function(results) {
+    filterResults(results) {
         return results;
     },
 
     /**
      * Applies focus to the input.
      */
-    focus: function() {
+    focus() {
         this._clearCloseTimeout();
 
         this._focusing = true;
@@ -161,7 +159,7 @@ assign(Selectivity.prototype, {
     /**
      * Returns the selection data.
      */
-    getData: function() {
+    getData() {
         return this._data;
     },
 
@@ -174,14 +172,14 @@ assign(Selectivity.prototype, {
      *         the item cannot be found. Note that if no items are defined, this method assumes the
      *         text labels will be equal to the IDs.
      */
-    getItemForId: function(id) {
-        var items = this.items;
+    getItemForId(id) {
+        const items = this.items;
         if (items) {
             return Selectivity.findNestedById(items, id);
         } else if (id === null) {
             return null;
         } else {
-            return { id: id, text: '' + id };
+            return { id: id, text: `${id}` };
         }
     },
 
@@ -192,10 +190,10 @@ assign(Selectivity.prototype, {
      *
      * @return Item ID or null if no ID could be found.
      */
-    getRelatedItemId: function(elementOrEvent) {
-        var el = elementOrEvent.target || elementOrEvent;
+    getRelatedItemId(elementOrEvent) {
+        let el = elementOrEvent.target || elementOrEvent;
         while (el) {
-            if (el.hasAttribute('data-item-id')) {
+            if (el.hasAttribute("data-item-id")) {
                 break;
             }
             el = el.parentNode;
@@ -205,14 +203,14 @@ assign(Selectivity.prototype, {
             return null;
         }
 
-        var id = el.getAttribute('data-item-id');
+        const id = el.getAttribute("data-item-id");
 
         // IDs can be either numbers or strings, but attribute values are always strings, so we
         // will have to find out whether the item ID ought to be a number or string ourselves.
         if (Selectivity.findById(this._data || [], id)) {
             return id;
         } else {
-            var dropdown = this.dropdown;
+            let dropdown = this.dropdown;
             while (dropdown) {
                 if (Selectivity.findNestedById(dropdown.results, id)) {
                     return id;
@@ -220,15 +218,15 @@ assign(Selectivity.prototype, {
                 // FIXME: reference to submenu plugin doesn't belong in base
                 dropdown = dropdown.submenu;
             }
-            var number = parseInt(id, 10);
-            return '' + number === id ? number : id;
+            const number = parseInt(id, 10);
+            return `${number}` === id ? number : id;
         }
     },
 
     /**
      * Returns the value of the selection.
      */
-    getValue: function() {
+    getValue() {
         return this._value;
     },
 
@@ -244,17 +242,17 @@ assign(Selectivity.prototype, {
      *                         user types in the input field. This is useful if you want to use the
      *                         input only to handle keyboard support.
      */
-    initInput: function(input, options) {
+    initInput(input, options) {
         this.input = input;
 
-        var selectivity = this;
-        var inputListeners = this.options.inputListeners || Selectivity.InputListeners;
+        const selectivity = this;
+        const inputListeners = this.options.inputListeners || Selectivity.InputListeners;
         inputListeners.forEach(function(listener) {
             listener(selectivity, input, options);
         });
 
         if (!options || options.search !== false) {
-            input.addEventListener('keyup', function(event) {
+            input.addEventListener("keyup", function(event) {
                 if (!event.defaultPrevented) {
                     selectivity.search(event.target.value);
                 }
@@ -265,28 +263,28 @@ assign(Selectivity.prototype, {
     /**
      * Opens the dropdown.
      */
-    open: function() {
-        if (this._opening || this.dropdown || !this.triggerEvent('selectivity-opening')) {
+    open() {
+        if (this._opening || this.dropdown || !this.triggerEvent("selectivity-opening")) {
             return;
         }
 
         this._opening = true;
 
-        var Dropdown = this.options.dropdown || Selectivity.Dropdown;
+        const Dropdown = this.options.dropdown || Selectivity.Dropdown;
         if (Dropdown) {
             this.dropdown = new Dropdown(this, {
                 items: this.items,
                 position: this.options.positionDropdown,
                 query: this.options.query,
-                showSearchInput: this.options.showSearchInputInDropdown !== false
+                showSearchInput: this.options.showSearchInputInDropdown !== false,
             });
         }
 
-        this.search('');
+        this.search("");
 
         this.focus();
 
-        toggleClass(this.el, 'open', true);
+        toggleClass(this.el, "open", true);
 
         this._opening = false;
     },
@@ -294,7 +292,7 @@ assign(Selectivity.prototype, {
     /**
      * (Re-)positions the dropdown.
      */
-    positionDropdown: function() {
+    positionDropdown() {
         if (this.dropdown) {
             this.dropdown.position();
         }
@@ -309,7 +307,7 @@ assign(Selectivity.prototype, {
      *
      * @param term Term to search for.
      */
-    search: function(term) {
+    search(term) {
         this.open();
 
         if (this.dropdown) {
@@ -332,7 +330,7 @@ assign(Selectivity.prototype, {
      *                                so you may want to call rerenderSelection() manually when
      *                                using this option.
      */
-    setData: function(newData, options) {
+    setData(newData, options) {
         options = options || {};
 
         newData = this.validateData(newData);
@@ -421,18 +419,18 @@ assign(Selectivity.prototype, {
      *                templates - Object with instance-specific templates to override the global
      *                            templates assigned to Selectivity.Templates.
      */
-    setOptions: function(options) {
+    setOptions(options) {
         options = options || {};
 
-        var selectivity = this;
+        const selectivity = this;
         Selectivity.OptionListeners.forEach(function(listener) {
             listener(selectivity, options);
         });
 
-        if ('items' in options) {
+        if ("items" in options) {
             this.items = options.items ? Selectivity.processItems(options.items) : null;
         }
-        if ('templates' in options) {
+        if ("templates" in options) {
             assign(this.templates, options.templates);
         }
 
@@ -461,7 +459,7 @@ assign(Selectivity.prototype, {
      *                                so you may want to call rerenderSelection() manually when
      *                                using this option.
      */
-    setValue: function(newValue, options) {
+    setValue(newValue, options) {
         options = options || {};
 
         newValue = this.validateValue(newValue);
@@ -479,7 +477,7 @@ assign(Selectivity.prototype, {
                             this.triggerChange();
                         }
                     }
-                }.bind(this)
+                }.bind(this),
             );
         } else {
             this._data = this.getDataForValue(newValue);
@@ -499,15 +497,15 @@ assign(Selectivity.prototype, {
      * @return String containing HTML or ReactElement if template is a function returning
      *         ReactElement.
      */
-    template: function(templateName, options) {
-        var template = this.templates[templateName];
+    template(templateName, options) {
+        const template = this.templates[templateName];
         if (!template) {
-            throw new Error('Unknown template: ' + templateName);
+            throw new Error(`Unknown template: ${templateName}`);
         }
 
-        if (typeof template === 'function') {
-            var templateResult = template(options);
-            return typeof templateResult === 'string' ? templateResult.trim() : templateResult;
+        if (typeof template === "function") {
+            const templateResult = template(options);
+            return typeof templateResult === "string" ? templateResult.trim() : templateResult;
         } else if (template.render) {
             return template.render(options).trim();
         } else {
@@ -527,10 +525,10 @@ assign(Selectivity.prototype, {
      * @see getData()
      * @see getValue()
      */
-    triggerChange: function(options) {
-        var data = assign({ data: this._data, value: this._value }, options);
-        this.triggerEvent('change', data);
-        this.triggerEvent('selectivity-change', data);
+    triggerChange(options) {
+        const data = assign({ data: this._data, value: this._value }, options);
+        this.triggerEvent("change", data);
+        this.triggerEvent("selectivity-change", data);
     },
 
     /**
@@ -542,8 +540,8 @@ assign(Selectivity.prototype, {
      * @return Whether the default action of the event may be executed, ie. returns false if
      *         preventDefault() has been called.
      */
-    triggerEvent: function(eventName, data) {
-        var event = document.createEvent('Event');
+    triggerEvent(eventName, data) {
+        const event = document.createEvent("Event");
         event.initEvent(eventName, /* bubbles: */ false, /* cancelable: */ true);
         assign(event, data);
         this.el.dispatchEvent(event);
@@ -557,19 +555,19 @@ assign(Selectivity.prototype, {
      *
      * @return The validated item. May differ from the input item.
      */
-    validateItem: function(item) {
+    validateItem(item) {
         if (item && Selectivity.isValidId(item.id) && isString(item.text)) {
             return item;
         } else {
-            throw new Error('Item should have id (number or string) and text (string) properties');
+            throw new Error("Item should have id (number or string) and text (string) properties");
         }
     },
 
     /**
      * @private
      */
-    _blur: function() {
-        if (!this._focusing && !this.el.classList.contains('hover')) {
+    _blur() {
+        if (!this._focusing && !this.el.classList.contains("hover")) {
             // Without the timeout it appears clicks on result items are not always properly
             // handled, especially when the user doesn't click exactly on the text of the result
             // item. I don't understand really why that happens, or why the timeout has to be so
@@ -582,7 +580,7 @@ assign(Selectivity.prototype, {
     /**
      * @private
      */
-    _clearCloseTimeout: function() {
+    _clearCloseTimeout() {
         if (this._closeTimeout) {
             clearTimeout(this._closeTimeout);
             this._closeTimeout = 0;
@@ -592,28 +590,28 @@ assign(Selectivity.prototype, {
     /**
      * @private
      */
-    _closed: function() {
+    _closed() {
         this.dropdown = null;
 
-        toggleClass(this.el, 'open', false);
+        toggleClass(this.el, "open", false);
     },
 
     /**
      * @private
      */
-    _mouseleave: function(event) {
+    _mouseleave(event) {
         // If mouseleave happens on any selectivity related element, remove hover class
         if (!this.el.contains(event.relatedTarget)) {
-            toggleClass(this.el, 'hover', false);
+            toggleClass(this.el, "hover", false);
         }
     },
 
     /**
      * @private
      */
-    _mouseenter: function() {
-        toggleClass(this.el, 'hover', true);
-    }
+    _mouseenter() {
+        toggleClass(this.el, "hover", true);
+    },
 });
 
 /**
@@ -670,7 +668,7 @@ Selectivity.Templates = {};
  * @return The item in the array with the given ID, or null if the item was not found.
  */
 Selectivity.findById = function(array, id) {
-    var index = Selectivity.findIndexById(array, id);
+    const index = Selectivity.findIndexById(array, id);
     return index > -1 ? array[index] : null;
 };
 
@@ -683,7 +681,7 @@ Selectivity.findById = function(array, id) {
  * @return The index of the item in the array with the given ID, or -1 if the item was not found.
  */
 Selectivity.findIndexById = function(array, id) {
-    for (var i = 0, length = array.length; i < length; i++) {
+    for (let i = 0, length = array.length; i < length; i++) {
         if (array[i].id === id) {
             return i;
         }
@@ -701,9 +699,9 @@ Selectivity.findIndexById = function(array, id) {
  * @return The item in the array with the given ID, or null if the item was not found.
  */
 Selectivity.findNestedById = function(array, id) {
-    for (var i = 0, length = array.length; i < length; i++) {
-        var item = array[i],
-            result;
+    for (let i = 0, length = array.length; i < length; i++) {
+        const item = array[i];
+        let result;
         if (item.id === id) {
             result = item;
         } else if (item.children) {
@@ -734,7 +732,7 @@ Selectivity.inherits = function(SubClass, SuperClass, prototype) {
     SubClass.prototype = assign(
         Object.create(SuperClass.prototype),
         { constructor: SubClass },
-        prototype
+        prototype,
     );
 
     return function(self, methodName) {
@@ -751,7 +749,7 @@ Selectivity.inherits = function(SubClass, SuperClass, prototype) {
  * @return true if the value is a valid ID, false otherwise.
  */
 Selectivity.isValidId = function(id) {
-    return typeof id === 'number' || isString(id);
+    return typeof id === "number" || isString(id);
 };
 
 /**
@@ -766,17 +764,13 @@ Selectivity.isValidId = function(id) {
  * @return true if the text matches the term, false otherwise.
  */
 Selectivity.matcher = function(item, term) {
-    var result = null;
+    let result = null;
     if (Selectivity.transformText(item.text).indexOf(term) > -1) {
         result = item;
     } else if (item.children) {
-        var matchingChildren = item.children
-            .map(function(child) {
-                return Selectivity.matcher(child, term);
-            })
-            .filter(function(child) {
-                return !!child;
-            });
+        const matchingChildren = item.children
+            .map(child => Selectivity.matcher(child, term))
+            .filter(child => !!child);
         if (matchingChildren.length) {
             result = { id: item.id, text: item.text, children: matchingChildren };
         }
@@ -795,7 +789,7 @@ Selectivity.matcher = function(item, term) {
  */
 Selectivity.processItem = function(item) {
     if (Selectivity.isValidId(item)) {
-        return { id: item, text: '' + item };
+        return { id: item, text: `${item}` };
     } else if (item && (Selectivity.isValidId(item.id) || item.children) && isString(item.text)) {
         if (item.children) {
             item.children = Selectivity.processItems(item.children);
@@ -803,7 +797,7 @@ Selectivity.processItem = function(item) {
 
         return item;
     } else {
-        throw new Error('invalid item');
+        throw new Error("invalid item");
     }
 };
 
@@ -818,7 +812,7 @@ Selectivity.processItems = function(items) {
     if (Array.isArray(items)) {
         return items.map(Selectivity.processItem);
     } else {
-        throw new Error('invalid items');
+        throw new Error("invalid items");
     }
 };
 
@@ -833,5 +827,3 @@ Selectivity.processItems = function(items) {
 Selectivity.transformText = function(string) {
     return string.toLowerCase();
 };
-
-module.exports = Selectivity;

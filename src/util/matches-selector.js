@@ -1,10 +1,8 @@
-'use strict';
-
 /**
  * Returns whether the given element matches the given selector.
  */
-module.exports = function(el, selector) {
-    var method =
+export default function matchesSelector(el, selector) {
+    const method =
         el.matches || el.webkitMatchesSelector || el.mozMatchesSelector || el.msMatchesSelector;
     return method.call(el, selector);
-};
+}

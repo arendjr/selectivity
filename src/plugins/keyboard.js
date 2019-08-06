@@ -1,22 +1,20 @@
-'use strict';
+import Selectivity from "../selectivity";
+import findResultItem from "../util/find-result-item";
+import getKeyCode from "../util/get-key-code";
 
-var Selectivity = require('../selectivity');
-var findResultItem = require('../util/find-result-item');
-var getKeyCode = require('../util/get-key-code');
-
-var KEY_BACKSPACE = 8;
-var KEY_DOWN_ARROW = 40;
-var KEY_ENTER = 13;
-var KEY_ESCAPE = 27;
-var KEY_TAB = 9;
-var KEY_UP_ARROW = 38;
+const KEY_BACKSPACE = 8;
+const KEY_DOWN_ARROW = 40;
+const KEY_ENTER = 13;
+const KEY_ESCAPE = 27;
+const KEY_TAB = 9;
+const KEY_UP_ARROW = 38;
 
 /**
  * Search input listener providing keyboard support for navigating the dropdown.
  */
 function listener(selectivity, input) {
-    var keydownCanceled = false;
-    var closeSubmenu = null;
+    let keydownCanceled = false;
+    let closeSubmenu = null;
 
     /**
      * Moves a dropdown's highlight to the next or previous result item.
@@ -24,19 +22,19 @@ function listener(selectivity, input) {
      * @param delta Either 1 to move to the next item, or -1 to move to the previous item.
      */
     function moveHighlight(dropdown, delta) {
-        var results = dropdown.results;
+        const results = dropdown.results;
         if (!results.length) {
             return;
         }
 
-        var resultItems = [].slice.call(dropdown.el.querySelectorAll('.selectivity-result-item'));
+        const resultItems = [].slice.call(dropdown.el.querySelectorAll(".selectivity-result-item"));
 
         function scrollToHighlight() {
-            var el;
+            let el;
             if (dropdown.highlightedResult) {
                 el = findResultItem(resultItems, dropdown.highlightedResult.id);
             } else if (dropdown.loadMoreHighlighted) {
-                el = dropdown.$('.selectivity-load-more');
+                el = dropdown.$(".selectivity-load-more");
             }
 
             if (el && el.scrollIntoView) {
@@ -49,11 +47,11 @@ function listener(selectivity, input) {
             return;
         }
 
-        var defaultIndex = delta > 0 ? 0 : resultItems.length - 1;
-        var index = defaultIndex;
-        var highlightedResult = dropdown.highlightedResult;
+        const defaultIndex = delta > 0 ? 0 : resultItems.length - 1;
+        let index = defaultIndex;
+        const highlightedResult = dropdown.highlightedResult;
         if (highlightedResult) {
-            var highlightedResultItem = findResultItem(resultItems, highlightedResult.id);
+            const highlightedResultItem = findResultItem(resultItems, highlightedResult.id);
             index = resultItems.indexOf(highlightedResultItem) + delta;
             if (delta > 0 ? index >= resultItems.length : index < 0) {
                 if (dropdown.hasMore) {
@@ -66,8 +64,11 @@ function listener(selectivity, input) {
             }
         }
 
-        var resultItem = resultItems[index];
-        var result = Selectivity.findNestedById(results, selectivity.getRelatedItemId(resultItem));
+        const resultItem = resultItems[index];
+        const result = Selectivity.findNestedById(
+            results,
+            selectivity.getRelatedItemId(resultItem),
+        );
         if (result) {
             dropdown.highlight(result, { delay: !!result.submenu });
             scrollToHighlight();
@@ -75,13 +76,13 @@ function listener(selectivity, input) {
     }
 
     function keyHeld(event) {
-        var dropdown = selectivity.dropdown;
+        const dropdown = selectivity.dropdown;
         if (dropdown) {
-            var keyCode = getKeyCode(event);
+            const keyCode = getKeyCode(event);
             if (keyCode === KEY_BACKSPACE) {
                 if (!input.value) {
                     if (dropdown.submenu) {
-                        var submenu = dropdown.submenu;
+                        let submenu = dropdown.submenu;
                         while (submenu.submenu) {
                             submenu = submenu.submenu;
                         }
@@ -112,8 +113,8 @@ function listener(selectivity, input) {
             }
         }
 
-        var dropdown = selectivity.dropdown;
-        var keyCode = getKeyCode(event);
+        const dropdown = selectivity.dropdown;
+        const keyCode = getKeyCode(event);
         if (keydownCanceled) {
             event.preventDefault();
             keydownCanceled = false;
@@ -151,8 +152,8 @@ function listener(selectivity, input) {
         }
     }
 
-    input.addEventListener('keydown', keyHeld);
-    input.addEventListener('keyup', keyReleased);
+    input.addEventListener("keydown", keyHeld);
+    input.addEventListener("keyup", keyReleased);
 }
 
 Selectivity.InputListeners.push(listener);

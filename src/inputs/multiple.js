@@ -1,29 +1,27 @@
-'use strict';
+import isString from "lodash/isString";
 
-var assign = require('lodash/assign');
-var isString = require('lodash/isString');
+import Selectivity from "../selectivity";
+import { assign } from "../util/object";
+import getItemSelector from "../util/get-item-selector";
+import getKeyCode from "../util/get-key-code";
+import parseElement from "../util/parse-element";
+import removeElement from "../util/remove-element";
+import stopPropagation from "../util/stop-propagation";
+import toggleClass from "../util/toggle-class";
 
-var Selectivity = require('../selectivity');
-var getItemSelector = require('../util/get-item-selector');
-var getKeyCode = require('../util/get-key-code');
-var parseElement = require('../util/parse-element');
-var removeElement = require('../util/remove-element');
-var stopPropagation = require('../util/stop-propagation');
-var toggleClass = require('../util/toggle-class');
+const KEY_BACKSPACE = 8;
+const KEY_DELETE = 46;
+const KEY_ENTER = 13;
 
-var KEY_BACKSPACE = 8;
-var KEY_DELETE = 46;
-var KEY_ENTER = 13;
+const INPUT_SELECTOR = ".selectivity-multiple-input";
+const SELECTED_ITEM_SELECTOR = ".selectivity-multiple-selected-item";
 
-var INPUT_SELECTOR = '.selectivity-multiple-input';
-var SELECTED_ITEM_SELECTOR = '.selectivity-multiple-selected-item';
-
-var hasTouch = 'ontouchstart' in window;
+const hasTouch = "ontouchstart" in window;
 
 /**
  * MultipleInput Constructor.
  */
-function MultipleInput(options) {
+export default function MultipleInput(options) {
     Selectivity.call(
         this,
         assign(
@@ -31,39 +29,39 @@ function MultipleInput(options) {
                 // dropdowns for multiple-value inputs should open below the select box,
                 // unless there is not enough space below, but there is space enough above, then it should
                 // open upwards
-                positionDropdown: function(el, selectEl) {
-                    var rect = selectEl.getBoundingClientRect();
-                    var dropdownHeight = el.clientHeight;
-                    var openUpwards =
+                positionDropdown(el, selectEl) {
+                    const rect = selectEl.getBoundingClientRect();
+                    const dropdownHeight = el.clientHeight;
+                    const openUpwards =
                         rect.bottom + dropdownHeight > window.innerHeight &&
                         rect.top - dropdownHeight > 0;
 
                     assign(el.style, {
-                        left: rect.left + 'px',
-                        top: (openUpwards ? rect.top - dropdownHeight : rect.bottom) + 'px',
-                        width: rect.width + 'px'
+                        left: `${rect.left}px`,
+                        top: `${openUpwards ? rect.top - dropdownHeight : rect.bottom}px`,
+                        width: `${rect.width}px`,
                     });
                 },
 
-                showSearchInputInDropdown: false
+                showSearchInputInDropdown: false,
             },
-            options
-        )
+            options,
+        ),
     );
 
     this._reset();
 
-    var events = {
+    const events = {
         change: this.rerenderSelection,
         click: this._clicked,
-        'selectivity-selected': this._resultSelected
+        "selectivity-selected": this._resultSelected,
     };
-    events['change ' + INPUT_SELECTOR] = stopPropagation;
-    events['click ' + SELECTED_ITEM_SELECTOR] = this._itemClicked;
-    events['click ' + SELECTED_ITEM_SELECTOR + '-remove'] = this._itemRemoveClicked;
-    events['keydown ' + INPUT_SELECTOR] = this._keyHeld;
-    events['keyup ' + INPUT_SELECTOR] = this._keyReleased;
-    events['paste ' + INPUT_SELECTOR] = this._onPaste;
+    events[`change ${INPUT_SELECTOR}`] = stopPropagation;
+    events[`click ${SELECTED_ITEM_SELECTOR}`] = this._itemClicked;
+    events[`click ${SELECTED_ITEM_SELECTOR}-remove`] = this._itemRemoveClicked;
+    events[`keydown ${INPUT_SELECTOR}`] = this._keyHeld;
+    events[`keyup ${INPUT_SELECTOR}`] = this._keyReleased;
+    events[`paste ${INPUT_SELECTOR}`] = this._onPaste;
 
     this.events.on(events);
 }
@@ -71,15 +69,15 @@ function MultipleInput(options) {
 /**
  * Methods.
  */
-var callSuper = Selectivity.inherits(MultipleInput, Selectivity, {
+const callSuper = Selectivity.inherits(MultipleInput, Selectivity, {
     /**
      * Adds an item to the selection, if it's not selected yet.
      *
      * @param item The item to add. May be an item with 'id' and 'text' properties or just an ID.
      */
-    add: function(item) {
-        var itemIsId = Selectivity.isValidId(item);
-        var id = itemIsId ? item : this.validateItem(item) && item.id;
+    add(item) {
+        const itemIsId = Selectivity.isValidId(item);
+        const id = itemIsId ? item : this.validateItem(item) && item.id;
 
         if (this.options.allowDuplicates || this._value.indexOf(id) === -1) {
             this._value.push(id);
@@ -94,7 +92,7 @@ var callSuper = Selectivity.inherits(MultipleInput, Selectivity, {
 
                             this.triggerChange({ added: item });
                         }
-                    }.bind(this)
+                    }.bind(this),
                 );
             } else {
                 if (itemIsId) {
@@ -106,28 +104,28 @@ var callSuper = Selectivity.inherits(MultipleInput, Selectivity, {
             }
         }
 
-        this.input.value = '';
+        this.input.value = "";
         this._updateInputWidth();
     },
 
     /**
      * Clears the data and value.
      */
-    clear: function() {
+    clear() {
         this.setData([]);
     },
 
     /**
      * @inherit
      */
-    filterResults: function(results) {
+    filterResults(results) {
         results = results.map(function(item) {
-            var result = {
+            const result = {
                 id: item.id,
-                text: item.text
+                text: item.text,
             };
             if (item.children) {
-                result['children'] = this.filterResults(item.children);
+                result["children"] = this.filterResults(item.children);
             }
             return result;
         }, this);
@@ -146,7 +144,7 @@ var callSuper = Selectivity.inherits(MultipleInput, Selectivity, {
      *         Note that if no items are defined, this method assumes the text labels will be equal
      *         to the IDs.
      */
-    getDataForValue: function(value) {
+    getDataForValue(value) {
         return value.map(this.getItemForId, this).filter(function(item) {
             return !!item;
         });
@@ -160,7 +158,7 @@ var callSuper = Selectivity.inherits(MultipleInput, Selectivity, {
      *
      * @return The corresponding value. Will be an array of IDs.
      */
-    getValueForData: function(data) {
+    getValueForData(data) {
         return data.map(function(item) {
             return item.id;
         });
@@ -171,11 +169,11 @@ var callSuper = Selectivity.inherits(MultipleInput, Selectivity, {
      *
      * @param item The item to remove. May be an item with 'id' and 'text' properties or just an ID.
      */
-    remove: function(item) {
-        var id = item.id || item;
+    remove(item) {
+        const id = item.id || item;
 
-        var removedItem;
-        var index = Selectivity.findIndexById(this._data, id);
+        let removedItem;
+        let index = Selectivity.findIndexById(this._data, id);
         if (index > -1) {
             removedItem = this._data[index];
             this._data.splice(index, 1);
@@ -206,7 +204,7 @@ var callSuper = Selectivity.inherits(MultipleInput, Selectivity, {
      * call this method explicitly if you've updated the selection with the triggerChange option set
      * to false.
      */
-    rerenderSelection: function(event) {
+    rerenderSelection(event) {
         event = event || {};
 
         if (event.added) {
@@ -226,7 +224,7 @@ var callSuper = Selectivity.inherits(MultipleInput, Selectivity, {
         if (event.added || event.removed) {
             if (this.dropdown) {
                 this.dropdown.showResults(this.filterResults(this.dropdown.results), {
-                    hasMore: this.dropdown.hasMore
+                    hasMore: this.dropdown.hasMore,
                 });
             }
 
@@ -243,7 +241,7 @@ var callSuper = Selectivity.inherits(MultipleInput, Selectivity, {
     /**
      * @inherit
      */
-    search: function(term) {
+    search(term) {
         if (this.options.tokenizer) {
             term = this.options.tokenizer(term, this._data, this.add.bind(this), this.options);
 
@@ -255,17 +253,17 @@ var callSuper = Selectivity.inherits(MultipleInput, Selectivity, {
         this._updateInputWidth();
 
         if (this.dropdown) {
-            callSuper(this, 'search', term);
+            callSuper(this, "search", term);
         }
     },
 
     /**
      * @inherit
      */
-    setOptions: function(options) {
-        var wasEnabled = this.enabled;
+    setOptions(options) {
+        const wasEnabled = this.enabled;
 
-        callSuper(this, 'setOptions', options);
+        callSuper(this, "setOptions", options);
 
         if (wasEnabled !== this.enabled) {
             this._reset();
@@ -280,13 +278,13 @@ var callSuper = Selectivity.inherits(MultipleInput, Selectivity, {
      *
      * @return The validated data. This may differ from the input data.
      */
-    validateData: function(data) {
+    validateData(data) {
         if (data === null) {
             return [];
         } else if (Array.isArray(data)) {
             return data.map(this.validateItem, this);
         } else {
-            throw new Error('Data for MultiSelectivity instance should be an array');
+            throw new Error("Data for MultiSelectivity instance should be an array");
         }
     },
 
@@ -297,24 +295,24 @@ var callSuper = Selectivity.inherits(MultipleInput, Selectivity, {
      *
      * @return The validated value. This may differ from the input value.
      */
-    validateValue: function(value) {
+    validateValue(value) {
         if (value === null) {
             return [];
         } else if (Array.isArray(value)) {
             if (value.every(Selectivity.isValidId)) {
                 return value;
             } else {
-                throw new Error('Value contains invalid IDs');
+                throw new Error("Value contains invalid IDs");
             }
         } else {
-            throw new Error('Value for MultiSelectivity instance should be an array');
+            throw new Error("Value for MultiSelectivity instance should be an array");
         }
     },
 
     /**
      * @private
      */
-    _backspacePressed: function() {
+    _backspacePressed() {
         if (this.options.backspaceHighlightsBeforeDelete) {
             if (this._highlightedItemId) {
                 this._deletePressed();
@@ -329,7 +327,7 @@ var callSuper = Selectivity.inherits(MultipleInput, Selectivity, {
     /**
      * @private
      */
-    _clicked: function(event) {
+    _clicked(event) {
         if (this.enabled) {
             if (this.options.showDropdown !== false) {
                 this.open();
@@ -344,12 +342,12 @@ var callSuper = Selectivity.inherits(MultipleInput, Selectivity, {
     /**
      * @private
      */
-    _createToken: function() {
-        var term = this.input.value;
-        var createTokenItem = this.options.createTokenItem;
+    _createToken() {
+        const term = this.input.value;
+        const createTokenItem = this.options.createTokenItem;
 
         if (term && createTokenItem) {
-            var item = createTokenItem(term);
+            const item = createTokenItem(term);
             if (item) {
                 this.add(item);
             }
@@ -359,7 +357,7 @@ var callSuper = Selectivity.inherits(MultipleInput, Selectivity, {
     /**
      * @private
      */
-    _deletePressed: function() {
+    _deletePressed() {
         if (this._highlightedItemId) {
             this.remove(this._highlightedItemId);
         }
@@ -368,18 +366,18 @@ var callSuper = Selectivity.inherits(MultipleInput, Selectivity, {
     /**
      * @private
      */
-    _forEachSelectedItem: function(callback) {
+    _forEachSelectedItem(callback) {
         Array.prototype.forEach.call(this.el.querySelectorAll(SELECTED_ITEM_SELECTOR), callback);
     },
 
     /**
      * @private
      */
-    _highlightItem: function(id) {
+    _highlightItem(id) {
         this._highlightedItemId = id;
 
         this._forEachSelectedItem(function(el) {
-            toggleClass(el, 'highlighted', el.getAttribute('data-item-id') === id);
+            toggleClass(el, "highlighted", el.getAttribute("data-item-id") === id);
         });
 
         if (!hasTouch) {
@@ -390,7 +388,7 @@ var callSuper = Selectivity.inherits(MultipleInput, Selectivity, {
     /**
      * @private
      */
-    _itemClicked: function(event) {
+    _itemClicked(event) {
         if (this.enabled) {
             this._highlightItem(this.getRelatedItemId(event));
         }
@@ -399,7 +397,7 @@ var callSuper = Selectivity.inherits(MultipleInput, Selectivity, {
     /**
      * @private
      */
-    _itemRemoveClicked: function(event) {
+    _itemRemoveClicked(event) {
         this.remove(this.getRelatedItemId(event));
 
         stopPropagation(event);
@@ -408,7 +406,7 @@ var callSuper = Selectivity.inherits(MultipleInput, Selectivity, {
     /**
      * @private
      */
-    _keyHeld: function(event) {
+    _keyHeld(event) {
         this._originalValue = this.input.value;
 
         if (getKeyCode(event) === KEY_ENTER && !event.ctrlKey) {
@@ -419,9 +417,9 @@ var callSuper = Selectivity.inherits(MultipleInput, Selectivity, {
     /**
      * @private
      */
-    _keyReleased: function(event) {
-        var inputHadText = !!this._originalValue;
-        var keyCode = getKeyCode(event);
+    _keyReleased(event) {
+        const inputHadText = !!this._originalValue;
+        const keyCode = getKeyCode(event);
 
         if (keyCode === KEY_ENTER && !event.ctrlKey) {
             this._createToken();
@@ -435,32 +433,32 @@ var callSuper = Selectivity.inherits(MultipleInput, Selectivity, {
     /**
      * @private
      */
-    _onPaste: function() {
+    _onPaste() {
         setTimeout(
             function() {
                 this.search(this.input.value);
 
                 this._createToken();
             }.bind(this),
-            10
+            10,
         );
     },
 
     /**
      * @private
      */
-    _renderSelectedItem: function(item) {
-        var el = parseElement(
+    _renderSelectedItem(item) {
+        const el = parseElement(
             this.template(
-                'multipleSelectedItem',
+                "multipleSelectedItem",
                 assign(
                     {
                         highlighted: item.id === this._highlightedItemId,
-                        removable: !this.options.readOnly
+                        removable: !this.options.readOnly,
                     },
-                    item
-                )
-            )
+                    item,
+                ),
+            ),
         );
 
         this.input.parentNode.insertBefore(el, this.input);
@@ -469,8 +467,8 @@ var callSuper = Selectivity.inherits(MultipleInput, Selectivity, {
     /**
      * @private
      */
-    _reset: function() {
-        this.el.innerHTML = this.template('multipleSelectInput', { enabled: this.enabled });
+    _reset() {
+        this.el.innerHTML = this.template("multipleSelectInput", { enabled: this.enabled });
 
         this._highlightedItemId = null;
 
@@ -482,7 +480,7 @@ var callSuper = Selectivity.inherits(MultipleInput, Selectivity, {
     /**
      * @private
      */
-    _resultSelected: function(event) {
+    _resultSelected(event) {
         if (this._value.indexOf(event.id) === -1) {
             this.add(event.item);
         } else {
@@ -493,19 +491,19 @@ var callSuper = Selectivity.inherits(MultipleInput, Selectivity, {
     /**
      * @private
      */
-    _scrollToBottom: function() {
-        var inputContainer = this.$(INPUT_SELECTOR + '-container');
+    _scrollToBottom() {
+        const inputContainer = this.$(`${INPUT_SELECTOR}-container`);
         inputContainer.scrollTop = inputContainer.clientHeight;
     },
 
     /**
      * @private
      */
-    _updateInputWidth: function() {
+    _updateInputWidth() {
         if (this.enabled) {
-            var inputContent =
-                this.input.value || (!this._data.length && this.options.placeholder) || '';
-            this.input.setAttribute('size', inputContent.length + 2);
+            const inputContent =
+                this.input.value || (!this._data.length && this.options.placeholder) || "";
+            this.input.setAttribute("size", inputContent.length + 2);
 
             this.positionDropdown();
         }
@@ -514,14 +512,14 @@ var callSuper = Selectivity.inherits(MultipleInput, Selectivity, {
     /**
      * @private
      */
-    _updatePlaceholder: function() {
-        var placeholder = (!this._data.length && this.options.placeholder) || '';
+    _updatePlaceholder() {
+        const placeholder = (!this._data.length && this.options.placeholder) || "";
         if (this.enabled) {
-            this.input.setAttribute('placeholder', placeholder);
+            this.input.setAttribute("placeholder", placeholder);
         } else {
-            this.$('.selectivity-placeholder').textContent = placeholder;
+            this.$(".selectivity-placeholder").textContent = placeholder;
         }
-    }
+    },
 });
 
-module.exports = Selectivity.Inputs.Multiple = MultipleInput;
+Selectivity.Inputs.Multiple = MultipleInput;

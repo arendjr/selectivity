@@ -43,15 +43,17 @@ following table to see which files you need:
 
 Reference the files from your HTML page like this:
 
-    <head>
-        ...
-        <link href="font-awesome.css" rel="stylesheet">
-        <link href="selectivity.css" rel="stylesheet">
-        ...
-        <script src="jquery-or-react-or-zepto.js"></script>
-        <script src="selectivity.js"></script>
-        ...
-    </head>
+```html
+<head>
+    <!-- ... -->
+    <link href="font-awesome.css" rel="stylesheet" />
+    <link href="selectivity.css" rel="stylesheet" />
+    <!-- ... -->
+    <script src="jquery-or-react-or-zepto.js"></script>
+    <script src="selectivity.js"></script>
+    <!-- ... -->
+</head>
+```
 
 Note the first line includes FontAwesome which is required for the default icons. This line is
 optional if you use custom templates.
@@ -67,18 +69,11 @@ Finally, the last line should reference the JavaScript file from the bundle you 
 You are now ready to start using Selectivity as described on the Selectivity homepage:
 https://arendjr.github.io/selectivity/
 
-### Using Yarn
+### Using Yarn or NPM
 
-If you have Yarn installed, run:
+Use one of the following commands, depending on whether you have Yarn or NPM installed:
 
     $ yarn add selectivity
-
-Note you will need to include the CSS yourself. You can find it in
-`node_modules/selectivity/selectivity.css`.
-
-### Using NPM
-
-Make sure you have Node.js installed and run:
 
     $ npm install --save selectivity
 
@@ -89,7 +84,9 @@ Note you will need to include the CSS yourself. You can find it in
 
 You can `require()` Selectivity as follows:
 
-    var Selectivity = require('selectivity');
+```js
+const Selectivity = require("selectivity");
+```
 
 But, this will only expose the main Selectivity object and will load none of the plugins, nor enable
 any of the specialized APIs. You could say what you're getting is the core of the VanillaJS API.
@@ -97,47 +94,51 @@ any of the specialized APIs. You could say what you're getting is the core of th
 If however, you just want to use the jQuery API with all the relevant plugins loaded, you can do
 this:
 
-    require('selectivity/jquery');
+```js
+require("selectivity/jquery");
+```
 
 After this you can call the jQuery API as you would expect:
 
-    $('...').selectivity(/*...*/);
+```js
+$("...").selectivity(/*...*/);
+```
 
 Similarly, if you want to use the React API with all its relevant plugins, you can do this:
 
-    var Selectivity = require('selectivity/react');
+```js
+const Selectivity = require("selectivity/react");
+```
 
 The Selectivity object you receive is the same one as if you'd required `'selectivity'`, but you get
 the React Component class as `Selectivity.React` so you can use it as follows:
 
-    <Selectivity.React {...props} />
+```js
+<Selectivity.React {...props} />
+```
 
 Finally, if you're an expert (\*) you can choose to use the VanillaJS API and enable just the
 plugins you want one by one. For example:
 
-    var Selectivity = require('selectivity');
-    require('selectivity/dropdown');
-    require('selectivity/inputs/single');
-    require('selectivity/plugins/ajax');
-    require('selectivity/plugins/async');
-    require('selectivity/plugins/submenu');
+```js
+const Selectivity = require("selectivity");
+require("selectivity/dropdown");
+require("selectivity/inputs/single");
+require("selectivity/plugins/ajax");
+require("selectivity/plugins/async");
+require("selectivity/plugins/submenu");
 
-    var singleInput = new Selectivity.Inputs.Single({
-        element: document.querySelector('...'),
-        /*...*/
-    });
+const singleInput = new Selectivity.Inputs.Single({
+    element: document.querySelector("...")
+    /* ... */
+});
+```
 
 All the modules listed in the table below under _Creating custom builds_ can be required this way.
 
 \*) Using the VanillaJS API isn't really that hard, but all the examples and documentation assume
 you're using either the React or the jQuery API, so be prepared that you'll have to figure out a bit
 more on your own.
-
-### Ruby on Rails
-
-Detailed information for `selectivity-rails`, including
-[Installation and usage](https://github.com/msx2/selectivity-rails#installation-and-usage) are
-provided in the [gem's repository](https://github.com/msx2/selectivity-rails).
 
 ### Customization
 
@@ -147,25 +148,26 @@ options exist.
 
 To do any basic customization, you'll need a reference to the `Selectivity` object. If you have
 installed through Yarn/NPM, you can get this object through
-`var Selectivity = require('selectivity');`. If you're using a jQuery build, the object is exposed
+`const Selectivity = require("selectivity");`. If you're using a jQuery build, the object is exposed
 as `$.Selectivity`. For non-jQuery builds that you included as a script, the object is exposed as
 global variable.
 
 #### Example: Customizing localization in a jQuery build
 
-    $.Selectivity.Locale.noResultsForTerm = function(term) {
-        return 'No results were found for <b>' + escape(term) + '</b>';
-    };
+```js
+$.Selectivity.Locale.noResultsForTerm = term => `No results were found for <b>${escape(term)}</b>`;
+```
 
 See [locale.js](https://github.com/arendjr/selectivity/blob/master/src/locale.js) for an overview of
 all localizable messages.
 
 #### Example: Specifying a custom template when installed through NPM
 
-    var Selectivity = require('selectivity');
-    Selectivity.Templates.loading = function() {
-        return '<div class="selectivity-loading"><div class="my-spinner"></div></div>';
-    };
+```js
+const Selectivity = require("selectivity");
+Selectivity.Templates.loading = () =>
+    '<div class="selectivity-loading"><div class="my-spinner"></div></div>';
+```
 
 See [templates.js](https://github.com/arendjr/selectivity/blob/master/src/templates.js) for an
 overview of all templates that can be customized.
@@ -188,8 +190,8 @@ them to work, possibly with the use of some polyfills. Reports of success or pat
 ## Build System
 
 Selectivity is built modularly and uses Yarn and Gulp as a build system to build its distributable
-files. Make sure you have the `yarn` command globally available and make sure you have the `sass`
-Gem installed. Then, inside the project directory, run:
+files. Make sure you have the `yarn` command globally available. Then, inside the project directory,
+run:
 
     $ yarn
 

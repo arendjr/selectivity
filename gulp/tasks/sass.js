@@ -1,43 +1,43 @@
-'use strict';
+"use strict";
 
-var fs = require('fs');
-var gulp = require('gulp');
-var concat = require('gulp-concat');
-var csso = require('gulp-csso');
-var gulpif = require('gulp-if');
-var sass = require('gulp-ruby-sass');
-var autoprefixer = require('gulp-autoprefixer');
-var gutil = require('gulp-util');
+const autoprefixer = require("autoprefixer");
+const fs = require("fs");
+const log = require("fancy-log");
+const postcss = require("postcss");
+const { promisify } = require("util");
+const sass = require("node-sass");
+const { yellow } = require("ansi-colors");
 
-var argv = require('../argv');
+const argv = require("../argv");
+const { browsersList } = require("../../package.json");
 
-module.exports = function() {
-    var sassModules = ['variables', 'base'].concat(argv.modules);
-    fs.writeFileSync(
-        'styles/selectivity-custom.sass',
-        sassModules
-            .map(function(module) {
-                if (fs.existsSync('styles/' + module + '.sass')) {
-                    return "@import '" + module + "'\n";
-                } else {
-                    return '';
-                }
-            })
-            .join('')
-    );
+const renderSass = promisify(sass.render);
+const writeFileAsync = promisify(fs.writeFile);
 
-    return sass('styles/selectivity-custom.sass')
-        .on('error', function(error) {
-            gutil.log(gutil.colors.red('Error building CSS bundle: ') + error.toString());
-        })
-        .pipe(autoprefixer({ browsers: ['last 5 versions'], cascade: false }))
-        .pipe(
-            concat(
-                (argv.bundleName ? 'selectivity-' + argv.bundleName : 'selectivity') +
-                    (argv.minify ? '.min' : '') +
-                    '.css'
-            )
+module.exports = async function() {
+    const sassModules = ["variables", "base"].concat(argv.modules);
+
+    return renderSass({
+        data: sassModules
+            .map(module => (fs.existsSync(`styles/${module}.sass`) ? `@import '${module}';` : ""))
+            .join("\n"),
+        includePaths: ["styles"],
+        outputStyle: argv.minify ? "compressed" : "expanded",
+    })
+        .then(({ css }) =>
+            postcss([autoprefixer({ cascade: false, overrideBrowserslist: browsersList })]).process(
+                css,
+                { from: undefined },
+            ),
         )
-        .pipe(gulpif(argv.minify, csso()))
-        .pipe(gulp.dest('build/'));
+        .then(result => {
+            for (const warning of result.warnings()) {
+                log(yellow("PostCSS: ") + warning.toString());
+            }
+
+            const fileName = `selectivity${argv.bundleName ? `-${argv.bundleName}` : ""}${
+                argv.minify ? ".min" : ""
+            }.css`;
+            return writeFileAsync(`build/${fileName}`, result.css);
+        });
 };

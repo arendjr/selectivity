@@ -1,131 +1,107 @@
 #!/usr/bin/env node
 /* eslint no-console: 0 */
+"use strict";
 
-'use strict';
+const { execSync } = require("child_process");
+const fs = require("fs");
+const glob = require("glob");
+const yargs = require("yargs");
 
-var execSync = require('child_process').execSync;
-var fs = require('fs');
-var glob = require('glob');
-var yargs = require('yargs');
-
-var argv = yargs
-    .usage('Usage: tools/create-release.js <version>')
+const argv = yargs
+    .usage("Usage: tools/create-release.js <version>")
     .demand(1)
-    .option('clean', {
+    .option("clean", {
         default: true,
-        describe: 'Disable if you want to inspect the release directory afterwards.',
-        type: 'boolean'
+        describe: "Disable if you want to inspect the release directory afterwards.",
+        type: "boolean",
     })
-    .option('publish', {
+    .option("publish", {
         default: false,
-        describe: 'Publish the new release to NPM.',
-        type: 'boolean'
+        describe: "Publish the new release to NPM.",
+        type: "boolean",
     })
     .strict()
     .wrap(yargs.terminalWidth()).argv;
 
-var version = argv._[0];
-var apis = ['jquery', 'react'];
-var tarballDir = 'release/selectivity-' + version;
-var npmDir = 'release/selectivity-npm';
+const version = argv._[0];
+const apis = ["jquery", "react"];
+const tarballDir = `release/selectivity-${version}`;
+const npmDir = "release/selectivity-npm";
 
 function createTarball() {
-    console.log('Creating release tarball ' + version + '...');
+    console.log(`Creating release tarball ${version}...`);
 
-    execSync('npm run build');
+    execSync("npm run build");
 
-    execSync('cp build/selectivity.* ' + tarballDir);
-    apis.forEach(function(api) {
-        execSync('cp build/selectivity-' + api + '.* ' + tarballDir);
-    });
-    execSync('cp CHANGELOG.md LICENSE README.md ' + tarballDir);
-    execSync('tar czf ' + tarballDir + '.tar.gz ' + tarballDir);
+    execSync(`cp build/selectivity.* ${tarballDir}`);
+    for (const api of apis) {
+        execSync(`cp build/selectivity-${api}.* ${tarballDir}`);
+    }
+    execSync(`cp CHANGELOG.md LICENSE README.md ${tarballDir}`);
+    execSync(`tar czf ${tarballDir}.tar.gz ${tarballDir}`);
 }
 
 function createNpmPackage() {
-    console.log('Creating NPM package ' + version + '...');
+    console.log(`Creating NPM package ${version}...`);
 
-    var allModules = glob
-        .sync('src/**/*.js')
-        .map(function(filename) {
-            return filename.slice(4, -3);
-        })
-        .filter(function(module) {
-            return module.slice(-7) !== '-custom';
-        });
+    const allModules = glob.sync("src/**/*.js").map(filename => filename.slice(4, -3));
 
-    var allDirs = [];
-    allModules.forEach(function(module) {
-        var slashIndex = module.indexOf('/');
+    const allDirs = [];
+    for (const module of allModules) {
+        const slashIndex = module.indexOf("/");
         if (slashIndex > -1) {
-            var dir = module.slice(0, slashIndex);
+            const dir = module.slice(0, slashIndex);
             if (allDirs.indexOf(dir) === -1) {
                 allDirs.push(dir);
             }
         }
-    });
+    }
 
     execSync(
-        'cp -R CHANGELOG.md LICENSE README.md ' +
-            allDirs
-                .map(function(dir) {
-                    return 'src/' + dir;
-                })
-                .join(' ') +
-            ' ' +
-            allModules
-                .filter(function(module) {
-                    return module.indexOf('/') === -1;
-                })
-                .map(function(module) {
-                    return 'src/' + module + '.js';
-                })
-                .join(' ') +
-            ' ' +
-            npmDir
+        `cp -R CHANGELOG.md LICENSE README.md ${allDirs
+            .map(dir => `src/${dir}`)
+            .join(" ")} ${allModules
+            .filter(module => module.includes("/"))
+            .map(module => `src/${module}.js`)
+            .join(" ")} ${npmDir}`,
     );
 
-    execSync('mkdir ' + npmDir + '/styles');
-    execSync('cp ' + tarballDir + '/*.css ' + npmDir + '/styles');
+    execSync(`mkdir ${npmDir}/styles`);
+    execSync(`cp ${tarballDir}/*.css ${npmDir}/styles`);
 
-    apis.forEach(function(api) {
+    for (const api of apis) {
         fs.writeFileSync(
-            npmDir + '/' + api + '.js',
-            allModules
-                .filter(function(module) {
-                    return (
-                        module.indexOf('util/') !== 0 &&
-                        !apis.some(function(otherApi) {
-                            return otherApi !== api && module.indexOf('/' + otherApi) > -1;
-                        })
-                    );
-                })
-                .map(function(module) {
-                    return 'require("./' + module + '");\n';
-                })
-                .join('') + 'module.exports=require("./selectivity");\n'
+            `${npmDir}/${api}.js`,
+            `${allModules
+                .filter(
+                    module =>
+                        !module.startsWith("util/") &&
+                        !apis.some(otherApi => otherApi !== api && module.includes(`/${otherApi}`)),
+                )
+                .map(module => `require("./${module}");\n`)
+                .join("")}module.exports=require("./selectivity");\n`,
         );
-    });
+    }
 
-    var packageJson = require('../package.json');
-    packageJson.main = './selectivity.js';
+    const packageJson = require("../package.json");
+    packageJson.main = "./selectivity.js";
     packageJson.version = version;
-    fs.writeFileSync(npmDir + '/package.json', JSON.stringify(packageJson, null, 2));
+    fs.writeFileSync(`${npmDir}/package.json`, JSON.stringify(packageJson, null, 2));
 
     if (argv.publish) {
-        execSync('cd ' + npmDir + '; npm publish .; cd ../..');
+        execSync(`cd ${npmDir}; npm publish .; cd ../..`);
     }
 }
 
-execSync('mkdir -p ' + tarballDir);
+execSync(`mkdir -p ${tarballDir}`);
 createTarball();
 
-execSync('mkdir -p ' + npmDir);
+execSync(`mkdir -p ${npmDir}`);
 createNpmPackage();
 
 if (argv.clean) {
-    execSync('rm -R ' + tarballDir);
-    execSync('rm -R ' + npmDir);
+    execSync(`rm -R ${tarballDir}`);
+    execSync(`rm -R ${npmDir}`);
 }
 
-console.log('OK');
+console.log("OK");

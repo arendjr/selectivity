@@ -1,18 +1,20 @@
 {
     "env": {
-        "browser": true,
-        "node": true,
-        "phantomjs": true
+        "es6": true,
+        "node": true
     },
     "extends": ["eslint:recommended", "prettier"],
     "globals": {
         "window": false,
-        "Comment": true,
         "Promise": true
     },
-    "plugins": [
-        "prettier"
-    ],
+    "parser": "babel-eslint",
+    "parserOptions": {
+        "ecmaVersion": 2018,
+        "sourceType": "script"
+    },
+    "plugins": ["compat", "import", "jest", "prettier", "react"],
+    "root": true,
     "rules": {
         "constructor-super": "error",
         "linebreak-style": ["error", "unix"],
@@ -30,24 +32,44 @@
         "no-unused-vars": "error",
         "no-use-before-define": ["error", { "classes": false, "functions": false }],
         "no-useless-constructor": "error",
+        "no-var": "error",
         "prefer-const": "error",
+        "prefer-template": "error",
         "prettier/prettier": [
             "error",
             {
                 "bracketSpacing": true,
                 "jsxBracketSameLine": true,
-                "parser": "babylon",
+                "parser": "babel",
                 "printWidth": 100,
-                "singleQuote": true,
+                "singleQuote": false,
                 "semi": true,
                 "tabWidth": 4,
-                "trailingComma": "none"
+                "trailingComma": "all"
             }
         ],
+        "react/jsx-key": "error",
+        "react/jsx-no-target-blank": "error",
+        "react/jsx-no-undef": "error",
+        "react/jsx-sort-props": ["error", { "ignoreCase": false }],
+        "react/jsx-uses-react": "error",
+        "react/jsx-uses-vars": "error",
+        "react/no-deprecated": "error",
+        "react/no-this-in-sfc": "error",
+        "react/no-typos": "warn",
+        "react/no-unsafe": ["error", { "checkAliases": true }],
+        "react/no-unknown-property": "error",
+        "react/react-in-jsx-scope": "error",
+        "react/require-render-return": "error",
+        "react/sort-prop-types": "error",
         "require-yield": "error",
-        "semi": ["error", "always"],
         "spaced-comment": ["error", "always", { "markers": ["/"] }],
         "strict": ["error", "global"],
         "yoda": "error"
+    },
+    "settings": {
+        "react": {
+            "version": "16.0"
+        }
     }
 }

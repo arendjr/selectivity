@@ -1,14 +1,11 @@
-'use strict';
-
-var assign = require('lodash/assign');
-
-var Selectivity = require('../selectivity');
-var stopPropagation = require('../util/stop-propagation');
+import Selectivity from "../selectivity";
+import { assign } from "../util/object";
+import stopPropagation from "../util/stop-propagation";
 
 /**
  * SingleInput Constructor.
  */
-function SingleInput(options) {
+export default function SingleInput(options) {
     Selectivity.call(
         this,
         assign(
@@ -16,50 +13,50 @@ function SingleInput(options) {
                 // Dropdowns for single-value inputs should open below the select box, unless there
                 // is not enough space below, in which case the dropdown should be moved up just
                 // enough so it fits in the window, but never so much that it reaches above the top.
-                positionDropdown: function(el, selectEl) {
-                    var rect = selectEl.getBoundingClientRect();
-                    var dropdownTop = rect.bottom;
+                positionDropdown(el, selectEl) {
+                    const rect = selectEl.getBoundingClientRect();
+                    const dropdownTop = rect.bottom;
 
-                    var deltaUp = Math.min(
+                    const deltaUp = Math.min(
                         Math.max(dropdownTop + el.clientHeight - window.innerHeight, 0),
-                        rect.top + rect.height
+                        rect.top + rect.height,
                     );
 
                     assign(el.style, {
-                        left: rect.left + 'px',
-                        top: dropdownTop - deltaUp + 'px',
-                        width: rect.width + 'px'
+                        left: `${rect.left}px`,
+                        top: `${dropdownTop - deltaUp}px`,
+                        width: `${rect.width}px`,
                     });
-                }
+                },
             },
-            options
-        )
+            options,
+        ),
     );
 
     this.rerender();
 
     if (options.showSearchInputInDropdown === false) {
-        this.initInput(this.$('.selectivity-single-select-input'), { search: false });
+        this.initInput(this.$(".selectivity-single-select-input"), { search: false });
     }
 
     this.events.on({
         change: this.rerenderSelection,
         click: this._clicked,
-        'click .selectivity-search-input': stopPropagation,
-        'click .selectivity-single-selected-item-remove': this._itemRemoveClicked,
-        'focus .selectivity-single-select-input': this._focused,
-        'selectivity-selected': this._resultSelected
+        "click .selectivity-search-input": stopPropagation,
+        "click .selectivity-single-selected-item-remove": this._itemRemoveClicked,
+        "focus .selectivity-single-select-input": this._focused,
+        "selectivity-selected": this._resultSelected,
     });
 }
 
 /**
  * Methods.
  */
-var callSuper = Selectivity.inherits(SingleInput, Selectivity, {
+const callSuper = Selectivity.inherits(SingleInput, Selectivity, {
     /**
      * Clears the data and value.
      */
-    clear: function() {
+    clear() {
         this.setData(null);
     },
 
@@ -69,10 +66,10 @@ var callSuper = Selectivity.inherits(SingleInput, Selectivity, {
      * @param options Optional options object. May contain the following property:
      *                keepFocus - If true, the focus will remain on the input.
      */
-    close: function(options) {
+    close(options) {
         this._closing = true;
 
-        callSuper(this, 'close');
+        callSuper(this, "close");
 
         if (options && options.keepFocus && this.input) {
             this.input.focus();
@@ -89,7 +86,7 @@ var callSuper = Selectivity.inherits(SingleInput, Selectivity, {
      * @return The corresponding data. Will be an object with 'id' and 'text' properties. Note that
      *         if no items are defined, this method assumes the text label will be equal to the ID.
      */
-    getDataForValue: function(value) {
+    getDataForValue(value) {
         return this.getItemForId(value);
     },
 
@@ -101,15 +98,15 @@ var callSuper = Selectivity.inherits(SingleInput, Selectivity, {
      *
      * @return The corresponding value. Will be an ID or null.
      */
-    getValueForData: function(data) {
+    getValueForData(data) {
         return data ? data.id : null;
     },
 
     /**
      * Rerenders the entire component.
      */
-    rerender: function() {
-        this.el.innerHTML = this.template('singleSelectInput', this.options);
+    rerender() {
+        this.el.innerHTML = this.template("singleSelectInput", this.options);
 
         this.rerenderSelection();
     },
@@ -121,28 +118,28 @@ var callSuper = Selectivity.inherits(SingleInput, Selectivity, {
      * call this method explicitly if you've updated the selection with the triggerChange option set
      * to false.
      */
-    rerenderSelection: function() {
-        var template = this._data ? 'singleSelectedItem' : 'singleSelectPlaceholder';
-        var options = this._data
+    rerenderSelection() {
+        const template = this._data ? "singleSelectedItem" : "singleSelectPlaceholder";
+        const options = this._data
             ? assign(
                   {
-                      removable: this.options.allowClear && !this.options.readOnly
+                      removable: this.options.allowClear && !this.options.readOnly,
                   },
-                  this._data
+                  this._data,
               )
             : { placeholder: this.options.placeholder };
 
-        this.el.querySelector('input').value = this._value;
-        this.$('.selectivity-single-result-container').innerHTML = this.template(template, options);
+        this.el.querySelector("input").value = this._value;
+        this.$(".selectivity-single-result-container").innerHTML = this.template(template, options);
     },
 
     /**
      * @inherit
      */
-    setOptions: function(options) {
-        var wasEnabled = this.enabled;
+    setOptions(options) {
+        const wasEnabled = this.enabled;
 
-        callSuper(this, 'setOptions', options);
+        callSuper(this, "setOptions", options);
 
         if (wasEnabled !== this.enabled) {
             this.rerender();
@@ -157,7 +154,7 @@ var callSuper = Selectivity.inherits(SingleInput, Selectivity, {
      *
      * @return The validated data. This may differ from the input data.
      */
-    validateData: function(data) {
+    validateData(data) {
         return data === null ? data : this.validateItem(data);
     },
 
@@ -168,18 +165,18 @@ var callSuper = Selectivity.inherits(SingleInput, Selectivity, {
      *
      * @return The validated value. This may differ from the input value.
      */
-    validateValue: function(value) {
+    validateValue(value) {
         if (value === null || Selectivity.isValidId(value)) {
             return value;
         } else {
-            throw new Error('Value for SingleSelectivity instance should be a valid ID or null');
+            throw new Error("Value for SingleSelectivity instance should be a valid ID or null");
         }
     },
 
     /**
      * @private
      */
-    _clicked: function() {
+    _clicked() {
         if (this.enabled) {
             if (this.dropdown) {
                 this.close({ keepFocus: true });
@@ -192,7 +189,7 @@ var callSuper = Selectivity.inherits(SingleInput, Selectivity, {
     /**
      * @private
      */
-    _focused: function() {
+    _focused() {
         if (
             this.enabled &&
             !this._closing &&
@@ -206,7 +203,7 @@ var callSuper = Selectivity.inherits(SingleInput, Selectivity, {
     /**
      * @private
      */
-    _itemRemoveClicked: function(event) {
+    _itemRemoveClicked(event) {
         this.setData(null);
 
         stopPropagation(event);
@@ -215,11 +212,11 @@ var callSuper = Selectivity.inherits(SingleInput, Selectivity, {
     /**
      * @private
      */
-    _resultSelected: function(event) {
+    _resultSelected(event) {
         this.setData(event.item);
 
         this.close({ keepFocus: true });
-    }
+    },
 });
 
-module.exports = Selectivity.Inputs.Single = SingleInput;
+Selectivity.Inputs.Single = SingleInput;

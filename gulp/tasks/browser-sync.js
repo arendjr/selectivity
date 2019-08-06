@@ -1,7 +1,7 @@
-'use strict';
+"use strict";
 
-var browserSync = require('browser-sync');
+const browserSync = require("browser-sync");
 
 module.exports = function(callback) {
-    browserSync({ server: { baseDir: './' }, open: false }, callback);
+    browserSync({ server: { baseDir: "./" }, open: false }, callback);
 };

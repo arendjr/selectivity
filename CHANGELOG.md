@@ -1,5 +1,13 @@
 # CHANGELOG
 
+## master (4.0)
+
+-   Upgraded dependencies. This includes replacing `browserify` with `rollup`. As a result, packages
+    should be even smaller than before, but the risk of breakage is also bigger than usual, hence
+    the major bump in version number. The `--derequire` build argument has also been removed because
+    of this, as it's no longer needed.
+-   Fix #248: Items update should trigger `setValue()` (thanks to @LeoDT).
+
 ## 3.1.0
 
 -   Add `data` property to `change` events.

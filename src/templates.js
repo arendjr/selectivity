@@ -1,9 +1,7 @@
-'use strict';
+import escape from "lodash/escape";
 
-var escape = require('lodash/escape');
-
-var Selectivity = require('./selectivity');
-var Locale = require('./locale');
+import Locale from "./locale";
+import Selectivity from "./selectivity";
 
 /**
  * Default set of templates to use with Selectivity.js.
@@ -29,28 +27,20 @@ Selectivity.Templates = {
      *                                  an input element with the 'selectivity-search-input' is
      *                                  expected.
      */
-    dropdown: function(options) {
-        var extraClass = options.dropdownCssClass ? ' ' + options.dropdownCssClass : '',
-            searchInput = '';
+    dropdown(options) {
+        let extraClass = options.dropdownCssClass ? ` ${options.dropdownCssClass}` : "",
+            searchInput = "";
         if (options.showSearchInput) {
-            extraClass += ' has-search-input';
+            extraClass += " has-search-input";
 
-            var placeholder = options.searchInputPlaceholder;
+            const placeholder = options.searchInputPlaceholder;
             searchInput =
-                '<div class="selectivity-search-input-container">' +
-                '<input type="text" class="selectivity-search-input"' +
-                (placeholder ? ' placeholder="' + escape(placeholder) + '"' : '') +
-                '>' +
-                '</div>';
+                `${'<div class="selectivity-search-input-container">' +
+                    '<input type="text" class="selectivity-search-input"'}${
+                    placeholder ? ` placeholder="${escape(placeholder)}"` : ""
+                }>` + `</div>`;
         }
-        return (
-            '<div class="selectivity-dropdown' +
-            extraClass +
-            '">' +
-            searchInput +
-            '<div class="selectivity-results-container"></div>' +
-            '</div>'
-        );
+        return `<div class="selectivity-dropdown${extraClass}">${searchInput}<div class="selectivity-results-container"></div></div>`;
     },
 
     /**
@@ -60,12 +50,10 @@ Selectivity.Templates = {
      *                escape - Boolean whether the message should be HTML-escaped.
      *                message - The message to display.
      */
-    error: function(options) {
-        return (
-            '<div class="selectivity-error">' +
-            (options.escape ? escape(options.message) : options.message) +
-            '</div>'
-        );
+    error(options) {
+        return `<div class="selectivity-error">${
+            options.escape ? escape(options.message) : options.message
+        }</div>`;
     },
 
     /**
@@ -74,8 +62,8 @@ Selectivity.Templates = {
      * This template is expected to have an element with a 'selectivity-loading' class which may be
      * replaced with actual results.
      */
-    loading: function() {
-        return '<div class="selectivity-loading">' + Locale.loading + '</div>';
+    loading() {
+        return `<div class="selectivity-loading">${Locale.loading}</div>`;
     },
 
     /**
@@ -84,8 +72,8 @@ Selectivity.Templates = {
      * This template is expected to have an element with a 'selectivity-load-more' class which, when
      * clicked, will load more results.
      */
-    loadMore: function() {
-        return '<div class="selectivity-load-more">' + Locale.loadMore + '</div>';
+    loadMore() {
+        return `<div class="selectivity-load-more">${Locale.loadMore}</div>`;
     },
 
     /**
@@ -101,15 +89,13 @@ Selectivity.Templates = {
      * @param options Options object containing the following property:
      *                enabled - Boolean whether the input is enabled.
      */
-    multipleSelectInput: function(options) {
+    multipleSelectInput(options) {
         return (
-            '<div class="selectivity-multiple-input-container">' +
-            (options.enabled
-                ? '<input type="text" autocomplete="off" autocorrect="off" ' +
-                  'autocapitalize="off" class="selectivity-multiple-input">'
-                : '<div class="selectivity-multiple-input ' + 'selectivity-placeholder"></div>') +
-            '<div class="selectivity-clearfix"></div>' +
-            '</div>'
+            `<div class="selectivity-multiple-input-container">${
+                options.enabled
+                    ? '<input type="text" autocomplete="off" autocorrect="off" autocapitalize="off" class="selectivity-multiple-input">'
+                    : '<div class="selectivity-multiple-input ' + 'selectivity-placeholder"></div>'
+            }<div class="selectivity-clearfix"></div>` + `</div>`
         );
     },
 
@@ -129,23 +115,15 @@ Selectivity.Templates = {
      *                removable - Boolean whether a remove icon should be displayed.
      *                text - Text label which the user sees.
      */
-    multipleSelectedItem: function(options) {
-        var extraClass = options.highlighted ? ' highlighted' : '';
-        return (
-            '<span class="selectivity-multiple-selected-item' +
-            extraClass +
-            '" ' +
-            'data-item-id="' +
-            escape(options.id) +
-            '">' +
-            (options.removable
-                ? '<a class="selectivity-multiple-selected-item-remove">' +
-                  '<i class="fa fa-remove"></i>' +
-                  '</a>'
-                : '') +
-            escape(options.text) +
-            '</span>'
-        );
+    multipleSelectedItem(options) {
+        const extraClass = options.highlighted ? " highlighted" : "";
+        return `<span class="selectivity-multiple-selected-item${extraClass}" data-item-id="${escape(
+            options.id,
+        )}">${
+            options.removable
+                ? '<a class="selectivity-multiple-selected-item-remove"><i class="fa fa-remove"></i></a>'
+                : ""
+        }${escape(options.text)}</span>`;
     },
 
     /**
@@ -154,12 +132,10 @@ Selectivity.Templates = {
      * @param options Options object containing the following property:
      *                term - Search term the user is searching for.
      */
-    noResults: function(options) {
-        return (
-            '<div class="selectivity-error">' +
-            (options.term ? Locale.noResultsForTerm(options.term) : Locale.noResults) +
-            '</div>'
-        );
+    noResults(options) {
+        return `<div class="selectivity-error">${
+            options.term ? Locale.noResultsForTerm(options.term) : Locale.noResults
+        }</div>`;
     },
 
     /**
@@ -170,8 +146,8 @@ Selectivity.Templates = {
      * @param options Options object containing the following property:
      *                childrenHtml - Rendered HTML for the children.
      */
-    resultChildren: function(options) {
-        return '<div class="selectivity-result-children">' + options.childrenHtml + '</div>';
+    resultChildren(options) {
+        return `<div class="selectivity-result-children">${options.childrenHtml}</div>`;
     },
 
     /**
@@ -187,20 +163,12 @@ Selectivity.Templates = {
      *                disabled - Truthy if the item should be disabled.
      *                submenu - Truthy if the result item has a menu with subresults.
      */
-    resultItem: function(options) {
-        return (
-            '<div class="selectivity-result-item' +
-            (options.disabled ? ' disabled' : '') +
-            '"' +
-            ' data-item-id="' +
-            escape(options.id) +
-            '">' +
-            escape(options.text) +
-            (options.submenu
-                ? '<i class="selectivity-submenu-icon fa fa-chevron-right"></i>'
-                : '') +
-            '</div>'
-        );
+    resultItem(options) {
+        return `<div class="selectivity-result-item${
+            options.disabled ? " disabled" : ""
+        }" data-item-id="${escape(options.id)}">${escape(options.text)}${
+            options.submenu ? '<i class="selectivity-submenu-icon fa fa-chevron-right"></i>' : ""
+        }</div>`;
     },
 
     /**
@@ -212,8 +180,8 @@ Selectivity.Templates = {
      * @param options Options object containing the following properties:
      *                text - Text label.
      */
-    resultLabel: function(options) {
-        return '<div class="selectivity-result-label">' + escape(options.text) + '</div>';
+    resultLabel(options) {
+        return `<div class="selectivity-result-label">${escape(options.text)}</div>`;
     },
 
     /**
@@ -223,16 +191,11 @@ Selectivity.Templates = {
      * 'selectivity-single-result-container' which is the element containing the selected item or
      * the placeholder.
      */
-    singleSelectInput: function(options) {
-        return (
-            '<div class="selectivity-single-select">' +
-            '<input type="text" class="selectivity-single-select-input"' +
-            (options.required ? ' required' : '') +
-            '>' +
-            '<div class="selectivity-single-result-container"></div>' +
-            '<i class="fa fa-sort-desc selectivity-caret"></i>' +
-            '</div>'
-        );
+    singleSelectInput(options) {
+        return `${'<div class="selectivity-single-select">' +
+            '<input type="text" class="selectivity-single-select-input"'}${
+            options.required ? " required" : ""
+        }><div class="selectivity-single-result-container"></div><i class="fa fa-sort-desc selectivity-caret"></i></div>`;
     },
 
     /**
@@ -244,8 +207,8 @@ Selectivity.Templates = {
      * @param options Options object containing the following property:
      *                placeholder - The placeholder text.
      */
-    singleSelectPlaceholder: function(options) {
-        return '<div class="selectivity-placeholder">' + escape(options.placeholder) + '</div>';
+    singleSelectPlaceholder(options) {
+        return `<div class="selectivity-placeholder">${escape(options.placeholder)}</div>`;
     },
 
     /**
@@ -260,20 +223,14 @@ Selectivity.Templates = {
      *                removable - Boolean whether a remove icon should be displayed.
      *                text - Text label which the user sees.
      */
-    singleSelectedItem: function(options) {
-        return (
-            '<span class="selectivity-single-selected-item" ' +
-            'data-item-id="' +
-            escape(options.id) +
-            '">' +
-            (options.removable
-                ? '<a class="selectivity-single-selected-item-remove">' +
-                  '<i class="fa fa-remove"></i>' +
-                  '</a>'
-                : '') +
-            escape(options.text) +
-            '</span>'
-        );
+    singleSelectedItem(options) {
+        return `<span class="selectivity-single-selected-item" data-item-id="${escape(
+            options.id,
+        )}">${
+            options.removable
+                ? '<a class="selectivity-single-selected-item-remove"><i class="fa fa-remove"></i></a>'
+                : ""
+        }${escape(options.text)}</span>`;
     },
 
     /**
@@ -284,15 +241,13 @@ Selectivity.Templates = {
      *                name - Name of the <select> element.
      *                mode - Mode in which select exists, single or multiple.
      */
-    selectCompliance: function(options) {
-        var mode = options.mode;
-        var name = options.name;
-        if (mode === 'multiple' && name.slice(-2) !== '[]') {
-            name += '[]';
+    selectCompliance(options) {
+        const mode = options.mode;
+        let name = options.name;
+        if (mode === "multiple" && name.slice(-2) !== "[]") {
+            name += "[]";
         }
-        return (
-            '<select name="' + name + '"' + (mode === 'multiple' ? ' multiple' : '') + '></select>'
-        );
+        return `<select name="${name}"${mode === "multiple" ? " multiple" : ""}></select>`;
     },
 
     /**
@@ -302,13 +257,7 @@ Selectivity.Templates = {
      *                id - Identifier for the item.
      *                text - Text label which the user sees.
      */
-    selectOptionCompliance: function(options) {
-        return (
-            '<option value="' +
-            escape(options.id) +
-            '" selected>' +
-            escape(options.text) +
-            '</option>'
-        );
-    }
+    selectOptionCompliance(options) {
+        return `<option value="${escape(options.id)}" selected>${escape(options.text)}</option>`;
+    },
 };

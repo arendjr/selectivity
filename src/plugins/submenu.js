@@ -1,14 +1,11 @@
-'use strict';
-
-var Dropdown = require('../dropdown');
-var Selectivity = require('../selectivity');
-
-var findResultItem = require('../util/find-result-item');
+import Dropdown from "../dropdown";
+import Selectivity from "../selectivity";
+import findResultItem from "../util/find-result-item";
 
 /**
  * Extended dropdown that supports submenus.
  */
-function SubmenuPlugin(selectivity, options) {
+export default function SubmenuPlugin(selectivity, options) {
     /**
      * Optional parent dropdown menu from which this dropdown was opened.
      */
@@ -21,16 +18,16 @@ function SubmenuPlugin(selectivity, options) {
     this._openSubmenuTimeout = 0;
 }
 
-var callSuper = Selectivity.inherits(SubmenuPlugin, Dropdown, {
+const callSuper = Selectivity.inherits(SubmenuPlugin, Dropdown, {
     /**
      * @inherit
      */
-    close: function() {
+    close() {
         if (this.submenu) {
             this.submenu.close();
         }
 
-        callSuper(this, 'close');
+        callSuper(this, "close");
 
         if (this.parentMenu) {
             this.parentMenu.submenu = null;
@@ -52,12 +49,12 @@ var callSuper = Selectivity.inherits(SubmenuPlugin, Dropdown, {
      *                reason - The reason why the result item is being highlighted. See
      *                         Dropdown#highlight().
      */
-    highlight: function(item, options) {
+    highlight(item, options) {
         options = options || {};
-        var reason = options.reason || 'unspecified';
+        const reason = options.reason || "unspecified";
 
         if (options.delay) {
-            callSuper(this, 'highlight', item);
+            callSuper(this, "highlight", item);
 
             clearTimeout(this._openSubmenuTimeout);
             this._openSubmenuTimeout = setTimeout(this._doHighlight.bind(this, item, reason), 300);
@@ -68,7 +65,7 @@ var callSuper = Selectivity.inherits(SubmenuPlugin, Dropdown, {
                 clearTimeout(this._closeSubmenuTimeout);
                 this._closeSubmenuTimeout = setTimeout(
                     this._closeSubmenuAndHighlight.bind(this, item, reason),
-                    100
+                    100,
                 );
             }
         } else {
@@ -78,7 +75,7 @@ var callSuper = Selectivity.inherits(SubmenuPlugin, Dropdown, {
             }
 
             if (options.openSubmenu === false) {
-                callSuper(this, 'highlight', item);
+                callSuper(this, "highlight", item);
             } else {
                 this._doHighlight(item, reason);
             }
@@ -88,9 +85,9 @@ var callSuper = Selectivity.inherits(SubmenuPlugin, Dropdown, {
     /**
      * @inherit
      */
-    search: function(term) {
+    search(term) {
         if (this.submenu) {
-            var searchInput = this.$('.selectivity-search-input');
+            const searchInput = this.$(".selectivity-search-input");
             if (searchInput && searchInput === document.activeElement) {
                 this.submenu.close();
             } else {
@@ -99,24 +96,24 @@ var callSuper = Selectivity.inherits(SubmenuPlugin, Dropdown, {
             }
         }
 
-        callSuper(this, 'search', term);
+        callSuper(this, "search", term);
     },
 
     /**
      * @inherit
      */
-    selectHighlight: function() {
+    selectHighlight() {
         if (this.submenu) {
             this.submenu.selectHighlight();
         } else {
-            callSuper(this, 'selectHighlight');
+            callSuper(this, "selectHighlight");
         }
     },
 
     /**
      * @inherit
      */
-    showResults: function(results, options) {
+    showResults(results, options) {
         // makes sure any result item with a submenu that's not explicitly
         // set as selectable becomes unselectable
         function setSelectable(item) {
@@ -132,36 +129,36 @@ var callSuper = Selectivity.inherits(SubmenuPlugin, Dropdown, {
             this.submenu.showResults(results, options);
         } else {
             results.forEach(setSelectable);
-            callSuper(this, 'showResults', results, options);
+            callSuper(this, "showResults", results, options);
         }
     },
 
     /**
      * @inherit
      */
-    triggerClose: function() {
+    triggerClose() {
         if (this.parentMenu) {
-            this.selectivity.triggerEvent('selectivity-close-submenu');
+            this.selectivity.triggerEvent("selectivity-close-submenu");
         } else {
-            callSuper(this, 'triggerClose');
+            callSuper(this, "triggerClose");
         }
     },
 
     /**
      * @inherit
      */
-    triggerOpen: function() {
+    triggerOpen() {
         if (this.parentMenu) {
-            this.selectivity.triggerEvent('selectivity-open-submenu');
+            this.selectivity.triggerEvent("selectivity-open-submenu");
         } else {
-            callSuper(this, 'triggerOpen');
+            callSuper(this, "triggerOpen");
         }
     },
 
     /**
      * @private
      */
-    _closeSubmenuAndHighlight: function(item, reason) {
+    _closeSubmenuAndHighlight(item, reason) {
         if (this.submenu) {
             this.submenu.close();
         }
@@ -172,10 +169,10 @@ var callSuper = Selectivity.inherits(SubmenuPlugin, Dropdown, {
     /**
      * @private
      */
-    _doHighlight: function(item, reason) {
-        callSuper(this, 'highlight', item);
+    _doHighlight(item, reason) {
+        callSuper(this, "highlight", item);
 
-        var options = this.selectivity.options;
+        const options = this.selectivity.options;
         if (
             !item.submenu ||
             this.submenu ||
@@ -184,23 +181,23 @@ var callSuper = Selectivity.inherits(SubmenuPlugin, Dropdown, {
             return;
         }
 
-        var Dropdown = options.dropdown || Selectivity.Dropdown;
+        const Dropdown = options.dropdown || Selectivity.Dropdown;
         if (Dropdown) {
-            var resultItems = this.el.querySelectorAll('.selectivity-result-item');
-            var resultItem = findResultItem(resultItems, item.id);
-            var dropdownEl = this.el;
+            const resultItems = this.el.querySelectorAll(".selectivity-result-item");
+            const resultItem = findResultItem(resultItems, item.id);
+            const dropdownEl = this.el;
 
             this.submenu = new Dropdown(this.selectivity, {
                 highlightFirstItem: !item.selectable,
                 items: item.submenu.items || null,
                 parentMenu: this,
-                position: function(el, selectEl) {
+                position(el, selectEl) {
                     if (item.submenu.positionDropdown) {
                         item.submenu.positionDropdown(el, selectEl, resultItem, dropdownEl);
                     } else {
-                        var rect = dropdownEl.getBoundingClientRect();
-                        var left = rect.right;
-                        var width = rect.width;
+                        const rect = dropdownEl.getBoundingClientRect();
+                        let left = rect.right;
+                        const width = rect.width;
                         if (left + width > document.body.clientWidth && rect.left - width > 0) {
                             // Open the submenu on the left-hand side if there's no sufficient
                             // space on the right side.
@@ -209,26 +206,24 @@ var callSuper = Selectivity.inherits(SubmenuPlugin, Dropdown, {
                         }
 
                         // Move the submenu up so it fits in the window, if necessary and possible.
-                        var submenuTop = resultItem.getBoundingClientRect().top;
-                        var deltaUp = Math.min(
+                        const submenuTop = resultItem.getBoundingClientRect().top;
+                        const deltaUp = Math.min(
                             Math.max(submenuTop + el.clientHeight - window.innerHeight, 0),
-                            rect.top + rect.height
+                            rect.top + rect.height,
                         );
 
-                        el.style.left = left + 'px';
-                        el.style.top = submenuTop - deltaUp + 'px';
-                        el.style.width = width + 'px';
+                        el.style.left = `${left}px`;
+                        el.style.top = `${submenuTop - deltaUp}px`;
+                        el.style.width = `${width}px`;
                     }
                 },
                 query: item.submenu.query || null,
-                showSearchInput: item.submenu.showSearchInput
+                showSearchInput: item.submenu.showSearchInput,
             });
 
-            this.submenu.search('');
+            this.submenu.search("");
         }
-    }
+    },
 });
 
 Selectivity.Dropdown = SubmenuPlugin;
-
-module.exports = SubmenuPlugin;

@@ -1,13 +1,11 @@
-'use strict';
+import ReactDOM from "react-dom";
+import { isValidElement } from "react";
 
-var isValidElement = require('react').isValidElement;
-var ReactDOM = require('react-dom');
+import Selectivity from "../../selectivity";
 
-var Selectivity = require('../../selectivity');
-
-var div = null;
+let div = null;
 function renderToString(element) {
-    div = div || document.createElement('div');
+    div = div || document.createElement("div");
     ReactDOM.render(element, div);
     return div.innerHTML;
 }
@@ -28,14 +26,14 @@ function renderToString(element) {
  *         )
  *     };
  */
-var templateMethod = Selectivity.prototype.template;
+const templateMethod = Selectivity.prototype.template;
 Selectivity.prototype.template = function(templateName, options) {
-    var template = this.templates[templateName];
+    const template = this.templates[templateName];
     if (isValidElement(template)) {
         return renderToString(template);
     }
 
-    var result = templateMethod.call(this, templateName, options);
+    const result = templateMethod.call(this, templateName, options);
     if (isValidElement(result)) {
         return renderToString(result);
     } else {
