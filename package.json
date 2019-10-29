@@ -48,7 +48,7 @@
         "glob": "^7.1.4",
         "gulp": "^4.0.2",
         "jest": "^24.8.0",
-        "jest-environment-enzyme": "^7.0.2",
+        "jest-environment-enzyme": "7.1.1",
         "jest-enzyme": "^7.0.2",
         "jquery": "^3.4.1",
         "jsdom": "^15.1.1",
