@@ -68,7 +68,7 @@
         "rollup-plugin-virtual": "^1.0.1",
         "tape": "^4.11.0",
         "wait-for-expect": "^2.0.0",
-        "yargs": "^14.0.0"
+        "yargs": "^15.0.2"
     },
     "dependencies": {
         "lodash": "^4.17.15"
