@@ -51,7 +51,7 @@
         "jest-environment-enzyme": "^7.0.2",
         "jest-enzyme": "^7.0.2",
         "jquery": "^3.4.1",
-        "jsdom": "^15.1.1",
+        "jsdom": "^16.2.0",
         "node-sass": "^4.12.0",
         "postcss": "^7.0.17",
         "prettier": "^1.18.2",
