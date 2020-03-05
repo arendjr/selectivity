@@ -20,7 +20,7 @@
         "unit-tests": "jest"
     },
     "devDependencies": {
-        "@babel/core": "^7.5.5",
+        "@babel/core": "^7.8.7",
         "@babel/plugin-transform-modules-commonjs": "^7.5.0",
         "@babel/preset-env": "^7.5.5",
         "@babel/preset-react": "^7.0.0",
