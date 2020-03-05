@@ -22,7 +22,7 @@
     "devDependencies": {
         "@babel/core": "^7.8.7",
         "@babel/plugin-transform-modules-commonjs": "^7.8.3",
-        "@babel/preset-env": "^7.5.5",
+        "@babel/preset-env": "^7.8.7",
         "@babel/preset-react": "^7.0.0",
         "@babel/register": "^7.5.5",
         "@testing-library/jest-dom": "^4.0.0",
