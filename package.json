@@ -64,7 +64,7 @@
         "rollup-plugin-commonjs": "^10.0.1",
         "rollup-plugin-node-resolve": "^5.2.0",
         "rollup-plugin-replace": "^2.2.0",
-        "rollup-plugin-terser": "^5.1.1",
+        "rollup-plugin-terser": "^5.3.0",
         "rollup-plugin-virtual": "^1.0.1",
         "tape": "^4.11.0",
         "wait-for-expect": "^2.0.0",
