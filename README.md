@@ -2,9 +2,10 @@
 
 Modular and light-weight selection library.
 
-[![Selectivity on NPM](https://img.shields.io/npm/v/selectivity.svg)](https://www.npmjs.com/package/selectivity)
-[![Build Status](https://travis-ci.org/arendjr/selectivity.svg?branch=master)](https://travis-ci.org/arendjr/selectivity)
-[![Greenkeeper badge](https://badges.greenkeeper.io/arendjr/selectivity.svg)](https://greenkeeper.io/)
+**Deprecation notice:** At [Speakap](https://speakap.com/), we are migrating to a more responsive
+component library. As such, we will be migrating away from Selectivity, and we will no longer be
+maintaining this library. If you are interested in taking over ownership, please
+[file an issue](https://github.com/arendjr/selectivity/issues). Thanks for all the support!
 
 ## Setup
 
